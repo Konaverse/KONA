@@ -135,7 +135,7 @@ function EventCard({
         <div className="lg:hidden mb-4">
           <span
             className="font-mono text-[10px] uppercase tracking-[0.25em]"
-            style={{ color: colors[500] }}
+            style={{ color: colors[100] }}
           >
             {event.year}
           </span>
@@ -167,7 +167,7 @@ function EventCard({
         {/* Archive ref */}
         <span
           className="font-mono text-[9px] uppercase tracking-[0.25em] block mb-2"
-          style={{ color: colors[400] }}
+          style={{ color: colors[100] }}
         >
           Archive_Ref: {event.ref}
         </span>
@@ -177,7 +177,7 @@ function EventCard({
           className="font-extralight tracking-tight"
           style={{
             fontSize: "clamp(1.4rem, 2.5vw, 2.1rem)",
-            color: colors[50],
+            color: colors[200],
           }}
         >
           {event.headline}
@@ -185,8 +185,8 @@ function EventCard({
 
         {/* Description */}
         <p
-          className="text-sm font-light leading-relaxed mt-4"
-          style={{ color: colors[300] }}
+          className="text-base md:text-lg font-light leading-relaxed mt-4"
+          style={{ color: colors[100] }}
         >
           {event.description}
         </p>
@@ -267,7 +267,7 @@ export function AboutTimeline() {
         <div className="flex items-center gap-6 mb-10">
           <span
             className="font-mono text-[10px] uppercase tracking-[0.3em] shrink-0"
-            style={{ color: colors[400] }}
+            style={{ color: colors[100] }}
           >
             03 — The Chronicle
           </span>
@@ -286,7 +286,7 @@ export function AboutTimeline() {
             color: colors[50],
           }}
         >
-          How we got here.
+          <span style={{ color: colors[50] }}>How we</span> <span style={{ color: colors[200] }}>got here</span>.
         </h2>
       </div>
 
@@ -325,7 +325,7 @@ export function AboutTimeline() {
                   {/* Archive ref */}
                   <span
                     className="font-mono text-[9px] uppercase tracking-[0.3em] block mt-4"
-                    style={{ color: colors[400] }}
+                    style={{ color: colors[100] }}
                   >
                     Archive_Ref: {event.ref}
                   </span>
@@ -341,7 +341,7 @@ export function AboutTimeline() {
                     className="mt-3 font-light"
                     style={{
                       fontSize: "clamp(0.85rem, 1.2vw, 1rem)",
-                      color: colors[300],
+                      color: colors[100],
                       letterSpacing: "0.01em",
                     }}
                   >

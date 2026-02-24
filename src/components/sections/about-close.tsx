@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect, useState } from "react";
-import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 const colors = {
   50: "#f8f7f5",
@@ -81,7 +81,7 @@ function CapabilityRow({
         {/* Number */}
         <span
           className="font-mono text-[9px] uppercase tracking-[0.25em] shrink-0 w-6 text-right"
-          style={{ color: colors[500] }}
+          style={{ color: colors[100] }}
         >
           {id}
         </span>
@@ -228,7 +228,7 @@ export function AboutClose() {
           <div className="flex items-center gap-6 mb-16">
             <span
               className="font-mono text-[10px] uppercase tracking-[0.3em] shrink-0"
-              style={{ color: colors[400] }}
+              style={{ color: colors[100] }}
             >
               04 — What We Do
             </span>
@@ -299,7 +299,7 @@ export function AboutClose() {
           >
             <span
               className="font-mono text-[10px] uppercase tracking-[0.3em]"
-              style={{ color: colors[400] }}
+              style={{ color: colors[100] }}
             >
               05 — Begin
             </span>
@@ -320,7 +320,7 @@ export function AboutClose() {
               className="font-extralight tracking-tight leading-tight"
               style={{
                 fontSize: "clamp(2.5rem, 7vw, 5.5rem)",
-                color: colors[50],
+                color: colors[200],
               }}
             >
               Build what matters.
@@ -342,7 +342,7 @@ export function AboutClose() {
               className="font-light"
               style={{
                 fontSize: "clamp(0.875rem, 1.4vw, 1rem)",
-                color: colors[300],
+                color: colors[100],
                 letterSpacing: "0.03em",
               }}
             >
@@ -374,31 +374,12 @@ export function AboutClose() {
               transitionDelay: "440ms",
             }}
           >
-            <Link href="/contact">
-              <button
-                className="font-mono text-xs uppercase px-10 py-4 border"
-                style={{
-                  color: colors[50],
-                  borderColor: `${sage}70`,
-                  background: "transparent",
-                  letterSpacing: "0.2em",
-                  transition:
-                    "border-color 500ms cubic-bezier(0.16, 1, 0.3, 1), letter-spacing 500ms cubic-bezier(0.16, 1, 0.3, 1)",
-                }}
-                onMouseEnter={(e) => {
-                  const el = e.currentTarget;
-                  el.style.borderColor = sage;
-                  el.style.letterSpacing = "0.26em";
-                }}
-                onMouseLeave={(e) => {
-                  const el = e.currentTarget;
-                  el.style.borderColor = `${sage}70`;
-                  el.style.letterSpacing = "0.2em";
-                }}
-              >
-                Initialize Engagement
-              </button>
-            </Link>
+            <Button
+              href="/contact"
+              showCorners={true}
+            >
+              Initialize Engagement
+            </Button>
           </div>
 
           {/* Studio signature */}
@@ -412,7 +393,7 @@ export function AboutClose() {
           >
             <span
               className="font-mono text-[9px] uppercase tracking-[0.35em]"
-              style={{ color: colors[500] }}
+              style={{ color: colors[100] }}
             >
               Konaverse — Est. 2024
             </span>
