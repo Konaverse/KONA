@@ -115,7 +115,7 @@ export default function Footer() {
           </motion.div>
 
           {/* Grid Layout */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
             
             {/* Brand Info */}
             <motion.div
@@ -123,7 +123,7 @@ export default function Footer() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="lg:col-span-2"
+              className="lg:col-span-2 md:col-span-2"
             >
               <div className="p-6 rounded-lg border border-cyan-500/20 bg-black/40 backdrop-blur-sm">
                 <div className="flex items-center gap-3 mb-4">
@@ -186,6 +186,41 @@ export default function Footer() {
                   </li>
                 ))}
               </ul>
+              </div>
+            </motion.div>
+
+            {/* Services */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.25 }}
+            >
+              <div className="p-6 rounded-lg border border-cyan-500/20 bg-black/40 backdrop-blur-sm h-full">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-1 h-1 rounded-full bg-cyan-400" />
+                  <h4 className="text-cyan-400 font-mono text-sm">SERVICES</h4>
+                </div>
+                <ul className="space-y-2">
+                  {[
+                    "Web Development",
+                    "Web Applications",
+                    "Social Media",
+                    "Digital Advertising",
+                    "Videography",
+                  ].map((service) => (
+                    <li key={service}>
+                      <a
+                        href="#services"
+                        className="text-white/50 hover:text-cyan-400 transition-colors text-xs font-mono inline-flex items-center gap-2 group"
+                      >
+                        <span className="text-cyan-400/50">{'>'}</span>
+                        {service.toUpperCase()}
+                        <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </motion.div>
 

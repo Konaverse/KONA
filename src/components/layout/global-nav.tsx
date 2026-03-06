@@ -23,6 +23,7 @@ const solutionsItems = [
     { label: "Web Applications", href: "/solutions/web-applications" },
     { label: "Digital Advertising", href: "/solutions/digital-advertising" },
     { label: "Social Media", href: "/solutions/social-media" },
+    { label: "Videography", href: "/solutions/videography" },
 ];
 
 const projectsItems = [

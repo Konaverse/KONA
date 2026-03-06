@@ -40,7 +40,11 @@ import {
   SiInstagram,
   SiFacebook,
   SiTiktok,
-  SiYoutube
+  SiYoutube,
+  SiAdobepremierepro,
+  SiAdobeaftereffects,
+  SiDavinciresolve,
+  SiAdobeaudition,
 } from "react-icons/si";
 import { TbDeviceMobile, TbDeviceTablet, TbDeviceDesktop } from "react-icons/tb";
 
@@ -318,6 +322,62 @@ const serviceData = {
         ]
       }
     ]
+  },
+  "05": {
+    accent: "#c27c3a",
+    gradient: "radial-gradient(circle at 60% 40%, rgba(194, 124, 58, 0.15) 0%, transparent 60%)",
+    cards: [
+      {
+        shortTitle: "Video Production",
+        fullTitle: "Cinematic Video Production",
+        description: "From concept to final cut — we craft visually compelling video content that tells your brand story with cinematic precision and intentional storytelling.",
+        icons: [
+          { icon: SiAdobepremierepro, name: "Premiere Pro", color: "#9999FF" },
+          { icon: SiDavinciresolve, name: "DaVinci Resolve", color: "#FF6B35" },
+          { icon: SiYoutube, name: "YouTube", color: "#FF0000" },
+        ]
+      },
+      {
+        shortTitle: "Photography",
+        fullTitle: "Professional Photography",
+        description: "High-impact brand and product photography that elevates your visual identity across every touchpoint — from campaigns to social media.",
+        icons: [
+          { icon: SiAdobelightroom, name: "Lightroom", color: "#31A8FF" },
+          { icon: SiAdobephotoshop, name: "Photoshop", color: "#31A8FF" },
+          { icon: SiAdobecreativecloud, name: "Creative Cloud", color: "#DA1F26" },
+        ]
+      },
+      {
+        shortTitle: "Video Editing",
+        fullTitle: "Precision Post-Production",
+        description: "Expert editing that transforms raw footage into polished, audience-ready content — colour grading, pacing, sound design, and seamless visual flow.",
+        icons: [
+          { icon: SiAdobepremierepro, name: "Premiere Pro", color: "#9999FF" },
+          { icon: SiDavinciresolve, name: "DaVinci", color: "#FF6B35" },
+          { icon: SiAdobeaudition, name: "Audition", color: "#9999FF" },
+        ]
+      },
+      {
+        shortTitle: "Motion Graphics",
+        fullTitle: "Dynamic Motion Graphics",
+        description: "Animated visuals, kinetic typography, and fluid transitions that add dimension and energy to your brand narrative across every screen.",
+        icons: [
+          { icon: SiAdobeaftereffects, name: "After Effects", color: "#9999FF" },
+          { icon: SiAdobepremierepro, name: "Premiere Pro", color: "#9999FF" },
+          { icon: SiAdobecreativecloud, name: "Creative Cloud", color: "#DA1F26" },
+        ]
+      },
+      {
+        shortTitle: "Aerial & Drone",
+        fullTitle: "Aerial & Drone Cinematography",
+        description: "Breathtaking aerial perspectives and drone footage that give your content a world-class cinematic edge and an unforgettable sense of scale.",
+        icons: [
+          { icon: SiAdobepremierepro, name: "Premiere Pro", color: "#9999FF" },
+          { icon: SiDavinciresolve, name: "DaVinci", color: "#FF6B35" },
+          { icon: SiYoutube, name: "YouTube", color: "#FF0000" },
+        ]
+      }
+    ]
   }
 };
 
@@ -349,6 +409,13 @@ const serviceImages = {
     "https://images.unsplash.com/photo-1533750349088-cd871a92f312?w=800&q=80",
     "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80",
     "https://images.unsplash.com/photo-1533750516457-a7f992034fce?w=800&q=80",
+  ],
+  "05": [
+    "https://images.unsplash.com/photo-1579767684-28f27a64f1e0?w=800&q=80",
+    "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=800&q=80",
+    "https://images.unsplash.com/photo-1536240478700-b869ad10e2b5?w=800&q=80",
+    "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=800&q=80",
+    "https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=800&q=80",
   ],
 };
 
@@ -480,7 +547,7 @@ const MobileFeatureAccordion = ({
   );
 };
 
-function ServiceCard({ number, zIndex }: { number: "01" | "02" | "03" | "04"; zIndex: number }) {
+function ServiceCard({ number, zIndex }: { number: "01" | "02" | "03" | "04" | "05"; zIndex: number }) {
   const service = serviceData[number];
   const cardRef = useRef(null);
   const [activeAccordionIndex, setActiveAccordionIndex] = useState(0);
@@ -678,7 +745,7 @@ function ServiceCard({ number, zIndex }: { number: "01" | "02" | "03" | "04"; zI
   );
 }
 
-const services: ("01" | "02" | "03" | "04")[] = ["01", "02", "03", "04"];
+const services: ("01" | "02" | "03" | "04" | "05")[] = ["01", "02", "03", "04", "05"];
 
 export function ServicesSection() {
   return (

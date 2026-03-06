@@ -28,6 +28,7 @@ const footerLinks = {
         { label: "Web Applications", href: "/#web-applications" },
         { label: "Digital Advertising", href: "/#digital-advertising" },
         { label: "Social Media", href: "/#social-media" },
+        { label: "Videography", href: "/#videography" },
     ],
     nav: [
         { label: "About", href: "/#about" },
