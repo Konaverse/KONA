@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { ConditionalNav } from "@/components/layout/conditional-nav";
 import Footer from "@/components/layout/footer";
@@ -15,6 +16,23 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const monumentExtended = localFont({
+  src: [
+    {
+      path: "../../public/fonts/MonumentExtended-FreeForPersonalUse/MonumentExtended-Regular.otf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/MonumentExtended-FreeForPersonalUse/MonumentExtended-Ultrabold.otf",
+      weight: "800",
+      style: "normal",
+    },
+  ],
+  variable: "--font-monument",
+  display: "swap",
 });
 
 export const viewport: Viewport = {
@@ -104,7 +122,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#1a1d18] flex flex-col min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} ${monumentExtended.variable} antialiased bg-[#1a1d18] flex flex-col min-h-screen`}
       >
         <JsonLd data={organizationJsonLd()} />
         <ConditionalNav />
@@ -112,7 +130,7 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
-        <FluidWrapper 
+        <FluidWrapper
           fluidColor="#a89080"
           enabled={true}
         />

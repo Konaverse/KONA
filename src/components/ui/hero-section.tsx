@@ -4,10 +4,6 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import React from "react";
 
-const RobotHero = dynamic(() => import("./robot-hero"), {
-  ssr: false,
-  loading: () => null,
-});
 
 const SplineScene = dynamic(
   () => import("@splinetool/react-spline"),
@@ -312,14 +308,30 @@ export function HeroSection() {
 
   return (
     <div
-      className="bg-gradient-to-br from-[#1a1d18] via-black to-[#2a2e26]"
       style={{
         position: "relative",
         width: "100%",
         height: "100vh",
         overflow: "hidden",
+        background: "#000",
       }}
     >
+      {/* ── Hero background image ──────────────────────────────────────── */}
+      <img
+        src="/hero_figure.png"
+        alt=""
+        aria-hidden
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          objectPosition: "center top",
+          zIndex: 0,
+          pointerEvents: "none",
+        }}
+      />
       {/* ── Spline 3D background (temporarily disabled) ────────────────── */}
       {/*
       {canLoadSpline && !splineFailed && (
@@ -467,9 +479,9 @@ export function HeroSection() {
           top: "clamp(100px, 14vh, 140px)",
           left: "clamp(32px, 5vw, 80px)",
           zIndex: 10,
-          fontFamily: "var(--font-geist-mono, 'Geist Mono', monospace)",
+          fontFamily: "var(--font-monument, 'Monument Extended', sans-serif)",
           fontSize: "clamp(0.5rem, 6vw, 5.5rem)",
-          fontWeight: 100,
+          fontWeight: 800,
           lineHeight: 1.05,
           letterSpacing: "-0.02em",
           textTransform: "uppercase",
@@ -517,8 +529,7 @@ export function HeroSection() {
         />
       </h2>
 
-      {/* ── 3D Robot ───────────────────────────────────────────────────────── */}
-      <RobotHero />
+
     </div>
   );
 }

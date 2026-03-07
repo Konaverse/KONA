@@ -574,7 +574,7 @@ function ServiceCard({ number, zIndex }: { number: "01" | "02" | "03" | "04" | "
       {/* Background Layer - Who We Are Style */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         {/* Base Gradient - Dark to darker */}
-        <div 
+        <div
           className="absolute inset-0"
           style={{
             background: `linear-gradient(to bottom, 
@@ -646,8 +646,12 @@ function ServiceCard({ number, zIndex }: { number: "01" | "02" | "03" | "04" | "
 
             {/* Dynamic Scrambled Title */}
             <h2
-              className="text-2xl md:text-4xl lg:text-5xl font-extralight leading-tight drop-shadow-2xl mb-2 md:mb-6 min-h-[1.5em] md:min-h-[2.5em] lg:min-h-[2em]"
-              style={{ color: colors[50] }}
+              className="text-2xl md:text-4xl lg:text-5xl leading-tight drop-shadow-2xl mb-2 md:mb-6 min-h-[1.5em] md:min-h-[2.5em] lg:min-h-[2em] uppercase"
+              style={{
+                color: colors[50],
+                fontFamily: "var(--font-monument, 'Monument Extended', sans-serif)",
+                fontWeight: 800,
+              }}
             >
               <ScrambleText text={activeCard.fullTitle} />
             </h2>
