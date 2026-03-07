@@ -166,21 +166,24 @@ function MobileFounderCard({
           {bio}
         </p>
         <div className="flex items-center justify-center gap-4 mt-3">
-          {socials.map((s) => (
-            <a
-              key={s.label}
-              href={s.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={s.label}
-              className="transition-colors duration-300"
-              style={{ color: colors[400] }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = colors[50])}
-              onMouseLeave={(e) => (e.currentTarget.style.color = colors[400])}
-            >
-              <s.icon className="w-4 h-4" />
-            </a>
-          ))}
+          {socials.map((s) => {
+            const Icon = s.icon;
+            return (
+              <a
+                key={s.label}
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={s.label}
+                className="transition-colors duration-300"
+                style={{ color: colors[400] }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = colors[50])}
+                onMouseLeave={(e) => (e.currentTarget.style.color = colors[400])}
+              >
+                <Icon className="w-4 h-4" />
+              </a>
+            );
+          })}
         </div>
       </RevealBlock>
 
