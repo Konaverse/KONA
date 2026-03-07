@@ -111,7 +111,7 @@ function MobileFounderCard({
   funFact: string;
   portrait: string;
   portrait2: string;
-  socials: { icon: React.ElementType; href: string; label: string }[];
+  socials: { icon: React.ComponentType<{ className?: string }>; href: string; label: string }[];
   onImageClick: (src: string) => void;
 }) {
   return (
