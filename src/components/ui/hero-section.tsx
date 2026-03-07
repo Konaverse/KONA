@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
+import React from "react";
 
 const RobotHero = dynamic(() => import("./robot-hero"), {
   ssr: false,
@@ -21,6 +22,82 @@ const colors = {
   200: "#c8b4a0",
 };
 
+// ── Scramble Text — triggers on mount + re-triggers on hover ──────────────
+const SCRAMBLE_CHARS =
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
+
+function HeroScrambleText({
+  lines,
+  entranceDelay = 0,
+}: {
+  lines: string[];
+  entranceDelay?: number;
+}) {
+  const [triggerKey, setTriggerKey] = useState(0);
+
+  // Trigger entrance animation after delay
+  useEffect(() => {
+    const t = setTimeout(() => setTriggerKey(1), entranceDelay);
+    return () => clearTimeout(t);
+  }, [entranceDelay]);
+
+  const handleHover = useCallback(() => {
+    setTriggerKey((k) => k + 1);
+  }, []);
+
+  return (
+    <span onMouseEnter={handleHover}>
+      {lines.map((line, i) => (
+        <React.Fragment key={i}>
+          <ScrambleLine text={line} triggerKey={triggerKey} />
+          {i < lines.length - 1 && <br />}
+        </React.Fragment>
+      ))}
+    </span>
+  );
+}
+
+function ScrambleLine({
+  text,
+  triggerKey,
+}: {
+  text: string;
+  triggerKey: number;
+}) {
+  const [display, setDisplay] = useState(text.replace(/\S/g, " "));
+  const frameRef = useRef(0);
+
+  useEffect(() => {
+    if (triggerKey === 0) return; // don't animate until triggered
+    frameRef.current = 0;
+    const duration = 20;
+    const interval = setInterval(() => {
+      frameRef.current++;
+      if (frameRef.current >= duration) {
+        setDisplay(text);
+        clearInterval(interval);
+        return;
+      }
+      setDisplay(
+        text
+          .split("")
+          .map((char, i) => {
+            if (char === " ") return " ";
+            if (i < (frameRef.current / duration) * text.length) return text[i];
+            return SCRAMBLE_CHARS[
+              Math.floor(Math.random() * SCRAMBLE_CHARS.length)
+            ];
+          })
+          .join("")
+      );
+    }, 35);
+    return () => clearInterval(interval);
+  }, [text, triggerKey]);
+
+  return <>{display}</>;
+}
+
+// ── Device capability check ───────────────────────────────────────────────
 function useCanLoadSpline() {
   const [canLoad, setCanLoad] = useState(false);
   useEffect(() => {
@@ -33,6 +110,192 @@ function useCanLoadSpline() {
   return canLoad;
 }
 
+// ── Solution labels with hover preview ────────────────────────────────────
+const solutionItems = [
+  {
+    label: "Web Development",
+    href: "/solutions/web-development",
+    image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=560&h=320&fit=crop",
+    title: "Web Development",
+    subtitle: "Fast, scalable, beautifully crafted websites",
+  },
+  {
+    label: "Web Applications",
+    href: "/solutions/web-applications",
+    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=560&h=320&fit=crop",
+    title: "Web Applications",
+    subtitle: "Complex platforms engineered for scale",
+  },
+  {
+    label: "Digital Advertising",
+    href: "/solutions/digital-advertising",
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=560&h=320&fit=crop",
+    title: "Digital Advertising",
+    subtitle: "Data-driven campaigns that convert",
+  },
+  {
+    label: "Social Media",
+    href: "/solutions/social-media",
+    image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=560&h=320&fit=crop",
+    title: "Social Media",
+    subtitle: "Community building & brand narrative",
+  },
+  {
+    label: "Videography",
+    href: "/solutions/videography",
+    image: "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=560&h=320&fit=crop",
+    title: "Videography",
+    subtitle: "Cinematic storytelling for your brand",
+  },
+];
+
+function SolutionLabels() {
+  const [preview, setPreview] = useState<(typeof solutionItems)[number] | null>(null);
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+  const [visible, setVisible] = useState(false);
+
+  // Preload images
+  useEffect(() => {
+    solutionItems.forEach((item) => {
+      const img = new window.Image();
+      img.src = item.image;
+    });
+  }, []);
+
+  const updatePos = useCallback((e: React.MouseEvent) => {
+    const cardW = 300;
+    const cardH = 250;
+    const gap = 20;
+    let x = e.clientX - cardW / 2;
+    let y = e.clientY - cardH - gap;
+    if (x + cardW > window.innerWidth - 20) x = window.innerWidth - cardW - 20;
+    if (x < 20) x = 20;
+    if (y < 20) y = e.clientY + gap;
+    setPos({ x, y });
+  }, []);
+
+  return (
+    <>
+      <nav
+        aria-label="Solutions"
+        style={{
+          position: "absolute",
+          top: "clamp(100px, 14vh, 140px)",
+          right: "clamp(32px, 5vw, 80px)",
+          zIndex: 10,
+          display: "flex",
+          flexDirection: "column",
+          gap: 8,
+          alignItems: "flex-end",
+        }}
+      >
+        {solutionItems.map((item, i) => (
+          <a
+            key={item.href}
+            href={item.href}
+            style={{
+              display: "block",
+              padding: "6px 16px",
+              fontFamily: "var(--font-geist-mono, 'Geist Mono', monospace)",
+              fontSize: "11px",
+              fontWeight: 400,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              textDecoration: "none",
+              color: "#c8b4a0",
+              border: "1px solid rgba(200, 180, 160, 0.2)",
+              borderRadius: 2,
+              transition: "border-color 0.25s ease, color 0.25s ease, background 0.25s ease",
+              opacity: 0,
+              animation: `solutionLabelIn 0.5s ease ${0.6 + i * 0.1}s forwards`,
+              cursor: "pointer",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "rgba(200, 180, 160, 0.5)";
+              e.currentTarget.style.color = "#f8f7f5";
+              e.currentTarget.style.background = "rgba(200, 180, 160, 0.08)";
+              setPreview(item);
+              setVisible(true);
+              updatePos(e);
+            }}
+            onMouseMove={(e) => {
+              updatePos(e);
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "rgba(200, 180, 160, 0.2)";
+              e.currentTarget.style.color = "#c8b4a0";
+              e.currentTarget.style.background = "transparent";
+              setVisible(false);
+            }}
+          >
+            {item.label}
+          </a>
+        ))}
+      </nav>
+
+      {/* ── Floating preview card ─────────────────────────────────────────── */}
+      {preview && (
+        <div
+          style={{
+            position: "fixed",
+            left: pos.x,
+            top: pos.y,
+            zIndex: 1000,
+            pointerEvents: "none",
+            opacity: visible ? 1 : 0,
+            transform: visible ? "translateY(0) scale(1)" : "translateY(10px) scale(0.95)",
+            transition: "opacity 0.25s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)",
+          }}
+        >
+          <div
+            style={{
+              background: "#1a1a1a",
+              borderRadius: 16,
+              padding: 8,
+              boxShadow:
+                "0 25px 50px -12px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.1), 0 0 60px rgba(200,180,160,0.1)",
+              overflow: "hidden",
+              backdropFilter: "blur(10px)",
+            }}
+          >
+            <img
+              src={preview.image}
+              alt={preview.title}
+              style={{
+                width: 280,
+                height: "auto",
+                borderRadius: 10,
+                display: "block",
+              }}
+            />
+            <div
+              style={{
+                padding: "12px 8px 4px",
+                fontSize: "0.85rem",
+                color: "#fff",
+                fontWeight: 600,
+                fontFamily: "var(--font-geist-mono, 'Geist Mono', monospace)",
+              }}
+            >
+              {preview.title}
+            </div>
+            <div
+              style={{
+                padding: "0 8px 8px",
+                fontSize: "0.75rem",
+                color: "#888",
+              }}
+            >
+              {preview.subtitle}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// ── Hero Section ──────────────────────────────────────────────────────────
 export function HeroSection() {
   const canLoadSpline = useCanLoadSpline();
   const [splineReady, setSplineReady] = useState(false);
@@ -47,30 +310,6 @@ export function HeroSection() {
     return () => clearTimeout(t);
   }, [canLoadSpline, splineReady]);
 
-  // Animate .word elements on mount — staggered via data-delay attribute
-  useEffect(() => {
-    const words = document.querySelectorAll<HTMLElement>(".word");
-    const delayScale = 0.31;
-    const wordDurationMs = 600;
-    words.forEach((word) => {
-      const baseDelay = parseInt(word.getAttribute("data-delay") || "0", 10);
-      const delay = Math.round(baseDelay * delayScale);
-      setTimeout(() => {
-        word.style.animation = `word-appear ${wordDurationMs}ms ease-out forwards`;
-      }, delay);
-    });
-
-    // Word hover glow
-    words.forEach((word) => {
-      word.addEventListener("mouseenter", () => {
-        word.style.textShadow = "0 0 20px rgba(200, 180, 160, 0.5)";
-      });
-      word.addEventListener("mouseleave", () => {
-        word.style.textShadow = "none";
-      });
-    });
-  }, []);
-
   return (
     <div
       className="bg-gradient-to-br from-[#1a1d18] via-black to-[#2a2e26]"
@@ -81,7 +320,8 @@ export function HeroSection() {
         overflow: "hidden",
       }}
     >
-      {/* ── Spline 3D background ─────────────────────────────────────────── */}
+      {/* ── Spline 3D background (temporarily disabled) ────────────────── */}
+      {/*
       {canLoadSpline && !splineFailed && (
         <SplineScene
           scene={SPLINE_URL}
@@ -98,18 +338,20 @@ export function HeroSection() {
           }}
         />
       )}
+      */}
 
-      {/* ── Spline logo cover — adjust position/size as needed ────────────── */}
+      {/* ── Spline logo cover (temporarily disabled) ─────────────────────── */}
+      {/*
       <div
         aria-hidden
         style={{
           position: "absolute",
-          bottom: 23,       // ← tweak to move up/down
-          right: 15,        // ← tweak to move left/right
-          width: 140,      // ← tweak to make wider/narrower
-          height: 32,      // ← tweak to make taller/shorter
-          background: "#6b7f62",  // ← match your page's dark bg
-          zIndex: 1,       // sits on top of Spline (z-index 0)
+          bottom: 23,
+          right: 15,
+          width: 140,
+          height: 32,
+          background: "#6b7f62",
+          zIndex: 1,
           borderRadius: 12,
           pointerEvents: "none",
           display: "flex",
@@ -130,6 +372,8 @@ export function HeroSection() {
           Konaverse
         </span>
       </div>
+      */}
+
       {/* ── SVG grid pattern + detail dots ─────────────────────────────────── */}
       <svg
         className="absolute inset-0 w-full h-full"
@@ -213,95 +457,65 @@ export function HeroSection() {
         }}
       />
 
-      {/* ── Text content — original layout ─────────────────────────────────── */}
-      <div className="relative z-10 h-full flex flex-col justify-between items-center px-8 pt-20 pb-12 md:px-16 md:pt-24 md:pb-20" style={{ pointerEvents: "none" }}>
-        {/* Top tagline */}
-        <div className="text-center mt-8 md:mt-12">
-          <h2
-            className="text-xs md:text-sm font-mono font-light uppercase tracking-[0.2em] opacity-80"
-            style={{ color: colors[200] }}
-          >
-            <span className="word" data-delay="0">Welcome</span>
-            <span className="word" data-delay="200"> to</span>
-            <span className="word" data-delay="400"> <b>Konaverse</b></span>
-            <span className="word" data-delay="600"> —</span>
-            <span className="word" data-delay="800"> Where</span>
-            <span className="word" data-delay="1000"> digital</span>
-            <span className="word" data-delay="1200"> dreams</span>
-            <span className="word" data-delay="1400"> take</span>
-            <span className="word" data-delay="1600"> form.</span>
-          </h2>
-          <div
-            className="mt-4 w-16 h-px mx-auto opacity-30"
-            style={{
-              background: `linear-gradient(to right, transparent, ${colors[200]}, transparent)`,
-            }}
-          />
-        </div>
+      {/* ── Solution labels — top right ──────────────────────────────────── */}
+      <SolutionLabels />
 
-        {/* Main headline */}
-        <div className="text-center max-w-5xl mx-auto -mt-24 md:-mt-40">
-          <h1
-            className="text-3xl md:text-5xl lg:text-6xl font-extralight leading-tight tracking-tight"
-            style={{ color: colors[50] }}
-          >
-            <div className="mb-4 md:mb-6">
-              <span className="word" data-delay="1800">We</span>
-              <span className="word" data-delay="1950"> craft</span>
-              <span className="word" data-delay="2100"> digital</span>
-              <span className="word" data-delay="2250"> experiences</span>
-              <span className="word" data-delay="2400"> that</span>
-              <span className="word" data-delay="2550"> convert.</span>
-            </div>
-            <div
-              className="text-2xl md:text-3xl lg:text-4xl font-thin leading-relaxed"
-              style={{ color: colors[200] }}
-            >
-              <span className="word" data-delay="2800">Strategy,</span>
-              <span className="word" data-delay="2950"> design,</span>
-              <span className="word" data-delay="3100"> and</span>
-              <span className="word" data-delay="3250"> development</span>
-              <span className="word" data-delay="3400"> — unified</span>
-              <span className="word" data-delay="3550"> under</span>
-              <span className="word" data-delay="3700"> one</span>
-              <span className="word" data-delay="3850"> vision.</span>
-            </div>
-          </h1>
-        </div>
+      {/* ── Hero headline — top left ─────────────────────────────────────── */}
+      <h1
+        style={{
+          position: "absolute",
+          top: "clamp(100px, 14vh, 140px)",
+          left: "clamp(32px, 5vw, 80px)",
+          zIndex: 10,
+          fontFamily: "var(--font-geist-mono, 'Geist Mono', monospace)",
+          fontSize: "clamp(0.5rem, 6vw, 5.5rem)",
+          fontWeight: 100,
+          lineHeight: 1.05,
+          letterSpacing: "-0.02em",
+          textTransform: "uppercase",
+          color: "#c8b4a0",
+          margin: 0,
+          pointerEvents: "auto",
+          cursor: "default",
+        }}
+      >
+        <HeroScrambleText
+          lines={["ENTER THE.", "DIGITAL.", "ERA."]}
+          entranceDelay={300}
+        />
+      </h1>
 
-        {/* Bottom tagline */}
-        <div className="text-center">
-          <div
-            className="mb-4 w-16 h-px mx-auto opacity-30"
-            style={{
-              background: `linear-gradient(to right, transparent, ${colors[200]}, transparent)`,
-            }}
-          />
-          <h2
-            className="text-xs md:text-sm font-mono font-light uppercase tracking-[0.2em] opacity-80"
-            style={{ color: colors[200] }}
-          >
-            <span className="word" data-delay="4200">Web</span>
-            <span className="word" data-delay="4350"> design</span>
-            <span className="word" data-delay="4500"> ·</span>
-            <span className="word" data-delay="4650"> Development</span>
-            <span className="word" data-delay="4800"> ·</span>
-            <span className="word" data-delay="4950"> Brand</span>
-            <span className="word" data-delay="5100"> strategy</span>
-          </h2>
-          <div
-            className="mt-6 flex justify-center space-x-4 opacity-0"
-            style={{
-              animation: "word-appear 1s ease-out forwards",
-              animationDelay: "4.5s",
-            }}
-          >
-            <div className="w-1 h-1 rounded-full opacity-40" style={{ background: colors[200] }} />
-            <div className="w-1 h-1 rounded-full opacity-60" style={{ background: colors[200] }} />
-            <div className="w-1 h-1 rounded-full opacity-40" style={{ background: colors[200] }} />
-          </div>
-        </div>
-      </div>
+      {/* ── Hero subheadline — right ─────────────────────────────────────── */}
+      <h2
+        style={{
+          position: "absolute",
+          bottom: "10%",
+          right: "clamp(32px, 5vw, 80px)",
+          transform: "translateY(-50%)",
+          textAlign: "right",
+          zIndex: 10,
+          fontFamily: "var(--font-geist-mono, 'Geist Mono', monospace)",
+          fontSize: "clamp(0.5rem, 6vw, 1.5rem)",
+          fontWeight: 100,
+          lineHeight: 1.05,
+          letterSpacing: "-0.02em",
+          textTransform: "uppercase",
+          color: "#ebebebff",
+          margin: 0,
+          pointerEvents: "auto",
+          cursor: "default",
+        }}
+      >
+        <HeroScrambleText
+          lines={[
+            "KONAVERSE PROVIDES YOU",
+            "WITH THE TOOLS TO",
+            "BUILD YOUR OWN",
+            "DIGITAL REALM",
+          ]}
+          entranceDelay={800}
+        />
+      </h2>
 
       {/* ── 3D Robot ───────────────────────────────────────────────────────── */}
       <RobotHero />
