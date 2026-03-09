@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-const PIXELS_PER_FRAME = 14;
+import { PIXELS_PER_FRAME } from "./useFrameSequence";
 
 // ── Easy to update ───────────────────────────────────────────
 const STATS = [

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 
 export const TOTAL_FRAMES = 1084;
+export const PIXELS_PER_FRAME = 22;
 
 const CLIPS = [
     { folder: "00_start_to_web_dev", frames: 151, globalStart: 0 },

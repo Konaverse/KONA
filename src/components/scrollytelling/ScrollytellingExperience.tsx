@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState, useMemo, useCallback, startTransition } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useFrameSequence, TOTAL_FRAMES } from "./useFrameSequence";
+import { useFrameSequence, TOTAL_FRAMES, PIXELS_PER_FRAME } from "./useFrameSequence";
 import { FrameCanvas } from "./FrameCanvas";
 import { ServiceText } from "./ServiceText";
 import { CursorSpotlight } from "./CursorSpotlight";
@@ -17,7 +17,6 @@ const CHECKPOINTS = [0, 151, 302, 453, 604, 844, 1083];
 const SNAP_POINTS = CHECKPOINTS.map((cp) => cp / (TOTAL_FRAMES - 1));
 
 /* ─── Scroll weight ─────────────────────────────────────── */
-const PIXELS_PER_FRAME = 14;
 const TOTAL_SCROLL = TOTAL_FRAMES * PIXELS_PER_FRAME;
 
 export default function ScrollytellingExperience() {
@@ -66,27 +65,38 @@ export default function ScrollytellingExperience() {
         return () => window.removeEventListener("resize", check);
     }, []);
 
-    /* ─── Canvas drawing (object-fit: cover, DPR-aware) ──── */
+    /* ─── Canvas drawing (object-fit: cover, DPR-aware, cross-dissolve) ── */
     const drawFrame = useCallback(
-        (index: number) => {
+        (rawIndex: number) => {
             const canvas = canvasRef.current;
             if (!canvas) return;
             const ctx = canvas.getContext("2d");
-            const img = getImage(index);
-            if (!ctx || !img) return;
+            if (!ctx) return;
 
-            const hR = canvas.width / img.width;
-            const vR = canvas.height / img.height;
+            const floorIdx = Math.floor(rawIndex);
+            const ceilIdx = Math.min(floorIdx + 1, TOTAL_FRAMES - 1);
+            const blend = rawIndex - floorIdx;
+
+            const imgA = getImage(floorIdx);
+            if (!imgA) return;
+
+            // Cover-mode scaling
+            const hR = canvas.width / imgA.width;
+            const vR = canvas.height / imgA.height;
             const ratio = Math.max(hR, vR);
-            const cx = (canvas.width - img.width * ratio) / 2;
-            const cy = (canvas.height - img.height * ratio) / 2;
+            const cx = (canvas.width - imgA.width * ratio) / 2;
+            const cy = (canvas.height - imgA.height * ratio) / 2;
 
-            // Cover mode guarantees full canvas coverage — skip clearRect
-            ctx.drawImage(
-                img,
-                0, 0, img.width, img.height,
-                cx, cy, img.width * ratio, img.height * ratio,
-            );
+            ctx.globalAlpha = 1;
+            ctx.drawImage(imgA, 0, 0, imgA.width, imgA.height, cx, cy, imgA.width * ratio, imgA.height * ratio);
+
+            // Cross-dissolve with next frame
+            const imgB = getImage(ceilIdx);
+            if (imgB && blend > 0.01 && floorIdx !== ceilIdx) {
+                ctx.globalAlpha = blend;
+                ctx.drawImage(imgB, 0, 0, imgB.width, imgB.height, cx, cy, imgB.width * ratio, imgB.height * ratio);
+                ctx.globalAlpha = 1;
+            }
         },
         [getImage],
     );
@@ -124,12 +134,13 @@ export default function ScrollytellingExperience() {
             frame: TOTAL_FRAMES - 1,
             ease: "none",
             onUpdate: () => {
-                const f = Math.round(proxy.frame);
-                if (f !== lastFrameRef.current) {
-                    lastFrameRef.current = f;
-                    drawFrame(f); // Direct canvas blit — always runs at full speed
+                const raw = proxy.frame;
+                const rounded = Math.round(raw);
+                drawFrame(raw); // Raw float for cross-dissolve blending
+                if (rounded !== lastFrameRef.current) {
+                    lastFrameRef.current = rounded;
                     // Defer text overlay re-renders so they never block the canvas
-                    startTransition(() => setCurrentFrame(f));
+                    startTransition(() => setCurrentFrame(rounded));
                 }
             },
         });
@@ -139,7 +150,7 @@ export default function ScrollytellingExperience() {
             start: "top top",
             end: "bottom bottom",
             animation: tween,
-            scrub: true, // 1:1 scroll → frame. Preserves native OS inertia.
+            scrub: 0.5, // 500ms eased interpolation — eliminates jitter from stepped scroll
             snap: {
                 snapTo: SNAP_POINTS,
                 duration: { min: 0.8, max: 3.0 }, // short hops are fast, long jumps breathe

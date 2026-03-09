@@ -4,9 +4,7 @@
  * No React state — all updates go directly to DOM refs.
  */
 
-import { TOTAL_FRAMES } from "./useFrameSequence";
-
-const PIXELS_PER_FRAME = 14;
+import { TOTAL_FRAMES, PIXELS_PER_FRAME } from "./useFrameSequence";
 const TOTAL_SCROLL = TOTAL_FRAMES * PIXELS_PER_FRAME;
 const FADE_ZONE = TOTAL_SCROLL * 0.06; // fade starts at 94% of sequence
 
