@@ -5,7 +5,10 @@
       "Bash(npx tsc:*)",
       "Bash(npx --yes tsc:*)",
       "Bash(echo:*)",
-      "Bash(cmd:*)"
+      "Bash(cmd:*)",
+      "Bash(npm list:*)",
+      "Bash(npx next:*)",
+      "Bash(npm run:*)"
     ]
   }
 }
