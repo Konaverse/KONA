@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -193,67 +193,6 @@ function TiltCard({ children }: { children: React.ReactNode }) {
     );
 }
 
-/* ─── Anagram Text Component ──────────────────────────────── */
-function AnagramText({ text, triggerKey, delay = 0, as: Component = "div", className = "", style = {} }: any) {
-    const [display, setDisplay] = useState(text.replace(/\S/g, " "));
-    const frameRef = useRef(0);
-    const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
-
-    useEffect(() => {
-        if (triggerKey < 0) {
-            setDisplay(text.replace(/\S/g, " "));
-            return;
-        }
-
-        if (triggerKey === 0) return;
-
-        let timeout: NodeJS.Timeout;
-
-        timeout = setTimeout(() => {
-            frameRef.current = 0;
-            const duration = 20;
-            const interval = setInterval(() => {
-                frameRef.current++;
-                if (frameRef.current >= duration) {
-                    setDisplay(text);
-                    clearInterval(interval);
-                    return;
-                }
-                setDisplay(
-                    text
-                        .split("")
-                        .map((char: string, i: number) => {
-                            if (char === " " || char === "\n") return char;
-                            if (i < (frameRef.current / duration) * text.length) return text[i];
-                            return SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
-                        })
-                        .join("")
-                );
-            }, 35);
-
-            return () => clearInterval(interval);
-        }, delay);
-
-        return () => clearTimeout(timeout);
-    }, [text, triggerKey, delay]);
-
-    // Support multiline strings
-    if (typeof display === "string" && display.includes("\n")) {
-        return (
-            <Component className={className} style={style}>
-                {display.split("\n").map((line: string, i: number) => (
-                    <React.Fragment key={i}>
-                        {line}
-                        {i !== display.split("\n").length - 1 && <br />}
-                    </React.Fragment>
-                ))}
-            </Component>
-        );
-    }
-
-    return <Component className={className} style={style}>{display}</Component>;
-}
-
 /* ─── Chapter data ─────────────────────────────────────────── */
 interface Chapter {
     id: string;
@@ -360,33 +299,6 @@ const getPositionClasses = (positionType: string) => {
 
 /* ─── Chapter content (original visual overlay per chapter) ── */
 function ChapterContent({ chapter }: { chapter: Chapter }) {
-    const contentRef = useRef<HTMLDivElement>(null);
-    const [triggerKey, setTriggerKey] = useState(-1);
-    const hasTriggered = useRef(false);
-
-    // Trigger anagram animation via IntersectionObserver
-    useEffect(() => {
-        const el = contentRef.current;
-        if (!el) return;
-
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting && !hasTriggered.current) {
-                    hasTriggered.current = true;
-                    setTriggerKey((k) => Math.max(1, k + 1));
-                } else if (!entry.isIntersecting) {
-                    hasTriggered.current = false;
-                    setTriggerKey(-1);
-                }
-            },
-            { threshold: 0.3 },
-        );
-
-        observer.observe(el);
-        return () => observer.disconnect();
-    }, []);
-
-    const isVisible = triggerKey > 0;
     const isLargeHeadline = chapter.id === "opening" || chapter.id === "invitation";
 
     // Base typography styles matching PRD
@@ -444,18 +356,14 @@ function ChapterContent({ chapter }: { chapter: Chapter }) {
         pointerEvents: "auto" as const,
     };
 
-    const renderSubheading = (text: string, delay: number) => {
+    const renderSubheading = (text: string) => {
         const lines = text.split("\n");
         const isOpening = chapter.id === "opening";
         return (
             <div className="mt-4 pointer-events-auto">
                 {lines.map((line, i) => (
-                    <AnagramText
+                    <p
                         key={i}
-                        text={line}
-                        triggerKey={triggerKey}
-                        delay={delay + i * 150}
-                        as="p"
                         style={
                             isOpening
                                 ? openingSubheadingStyles
@@ -463,7 +371,9 @@ function ChapterContent({ chapter }: { chapter: Chapter }) {
                                   ? firstLineStyles
                                   : subheadingStyles
                         }
-                    />
+                    >
+                        {line}
+                    </p>
                 ))}
             </div>
         );
@@ -472,30 +382,19 @@ function ChapterContent({ chapter }: { chapter: Chapter }) {
     // For unified layouts (left, right, center-bottom)
     if (chapter.layout === "left" || chapter.layout === "right" || chapter.layout === "center-bottom") {
         return (
-            <div ref={contentRef} className="relative w-full h-full">
+            <div className="relative w-full h-full">
                 <div className={getPositionClasses(chapter.headlinePosition)}>
-                    <AnagramText
-                        text={chapter.headline}
-                        triggerKey={triggerKey}
-                        delay={0}
-                        as="h2"
-                        style={headlineStyles}
-                    />
+                    <h2 style={{ ...headlineStyles, whiteSpace: "pre-line" }}>{chapter.headline}</h2>
 
-                    {renderSubheading(chapter.subheading, 150)}
+                    {renderSubheading(chapter.subheading)}
 
-                    {chapter.cta && isVisible && (
+                    {chapter.cta && (
                         <Link
                             href={chapter.cta.href}
                             className="group hover:border-[#6b7f62] hover:text-[#6b7f62]"
                             style={btnStyles}
                         >
-                            <AnagramText
-                                text={chapter.cta.label}
-                                triggerKey={triggerKey}
-                                delay={350}
-                                as="span"
-                            />
+                            <span>{chapter.cta.label}</span>
                         </Link>
                     )}
                 </div>
@@ -507,7 +406,7 @@ function ChapterContent({ chapter }: { chapter: Chapter }) {
     const headlineLines = chapter.headline.split("\n");
 
     return (
-        <div ref={contentRef} className="relative w-full h-full">
+        <div className="relative w-full h-full">
             {/* Headline Container */}
             <div className={getPositionClasses(chapter.headlinePosition)}>
                 {chapter.id === "opening" ? (
@@ -515,45 +414,27 @@ function ChapterContent({ chapter }: { chapter: Chapter }) {
                         <KeyboardHint />
                         <TiltCard>
                             {headlineLines.map((line, i) => (
-                                <AnagramText
-                                    key={i}
-                                    text={line}
-                                    triggerKey={triggerKey}
-                                    delay={i * 80}
-                                    as="h2"
-                                    style={headlineStyles}
-                                />
+                                <h2 key={i} style={headlineStyles}>{line}</h2>
                             ))}
                         </TiltCard>
                     </>
                 ) : (
-                    <AnagramText
-                        text={chapter.headline}
-                        triggerKey={triggerKey}
-                        delay={0}
-                        as="h2"
-                        style={headlineStyles}
-                    />
+                    <h2 style={{ ...headlineStyles, whiteSpace: "pre-line" }}>{chapter.headline}</h2>
                 )}
             </div>
 
             {/* Subheading & CTA Container */}
             {chapter.subheadingPosition && (
                 <div className={getPositionClasses(chapter.subheadingPosition)}>
-                    {renderSubheading(chapter.subheading, 150)}
+                    {renderSubheading(chapter.subheading)}
 
-                    {chapter.cta && isVisible && (
+                    {chapter.cta && (
                         <Link
                             href={chapter.cta.href}
                             className="group hover:border-[#6b7f62] hover:text-[#6b7f62]"
                             style={btnStyles}
                         >
-                            <AnagramText
-                                text={chapter.cta.label}
-                                triggerKey={triggerKey}
-                                delay={350}
-                                as="span"
-                            />
+                            <span>{chapter.cta.label}</span>
                         </Link>
                     )}
                 </div>
@@ -580,8 +461,8 @@ export function ServiceText() {
                     // Opening: already visible at load, drifts upward as user scrolls.
                     // sine.in = slow start, accelerates — text lingers then releases.
                     gsap.to(el, {
-                        y: vh * 0.3,
-                        ease: "sine.in",
+                        y: -vh * 0.4,
+                        ease: "sine.out",
                         scrollTrigger: {
                             trigger: el,
                             start: "top top",
@@ -595,9 +476,9 @@ export function ServiceText() {
                     // position (viewport center) at progress 0.5.
                     gsap.fromTo(
                         el,
-                        { y: -vh * 0.2 },
+                        { y: vh * 0.35 },
                         {
-                            y: vh * 0.2,
+                            y: -vh * 0.35,
                             ease: "sine.inOut",
                             scrollTrigger: {
                                 trigger: el,
