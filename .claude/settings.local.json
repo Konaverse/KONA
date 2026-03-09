@@ -9,7 +9,9 @@
       "Bash(npm list:*)",
       "Bash(npx next:*)",
       "Bash(npm run:*)",
-      "Bash(where node:*)"
+      "Bash(where node:*)",
+      "Bash(xargs grep:*)",
+      "Bash(ls:*)"
     ]
   }
 }

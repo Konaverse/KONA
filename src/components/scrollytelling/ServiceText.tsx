@@ -2,10 +2,15 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { subscribeParallax } from "./cursorTracker";
+import { TOTAL_FRAMES, PIXELS_PER_FRAME } from "./useFrameSequence";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const MONO = "var(--font-geist-mono, 'Geist Mono', monospace)";
+const TOTAL_SCROLL = TOTAL_FRAMES * PIXELS_PER_FRAME;
 
 /* ─── Keyboard navigation hint ────────────────────────────── */
 function KeyboardHint() {
@@ -101,7 +106,7 @@ function KeyboardHint() {
 /* ─── Glassmorphism tilt card ──────────────────────────────── */
 function TiltCard({ children }: { children: React.ReactNode }) {
     const cardRef = useRef<HTMLDivElement>(null);
-    const rawX = useMotionValue(0); // normalized -1 → 1
+    const rawX = useMotionValue(0);
     const rawY = useMotionValue(0);
 
     // Spring physics: snappy response, no oscillation on leave
@@ -188,109 +193,13 @@ function TiltCard({ children }: { children: React.ReactNode }) {
     );
 }
 
-interface Chapter {
-    id: string;
-    frameStart: number;
-    frameEnd: number;
-    textVisible: boolean;
-    headline: string;
-    subheading: string;
-    cta: { label: string; href: string } | null;
-    layout: string;
-    headlinePosition: string;
-    subheadingPosition?: string;
-}
-
-const chapters: Chapter[] = [
-    {
-        id: "opening",
-        frameStart: -20, // Already fully visible at frame 0 (hero frame)
-        frameEnd: 75,
-        textVisible: true,
-        headline: "EXPERIENCE \n DIGITAL\n INNOVATION",
-        subheading: "KONAVERSE PROVIDES\nYOU WITH THE TOOLS\nTO BUILD YOUR OWN\nDIGITAL REALM.",
-        cta: null,
-        layout: "split",
-        headlinePosition: "bottom-right",
-        subheadingPosition: "top-left",
-    },
-    {
-        id: "web-development",
-        frameStart: 110,
-        frameEnd: 200,
-        textVisible: true,
-        headline: "01 — Web Development",
-        subheading: "Endless imagination, built to last.\nWe design and develop websites that don't just look premium — they perform, convert, and position you in a different league.",
-        cta: { label: "View Web Development", href: "/solutions/web-development" },
-        layout: "left",
-        headlinePosition: "left",
-    },
-    {
-        id: "web-applications",
-        frameStart: 260,
-        frameEnd: 360,
-        textVisible: true,
-        headline: "02 — Web Applications",
-        subheading: "Performance without compromise.\nCustom web applications built for scale. From internal tools to client-facing platforms — engineered with precision so your business runs without friction.",
-        cta: { label: "View Web Applications", href: "/solutions/web-applications" },
-        layout: "right",
-        headlinePosition: "right",
-    },
-    {
-        id: "videography",
-        frameStart: 410,
-        frameEnd: 510,
-        textVisible: true,
-        headline: "03 — Videography",
-        subheading: "Every frame, intentional.\nCinematic content that makes people stop. We capture your brand the way it deserves to be seen — with depth, atmosphere, and purpose.",
-        cta: { label: "View Videography", href: "/solutions/videography" },
-        layout: "left",
-        headlinePosition: "left",
-    },
-    {
-        id: "digital-advertising",
-        frameStart: 560,
-        frameEnd: 680,
-        textVisible: true,
-        headline: "04 — Digital Advertising",
-        subheading: "Reach the right people. Every time.\nCampaigns built around conversion, not vanity metrics. We put your brand in front of audiences that matter and turn attention into revenue.",
-        cta: { label: "View Digital Advertising", href: "/solutions/digital-advertising" },
-        layout: "right",
-        headlinePosition: "right",
-    },
-    {
-        id: "social-media",
-        frameStart: 800,
-        frameEnd: 920,
-        textVisible: true,
-        headline: "05 — Social Media Management",
-        subheading: "Presence that compounds.\nWe manage your social identity so you never have to think about it. Consistent, creative, always on-brand — your audience grows while you focus on your business.",
-        cta: { label: "View Social Media", href: "/solutions/social-media" },
-        layout: "center-bottom",
-        headlinePosition: "center",
-    },
-    {
-        id: "invitation",
-        frameStart: 1020,
-        frameEnd: 1200, // Extended past last frame so text stays at full opacity at checkpoint 1083
-        textVisible: true,
-        headline: "ENGAGE WITH.\nKONAVERSE.",
-        subheading: "Your digital presence, perfected. Your time, protected.",
-        cta: { label: "Start Your Project", href: "/contact" },
-        layout: "split",
-        headlinePosition: "top-right",
-        subheadingPosition: "bottom-left",
-    },
-];
-
-// --- Anagram Text Component ---
+/* ─── Anagram Text Component ──────────────────────────────── */
 function AnagramText({ text, triggerKey, delay = 0, as: Component = "div", className = "", style = {} }: any) {
     const [display, setDisplay] = useState(text.replace(/\S/g, " "));
     const frameRef = useRef(0);
     const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
 
     useEffect(() => {
-        // If we've hidden it (triggerKey = -1), reset display to spaces
         if (triggerKey < 0) {
             setDisplay(text.replace(/\S/g, " "));
             return;
@@ -332,7 +241,7 @@ function AnagramText({ text, triggerKey, delay = 0, as: Component = "div", class
     if (typeof display === "string" && display.includes("\n")) {
         return (
             <Component className={className} style={style}>
-                {display.split("\n").map((line, i) => (
+                {display.split("\n").map((line: string, i: number) => (
                     <React.Fragment key={i}>
                         {line}
                         {i !== display.split("\n").length - 1 && <br />}
@@ -345,107 +254,139 @@ function AnagramText({ text, triggerKey, delay = 0, as: Component = "div", class
     return <Component className={className} style={style}>{display}</Component>;
 }
 
-
-interface ServiceTextProps {
-    currentFrame: number;
+/* ─── Chapter data ─────────────────────────────────────────── */
+interface Chapter {
+    id: string;
+    checkpointFrame: number;
+    headline: string;
+    subheading: string;
+    cta: { label: string; href: string } | null;
+    layout: string;
+    headlinePosition: string;
+    subheadingPosition?: string;
 }
 
-export function ServiceText({ currentFrame }: ServiceTextProps) {
-    return (
-        <div className="fixed inset-0 pointer-events-none z-[10]">
-            {chapters.map((chapter) => (
-                <ChapterOverlay key={chapter.id} chapter={chapter} currentFrame={currentFrame} />
-            ))}
-        </div>
-    );
-}
+const chapters: Chapter[] = [
+    {
+        id: "opening",
+        checkpointFrame: 0,
+        headline: "EXPERIENCE \n DIGITAL\n INNOVATION",
+        subheading: "KONAVERSE PROVIDES\nYOU WITH THE TOOLS\nTO BUILD YOUR OWN\nDIGITAL REALM.",
+        cta: null,
+        layout: "split",
+        headlinePosition: "bottom-right",
+        subheadingPosition: "top-left",
+    },
+    {
+        id: "web-development",
+        checkpointFrame: 151,
+        headline: "01 — Web Development",
+        subheading: "Endless imagination, built to last.\nWe design and develop websites that don't just look premium — they perform, convert, and position you in a different league.",
+        cta: { label: "View Web Development", href: "/solutions/web-development" },
+        layout: "left",
+        headlinePosition: "left",
+    },
+    {
+        id: "web-applications",
+        checkpointFrame: 302,
+        headline: "02 — Web Applications",
+        subheading: "Performance without compromise.\nCustom web applications built for scale. From internal tools to client-facing platforms — engineered with precision so your business runs without friction.",
+        cta: { label: "View Web Applications", href: "/solutions/web-applications" },
+        layout: "right",
+        headlinePosition: "right",
+    },
+    {
+        id: "videography",
+        checkpointFrame: 453,
+        headline: "03 — Videography",
+        subheading: "Every frame, intentional.\nCinematic content that makes people stop. We capture your brand the way it deserves to be seen — with depth, atmosphere, and purpose.",
+        cta: { label: "View Videography", href: "/solutions/videography" },
+        layout: "left",
+        headlinePosition: "left",
+    },
+    {
+        id: "digital-advertising",
+        checkpointFrame: 604,
+        headline: "04 — Digital Advertising",
+        subheading: "Reach the right people. Every time.\nCampaigns built around conversion, not vanity metrics. We put your brand in front of audiences that matter and turn attention into revenue.",
+        cta: { label: "View Digital Advertising", href: "/solutions/digital-advertising" },
+        layout: "right",
+        headlinePosition: "right",
+    },
+    {
+        id: "social-media",
+        checkpointFrame: 844,
+        headline: "05 — Social Media Management",
+        subheading: "Presence that compounds.\nWe manage your social identity so you never have to think about it. Consistent, creative, always on-brand — your audience grows while you focus on your business.",
+        cta: { label: "View Social Media", href: "/solutions/social-media" },
+        layout: "center-bottom",
+        headlinePosition: "center",
+    },
+    {
+        id: "invitation",
+        checkpointFrame: 1083,
+        headline: "ENGAGE WITH.\nKONAVERSE.",
+        subheading: "Your digital presence, perfected. Your time, protected.",
+        cta: { label: "Start Your Project", href: "/contact" },
+        layout: "split",
+        headlinePosition: "top-right",
+        subheadingPosition: "bottom-left",
+    },
+];
 
-function ChapterOverlay({ chapter, currentFrame }: { chapter: Chapter; currentFrame: number }) {
-    // Calculate opacity
-    let opacity = 0;
-
-    if (currentFrame >= chapter.frameStart && currentFrame <= chapter.frameEnd) {
-        const fadeInEnd = chapter.frameStart + 20;
-        const fadeOutStart = chapter.frameEnd - 20;
-
-        if (currentFrame < fadeInEnd) {
-            opacity = (currentFrame - chapter.frameStart) / 20;
-        } else if (currentFrame > fadeOutStart) {
-            opacity = (chapter.frameEnd - currentFrame) / 20;
-        } else {
-            opacity = 1;
-        }
+/* ─── Position helpers (unchanged from original) ──────────── */
+const getPositionClasses = (positionType: string) => {
+    const base = "absolute pointer-events-auto ";
+    switch (positionType) {
+        case "top-left":
+            return base + "top-[10%] left-[6%] max-w-[55%]";
+        case "bottom-right":
+            return base + "bottom-[6%] right-[2%] max-w-[48%] text-right";
+        case "left":
+            return base + "top-[50%] -translate-y-1/2 left-[6%] max-w-[38%]";
+        case "right":
+            return base + "top-[50%] -translate-y-1/2 right-[6%] max-w-[38%] text-right";
+        case "center":
+        case "center-bottom":
+            return base + "bottom-[6%] left-1/2 -translate-x-1/2 w-[50%] max-w-[50%] text-center flex flex-col items-center justify-end";
+        case "top-right":
+            return base + "top-[10%] right-[6%] max-w-[40%] text-right";
+        case "bottom-left":
+            return base + "bottom-[6%] left-[6%] max-w-[40%]";
+        default:
+            return base;
     }
+};
 
-    const isVisible = opacity > 0;
-
-    // Track sequence entry to trigger anagram animation
+/* ─── Chapter content (original visual overlay per chapter) ── */
+function ChapterContent({ chapter }: { chapter: Chapter }) {
+    const contentRef = useRef<HTMLDivElement>(null);
     const [triggerKey, setTriggerKey] = useState(-1);
-    const wasVisible = useRef(false);
+    const hasTriggered = useRef(false);
 
+    // Trigger anagram animation via IntersectionObserver
     useEffect(() => {
-        if (isVisible && !wasVisible.current) {
-            setTriggerKey((k) => Math.max(1, k + 1));
-            wasVisible.current = true;
-        } else if (!isVisible && wasVisible.current) {
-            setTriggerKey(-1);
-            wasVisible.current = false;
-        }
-    }, [isVisible]);
+        const el = contentRef.current;
+        if (!el) return;
 
-    // Parallax refs — updated directly via cursorTracker (no React re-renders)
-    const unifiedParallaxRef = useRef<HTMLDivElement>(null);
-    const splitHeadlineRef = useRef<HTMLDivElement>(null);
-    const splitSubheadingRef = useRef<HTMLDivElement>(null);
-    const MAX_PX = 10;
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting && !hasTriggered.current) {
+                    hasTriggered.current = true;
+                    setTriggerKey((k) => Math.max(1, k + 1));
+                } else if (!entry.isIntersecting) {
+                    hasTriggered.current = false;
+                    setTriggerKey(-1);
+                }
+            },
+            { threshold: 0.3 },
+        );
 
-    useEffect(() => {
-        const isSplit = chapter.layout === "split";
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, []);
 
-        if (!isSplit) {
-            const el = unifiedParallaxRef.current;
-            if (!el) return;
-            const depth = 0.75;
-            return subscribeParallax((nx, ny) => {
-                el.style.transform = `translate3d(${nx * MAX_PX * depth}px, ${ny * MAX_PX * depth}px, 0)`;
-            });
-        } else {
-            const headEl = splitHeadlineRef.current;
-            const subEl = splitSubheadingRef.current;
-            return subscribeParallax((nx, ny) => {
-                // Headline deeper, subheading shallower
-                if (headEl) headEl.style.transform = `translate3d(${nx * MAX_PX}px, ${ny * MAX_PX}px, 0)`;
-                if (subEl) subEl.style.transform = `translate3d(${nx * MAX_PX * 0.55}px, ${ny * MAX_PX * 0.55}px, 0)`;
-            });
-        }
-    }, [chapter.layout]);
-
-    if (!chapter.textVisible) return null;
-
-    // Determine positions based on layout
-    const getPositionClasses = (positionType: string, isSubheading: boolean = false) => {
-        const base = "absolute pointer-events-auto ";
-        switch (positionType) {
-            case "top-left":
-                return base + "top-[10%] left-[6%] max-w-[55%]";
-            case "bottom-right":
-                return base + "bottom-[6%] right-[2%] max-w-[48%] text-right";
-            case "left":
-                return base + "top-[50%] -translate-y-1/2 left-[6%] max-w-[38%]";
-            case "right":
-                return base + "top-[50%] -translate-y-1/2 right-[6%] max-w-[38%] text-right";
-            case "center":
-            case "center-bottom":
-                return base + "bottom-[6%] left-1/2 -translate-x-1/2 w-[50%] max-w-[50%] text-center flex flex-col items-center justify-end";
-            case "top-right":
-                return base + "top-[10%] right-[6%] max-w-[40%] text-right";
-            case "bottom-left":
-                return base + "bottom-[6%] left-[6%] max-w-[40%]";
-            default:
-                return base;
-        }
-    };
-
+    const isVisible = triggerKey > 0;
     const isLargeHeadline = chapter.id === "opening" || chapter.id === "invitation";
 
     // Base typography styles matching PRD
@@ -457,21 +398,34 @@ function ChapterOverlay({ chapter, currentFrame }: { chapter: Chapter; currentFr
         textTransform: "uppercase" as const,
         letterSpacing: "-0.02em",
         lineHeight: isLargeHeadline ? 1.1 : 1.2,
+        textShadow: "0 2px 20px rgba(0,0,0,0.8), 0 0 40px rgba(0,0,0,0.5)",
     };
 
     const subheadingStyles = {
-        fontFamily: "var(--font-geist-sans, 'Geist', sans-serif)", // closest modern sans in project to Satoshi/Neue Montreal
+        fontFamily: "var(--font-geist-sans, 'Geist', sans-serif)",
         fontWeight: 300,
         fontSize: "clamp(0.85rem, 1vw, 1rem)",
         color: "#faf7f2",
         lineHeight: 1.7,
+        textShadow: "0 2px 20px rgba(0,0,0,0.8), 0 0 40px rgba(0,0,0,0.5)",
     };
 
     const firstLineStyles = {
         ...subheadingStyles,
         fontSize: "clamp(0.9rem, 1.2vw, 1.1rem)",
         color: "#6b7f62",
-        marginBottom: "0.5rem"
+        marginBottom: "0.5rem",
+    };
+
+    const openingSubheadingStyles = {
+        fontFamily: "var(--font-geist-mono, 'Geist Mono', monospace)",
+        fontWeight: 300,
+        fontSize: "clamp(0.75rem, 1vw, 0.95rem)",
+        color: "#faf7f2",
+        lineHeight: 2,
+        textTransform: "uppercase" as const,
+        letterSpacing: "0.12em",
+        textShadow: "0 2px 20px rgba(0,0,0,0.8), 0 0 40px rgba(0,0,0,0.5)",
     };
 
     const btnStyles = {
@@ -490,17 +444,6 @@ function ChapterOverlay({ chapter, currentFrame }: { chapter: Chapter; currentFr
         pointerEvents: "auto" as const,
     };
 
-    const openingSubheadingStyles = {
-        fontFamily: "var(--font-geist-mono, 'Geist Mono', monospace)",
-        fontWeight: 300,
-        fontSize: "clamp(0.75rem, 1vw, 0.95rem)",
-        color: "#faf7f2",
-        lineHeight: 2,
-        textTransform: "uppercase" as const,
-        letterSpacing: "0.12em",
-    };
-
-    // Safe approach to render subheading which might have multiple lines (bold first line)
     const renderSubheading = (text: string, delay: number) => {
         const lines = text.split("\n");
         const isOpening = chapter.id === "opening";
@@ -511,64 +454,63 @@ function ChapterOverlay({ chapter, currentFrame }: { chapter: Chapter; currentFr
                         key={i}
                         text={line}
                         triggerKey={triggerKey}
-                        delay={delay + (i * 150)}
+                        delay={delay + i * 150}
                         as="p"
-                        style={isOpening ? openingSubheadingStyles : (i === 0 ? firstLineStyles : subheadingStyles)}
+                        style={
+                            isOpening
+                                ? openingSubheadingStyles
+                                : i === 0
+                                  ? firstLineStyles
+                                  : subheadingStyles
+                        }
                     />
                 ))}
             </div>
         );
     };
 
-    // For unified layouts (left, right, center), everything goes in one container
+    // For unified layouts (left, right, center-bottom)
     if (chapter.layout === "left" || chapter.layout === "right" || chapter.layout === "center-bottom") {
         return (
-            <div
-                ref={unifiedParallaxRef}
-                className={getPositionClasses(chapter.headlinePosition)}
-                style={{
-                    opacity,
-                    willChange: "opacity, transform",
-                    visibility: isVisible ? "visible" : "hidden"
-                }}
-            >
-                <AnagramText
-                    text={chapter.headline}
-                    triggerKey={triggerKey}
-                    delay={0}
-                    as="h2"
-                    style={headlineStyles}
-                />
+            <div ref={contentRef} className="relative w-full h-full">
+                <div className={getPositionClasses(chapter.headlinePosition)}>
+                    <AnagramText
+                        text={chapter.headline}
+                        triggerKey={triggerKey}
+                        delay={0}
+                        as="h2"
+                        style={headlineStyles}
+                    />
 
-                {renderSubheading(chapter.subheading, 150)}
+                    {renderSubheading(chapter.subheading, 150)}
 
-                {chapter.cta && opacity > 0.5 && (
-                    <Link
-                        href={chapter.cta.href}
-                        className="group hover:border-[#6b7f62] hover:text-[#6b7f62]"
-                        style={btnStyles}
-                    >
-                        <AnagramText
-                            text={chapter.cta.label}
-                            triggerKey={triggerKey}
-                            delay={350}
-                            as="span"
-                        />
-                    </Link>
-                )}
+                    {chapter.cta && isVisible && (
+                        <Link
+                            href={chapter.cta.href}
+                            className="group hover:border-[#6b7f62] hover:text-[#6b7f62]"
+                            style={btnStyles}
+                        >
+                            <AnagramText
+                                text={chapter.cta.label}
+                                triggerKey={triggerKey}
+                                delay={350}
+                                as="span"
+                            />
+                        </Link>
+                    )}
+                </div>
             </div>
         );
     }
 
-    // For split layouts, components are in separate containers
+    // For split layouts (opening, invitation)
     const headlineLines = chapter.headline.split("\n");
 
     return (
-        <div style={{ opacity, willChange: "opacity", visibility: isVisible ? "visible" : "hidden" }}>
+        <div ref={contentRef} className="relative w-full h-full">
             {/* Headline Container */}
-            <div ref={splitHeadlineRef} className={getPositionClasses(chapter.headlinePosition)} style={{ willChange: "transform" }}>
+            <div className={getPositionClasses(chapter.headlinePosition)}>
                 {chapter.id === "opening" ? (
-                    // Opening: keyboard hint + all three lines inside the glass tilt card
                     <>
                         <KeyboardHint />
                         <TiltCard>
@@ -597,10 +539,10 @@ function ChapterOverlay({ chapter, currentFrame }: { chapter: Chapter; currentFr
 
             {/* Subheading & CTA Container */}
             {chapter.subheadingPosition && (
-                <div ref={splitSubheadingRef} className={getPositionClasses(chapter.subheadingPosition, true)} style={{ willChange: "transform" }}>
+                <div className={getPositionClasses(chapter.subheadingPosition)}>
                     {renderSubheading(chapter.subheading, 150)}
 
-                    {chapter.cta && opacity > 0.5 && (
+                    {chapter.cta && isVisible && (
                         <Link
                             href={chapter.cta.href}
                             className="group hover:border-[#6b7f62] hover:text-[#6b7f62]"
@@ -617,5 +559,119 @@ function ChapterOverlay({ chapter, currentFrame }: { chapter: Chapter; currentFr
                 </div>
             )}
         </div>
+    );
+}
+
+/* ─── Main export: parallax credit-roll positioning ────────── */
+export function ServiceText() {
+    const blockRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+    /* ─── Parallax ScrollTriggers ──────────────────────── */
+    useEffect(() => {
+        const ctx = gsap.context(() => {
+            chapters.forEach((chapter, index) => {
+                const el = blockRefs.current[index];
+                if (!el) return;
+
+                const isOpening = index === 0;
+                const vh = window.innerHeight;
+
+                if (isOpening) {
+                    // Opening: already visible at load, drifts upward as user scrolls.
+                    // sine.in = slow start, accelerates — text lingers then releases.
+                    gsap.to(el, {
+                        y: vh * 0.3,
+                        ease: "sine.in",
+                        scrollTrigger: {
+                            trigger: el,
+                            start: "top top",
+                            end: "bottom top",
+                            scrub: 0.5,
+                        },
+                    });
+                } else {
+                    // Standard + Invitation: enter from below, decelerate near center,
+                    // accelerate out. fromTo centered at y=0 keeps text at its natural
+                    // position (viewport center) at progress 0.5.
+                    gsap.fromTo(
+                        el,
+                        { y: -vh * 0.2 },
+                        {
+                            y: vh * 0.2,
+                            ease: "sine.inOut",
+                            scrollTrigger: {
+                                trigger: el,
+                                start: "top bottom",
+                                end: "bottom top",
+                                scrub: 0.5,
+                            },
+                        },
+                    );
+                }
+            });
+        });
+
+        return () => ctx.revert();
+    }, []);
+
+    /* ─── Invitation fade-out (mirrors fixedLayerRef) ──── */
+    useEffect(() => {
+        const invitationEl = blockRefs.current[chapters.length - 1];
+        if (!invitationEl) return;
+
+        const FADE_START = TOTAL_SCROLL - 400;
+        let current = 1;
+        let rafId: number;
+
+        const tick = () => {
+            const scrollY = window.scrollY;
+            const target =
+                scrollY >= TOTAL_SCROLL
+                    ? 0
+                    : scrollY > FADE_START
+                      ? 1 - (scrollY - FADE_START) / (TOTAL_SCROLL - FADE_START)
+                      : 1;
+            current += (target - current) * 0.12;
+            invitationEl.style.opacity = String(current);
+            rafId = requestAnimationFrame(tick);
+        };
+
+        rafId = requestAnimationFrame(tick);
+        return () => cancelAnimationFrame(rafId);
+    }, []);
+
+    return (
+        <>
+            {chapters.map((chapter, index) => {
+                const isInvitation = index === chapters.length - 1;
+
+                // Invitation: position so text is centered at max-scroll.
+                // Others: naive position — top aligns with viewport top at checkpoint scroll.
+                const topValue = isInvitation
+                    ? `calc(${TOTAL_SCROLL}px - 100vh)`
+                    : `${chapter.checkpointFrame * PIXELS_PER_FRAME}px`;
+
+                return (
+                    <div
+                        key={chapter.id}
+                        ref={(el) => {
+                            blockRefs.current[index] = el;
+                        }}
+                        style={{
+                            position: "absolute",
+                            top: topValue,
+                            left: 0,
+                            width: "100%",
+                            height: "100vh",
+                            pointerEvents: "none",
+                            zIndex: 10,
+                            willChange: "transform",
+                        }}
+                    >
+                        <ChapterContent chapter={chapter} />
+                    </div>
+                );
+            })}
+        </>
     );
 }

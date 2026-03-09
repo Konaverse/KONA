@@ -230,7 +230,7 @@ export default function Approach1Snap() {
     return (
         <>
             <FrameCanvas ref={canvasRef} isInitialLoaded={isInitialLoaded} />
-            <ServiceText currentFrame={currentFrame} />
+            <ServiceText />
 
             {/* The scroll container: tall spacer, free scroll, no CSS snap */}
             <div

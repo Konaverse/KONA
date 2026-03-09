@@ -12,10 +12,6 @@ import { StatsCounter } from "./StatsCounter";
 
 gsap.registerPlugin(ScrollTrigger);
 
-/* ─── Magnetic checkpoints (hero frames) ────────────────── */
-const CHECKPOINTS = [0, 151, 302, 453, 604, 844, 1083];
-const SNAP_POINTS = CHECKPOINTS.map((cp) => cp / (TOTAL_FRAMES - 1));
-
 /* ─── Scroll weight ─────────────────────────────────────── */
 const TOTAL_SCROLL = TOTAL_FRAMES * PIXELS_PER_FRAME;
 
@@ -116,7 +112,7 @@ export default function ScrollytellingExperience() {
         return () => window.removeEventListener("resize", resize);
     }, [drawFrame]);
 
-    /* ─── ScrollTrigger + magnetic snap ─────────────────── */
+    /* ─── ScrollTrigger (free scroll) ────────────────────── */
     useEffect(() => {
         if (isMobile || !isInitialLoaded) return;
 
@@ -151,13 +147,6 @@ export default function ScrollytellingExperience() {
             end: "bottom bottom",
             animation: tween,
             scrub: 0.5, // 500ms eased interpolation — eliminates jitter from stepped scroll
-            snap: {
-                snapTo: SNAP_POINTS,
-                duration: { min: 0.8, max: 3.0 }, // short hops are fast, long jumps breathe
-                delay: 0,           // snap immediately — no dead zone
-                ease: "power3.out", // fast grab, gentle settle — the "magnetic" feel
-                inertia: true,      // respects velocity to pick the right target
-            },
         });
 
         return () => {
@@ -193,13 +182,15 @@ export default function ScrollytellingExperience() {
             className="relative bg-[#0a0b09]"
             style={{ height: `${TOTAL_SCROLL}px` }}
         >
+            {/* Parallax text blocks — absolutely positioned in scroll container */}
+            <ServiceText />
+
             {/* Fixed visual layer — fades out at sequence end */}
             <div ref={fixedLayerRef}>
                 <FrameCanvas ref={canvasRef} isInitialLoaded={isInitialLoaded} />
                 <CursorSpotlight />
                 <SocialBar />
                 <StatsCounter />
-                <ServiceText currentFrame={currentFrame} />
 
                 {/* Archive label */}
                 <div
