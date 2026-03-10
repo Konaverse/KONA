@@ -1,15 +1,15 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 
-export const TOTAL_FRAMES = 1084;
+export const TOTAL_FRAMES = 1440;
 export const PIXELS_PER_FRAME = 22;
 
 const CLIPS = [
-    { folder: "00_start_to_web_dev", frames: 151, globalStart: 0 },
-    { folder: "01_web_dev_to_web_apps", frames: 151, globalStart: 151 },
-    { folder: "02_web_apps_to_videography", frames: 151, globalStart: 302 },
-    { folder: "03_videography_to_digital_ads", frames: 151, globalStart: 453 },
-    { folder: "04_digital_ads_to_social_media", frames: 240, globalStart: 604 },
-    { folder: "05_social_media_to_invitation", frames: 240, globalStart: 844 },
+    { folder: "00_start_to_web_dev",           frames: 240, globalStart: 0 },
+    { folder: "01_web_dev_to_web_apps",         frames: 240, globalStart: 240 },
+    { folder: "02_web_apps_to_videography",     frames: 240, globalStart: 480 },
+    { folder: "03_videography_to_digital_ads",  frames: 240, globalStart: 720 },
+    { folder: "04_digital_ads_to_social_media", frames: 240, globalStart: 960 },
+    { folder: "05_social_media_to_invitation",  frames: 240, globalStart: 1200 },
 ];
 
 /**
@@ -28,14 +28,11 @@ export function getFramePath(globalIndex: number): string {
         }
     }
 
-    // Calculate local frame number within the clip folder (1-indexed)
+    // Calculate local frame number within the clip folder (0-indexed)
     const localIndex = safeIndex - targetClip.globalStart;
-    const frameNumber = localIndex + 1;
+    const paddedNumber = String(localIndex).padStart(4, "0");
 
-    // Format with leading zeros: ezgif-frame-001.webp
-    const paddedNumber = String(frameNumber).padStart(3, "0");
-
-    return `/frames/${targetClip.folder}/ezgif-frame-${paddedNumber}.webp`;
+    return `/frames/${targetClip.folder}/frame_${paddedNumber}.webp`;
 }
 
 export function useFrameSequence() {
@@ -81,8 +78,8 @@ export function useFrameSequence() {
         const runPreload = async () => {
             if (!mounted) return;
 
-            // 1. Initial Priority Batch: Clip 00 (Frames 0 - 150)
-            const initialBatchEnd = Math.min(150, TOTAL_FRAMES - 1);
+            // 1. Initial Priority Batch: Clip 00 (Frames 0 - 239)
+            const initialBatchEnd = Math.min(239, TOTAL_FRAMES - 1);
             await preloadRange(0, initialBatchEnd);
 
             if (!mounted) return;

@@ -218,7 +218,7 @@ const chapters: Chapter[] = [
     },
     {
         id: "web-development",
-        checkpointFrame: 151,
+        checkpointFrame: 240,
         headline: "01 — Web Development",
         subheading: "Endless imagination, built to last.\nWe design and develop websites that don't just look premium — they perform, convert, and position you in a different league.",
         cta: { label: "View Web Development", href: "/solutions/web-development" },
@@ -227,7 +227,7 @@ const chapters: Chapter[] = [
     },
     {
         id: "web-applications",
-        checkpointFrame: 302,
+        checkpointFrame: 480,
         headline: "02 — Web Applications",
         subheading: "Performance without compromise.\nCustom web applications built for scale. From internal tools to client-facing platforms — engineered with precision so your business runs without friction.",
         cta: { label: "View Web Applications", href: "/solutions/web-applications" },
@@ -236,7 +236,7 @@ const chapters: Chapter[] = [
     },
     {
         id: "videography",
-        checkpointFrame: 453,
+        checkpointFrame: 720,
         headline: "03 — Videography",
         subheading: "Every frame, intentional.\nCinematic content that makes people stop. We capture your brand the way it deserves to be seen — with depth, atmosphere, and purpose.",
         cta: { label: "View Videography", href: "/solutions/videography" },
@@ -245,7 +245,7 @@ const chapters: Chapter[] = [
     },
     {
         id: "digital-advertising",
-        checkpointFrame: 604,
+        checkpointFrame: 960,
         headline: "04 — Digital Advertising",
         subheading: "Reach the right people. Every time.\nCampaigns built around conversion, not vanity metrics. We put your brand in front of audiences that matter and turn attention into revenue.",
         cta: { label: "View Digital Advertising", href: "/solutions/digital-advertising" },
@@ -254,7 +254,7 @@ const chapters: Chapter[] = [
     },
     {
         id: "social-media",
-        checkpointFrame: 844,
+        checkpointFrame: 1200,
         headline: "05 — Social Media Management",
         subheading: "Presence that compounds.\nWe manage your social identity so you never have to think about it. Consistent, creative, always on-brand — your audience grows while you focus on your business.",
         cta: { label: "View Social Media", href: "/solutions/social-media" },
@@ -263,7 +263,7 @@ const chapters: Chapter[] = [
     },
     {
         id: "invitation",
-        checkpointFrame: 1083,
+        checkpointFrame: 1439,
         headline: "ENGAGE WITH.\nKONAVERSE.",
         subheading: "Your digital presence, perfected. Your time, protected.",
         cta: { label: "Start Your Project", href: "/contact" },

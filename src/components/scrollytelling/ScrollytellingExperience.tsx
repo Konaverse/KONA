@@ -157,12 +157,12 @@ export default function ScrollytellingExperience() {
 
     /* ─── Chapter label ─────────────────────────────────── */
     const activeChapterLabel = useMemo(() => {
-        if (currentFrame < 151) return "00 — Opening";
-        if (currentFrame < 302) return "01 — Web Development";
-        if (currentFrame < 453) return "02 — Web Applications";
-        if (currentFrame < 604) return "03 — Videography";
-        if (currentFrame < 844) return "04 — Digital Advertising";
-        if (currentFrame < 1008) return "05 — Social Media";
+        if (currentFrame < 240)  return "00 — Opening";
+        if (currentFrame < 480)  return "01 — Web Development";
+        if (currentFrame < 720)  return "02 — Web Applications";
+        if (currentFrame < 960)  return "03 — Videography";
+        if (currentFrame < 1200) return "04 — Digital Advertising";
+        if (currentFrame < 1440) return "05 — Social Media";
         return "06 — Invitation";
     }, [currentFrame]);
 
