@@ -13,6 +13,15 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/konaverse/**",
+      },
+    ],
+  },
   async headers() {
     return [
       {

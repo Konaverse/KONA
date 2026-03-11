@@ -38,7 +38,7 @@ const monumentExtended = localFont({
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#1a1d18",
+  themeColor: "#111111",
 };
 
 export const metadata: Metadata = {
@@ -122,7 +122,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${monumentExtended.variable} antialiased bg-[#1a1d18] flex flex-col min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} ${monumentExtended.variable} antialiased bg-[#111111] flex flex-col min-h-screen`}
       >
         <JsonLd data={organizationJsonLd()} />
         <ConditionalNav />
