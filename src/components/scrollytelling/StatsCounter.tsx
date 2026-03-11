@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { PIXELS_PER_FRAME } from "./useFrameSequence";
+import { vhToPx } from "./scrollConstants";
 
 // ── Easy to update ───────────────────────────────────────────
 const STATS = [
@@ -20,6 +20,11 @@ const LINE_DELAY = 120;  // ms after all labels appear before line draws
 const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
 
 const FONT = "var(--font-geist-mono, 'Geist Mono', monospace)";
+
+// Fade the stats counter based on scroll position (in vh).
+// Stats disappear once the hero crack is ~25% open.
+const FADE_START_VH = 0.7;
+const FADE_END_VH   = 1.2;
 
 export function StatsCounter() {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -47,18 +52,15 @@ export function StatsCounter() {
                     const progress = Math.min(1, elapsed / COUNT_DURATION);
                     const count = Math.round(easeOut(progress) * stat.value);
 
-                    // Direct DOM — zero React re-renders during count
                     const numEl = numberRefs.current[i];
                     if (numEl) numEl.textContent = String(count);
 
                     if (progress < 1) {
                         rafIds.push(requestAnimationFrame(animate));
                     } else {
-                        // Snap suffix in
                         const sufEl = suffixRefs.current[i];
                         if (sufEl) sufEl.style.opacity = "1";
 
-                        // Slide label up after short pause
                         const t1 = setTimeout(() => {
                             if (!mounted) return;
                             const labelEl = labelRefs.current[i];
@@ -69,7 +71,6 @@ export function StatsCounter() {
 
                             labelsRevealed++;
                             if (labelsRevealed === STATS.length) {
-                                // Draw the anchoring line
                                 const t2 = setTimeout(() => {
                                     if (!mounted) return;
                                     const line = lineRef.current;
@@ -95,7 +96,7 @@ export function StatsCounter() {
         };
     }, []);
 
-    /* ── Frame-based fade — matches opening chapter content ─ */
+    /* ── Scroll-based fade — matches opening chapter ─────── */
     useEffect(() => {
         const el = containerRef.current;
         if (!el) return;
@@ -103,16 +104,14 @@ export function StatsCounter() {
         let rafId: number;
         let currentOpacity = 1;
 
-        // Opening chapter fades out between frame 55 and 80 —
-        // stats ride the same fade so they disappear together.
-        const FADE_START = 55;
-        const FADE_END = 80;
-
         const tick = () => {
-            const frame = window.scrollY / PIXELS_PER_FRAME;
+            const fadeStartPx = vhToPx(FADE_START_VH);
+            const fadeEndPx   = vhToPx(FADE_END_VH);
+            const scrollY = window.scrollY;
+
             const target =
-                frame >= FADE_END ? 0
-                    : frame > FADE_START ? 1 - (frame - FADE_START) / (FADE_END - FADE_START)
+                scrollY >= fadeEndPx ? 0
+                    : scrollY > fadeStartPx ? 1 - (scrollY - fadeStartPx) / (fadeEndPx - fadeStartPx)
                         : 1;
 
             currentOpacity += (target - currentOpacity) * 0.1;
@@ -135,7 +134,7 @@ export function StatsCounter() {
                 pointerEvents: "none",
             }}
         >
-            {/* Anchoring line — draws left to right after all labels appear */}
+            {/* Anchoring line */}
             <div
                 ref={lineRef}
                 style={{
@@ -151,7 +150,6 @@ export function StatsCounter() {
             <div style={{ display: "flex", gap: "40px", alignItems: "flex-start" }}>
                 {STATS.map((stat, i) => (
                     <div key={stat.label}>
-                        {/* Number + suffix */}
                         <div style={{ display: "flex", alignItems: "baseline", gap: "1px" }}>
                             <span
                                 ref={el => { numberRefs.current[i] = el; }}
@@ -182,7 +180,6 @@ export function StatsCounter() {
                             </span>
                         </div>
 
-                        {/* Label — fades up after count finishes */}
                         <div
                             ref={el => { labelRefs.current[i] = el; }}
                             style={{

@@ -4,9 +4,7 @@
  * No React state — all updates go directly to DOM refs.
  */
 
-import { TOTAL_FRAMES, PIXELS_PER_FRAME } from "./useFrameSequence";
-const TOTAL_SCROLL = TOTAL_FRAMES * PIXELS_PER_FRAME;
-const FADE_ZONE = TOTAL_SCROLL * 0.06; // fade starts at 94% of sequence
+import { getTotalScroll } from "./scrollConstants";
 
 type SpotlightListener = (viewportX: number, viewportY: number, opacity: number) => void;
 type ParallaxListener = (normX: number, normY: number, opacity: number) => void;
@@ -36,11 +34,13 @@ const tick = () => {
     parY += (ny - parY) * 0.1;
 
     // Sequence fade-out (lerped ~500ms)
+    const totalScroll = getTotalScroll();
+    const fadeZone = totalScroll * 0.06;
     const scrollY = window.scrollY;
-    const fadeStart = TOTAL_SCROLL - FADE_ZONE;
+    const fadeStart = totalScroll - fadeZone;
     const targetOpacity =
-        scrollY >= TOTAL_SCROLL ? 0
-        : scrollY > fadeStart ? 1 - (scrollY - fadeStart) / FADE_ZONE
+        scrollY >= totalScroll ? 0
+        : scrollY > fadeStart ? 1 - (scrollY - fadeStart) / fadeZone
         : 1;
     displayOpacity += (targetOpacity - displayOpacity) * 0.1;
 

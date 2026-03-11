@@ -2,9 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { Instagram, Facebook, Linkedin } from "lucide-react";
-import { TOTAL_FRAMES, PIXELS_PER_FRAME } from "./useFrameSequence";
-const TOTAL_SCROLL = TOTAL_FRAMES * PIXELS_PER_FRAME;
-const FADE_ZONE = TOTAL_SCROLL * 0.06;
+import { getTotalScroll } from "./scrollConstants";
 
 // ── Update these to the real profiles ────────────────────────
 const SOCIAL_LINKS = [
@@ -44,11 +42,13 @@ export function SocialBar() {
         let currentOpacity = 1;
 
         const tick = () => {
+            const totalScroll = getTotalScroll();
+            const fadeZone = totalScroll * 0.06;
             const scrollY = window.scrollY;
-            const fadeStart = TOTAL_SCROLL - FADE_ZONE;
+            const fadeStart = totalScroll - fadeZone;
             const targetOpacity =
-                scrollY >= TOTAL_SCROLL ? 0
-                : scrollY > fadeStart ? 1 - (scrollY - fadeStart) / FADE_ZONE
+                scrollY >= totalScroll ? 0
+                : scrollY > fadeStart ? 1 - (scrollY - fadeStart) / fadeZone
                 : 1;
 
             currentOpacity += (targetOpacity - currentOpacity) * 0.1;
@@ -91,7 +91,7 @@ export function SocialBar() {
                     flexDirection: "column",
                     alignItems: "center",
                     gap: "32px",
-                    pointerEvents: "none", // container transparent to interaction
+                    pointerEvents: "none",
                 }}
             >
                 {/* Connecting line — draws itself after icons appear */}
@@ -99,14 +99,14 @@ export function SocialBar() {
                     style={{
                         position: "absolute",
                         left: "calc(50% - 0.5px)",
-                        top: "20px",   // bottom edge of first icon
-                        bottom: "20px", // top edge of last icon
+                        top: "20px",
+                        bottom: "20px",
                         width: "1px",
                         background: "rgba(255, 255, 255, 0.15)",
                         transformOrigin: "top",
                         animation: `social-line-in 600ms ease-out forwards`,
                         animationDelay: `${LINE_DELAY}ms`,
-                        transform: "scaleY(0)", // hidden before animation
+                        transform: "scaleY(0)",
                     }}
                 />
 
@@ -125,11 +125,11 @@ export function SocialBar() {
                             alignItems: "center",
                             justifyContent: "center",
                             transition: "color 250ms ease, filter 250ms ease",
-                            opacity: 0, // animation starts from here
+                            opacity: 0,
                             animation: `social-icon-in ${ICON_DURATION}ms cubic-bezier(0.22, 1, 0.36, 1) forwards`,
                             animationDelay: `${ICON_INITIAL_DELAY + i * ICON_STAGGER}ms`,
                             position: "relative",
-                            zIndex: 1, // sits above the line
+                            zIndex: 1,
                         }}
                         onMouseEnter={(e) => {
                             const el = e.currentTarget as HTMLAnchorElement;

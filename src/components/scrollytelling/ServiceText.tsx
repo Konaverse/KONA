@@ -5,12 +5,11 @@ import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { TOTAL_FRAMES, PIXELS_PER_FRAME } from "./useFrameSequence";
+import { TOTAL_VH, SERVICES, INVITATION, getTotalScroll, vhToPx } from "./scrollConstants";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const MONO = "var(--font-geist-mono, 'Geist Mono', monospace)";
-const TOTAL_SCROLL = TOTAL_FRAMES * PIXELS_PER_FRAME;
 
 /* ─── Keyboard navigation hint ────────────────────────────── */
 function KeyboardHint() {
@@ -33,7 +32,6 @@ function KeyboardHint() {
             `}</style>
 
             <div style={{ marginBottom: "16px" }}>
-                {/* Arrow key cluster — numpad layout */}
                 <div style={{
                     display: "grid",
                     gridTemplateColumns: "repeat(3, 30px)",
@@ -42,7 +40,6 @@ function KeyboardHint() {
                     marginBottom: "12px",
                     justifyContent: "flex-end",
                 }}>
-                    {/* Row 1: only ↑ in centre column */}
                     <div />
                     <div style={{
                         display: "flex",
@@ -58,7 +55,6 @@ function KeyboardHint() {
                     }}>↑</div>
                     <div />
 
-                    {/* Row 2: ← ↓ → */}
                     {(["←", "↓", "→"] as const).map((arrow) => (
                         <div
                             key={arrow}
@@ -84,7 +80,6 @@ function KeyboardHint() {
                     ))}
                 </div>
 
-                {/* Hint note */}
                 <p style={{
                     fontFamily: MONO,
                     fontWeight: 300,
@@ -109,7 +104,6 @@ function TiltCard({ children }: { children: React.ReactNode }) {
     const rawX = useMotionValue(0);
     const rawY = useMotionValue(0);
 
-    // Spring physics: snappy response, no oscillation on leave
     const springConfig = { stiffness: 280, damping: 28, mass: 0.6 };
     const rotateY = useSpring(useTransform(rawX, [-1, 1], [-12, 12]), springConfig);
     const rotateX = useSpring(useTransform(rawY, [-1, 1], [10, -10]), springConfig);
@@ -138,7 +132,6 @@ function TiltCard({ children }: { children: React.ReactNode }) {
                 }
             `}</style>
 
-            {/* Perspective wrapper — inline so it hugs the card width */}
             <div style={{ perspective: "700px", perspectiveOrigin: "center center", display: "inline-block" }}>
                 <motion.div
                     ref={cardRef}
@@ -159,7 +152,6 @@ function TiltCard({ children }: { children: React.ReactNode }) {
                         overflow: "hidden",
                     }}
                 >
-                    {/* Forever-looping aurora gradient */}
                     <div
                         aria-hidden="true"
                         style={{
@@ -183,7 +175,6 @@ function TiltCard({ children }: { children: React.ReactNode }) {
                             pointerEvents: "none",
                         }}
                     />
-                    {/* Content above gradient */}
                     <div style={{ position: "relative", zIndex: 1 }}>
                         {children}
                     </div>
@@ -196,7 +187,8 @@ function TiltCard({ children }: { children: React.ReactNode }) {
 /* ─── Chapter data ─────────────────────────────────────────── */
 interface Chapter {
     id: string;
-    checkpointFrame: number;
+    /** Scroll position in vh multiples where this chapter's text is centered */
+    scrollPositionVh: number;
     headline: string;
     subheading: string;
     cta: { label: string; href: string } | null;
@@ -208,7 +200,7 @@ interface Chapter {
 const chapters: Chapter[] = [
     {
         id: "opening",
-        checkpointFrame: 0,
+        scrollPositionVh: 0,
         headline: "EXPERIENCE \n DIGITAL\n INNOVATION",
         subheading: "KONAVERSE PROVIDES\nYOU WITH THE TOOLS\nTO BUILD YOUR OWN\nDIGITAL REALM.",
         cta: null,
@@ -218,7 +210,7 @@ const chapters: Chapter[] = [
     },
     {
         id: "web-development",
-        checkpointFrame: 240,
+        scrollPositionVh: (SERVICES[0].startVh + SERVICES[0].endVh) / 2,
         headline: "01 — Web Development",
         subheading: "Endless imagination, built to last.\nWe design and develop websites that don't just look premium — they perform, convert, and position you in a different league.",
         cta: { label: "View Web Development", href: "/solutions/web-development" },
@@ -227,7 +219,7 @@ const chapters: Chapter[] = [
     },
     {
         id: "web-applications",
-        checkpointFrame: 480,
+        scrollPositionVh: (SERVICES[1].startVh + SERVICES[1].endVh) / 2,
         headline: "02 — Web Applications",
         subheading: "Performance without compromise.\nCustom web applications built for scale. From internal tools to client-facing platforms — engineered with precision so your business runs without friction.",
         cta: { label: "View Web Applications", href: "/solutions/web-applications" },
@@ -236,7 +228,7 @@ const chapters: Chapter[] = [
     },
     {
         id: "videography",
-        checkpointFrame: 720,
+        scrollPositionVh: (SERVICES[2].startVh + SERVICES[2].endVh) / 2,
         headline: "03 — Videography",
         subheading: "Every frame, intentional.\nCinematic content that makes people stop. We capture your brand the way it deserves to be seen — with depth, atmosphere, and purpose.",
         cta: { label: "View Videography", href: "/solutions/videography" },
@@ -245,7 +237,7 @@ const chapters: Chapter[] = [
     },
     {
         id: "digital-advertising",
-        checkpointFrame: 960,
+        scrollPositionVh: (SERVICES[3].startVh + SERVICES[3].endVh) / 2,
         headline: "04 — Digital Advertising",
         subheading: "Reach the right people. Every time.\nCampaigns built around conversion, not vanity metrics. We put your brand in front of audiences that matter and turn attention into revenue.",
         cta: { label: "View Digital Advertising", href: "/solutions/digital-advertising" },
@@ -254,7 +246,7 @@ const chapters: Chapter[] = [
     },
     {
         id: "social-media",
-        checkpointFrame: 1200,
+        scrollPositionVh: (SERVICES[4].startVh + SERVICES[4].endVh) / 2,
         headline: "05 — Social Media Management",
         subheading: "Presence that compounds.\nWe manage your social identity so you never have to think about it. Consistent, creative, always on-brand — your audience grows while you focus on your business.",
         cta: { label: "View Social Media", href: "/solutions/social-media" },
@@ -263,7 +255,7 @@ const chapters: Chapter[] = [
     },
     {
         id: "invitation",
-        checkpointFrame: 1439,
+        scrollPositionVh: (INVITATION.startVh + INVITATION.endVh) / 2,
         headline: "ENGAGE WITH.\nKONAVERSE.",
         subheading: "Your digital presence, perfected. Your time, protected.",
         cta: { label: "Start Your Project", href: "/contact" },
@@ -273,7 +265,7 @@ const chapters: Chapter[] = [
     },
 ];
 
-/* ─── Position helpers (unchanged from original) ──────────── */
+/* ─── Position helpers ────────────────────────────────────── */
 const getPositionClasses = (positionType: string) => {
     const base = "absolute pointer-events-auto ";
     switch (positionType) {
@@ -297,11 +289,10 @@ const getPositionClasses = (positionType: string) => {
     }
 };
 
-/* ─── Chapter content (original visual overlay per chapter) ── */
+/* ─── Chapter content renderer ────────────────────────────── */
 function ChapterContent({ chapter }: { chapter: Chapter }) {
     const isLargeHeadline = chapter.id === "opening" || chapter.id === "invitation";
 
-    // Base typography styles matching PRD
     const headlineStyles = {
         fontFamily: "var(--font-monument, 'Monument Extended', sans-serif)",
         fontWeight: 800,
@@ -379,15 +370,12 @@ function ChapterContent({ chapter }: { chapter: Chapter }) {
         );
     };
 
-    // For unified layouts (left, right, center-bottom)
     if (chapter.layout === "left" || chapter.layout === "right" || chapter.layout === "center-bottom") {
         return (
             <div className="relative w-full h-full">
                 <div className={getPositionClasses(chapter.headlinePosition)}>
                     <h2 style={{ ...headlineStyles, whiteSpace: "pre-line" }}>{chapter.headline}</h2>
-
                     {renderSubheading(chapter.subheading)}
-
                     {chapter.cta && (
                         <Link
                             href={chapter.cta.href}
@@ -402,12 +390,10 @@ function ChapterContent({ chapter }: { chapter: Chapter }) {
         );
     }
 
-    // For split layouts (opening, invitation)
     const headlineLines = chapter.headline.split("\n");
 
     return (
         <div className="relative w-full h-full">
-            {/* Headline Container */}
             <div className={getPositionClasses(chapter.headlinePosition)}>
                 {chapter.id === "opening" ? (
                     <>
@@ -423,11 +409,9 @@ function ChapterContent({ chapter }: { chapter: Chapter }) {
                 )}
             </div>
 
-            {/* Subheading & CTA Container */}
             {chapter.subheadingPosition && (
                 <div className={getPositionClasses(chapter.subheadingPosition)}>
                     {renderSubheading(chapter.subheading)}
-
                     {chapter.cta && (
                         <Link
                             href={chapter.cta.href}
@@ -443,7 +427,7 @@ function ChapterContent({ chapter }: { chapter: Chapter }) {
     );
 }
 
-/* ─── Main export: parallax credit-roll positioning ────────── */
+/* ─── Main export: parallax text overlays ─────────────────── */
 export function ServiceText() {
     const blockRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -458,8 +442,6 @@ export function ServiceText() {
                 const vh = window.innerHeight;
 
                 if (isOpening) {
-                    // Opening: already visible at load, drifts upward as user scrolls.
-                    // sine.in = slow start, accelerates — text lingers then releases.
                     gsap.to(el, {
                         y: -vh * 0.4,
                         ease: "sine.out",
@@ -471,9 +453,6 @@ export function ServiceText() {
                         },
                     });
                 } else {
-                    // Standard + Invitation: enter from below, decelerate near center,
-                    // accelerate out. fromTo centered at y=0 keeps text at its natural
-                    // position (viewport center) at progress 0.5.
                     gsap.fromTo(
                         el,
                         { y: vh * 0.35 },
@@ -500,17 +479,18 @@ export function ServiceText() {
         const invitationEl = blockRefs.current[chapters.length - 1];
         if (!invitationEl) return;
 
-        const FADE_START = TOTAL_SCROLL - 400;
         let current = 1;
         let rafId: number;
 
         const tick = () => {
+            const totalScroll = getTotalScroll();
+            const FADE_START = totalScroll - 400;
             const scrollY = window.scrollY;
             const target =
-                scrollY >= TOTAL_SCROLL
+                scrollY >= totalScroll
                     ? 0
                     : scrollY > FADE_START
-                      ? 1 - (scrollY - FADE_START) / (TOTAL_SCROLL - FADE_START)
+                      ? 1 - (scrollY - FADE_START) / (totalScroll - FADE_START)
                       : 1;
             current += (target - current) * 0.12;
             invitationEl.style.opacity = String(current);
@@ -526,11 +506,10 @@ export function ServiceText() {
             {chapters.map((chapter, index) => {
                 const isInvitation = index === chapters.length - 1;
 
-                // Invitation: position so text is centered at max-scroll.
-                // Others: naive position — top aligns with viewport top at checkpoint scroll.
+                // Position text block so its center aligns with the chapter's scroll position
                 const topValue = isInvitation
-                    ? `calc(${TOTAL_SCROLL}px - 100vh)`
-                    : `${chapter.checkpointFrame * PIXELS_PER_FRAME}px`;
+                    ? `calc(${TOTAL_VH * 100}vh - 100vh)`
+                    : `${chapter.scrollPositionVh * 100}vh`;
 
                 return (
                     <div
