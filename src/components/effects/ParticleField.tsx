@@ -2,11 +2,11 @@
 
 import { useEffect, useRef } from "react";
 
-const PARTICLE_COUNT = 120;
-const SCATTER_RADIUS = 150;
-const SCATTER_FORCE = 0.8;
-const DRIFT_SPEED = 0.3;
-const RETURN_SPEED = 0.02;
+const PARTICLE_COUNT = 240;
+const SCATTER_RADIUS = 180;
+const SCATTER_FORCE = 1.2;
+const DRIFT_SPEED = 0.4;
+const RETURN_SPEED = 0.025;
 
 interface Particle {
   x: number;
@@ -54,8 +54,8 @@ export default function ParticleField() {
         baseY: y,
         vx: (Math.random() - 0.5) * DRIFT_SPEED,
         vy: (Math.random() - 0.5) * DRIFT_SPEED,
-        size: Math.random() * 1.5 + 0.5,
-        opacity: Math.random() * 0.4 + 0.1,
+        size: Math.random() * 1.8 + 0.4,
+        opacity: Math.random() * 0.5 + 0.1,
       });
     }
     particlesRef.current = particles;
@@ -103,8 +103,8 @@ export default function ParticleField() {
         p.vy += (p.baseY - p.y) * RETURN_SPEED;
 
         // Damping
-        p.vx *= 0.95;
-        p.vy *= 0.95;
+        p.vx *= 0.94;
+        p.vy *= 0.94;
 
         // Wrap edges for base positions
         if (p.x < -20) { p.x = w + 20; p.baseX = p.x; }
@@ -126,8 +126,8 @@ export default function ParticleField() {
           const dy = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < 120) {
-            const alpha = (1 - dist / 120) * 0.06;
+          if (dist < 140) {
+            const alpha = (1 - dist / 140) * 0.08;
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
