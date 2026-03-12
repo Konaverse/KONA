@@ -5,7 +5,25 @@
       "Bash(npx tsc:*)",
       "Bash(npx --yes tsc:*)",
       "Bash(echo:*)",
-      "Bash(cmd:*)"
+      "Bash(cmd:*)",
+      "Bash(cd C:/Users/konst/Projects/KONA && npx next build 2>&1 | tail -30)",
+      "Bash(cd C:/Users/konst/Projects/KONA && npx.cmd tsc --noEmit 2>&1 | tail -30)",
+      "Bash(where node:*)",
+      "Bash(cd \"C:/Users/konst/Projects/KONA\" && \"C:/Program Files/nodejs/npx.cmd\" tsc --noEmit 2>&1 | tail -30)",
+      "Bash(cd \"C:/Users/konst/Projects/KONA\" && rm src/components/sections/HeroSection.tsx)",
+      "Bash(npx next:*)",
+      "Bash(cd \"C:/Users/konst/Projects/KONA\" && node -e \"const ts = require\\('typescript'\\); const cfg = ts.readConfigFile\\('tsconfig.json', ts.sys.readFile\\); const parsed = ts.parseJsonConfigFileContent\\(cfg.config, ts.sys, '.'\\); const program = ts.createProgram\\(parsed.fileNames.filter\\(f => f.includes\\('ArchitectScene'\\) || f.includes\\('home-page'\\)\\), parsed.options\\); const diags = ts.getPreEmitDiagnostics\\(program\\); if \\(diags.length\\) { diags.forEach\\(d => { const msg = ts.flattenDiagnosticMessageText\\(d.messageText, '\\\\n'\\); const file = d.file ? d.file.fileName + ':' + \\(d.file.getLineAndCharacterOfPosition\\(d.start\\).line+1\\) : ''; console.log\\(file, msg\\); }\\); } else { console.log\\('No type errors'\\); }\" 2>&1)",
+      "Bash(cd \"C:/Users/konst/Projects/KONA\" && node -e \"\nconst ts = require\\('typescript'\\);\nconst cfg = ts.readConfigFile\\('tsconfig.json', ts.sys.readFile\\);\nconst parsed = ts.parseJsonConfigFileContent\\(cfg.config, ts.sys, '.'\\);\nparsed.options.incremental = false;\nconst files = parsed.fileNames.filter\\(f => f.includes\\('ArchitectScene'\\) || f.includes\\('home-page'\\)\\);\nconst program = ts.createProgram\\(files, parsed.options\\);\nconst diags = ts.getPreEmitDiagnostics\\(program\\);\nif \\(diags.length\\) {\n  diags.forEach\\(d => {\n    const msg = ts.flattenDiagnosticMessageText\\(d.messageText, '\\\\\\\\n'\\);\n    const file = d.file ? d.file.fileName + ':' + \\(d.file.getLineAndCharacterOfPosition\\(d.start\\).line+1\\) : '';\n    console.log\\(file, msg\\);\n  }\\);\n} else {\n  console.log\\('No type errors'\\);\n}\n\" 2>&1)",
+      "Bash(cd \"C:/Users/konst/Projects/KONA\" && node -e \"\nconst ts = require\\('typescript'\\);\nconst cfg = ts.readConfigFile\\('tsconfig.json', ts.sys.readFile\\);\nconst parsed = ts.parseJsonConfigFileContent\\(cfg.config, ts.sys, '.'\\);\nparsed.options.incremental = false;\nconst files = parsed.fileNames.filter\\(f => f.includes\\('ArchitectScene'\\)\\);\nconst program = ts.createProgram\\(files, parsed.options\\);\nconst diags = ts.getPreEmitDiagnostics\\(program\\);\nif \\(diags.length\\) {\n  diags.forEach\\(d => {\n    const msg = ts.flattenDiagnosticMessageText\\(d.messageText, '\\\\\\\\n'\\);\n    const file = d.file ? d.file.fileName + ':' + \\(d.file.getLineAndCharacterOfPosition\\(d.start\\).line+1\\) : '';\n    console.log\\(file, msg\\);\n  }\\);\n} else { console.log\\('No type errors'\\); }\n\" 2>&1)",
+      "Bash(npx.cmd tsc:*)",
+      "Bash(find /c/Users/konst/Projects/KONA -maxdepth 3 -name \"tailwind.config*\" -o -name \"*.config.js\" -o -name \"postcss.config*\" 2>/dev/null | head -20)",
+      "Bash(find src:*)",
+      "Bash(ls -la src/app/ | grep -E \"\\\\.\\(tsx|ts\\)$\")",
+      "Bash(find . -name \"*.css\" -type f | head -5 | xargs ls -la 2>/dev/null || echo \"Checking CSS generation...\")",
+      "Bash(grep -o \"translate-x-\\\\[50px\\\\]\" C:\\\\Users\\\\konst\\\\Projects\\\\KONA\\\\.next\\\\dev\\\\static\\\\chunks\\\\*root-of-the-server*.css 2>/dev/null | head -1 || echo \"Checking direct translation...\")",
+      "Bash(head -100 \"/cygdrive/c/Users/konst/Projects/KONA/.next/dev/static/chunks/\"*root-of-the-server*\".css\" 2>/dev/null | tail -50)",
+      "WebSearch",
+      "Bash(cd \"C:/Users/konst/Projects/KONA\" && PATH=\"/c/Program Files/nodejs:$PATH\" npx tsc --noEmit 2>&1 | head -40)"
     ]
   }
 }

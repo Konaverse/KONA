@@ -125,15 +125,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${monumentExtended.variable} antialiased bg-[#111111] flex flex-col min-h-screen`}
       >
         <JsonLd data={organizationJsonLd()} />
-        <ConditionalNav />
         <main id="main-content" className="flex-grow">
           {children}
         </main>
-        <Footer />
-        <FluidWrapper
-          fluidColor="#a89080"
-          enabled={true}
-        />
       </body>
     </html>
   );

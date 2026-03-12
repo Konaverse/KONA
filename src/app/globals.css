@@ -856,17 +856,6 @@
   }
 }
 
-/* ===== Konaverse Hero ===== */
-.hero-headline {
-  font-size: clamp(72px, 15vw, 120px);
-}
-
-@media (min-width: 768px) {
-  .hero-headline {
-    font-size: clamp(120px, 18vw, 240px);
-  }
-}
-
 @keyframes solutionLabelIn {
   from {
     opacity: 0;
