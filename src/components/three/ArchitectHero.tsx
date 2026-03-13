@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, MotionValue } from "framer-motion";
 import HeroHUD from "./HeroHUD";
 import type { HoveredCardState } from "./SceneManager";
 
@@ -53,21 +53,23 @@ function DoorOverlay({ onComplete }: { onComplete: () => void }) {
   );
 }
 
-export default function ArchitectHero({ 
+export default function ArchitectHero({
   onEntranceComplete,
   hoveredCard,
   onHoverCard,
-  headPosition
-}: { 
+  headPosition,
+  scrollProgress
+}: {
   onEntranceComplete?: () => void;
   hoveredCard: HoveredCardState | null;
   onHoverCard: (card: HoveredCardState | null) => void;
   headPosition: { x: number, y: number };
+  scrollProgress: MotionValue<number>;
 }) {
   const [doorsVisible, setDoorsVisible] = useState(true);
 
   return (
-    <div style={{ position: "relative", width: "100%", height: "100vh", background: "transparent", overflow: "hidden" }}>
+    <div style={{ position: "relative", width: "100%", height: "100vh", background: "transparent" }}>
       {doorsVisible && <DoorOverlay onComplete={() => { setDoorsVisible(false); onEntranceComplete?.(); }} />}
       
       {/* Neural Link Overlay */}
@@ -83,10 +85,15 @@ export default function ArchitectHero({
         </AnimatePresence>
       </div>
 
-      <HeroHUD visible={!doorsVisible} onHoverCard={(id, rect) => {
-        if (id && rect) { onHoverCard({ id, x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }); }
-        else { onHoverCard(null); }
-      }} />
+      <HeroHUD
+        visible={!doorsVisible}
+        scrollProgress={scrollProgress}
+        onHoverCard={(id: string | null, rect: DOMRect | null) => {
+          if (id && rect) { onHoverCard({ id, x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }); }
+          else { onHoverCard(null); }
+        }}
+      />
+
     </div>
   );
 }

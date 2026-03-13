@@ -4,10 +4,13 @@ import { useEffect, useRef, useMemo, useState } from "react";
 import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
+import { motion, useTransform, MotionValue } from "framer-motion";
 
 const BASE_MODEL = "/models/architect/Walking.fbx";
 const IDLE_ANIM = "/models/architect/Breathing Idle.fbx";
 const THOUGHTFUL_NOD_ANIM = "/models/architect/Thoughtful Head Nod.fbx";
+const LOOKING_ANIM = "/models/architect/Looking.fbx";
+const ARM_GESTURE_ANIM = "/models/architect/Arm Gesture.fbx";
 
 // ─── Shared State Types ───────────────────────────────────────
 export interface HoveredCardState {
@@ -184,15 +187,19 @@ function WebGLSparkSystem({ active }: { active: boolean }) {
 function ArchitectModel({
   hoveredCard,
   onHeadPositionUpdate,
-  activeSection
+  activeSection,
+  scrollProgress
 }: {
   hoveredCard: HoveredCardState | null;
   onHeadPositionUpdate: (pos: { x: number; y: number }) => void;
   activeSection: number;
+  scrollProgress: MotionValue<number>;
 }) {
   const baseModel = useLoader(FBXLoader, BASE_MODEL);
   const idleData = useLoader(FBXLoader, IDLE_ANIM);
   const nodData = useLoader(FBXLoader, THOUGHTFUL_NOD_ANIM);
+  const lookingData = useLoader(FBXLoader, LOOKING_ANIM);
+  const armGestureData = useLoader(FBXLoader, ARM_GESTURE_ANIM);
   
   const mixerRef = useRef<THREE.AnimationMixer | null>(null);
   const actionsRef = useRef<{ [key: string]: THREE.AnimationAction }>({});
@@ -247,15 +254,17 @@ function ArchitectModel({
   }, [baseModel]);
 
   useEffect(() => {
-    if (!baseModel || !idleData || !nodData) return;
-    
+    if (!baseModel || !idleData || !nodData || !lookingData || !armGestureData) return;
+
     const mixer = new THREE.AnimationMixer(baseModel);
     mixerRef.current = mixer;
 
     const idle = mixer.clipAction(idleData.animations[0]);
     const nod = mixer.clipAction(nodData.animations[0]);
+    const looking = mixer.clipAction(lookingData.animations[0]);
+    const armGesture = mixer.clipAction(armGestureData.animations[0]);
 
-    actionsRef.current = { idle, nod };
+    actionsRef.current = { idle, nod, looking, armGesture };
 
     idle.play();
 
@@ -269,20 +278,44 @@ function ArchitectModel({
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
     };
-  }, [baseModel, idleData, nodData]);
+  }, [baseModel, idleData, nodData, lookingData, armGestureData]);
+
+  // Track current animation state: "idle" | "nod" | "looking"
+  const currentAnimRef = useRef<string>("idle");
 
   useEffect(() => {
-    const { idle, nod } = actionsRef.current;
-    if (!idle || !nod) return;
+    const crossfadeTo = (target: string) => {
+      if (currentAnimRef.current === target) return;
+      const actions = actionsRef.current;
+      const current = actions[currentAnimRef.current];
+      const next = actions[target];
+      if (!current || !next) return;
 
-    if (activeSection > 0) {
-      idle.fadeOut(0.5);
-      nod.reset().fadeIn(0.5).play();
-    } else {
-      nod.fadeOut(0.5);
-      idle.reset().fadeIn(0.5).play();
-    }
-  }, [activeSection]);
+      current.fadeOut(0.5);
+      next.reset().fadeIn(0.5).play();
+      currentAnimRef.current = target;
+    };
+
+    const unsubscribe = scrollProgress.on("change", (val) => {
+      if (!actionsRef.current.idle) return;
+
+      if (activeSection >= 1) {
+        // Blueprint section — looking around the new world
+        crossfadeTo("looking");
+      } else if (val >= 0.606) {
+        // Welcome text visible — arm gesture
+        crossfadeTo("armGesture");
+      } else if (val >= 0.45) {
+        // Hero scrolled deep — thoughtful nod
+        crossfadeTo("nod");
+      } else {
+        // Hero top — idle
+        crossfadeTo("idle");
+      }
+    });
+
+    return () => unsubscribe();
+  }, [scrollProgress, activeSection]);
 
   const tempVec = useMemo(() => new THREE.Vector3(), []);
 
@@ -290,18 +323,19 @@ function ArchitectModel({
     if (!mixerRef.current) return;
     mixerRef.current.update(delta);
 
+    // High Performance: Get value from MotionValue without state update
+    const scrollVal = scrollProgress.get();
+
     if (modelGroupRef.current) {
-      const isAltSection = activeSection > 0;
-      const targetZ = isAltSection ? -0.3 : 0; // Closer to camera
-      const targetX = isAltSection ? -0.95 : 0; // Further left
-      const targetY = 0;
-      const targetRotY = isAltSection ? 0.6 : 0; // Rotate body to face right
+      // Use capped scrollVal (reaches 1.0 logic state at 0.5 scroll)
+      const p = THREE.MathUtils.clamp(scrollVal / 0.5, 0, 1);
+      const targetZ = -0.3 * p; 
+      const targetX = -0.95 * p; 
+      const targetRotY = 0.6 * p; 
       
-      const lerpFactor = 1 - Math.pow(0.05, delta);
-      modelGroupRef.current.position.z = THREE.MathUtils.lerp(modelGroupRef.current.position.z, targetZ, lerpFactor);
-      modelGroupRef.current.position.x = THREE.MathUtils.lerp(modelGroupRef.current.position.x, targetX, lerpFactor);
-      modelGroupRef.current.position.y = THREE.MathUtils.lerp(modelGroupRef.current.position.y, targetY, lerpFactor);
-      modelGroupRef.current.rotation.y = THREE.MathUtils.lerp(modelGroupRef.current.rotation.y, targetRotY, lerpFactor);
+      modelGroupRef.current.position.z = THREE.MathUtils.lerp(modelGroupRef.current.position.z, targetZ, 0.1);
+      modelGroupRef.current.position.x = THREE.MathUtils.lerp(modelGroupRef.current.position.x, targetX, 0.1);
+      modelGroupRef.current.rotation.y = THREE.MathUtils.lerp(modelGroupRef.current.rotation.y, targetRotY, 0.1);
     }
 
     if (headBoneRef.current) {
@@ -318,8 +352,8 @@ function ArchitectModel({
         onHeadPositionUpdate({ x: screenX, y: screenY });
       }
 
-      const isAlt = activeSection > 0;
-      const targetWeight = isAlt ? 0.15 : 1.0;
+      const p = THREE.MathUtils.clamp(scrollVal / 0.5, 0, 1);
+      const targetWeight = THREE.MathUtils.lerp(1.0, 0.15, p);
       trackingWeightRef.current = THREE.MathUtils.lerp(trackingWeightRef.current, targetWeight, 0.05);
 
       let tX = 0;
@@ -335,8 +369,7 @@ function ArchitectModel({
         tY = mouseRef.current.y * (viewport.height / 2);
       }
 
-      // Add a bias to look right when in Section 2
-      const lookBias = isAlt ? 0.4 : 0;
+      const lookBias = 0.4 * p;
       const tRY = Math.max(-1.57, Math.min(1.57, tX * 1.2 + lookBias)) * trackingWeightRef.current;
       const tRX = Math.max(-1.05, Math.min(1.05, -tY * 0.8)) * trackingWeightRef.current;
 
@@ -375,11 +408,13 @@ function ArchitectModel({
 
 export default function SceneManager({
   activeSection,
+  scrollProgress,
   hoveredCard,
   onHeadPositionUpdate,
   sparkActive
 }: {
   activeSection: number;
+  scrollProgress: MotionValue<number>;
   hoveredCard: HoveredCardState | null;
   onHeadPositionUpdate: (pos: { x: number; y: number }) => void;
   sparkActive: boolean;
@@ -394,7 +429,12 @@ export default function SceneManager({
         <directionalLight color="#004422" intensity={0.4} position={[-3, 2, -1]} />
         <ambientLight intensity={0.15} />
         <WebGLSparkSystem active={sparkActive && activeSection === 0} />
-        <ArchitectModel hoveredCard={hoveredCard} onHeadPositionUpdate={onHeadPositionUpdate} activeSection={activeSection} />
+        <ArchitectModel
+          hoveredCard={hoveredCard}
+          onHeadPositionUpdate={onHeadPositionUpdate}
+          activeSection={activeSection}
+          scrollProgress={scrollProgress}
+        />
       </Canvas>
     </div>
   );
