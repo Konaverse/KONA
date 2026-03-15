@@ -5,6 +5,7 @@ import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
 import { motion, useTransform, MotionValue } from "framer-motion";
+import DepthText from "./DepthText";
 
 // Architect pose per service (index 0-4)
 const SERVICE_ANIMS = ["nod", "armGesture", "looking", "idle", "lookingBehind"] as const;
@@ -306,7 +307,9 @@ function ArchitectModel({
 
   // Effect: section-level transitions + hero scroll-driven poses
   useEffect(() => {
-    if (activeSection >= 3) {
+    if (activeSection >= 4) {
+      crossfadeTo("idle");
+    } else if (activeSection >= 3) {
       crossfadeTo(SERVICE_ANIMS[serviceIndexRef.current]);
     } else if (activeSection >= 2) {
       crossfadeTo("lookingBehind");
@@ -315,7 +318,9 @@ function ArchitectModel({
     }
 
     const unsubscribe = scrollProgress.on("change", (val) => {
-      if (activeSection >= 3) {
+      if (activeSection >= 4) {
+        crossfadeTo("idle");
+      } else if (activeSection >= 3) {
         crossfadeTo(SERVICE_ANIMS[serviceIndexRef.current]);
       } else if (activeSection >= 2) {
         crossfadeTo("lookingBehind");
@@ -335,7 +340,7 @@ function ArchitectModel({
 
   // Effect: per-service pose change while services section is visible
   useEffect(() => {
-    if (activeSection < 3) return;
+    if (activeSection !== 3) return;
     crossfadeTo(SERVICE_ANIMS[serviceIndex]);
   }, [serviceIndex, activeSection, crossfadeTo]);
 
@@ -349,17 +354,18 @@ function ArchitectModel({
     const scrollVal = scrollProgress.get();
 
     if (modelGroupRef.current) {
-      const inServices = activeSection >= 3;
-      const inClients  = activeSection === 2;
+      const inInterlude = activeSection >= 4;
+      const inServices  = activeSection === 3;
+      const inClients   = activeSection === 2;
       const p = THREE.MathUtils.clamp(scrollVal / 0.5, 0, 1);
 
       // Services: right side of screen, body turned to face left
       // Lerp speed 0.06 — fast enough to fully settle while the curtain
       // still covers the viewport (curtain clears at ~progress 0.30).
-      const targetX    = inServices ?  0.55 : inClients ? -0.55 : -0.95 * p;
-      const targetZ    = inServices ?  0.05 : inClients ?  0.05 : -0.30 * p;
-      const targetRotY = inServices ? -0.50 : inClients ?  0.18 :  0.60 * p;
-      const lerpSpeed  = inServices ?  0.06 : inClients ?  0.025 : 0.1;
+      const targetX    = inInterlude ?  0.00 : inServices ?  0.55 : inClients ? -0.55 : -0.95 * p;
+      const targetZ    = inInterlude ? -0.60 : inServices ?  0.05 : inClients ?  0.05 : -0.30 * p;
+      const targetRotY = inInterlude ?  0.00 : inServices ? -0.50 : inClients ?  0.18 :  0.60 * p;
+      const lerpSpeed  = inInterlude ?  0.04 : inServices ?  0.06 : inClients ?  0.025 : 0.1;
 
       modelGroupRef.current.position.x = THREE.MathUtils.lerp(modelGroupRef.current.position.x, targetX, lerpSpeed);
       modelGroupRef.current.position.z = THREE.MathUtils.lerp(modelGroupRef.current.position.z, targetZ, lerpSpeed);
@@ -441,6 +447,7 @@ export default function SceneManager({
   onHeadPositionUpdate,
   sparkActive,
   serviceIndex = 0,
+  textProgress,
 }: {
   activeSection: number;
   scrollProgress: MotionValue<number>;
@@ -448,6 +455,7 @@ export default function SceneManager({
   onHeadPositionUpdate: (pos: { x: number; y: number }) => void;
   sparkActive: boolean;
   serviceIndex?: number;
+  textProgress?: MotionValue<number>;
 }) {
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}>
@@ -466,6 +474,9 @@ export default function SceneManager({
           scrollProgress={scrollProgress}
           serviceIndex={serviceIndex}
         />
+        {activeSection >= 5 && textProgress && (
+          <DepthText progress={textProgress} />
+        )}
       </Canvas>
     </div>
   );

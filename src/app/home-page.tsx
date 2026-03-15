@@ -15,7 +15,7 @@ import type { HoveredCardState } from "@/components/three/SceneManager";
 
 // Mirror of ServicesSection timing — used to lift serviceSolIndex for SceneManager + ServicesBackground
 const SVC_CURTAIN = 0.28;
-const SVC_PER     = 0.14;
+const SVC_PER = 0.14;
 function getSvcIndex(p: number): number {
   if (p < SVC_CURTAIN) return 0;
   for (let i = 0; i < 5; i++) {
@@ -46,6 +46,8 @@ export default function HomePage() {
   const blueprintWrapperRef = useRef<HTMLDivElement>(null);
   const clientsWrapperRef = useRef<HTMLDivElement>(null);
   const servicesWrapperRef = useRef<HTMLDivElement>(null);
+  const interludeWrapperRef = useRef<HTMLDivElement>(null);
+  const textWrapperRef = useRef<HTMLDivElement>(null);
 
   // ── Section-scoped scroll progress ──
   const { scrollYProgress: heroScrollY } = useScroll({
@@ -62,6 +64,14 @@ export default function HomePage() {
   });
   const { scrollYProgress: servicesScrollY } = useScroll({
     target: servicesWrapperRef,
+    offset: ["start start", "end start"],
+  });
+  const { scrollYProgress: interludeScrollY } = useScroll({
+    target: interludeWrapperRef,
+    offset: ["start start", "end start"],
+  });
+  const { scrollYProgress: textScrollY } = useScroll({
+    target: textWrapperRef,
     offset: ["start start", "end start"],
   });
 
@@ -82,6 +92,11 @@ export default function HomePage() {
     restDelta: 0.001,
   });
   const smoothedServicesProgress = useSpring(servicesScrollY, {
+    stiffness: 80,
+    damping: 28,
+    restDelta: 0.001,
+  });
+  const smoothedTextProgress = useSpring(textScrollY, {
     stiffness: 80,
     damping: 28,
     restDelta: 0.001,
@@ -107,6 +122,21 @@ export default function HomePage() {
     else if (blueprintScrollY.get() > 0.02) setActiveIndex(1);
     else setActiveIndex(0);
   });
+  useMotionValueEvent(interludeScrollY, "change", (val) => {
+    if (val > 0.02) setActiveIndex(4);
+    else if (servicesScrollY.get() > 0.02) setActiveIndex(3);
+    else if (clientsScrollY.get() > 0.02) setActiveIndex(2);
+    else if (blueprintScrollY.get() > 0.02) setActiveIndex(1);
+    else setActiveIndex(0);
+  });
+  useMotionValueEvent(textScrollY, "change", (val) => {
+    if (val > 0.02) setActiveIndex(5);
+    else if (interludeScrollY.get() > 0.02) setActiveIndex(4);
+    else if (servicesScrollY.get() > 0.02) setActiveIndex(3);
+    else if (clientsScrollY.get() > 0.02) setActiveIndex(2);
+    else if (blueprintScrollY.get() > 0.02) setActiveIndex(1);
+    else setActiveIndex(0);
+  });
 
   // ── behindCurtain — driven by the SPRING so it fires exactly when curtains
   //    reach y:0% (full viewport coverage at smoothed progress = 0.05) ──
@@ -128,11 +158,11 @@ export default function HomePage() {
   }, [entranceComplete]);
 
   // ── Welcome text — hero-scoped ──
-  const lineScaleX    = useTransform(heroScrollY, [0.40, 0.47], [0, 1]);
-  const lineOpacity   = useTransform(heroScrollY, [0.40, 0.44, 0.60, 0.64], [0, 1, 1, 0]);
-  const topTextY      = useTransform(heroScrollY, [0.44, 0.52], [0, -32]);
+  const lineScaleX = useTransform(heroScrollY, [0.40, 0.47], [0, 1]);
+  const lineOpacity = useTransform(heroScrollY, [0.40, 0.44, 0.60, 0.64], [0, 1, 1, 0]);
+  const topTextY = useTransform(heroScrollY, [0.44, 0.52], [0, -32]);
   const topTextOpacity = useTransform(heroScrollY, [0.44, 0.47, 0.60, 0.64], [0, 1, 1, 0]);
-  const bottomTextY   = useTransform(heroScrollY, [0.47, 0.52], [0, 28]);
+  const bottomTextY = useTransform(heroScrollY, [0.47, 0.52], [0, 28]);
   const bottomTextOpacity = useTransform(heroScrollY, [0.47, 0.52, 0.60, 0.64], [0, 1, 1, 0]);
 
   return (
@@ -230,6 +260,7 @@ export default function HomePage() {
         onHeadPositionUpdate={setHeadPosition}
         sparkActive={entranceComplete}
         serviceIndex={serviceSolIndex}
+        textProgress={smoothedTextProgress}
       />
 
       {/* ══════ Particles — hidden instantly when curtains close ══════ */}
@@ -287,8 +318,13 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Spacer — 20vh breath after clients fades */}
-        <div style={{ height: "20vh", position: "relative" }} />
+
+        {/* Interlude spacer — transparent, architect drifts to center */}
+        <div ref={interludeWrapperRef} style={{ height: "200vh", position: "relative" }} />
+
+        {/* Text section — 3D depth text animates through scene */}
+        <div ref={textWrapperRef} style={{ height: "300vh", position: "relative" }} />
+
       </div>
     </>
   );
