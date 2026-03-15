@@ -1,16 +1,20 @@
 "use client";
 
-import { useEffect, useRef, useMemo, useState } from "react";
+import { useEffect, useRef, useMemo, useState, useCallback } from "react";
 import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
 import { motion, useTransform, MotionValue } from "framer-motion";
+
+// Architect pose per service (index 0-4)
+const SERVICE_ANIMS = ["nod", "armGesture", "looking", "idle", "lookingBehind"] as const;
 
 const BASE_MODEL = "/models/architect/Walking.fbx";
 const IDLE_ANIM = "/models/architect/Breathing Idle.fbx";
 const THOUGHTFUL_NOD_ANIM = "/models/architect/Thoughtful Head Nod.fbx";
 const LOOKING_ANIM = "/models/architect/Looking.fbx";
 const ARM_GESTURE_ANIM = "/models/architect/Arm Gesture.fbx";
+const LOOKING_BEHIND_ANIM = "/models/architect/Looking Behind.fbx";
 
 // ─── Shared State Types ───────────────────────────────────────
 export interface HoveredCardState {
@@ -188,18 +192,21 @@ function ArchitectModel({
   hoveredCard,
   onHeadPositionUpdate,
   activeSection,
-  scrollProgress
+  scrollProgress,
+  serviceIndex = 0,
 }: {
   hoveredCard: HoveredCardState | null;
   onHeadPositionUpdate: (pos: { x: number; y: number }) => void;
   activeSection: number;
   scrollProgress: MotionValue<number>;
+  serviceIndex?: number;
 }) {
   const baseModel = useLoader(FBXLoader, BASE_MODEL);
   const idleData = useLoader(FBXLoader, IDLE_ANIM);
   const nodData = useLoader(FBXLoader, THOUGHTFUL_NOD_ANIM);
   const lookingData = useLoader(FBXLoader, LOOKING_ANIM);
   const armGestureData = useLoader(FBXLoader, ARM_GESTURE_ANIM);
+  const lookingBehindData = useLoader(FBXLoader, LOOKING_BEHIND_ANIM);
   
   const mixerRef = useRef<THREE.AnimationMixer | null>(null);
   const actionsRef = useRef<{ [key: string]: THREE.AnimationAction }>({});
@@ -254,7 +261,7 @@ function ArchitectModel({
   }, [baseModel]);
 
   useEffect(() => {
-    if (!baseModel || !idleData || !nodData || !lookingData || !armGestureData) return;
+    if (!baseModel || !idleData || !nodData || !lookingData || !armGestureData || !lookingBehindData) return;
 
     const mixer = new THREE.AnimationMixer(baseModel);
     mixerRef.current = mixer;
@@ -263,8 +270,9 @@ function ArchitectModel({
     const nod = mixer.clipAction(nodData.animations[0]);
     const looking = mixer.clipAction(lookingData.animations[0]);
     const armGesture = mixer.clipAction(armGestureData.animations[0]);
+    const lookingBehind = mixer.clipAction(lookingBehindData.animations[0]);
 
-    actionsRef.current = { idle, nod, looking, armGesture };
+    actionsRef.current = { idle, nod, looking, armGesture, lookingBehind };
 
     idle.play();
 
@@ -278,44 +286,58 @@ function ArchitectModel({
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
     };
-  }, [baseModel, idleData, nodData, lookingData, armGestureData]);
+  }, [baseModel, idleData, nodData, lookingData, armGestureData, lookingBehindData]);
 
-  // Track current animation state: "idle" | "nod" | "looking"
-  const currentAnimRef = useRef<string>("idle");
+  // Track current animation state
+  const currentAnimRef  = useRef<string>("idle");
+  const serviceIndexRef = useRef(serviceIndex);
+  serviceIndexRef.current = serviceIndex;
 
+  // Stable crossfade helper — safe to call before actions are loaded (guards internally)
+  const crossfadeTo = useCallback((target: string) => {
+    if (currentAnimRef.current === target) return;
+    const current = actionsRef.current[currentAnimRef.current];
+    const next    = actionsRef.current[target];
+    if (!current || !next) return;
+    current.fadeOut(0.5);
+    next.reset().fadeIn(0.5).play();
+    currentAnimRef.current = target;
+  }, []);
+
+  // Effect: section-level transitions + hero scroll-driven poses
   useEffect(() => {
-    const crossfadeTo = (target: string) => {
-      if (currentAnimRef.current === target) return;
-      const actions = actionsRef.current;
-      const current = actions[currentAnimRef.current];
-      const next = actions[target];
-      if (!current || !next) return;
-
-      current.fadeOut(0.5);
-      next.reset().fadeIn(0.5).play();
-      currentAnimRef.current = target;
-    };
+    if (activeSection >= 3) {
+      crossfadeTo(SERVICE_ANIMS[serviceIndexRef.current]);
+    } else if (activeSection >= 2) {
+      crossfadeTo("lookingBehind");
+    } else if (activeSection >= 1) {
+      crossfadeTo("looking");
+    }
 
     const unsubscribe = scrollProgress.on("change", (val) => {
-      if (!actionsRef.current.idle) return;
-
-      if (activeSection >= 1) {
-        // Blueprint section — looking around the new world
+      if (activeSection >= 3) {
+        crossfadeTo(SERVICE_ANIMS[serviceIndexRef.current]);
+      } else if (activeSection >= 2) {
+        crossfadeTo("lookingBehind");
+      } else if (activeSection >= 1) {
         crossfadeTo("looking");
-      } else if (val >= 0.606) {
-        // Welcome text visible — arm gesture
+      } else if (val >= 0.40) {
         crossfadeTo("armGesture");
-      } else if (val >= 0.45) {
-        // Hero scrolled deep — thoughtful nod
+      } else if (val >= 0.22) {
         crossfadeTo("nod");
       } else {
-        // Hero top — idle
         crossfadeTo("idle");
       }
     });
 
     return () => unsubscribe();
-  }, [scrollProgress, activeSection]);
+  }, [scrollProgress, activeSection, crossfadeTo]);
+
+  // Effect: per-service pose change while services section is visible
+  useEffect(() => {
+    if (activeSection < 3) return;
+    crossfadeTo(SERVICE_ANIMS[serviceIndex]);
+  }, [serviceIndex, activeSection, crossfadeTo]);
 
   const tempVec = useMemo(() => new THREE.Vector3(), []);
 
@@ -327,15 +349,21 @@ function ArchitectModel({
     const scrollVal = scrollProgress.get();
 
     if (modelGroupRef.current) {
-      // Use capped scrollVal (reaches 1.0 logic state at 0.5 scroll)
+      const inServices = activeSection >= 3;
+      const inClients  = activeSection === 2;
       const p = THREE.MathUtils.clamp(scrollVal / 0.5, 0, 1);
-      const targetZ = -0.3 * p; 
-      const targetX = -0.95 * p; 
-      const targetRotY = 0.6 * p; 
-      
-      modelGroupRef.current.position.z = THREE.MathUtils.lerp(modelGroupRef.current.position.z, targetZ, 0.1);
-      modelGroupRef.current.position.x = THREE.MathUtils.lerp(modelGroupRef.current.position.x, targetX, 0.1);
-      modelGroupRef.current.rotation.y = THREE.MathUtils.lerp(modelGroupRef.current.rotation.y, targetRotY, 0.1);
+
+      // Services: right side of screen, body turned to face left
+      // Lerp speed 0.06 — fast enough to fully settle while the curtain
+      // still covers the viewport (curtain clears at ~progress 0.30).
+      const targetX    = inServices ?  0.55 : inClients ? -0.55 : -0.95 * p;
+      const targetZ    = inServices ?  0.05 : inClients ?  0.05 : -0.30 * p;
+      const targetRotY = inServices ? -0.50 : inClients ?  0.18 :  0.60 * p;
+      const lerpSpeed  = inServices ?  0.06 : inClients ?  0.025 : 0.1;
+
+      modelGroupRef.current.position.x = THREE.MathUtils.lerp(modelGroupRef.current.position.x, targetX, lerpSpeed);
+      modelGroupRef.current.position.z = THREE.MathUtils.lerp(modelGroupRef.current.position.z, targetZ, lerpSpeed);
+      modelGroupRef.current.rotation.y = THREE.MathUtils.lerp(modelGroupRef.current.rotation.y, targetRotY, lerpSpeed);
     }
 
     if (headBoneRef.current) {
@@ -411,13 +439,15 @@ export default function SceneManager({
   scrollProgress,
   hoveredCard,
   onHeadPositionUpdate,
-  sparkActive
+  sparkActive,
+  serviceIndex = 0,
 }: {
   activeSection: number;
   scrollProgress: MotionValue<number>;
   hoveredCard: HoveredCardState | null;
   onHeadPositionUpdate: (pos: { x: number; y: number }) => void;
   sparkActive: boolean;
+  serviceIndex?: number;
 }) {
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}>
@@ -428,12 +458,13 @@ export default function SceneManager({
         <directionalLight color="#00ff88" intensity={1.2} position={[3, 5, 2]} castShadow />
         <directionalLight color="#004422" intensity={0.4} position={[-3, 2, -1]} />
         <ambientLight intensity={0.15} />
-        <WebGLSparkSystem active={sparkActive && activeSection === 0} />
+        <WebGLSparkSystem active={sparkActive && (activeSection === 0 || activeSection === 2)} />
         <ArchitectModel
           hoveredCard={hoveredCard}
           onHeadPositionUpdate={onHeadPositionUpdate}
           activeSection={activeSection}
           scrollProgress={scrollProgress}
+          serviceIndex={serviceIndex}
         />
       </Canvas>
     </div>

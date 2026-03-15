@@ -1,28 +1,148 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
 import { motion, useTransform, MotionValue } from "framer-motion";
 
-// ─── Card Content ────────────────────────────────────────
+// ─── Principle Data ───────────────────────────────────────
 const PRINCIPLES = [
   {
-    label: "01_PHILOSOPHY",
+    num: "01",
+    label: "PHILOSOPHY",
+    claim: "ARCHITECTS,\nNOT BUILDERS",
     text: "We don't build websites. We architect digital ecosystems that convert visitors into believers.",
   },
   {
-    label: "02_APPROACH",
+    num: "02",
+    label: "APPROACH",
+    claim: "CRAFT OVER\nCONVENIENCE",
     text: "Every pixel earns its place. Every interaction is designed to resonate. No templates. No shortcuts.",
   },
   {
-    label: "03_COMMITMENT",
+    num: "03",
+    label: "COMMITMENT",
+    claim: "YOUR BRAND,\nOUR OBSESSION",
     text: "Small team. Direct collaboration. We treat your brand like our own because your success is ours.",
   },
 ];
 
-// ─── SVG Blueprint Grid ─────────────────────────────────
+// ─── Principle Entry ──────────────────────────────────────
+function PrincipleEntry({
+  num,
+  label,
+  claim,
+  text,
+  index,
+  progress,
+}: {
+  num: string;
+  label: string;
+  claim: string;
+  text: string;
+  index: number;
+  progress: MotionValue<number>;
+}) {
+  const start = 0.28 + index * 0.07;
+  const end = start + 0.08;
+
+  const opacity = useTransform(progress, [start, end, 0.87, 0.94], [0, 1, 1, 0]);
+  const y = useTransform(progress, [start, end], [22, 0]);
+  const lineScaleX = useTransform(progress, [start, start + 0.05], [0, 1]);
+
+  return (
+    <motion.div
+      style={{
+        position: "relative",
+        opacity,
+        y,
+        willChange: "transform, opacity",
+      }}
+    >
+      {/* Hairline above */}
+      <motion.div
+        style={{
+          height: 1,
+          background: "var(--kona-accent)",
+          scaleX: lineScaleX,
+          transformOrigin: "left center",
+          opacity: 0.35,
+          marginBottom: 14,
+        }}
+      />
+
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 18 }}>
+        {/* Ghost index number */}
+        <div
+          style={{
+            fontFamily: "var(--font-monument), sans-serif",
+            fontSize: "clamp(36px, 4.5vw, 60px)",
+            fontWeight: 800,
+            lineHeight: 1,
+            color: "var(--kona-accent)",
+            opacity: 0.1,
+            flexShrink: 0,
+            marginTop: -2,
+            letterSpacing: "-0.05em",
+            userSelect: "none",
+          }}
+        >
+          {num}
+        </div>
+
+        <div style={{ flex: 1 }}>
+          {/* Mono category label */}
+          <div
+            style={{
+              fontFamily: "var(--font-geist-mono), monospace",
+              fontSize: 9,
+              fontWeight: 500,
+              letterSpacing: "0.28em",
+              textTransform: "uppercase",
+              color: "var(--kona-accent)",
+              marginBottom: 7,
+            }}
+          >
+            {label}
+          </div>
+
+          {/* Bold claim — the memorable hook */}
+          <div
+            style={{
+              fontFamily: "var(--font-monument), sans-serif",
+              fontSize: "clamp(13px, 1.5vw, 18px)",
+              fontWeight: 800,
+              letterSpacing: "0.05em",
+              textTransform: "uppercase",
+              color: "rgba(255, 255, 255, 0.95)",
+              lineHeight: 1.2,
+              marginBottom: 10,
+              whiteSpace: "pre-line",
+            }}
+          >
+            {claim}
+          </div>
+
+          {/* Body */}
+          <p
+            style={{
+              fontFamily: "var(--font-geist-sans), sans-serif",
+              fontSize: "clamp(11px, 1vw, 13px)",
+              fontWeight: 300,
+              lineHeight: 1.75,
+              color: "rgba(255, 255, 255, 0.48)",
+              margin: 0,
+            }}
+          >
+            {text}
+          </p>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── Blueprint Grid (unchanged) ───────────────────────────
 function BlueprintGrid({ progress }: { progress: MotionValue<number> }) {
   const dashOffset = useTransform(progress, [0.15, 0.4], [1000, 0]);
-  const gridOpacity = useTransform(progress, [0.15, 0.25, 0.85, 1.0], [0, 0.12, 0.12, 0]);
+  const gridOpacity = useTransform(progress, [0.15, 0.25, 0.85, 1.0], [0, 0.08, 0.08, 0]);
 
   return (
     <motion.svg
@@ -57,154 +177,55 @@ function BlueprintGrid({ progress }: { progress: MotionValue<number> }) {
           style={{ strokeDashoffset: dashOffset }}
         />
       ))}
-      <motion.line
-        x1="50" y1="550" x2="750" y2="50"
-        stroke="var(--kona-accent)"
-        strokeWidth="0.3"
-        strokeDasharray="1000"
-        style={{ strokeDashoffset: dashOffset }}
-      />
     </motion.svg>
   );
 }
 
-// ─── Self-Drawing Border Card ────────────────────────────
-function PrincipleCard({
-  label,
-  text,
-  index,
-  progress,
-}: {
-  label: string;
-  text: string;
-  index: number;
-  progress: MotionValue<number>;
-}) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [dims, setDims] = useState({ w: 0, h: 0, perimeter: 0 });
-
-  useEffect(() => {
-    if (cardRef.current) {
-      const { width, height } = cardRef.current.getBoundingClientRect();
-      setDims({ w: width, h: height, perimeter: 2 * (width + height) });
-    }
-  }, []);
-
-  const start = 0.14 + index * 0.04;
-  const borderEnd = start + 0.12;
-  const contentStart = start + 0.06;
-  const contentEnd = contentStart + 0.08;
-
-  const dashOffset = useTransform(
-    progress,
-    [start, borderEnd],
-    [dims.perimeter || 800, 0]
-  );
-  const contentOpacity = useTransform(progress, [contentStart, contentEnd], [0, 1]);
-
-  return (
-    <motion.div
-      ref={cardRef}
-      style={{
-        position: "relative",
-        padding: "24px 28px",
-        background: "var(--grad-subtle)",
-        y: useTransform(
-          progress,
-          [start, borderEnd, 0.85, 0.95],
-          [30, 0, 0, -80]
-        ),
-        opacity: useTransform(
-          progress,
-          [start, start + 0.03, 0.85, 0.95],
-          [0, 1, 1, 0]
-        ),
-        willChange: "transform, opacity",
-      }}
-    >
-      {dims.w > 0 && (
-        <svg
-          width={dims.w}
-          height={dims.h}
-          style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
-        >
-          <motion.rect
-            x="0.5" y="0.5"
-            width={dims.w - 1} height={dims.h - 1}
-            fill="none"
-            stroke="var(--kona-accent)"
-            strokeOpacity={0.4}
-            strokeWidth="1"
-            strokeDasharray={dims.perimeter}
-            style={{ strokeDashoffset: dashOffset }}
-          />
-        </svg>
-      )}
-
-      <motion.div
-        style={{
-          position: "absolute", top: 0, left: 0, right: 0, height: 1,
-          background: "var(--kona-accent)",
-          opacity: useTransform(progress, [contentStart, contentEnd], [0, 0.6]),
-        }}
-      />
-
-      <motion.div style={{ opacity: contentOpacity }}>
-        <div style={{
-          fontFamily: "var(--font-geist-mono), monospace",
-          fontSize: 10, fontWeight: 600, letterSpacing: "0.15em",
-          color: "var(--kona-accent)", textTransform: "uppercase", marginBottom: 12,
-        }}>
-          {label}
-        </div>
-        <p style={{
-          fontFamily: "var(--font-geist-sans), sans-serif",
-          fontSize: 15, fontWeight: 300, lineHeight: 1.7,
-          color: "var(--kona-text)", margin: 0,
-        }}>
-          {text}
-        </p>
-      </motion.div>
-    </motion.div>
-  );
-}
-
-// ─── Main Blueprint Section ──────────────────────────────
+// ─── Main Section ─────────────────────────────────────────
 interface BlueprintSectionProps {
   progress: MotionValue<number>;
   visible: boolean;
 }
 
 export default function BlueprintSection({ progress, visible }: BlueprintSectionProps) {
-  // ── Curtain: rise up to cover viewport, then split open ──
+  // Curtain: rise up, then split
   const curtainY = useTransform(progress, [0, 0.05], [100, 0]);
   const curtainX = useTransform(progress, [0.06, 0.14], [0, 105]);
 
-  // ── Ghost "02" visible through the curtain gap ──
-  const ghostOpacity = useTransform(progress, [0.04, 0.06, 0.12, 0.18], [0, 0.04, 0.04, 0]);
+  // Section label
+  const headerOpacity = useTransform(progress, [0.10, 0.14, 0.88, 0.95], [0, 1, 1, 0]);
+  const headerY = useTransform(progress, [0.10, 0.14], [14, 0]);
 
-  // ── Section header ──
-  const headerOpacity = useTransform(progress, [0.08, 0.12, 0.88, 0.95], [0, 1, 1, 0]);
-  const headerY = useTransform(progress, [0.08, 0.12, 0.88, 0.95], [20, 0, 0, -40]);
+  // Title line 1 — thin weight
+  const t1Opacity = useTransform(progress, [0.13, 0.18, 0.88, 0.95], [0, 1, 1, 0]);
+  const t1X = useTransform(progress, [0.13, 0.18], [-28, 0]);
 
-  // ── Title ──
-  const titleOpacity = useTransform(progress, [0.1, 0.14, 0.88, 0.95], [0, 1, 1, 0]);
-  const titleY = useTransform(progress, [0.1, 0.14, 0.88, 0.95], [20, 0, 0, -40]);
+  // Title line 2 — bold green
+  const t2Opacity = useTransform(progress, [0.17, 0.22, 0.88, 0.95], [0, 1, 1, 0]);
+  const t2X = useTransform(progress, [0.17, 0.22], [-28, 0]);
+
+  // Divider hairline
+  const divOpacity = useTransform(progress, [0.22, 0.26, 0.88, 0.95], [0, 1, 1, 0]);
+  const divScaleX = useTransform(progress, [0.22, 0.30], [0, 1]);
+
+  // Bottom annotation
+  const footerOpacity = useTransform(progress, [0.56, 0.62, 0.88, 0.95], [0, 1, 1, 0]);
+
+  // Boundary rule
+  const ruleOpacity = useTransform(progress, [0.10, 0.14, 0.88, 0.95], [0, 0.14, 0.14, 0]);
 
   return (
     <>
-      {/* ══════ CURTAINS — fixed, full viewport, covers everything ══════ */}
+      {/* ══════ CURTAINS ══════ */}
       <motion.div
         style={{
           position: "fixed",
           inset: 0,
           zIndex: 20,
           pointerEvents: "none",
-          // Hide curtains entirely once they've fully opened
           opacity: useTransform(progress, [0, 0.001, 0.16, 0.17], [0, 1, 1, 0]),
         }}
       >
-        {/* Left curtain */}
         <motion.div
           style={{
             position: "absolute",
@@ -216,7 +237,6 @@ export default function BlueprintSection({ progress, visible }: BlueprintSection
             x: useTransform(curtainX, (v) => `${-v}%`),
           }}
         />
-        {/* Right curtain */}
         <motion.div
           style={{
             position: "absolute",
@@ -230,7 +250,7 @@ export default function BlueprintSection({ progress, visible }: BlueprintSection
         />
       </motion.div>
 
-      {/* ══════ NEW WORLD — the Blueprint scene ══════ */}
+      {/* ══════ SCENE ══════ */}
       <div
         style={{
           position: "relative",
@@ -240,84 +260,159 @@ export default function BlueprintSection({ progress, visible }: BlueprintSection
           pointerEvents: "none",
         }}
       >
-        {/* Background is transparent — scene backdrop in home-page handles the world */}
-
-        {/* Blueprint grid */}
+        {/* Subtle blueprint grid */}
         <BlueprintGrid progress={progress} />
 
-        {/* Ghost "02" number */}
+        {/* Vertical boundary rule at the left edge of the content zone */}
         <motion.div
           style={{
             position: "absolute",
-            top: "50%", left: "50%",
-            transform: "translate(-50%, -50%)",
-            fontFamily: "var(--font-monument), sans-serif",
-            fontSize: "clamp(120px, 20vw, 280px)",
-            fontWeight: 900,
-            color: "var(--kona-accent)",
-            opacity: ghostOpacity,
-            userSelect: "none",
-            pointerEvents: "none",
-            lineHeight: 1,
+            top: "8vh",
+            bottom: "8vh",
+            right: "calc(52% + 2px)",
+            width: 1,
+            background: "linear-gradient(to bottom, transparent, var(--kona-accent), transparent)",
+            opacity: ruleOpacity,
           }}
-        >
-          02
-        </motion.div>
+        />
 
-        {/* ── Content — right-aligned, architect stays on the left ── */}
+        {/* ── Content column (right ~52%) ── */}
         <div
           style={{
             position: "absolute",
-            top: 0, bottom: 0, right: "5%",
-            width: "55%",
+            top: 0,
+            bottom: 0,
+            right: "4%",
+            width: "50%",
             display: "flex",
             flexDirection: "column",
-            justifyContent: "flex-end",
-            gap: 24,
+            justifyContent: "center",
             zIndex: 2,
+            paddingTop: "10vh",
             paddingBottom: "6vh",
-            paddingTop: "35vh",
+            gap: 0,
           }}
         >
+          {/* Section label */}
           <motion.div
             style={{
-              opacity: headerOpacity, y: headerY,
+              opacity: headerOpacity,
+              y: headerY,
               fontFamily: "var(--font-geist-mono), monospace",
-              fontSize: 12, fontWeight: 500,
-              letterSpacing: "0.2em", textTransform: "uppercase",
+              fontSize: 10,
+              fontWeight: 500,
+              letterSpacing: "0.28em",
+              textTransform: "uppercase",
               color: "var(--kona-accent)",
+              marginBottom: 24,
               willChange: "transform, opacity",
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
             }}
           >
-            02 — The Blueprint
+            <span style={{ opacity: 0.5 }}>◆</span>
+            <span>02 — The Blueprint</span>
           </motion.div>
 
-          <motion.h2
+          {/* Headline: counter-weight contrast */}
+          <div style={{ marginBottom: 28 }}>
+            <motion.div
+              style={{
+                opacity: t1Opacity,
+                x: t1X,
+                fontFamily: "var(--font-monument), sans-serif",
+                fontSize: "clamp(24px, 3.4vw, 52px)",
+                fontWeight: 200,
+                letterSpacing: "0.02em",
+                textTransform: "uppercase",
+                color: "rgba(255, 255, 255, 0.88)",
+                lineHeight: 1.1,
+                willChange: "transform, opacity",
+              }}
+            >
+              Not an agency.
+            </motion.div>
+            <motion.div
+              style={{
+                opacity: t2Opacity,
+                x: t2X,
+                fontFamily: "var(--font-monument), sans-serif",
+                fontSize: "clamp(24px, 3.4vw, 52px)",
+                fontWeight: 800,
+                letterSpacing: "0.02em",
+                textTransform: "uppercase",
+                color: "var(--kona-accent)",
+                lineHeight: 1.1,
+                willChange: "transform, opacity",
+              }}
+            >
+              A creative partner.
+            </motion.div>
+          </div>
+
+          {/* Divider — scans left to right */}
+          <motion.div
             style={{
-              opacity: titleOpacity, y: titleY,
-              fontFamily: "var(--font-geist-sans), sans-serif",
-              fontSize: "clamp(28px, 3.5vw, 48px)",
-              fontWeight: 200, lineHeight: 1.2,
-              color: "white", margin: 0,
+              height: 1,
+              background: "linear-gradient(to right, var(--kona-accent), rgba(0,255,136,0.1))",
+              opacity: divOpacity,
+              scaleX: divScaleX,
+              transformOrigin: "left center",
+              marginBottom: 28,
               willChange: "transform, opacity",
             }}
-          >
-            Not an agency.
-            <br />
-            <span style={{ color: "#00ff88" }}>A creative partner.</span>
-          </motion.h2>
+          />
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 16, maxWidth: 520 }}>
+          {/* Principles */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
             {PRINCIPLES.map((p, i) => (
-              <PrincipleCard
-                key={p.label}
+              <PrincipleEntry
+                key={p.num}
+                num={p.num}
                 label={p.label}
+                claim={p.claim}
                 text={p.text}
                 index={i}
                 progress={progress}
               />
             ))}
           </div>
+
+          {/* Footer annotation */}
+          <motion.div
+            style={{
+              opacity: footerOpacity,
+              marginTop: 30,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              willChange: "opacity",
+            }}
+          >
+            <span
+              style={{
+                fontFamily: "var(--font-geist-mono), monospace",
+                fontSize: 9,
+                letterSpacing: "0.22em",
+                color: "rgba(255, 255, 255, 0.18)",
+                textTransform: "uppercase",
+              }}
+            >
+              Konaverse · Studio · Europe
+            </span>
+            <span
+              style={{
+                fontFamily: "var(--font-geist-mono), monospace",
+                fontSize: 9,
+                letterSpacing: "0.22em",
+                color: "rgba(0, 255, 136, 0.28)",
+                textTransform: "uppercase",
+              }}
+            >
+              Est. 2024
+            </span>
+          </motion.div>
         </div>
       </div>
     </>

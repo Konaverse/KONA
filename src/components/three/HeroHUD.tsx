@@ -124,9 +124,8 @@ function VideoCard({ visible, p, onHover, onHoverEnd }: any) {
   // FLIP: capture card rect at click time
   const originRect = useRef<DOMRect | null>(null);
 
-  // GPU-accelerated: scale from 320x180 to ~820x461 (2.5625x), right-aligned via transformOrigin
-  const scale = useTransform(p, [0, 1], [1, 2.5625]);
-  const y = useTransform(p, [0, 1], [0, 80]);
+  const y = useTransform(p, [0, 1], [0, -400]);
+  const opacity = useTransform(p, [0, 0.4], [1, 0]);
   const uiOpacity = useTransform(p, [0, 0.2], [1, 0]);
 
   const handleExpand = () => {
@@ -169,16 +168,15 @@ function VideoCard({ visible, p, onHover, onHoverEnd }: any) {
         onClick={handleExpand}
         style={{
           position: "relative", cursor: "pointer", pointerEvents: "auto",
-          scale, y, transformOrigin: "right top", zIndex: 20,
+          y, opacity: visible ? opacity : 0, zIndex: 20,
           alignSelf: "flex-end",
           willChange: "transform",
         }}
       >
-        <motion.div style={{
+        <div style={{
           background: "rgba(255, 255, 255, 0.03)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
           border: `1px solid rgba(0, 255, 136, 0.1)`, borderRadius: 12, padding: 0, overflow: "hidden",
           width: 320, height: 180,
-          opacity: visible ? 1 : 0
         }}>
           <div style={{ position: "relative", width: "100%", height: "100%", background: "#000" }}>
             <video src="/konavers_video.mp4" muted loop playsInline autoPlay style={{ width: "100%", height: "100%", objectFit: "cover" }} />
@@ -189,7 +187,7 @@ function VideoCard({ visible, p, onHover, onHoverEnd }: any) {
               <div style={{ fontFamily: "var(--font-monument), sans-serif", fontSize: 9, fontWeight: 800, color: "rgba(255, 255, 255, 0.5)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Latest Build</div>
             </motion.div>
           </div>
-        </motion.div>
+        </div>
       </motion.div>
 
       <AnimatePresence>

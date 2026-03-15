@@ -23,7 +23,8 @@
       "Bash(grep -o \"translate-x-\\\\[50px\\\\]\" C:\\\\Users\\\\konst\\\\Projects\\\\KONA\\\\.next\\\\dev\\\\static\\\\chunks\\\\*root-of-the-server*.css 2>/dev/null | head -1 || echo \"Checking direct translation...\")",
       "Bash(head -100 \"/cygdrive/c/Users/konst/Projects/KONA/.next/dev/static/chunks/\"*root-of-the-server*\".css\" 2>/dev/null | tail -50)",
       "WebSearch",
-      "Bash(cd \"C:/Users/konst/Projects/KONA\" && PATH=\"/c/Program Files/nodejs:$PATH\" npx tsc --noEmit 2>&1 | head -40)"
+      "Bash(cd \"C:/Users/konst/Projects/KONA\" && PATH=\"/c/Program Files/nodejs:$PATH\" npx tsc --noEmit 2>&1 | head -40)",
+      "Bash(node_modules/.bin/tsc --noEmit 2>&1 | head -50)"
     ]
   }
 }
