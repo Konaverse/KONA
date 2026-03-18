@@ -2,14 +2,19 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, useSpring, useMotionValueEvent } from "framer-motion";
-import ArchitectHero from "@/components/three/ArchitectHero";
+import ArchitectHeroV2 from "@/components/three/ArchitectHeroV2";
 import SceneManager from "@/components/three/SceneManager";
 import CylinderNav from "@/components/layout/CylinderNav";
-import ParticleField from "@/components/effects/ParticleField";
 import BlueprintSection from "@/components/sections/BlueprintSection";
 import ClientsSection from "@/components/sections/ClientsSection";
 import ServicesSection from "@/components/sections/ServicesSection";
 import ServicesBackground from "@/components/three/ServicesBackground";
+import ProjectsSection from "@/components/sections/ProjectsSection";
+import GlobeBackground from "@/components/three/GlobeBackground";
+import HeroPanel, { ProjectSlideshow } from "@/components/sections/HeroPanel";
+import GlassPanel from "@/components/sections/GlassPanel";
+import MusicToggle from "@/components/ui/MusicToggle";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { HoveredCardState } from "@/components/three/SceneManager";
 
 
@@ -25,6 +30,7 @@ function getSvcIndex(p: number): number {
 }
 
 export default function HomePage() {
+  const isMobile = useMediaQuery("(max-width: 1023px)");
   const [entranceComplete, setEntranceComplete] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [serviceSolIndex, setServiceSolIndex] = useState(0);
@@ -46,8 +52,7 @@ export default function HomePage() {
   const blueprintWrapperRef = useRef<HTMLDivElement>(null);
   const clientsWrapperRef = useRef<HTMLDivElement>(null);
   const servicesWrapperRef = useRef<HTMLDivElement>(null);
-  const interludeWrapperRef = useRef<HTMLDivElement>(null);
-  const textWrapperRef = useRef<HTMLDivElement>(null);
+  const projectsWrapperRef = useRef<HTMLDivElement>(null);
 
   // ── Section-scoped scroll progress ──
   const { scrollYProgress: heroScrollY } = useScroll({
@@ -66,13 +71,12 @@ export default function HomePage() {
     target: servicesWrapperRef,
     offset: ["start start", "end start"],
   });
-  const { scrollYProgress: interludeScrollY } = useScroll({
-    target: interludeWrapperRef,
-    offset: ["start start", "end start"],
-  });
-  const { scrollYProgress: textScrollY } = useScroll({
-    target: textWrapperRef,
-    offset: ["start start", "end start"],
+  const { scrollYProgress: projectsScrollY } = useScroll({
+    target: projectsWrapperRef,
+    // "end end" keeps the sticky viewport active for the full 0→1 range.
+    // With "end start" the sticky element would unstick at progress 0.9 (1000-100/1000),
+    // cutting off Act 3 project 3 which starts at 0.9067.
+    offset: ["start start", "end end"],
   });
 
   // ── Smoothed values for animation ──
@@ -96,7 +100,7 @@ export default function HomePage() {
     damping: 28,
     restDelta: 0.001,
   });
-  const smoothedTextProgress = useSpring(textScrollY, {
+  const smoothedProjectsProgress = useSpring(projectsScrollY, {
     stiffness: 80,
     damping: 28,
     restDelta: 0.001,
@@ -105,6 +109,7 @@ export default function HomePage() {
   // ── Scene environment: swap instantly behind the curtain ──
   const [behindCurtain, setBehindCurtain] = useState(false);
   const [behindServicesCurtain, setBehindServicesCurtain] = useState(false);
+  const [behindProjectsCurtain, setBehindProjectsCurtain] = useState(false);
 
   // ── activeIndex — raw scroll for instant section detection ──
   useMotionValueEvent(blueprintScrollY, "change", (val) => {
@@ -122,16 +127,8 @@ export default function HomePage() {
     else if (blueprintScrollY.get() > 0.02) setActiveIndex(1);
     else setActiveIndex(0);
   });
-  useMotionValueEvent(interludeScrollY, "change", (val) => {
+  useMotionValueEvent(projectsScrollY, "change", (val) => {
     if (val > 0.02) setActiveIndex(4);
-    else if (servicesScrollY.get() > 0.02) setActiveIndex(3);
-    else if (clientsScrollY.get() > 0.02) setActiveIndex(2);
-    else if (blueprintScrollY.get() > 0.02) setActiveIndex(1);
-    else setActiveIndex(0);
-  });
-  useMotionValueEvent(textScrollY, "change", (val) => {
-    if (val > 0.02) setActiveIndex(5);
-    else if (interludeScrollY.get() > 0.02) setActiveIndex(4);
     else if (servicesScrollY.get() > 0.02) setActiveIndex(3);
     else if (clientsScrollY.get() > 0.02) setActiveIndex(2);
     else if (blueprintScrollY.get() > 0.02) setActiveIndex(1);
@@ -150,6 +147,11 @@ export default function HomePage() {
     if (val < 0.09 && behindServicesCurtain) setBehindServicesCurtain(false);
     setServiceSolIndex(getSvcIndex(val));
   });
+  // ── behindProjectsCurtain — hides services once the projects curtain covers the screen ──
+  useMotionValueEvent(smoothedProjectsProgress, "change", (val) => {
+    if (val >= 0.05 && !behindProjectsCurtain) setBehindProjectsCurtain(true);
+    if (val < 0.05 && behindProjectsCurtain) setBehindProjectsCurtain(false);
+  });
 
   // ── Scroll lock (replaces overflowY on container) ──
   useEffect(() => {
@@ -158,15 +160,23 @@ export default function HomePage() {
   }, [entranceComplete]);
 
   // ── Welcome text — hero-scoped ──
+  const heroPlaceholderOpacity = useTransform(heroScrollY, [0, 0.15], [1, 0]);
+  // Parallax exit — each layer moves at a different speed
+  const heroPanelY = useTransform(heroScrollY, [0, 0.2], [0, -120]);
+  const heroSlideshowY = useTransform(heroScrollY, [0, 0.2], [0, -200]);
+  const heroPanelScale = useTransform(heroScrollY, [0, 0.15], [1, 0.96]);
   const lineScaleX = useTransform(heroScrollY, [0.40, 0.47], [0, 1]);
-  const lineOpacity = useTransform(heroScrollY, [0.40, 0.44, 0.60, 0.64], [0, 1, 1, 0]);
+  const lineOpacity = useTransform(heroScrollY, [0.40, 0.44, 0.90, 0.99], [0, 1, 1, 0]);
   const topTextY = useTransform(heroScrollY, [0.44, 0.52], [0, -32]);
-  const topTextOpacity = useTransform(heroScrollY, [0.44, 0.47, 0.60, 0.64], [0, 1, 1, 0]);
+  const topTextOpacity = useTransform(heroScrollY, [0.44, 0.47, 0.90, 0.99], [0, 1, 1, 0]);
   const bottomTextY = useTransform(heroScrollY, [0.47, 0.52], [0, 28]);
-  const bottomTextOpacity = useTransform(heroScrollY, [0.47, 0.52, 0.60, 0.64], [0, 1, 1, 0]);
+  const bottomTextOpacity = useTransform(heroScrollY, [0.47, 0.52, 0.90, 0.99], [0, 1, 1, 0]);
 
   return (
     <>
+      {/* ══════ Music toggle — appears after hero ══════ */}
+      <MusicToggle scrollProgress={heroScrollY} />
+
       {/* ══════ WELCOME TEXT — fixed overlay, scroll-driven ══════ */}
       <div
         style={{
@@ -233,7 +243,7 @@ export default function HomePage() {
           position: "fixed",
           inset: 0,
           zIndex: -1,
-          background: "transparent",
+          background: "#000000",
         }}
       >
         {/* Blueprint world — swaps instantly behind the curtain */}
@@ -248,6 +258,9 @@ export default function HomePage() {
         )}
       </motion.div>
 
+      {/* ══════ Globe background — hero section ══════ */}
+      <GlobeBackground heroScrollY={smoothedHeroProgress} />
+
       {/* ══════ Services Background — mounts behind the curtain, unmounts behind it too ══════ */}
       {/* Rendered BEFORE SceneManager so SceneManager (alpha:true) paints on top at the same zIndex */}
       {behindServicesCurtain && <ServicesBackground serviceIndex={serviceSolIndex} />}
@@ -260,11 +273,7 @@ export default function HomePage() {
         onHeadPositionUpdate={setHeadPosition}
         sparkActive={entranceComplete}
         serviceIndex={serviceSolIndex}
-        textProgress={smoothedTextProgress}
       />
-
-      {/* ══════ Particles — hidden instantly when curtains close ══════ */}
-      {entranceComplete && !behindCurtain && <ParticleField />}
 
       {/* ══════ Main Scroll Container ══════ */}
       <div
@@ -277,13 +286,33 @@ export default function HomePage() {
         {/* Hero wrapper — owns its own scroll progress */}
         <div ref={heroWrapperRef} style={{ height: "200vh", position: "relative" }}>
           <div style={{ position: "sticky", top: 0, height: "100vh", width: "100%", overflow: "visible" }}>
-            <ArchitectHero
+            <ArchitectHeroV2
               onEntranceComplete={() => setEntranceComplete(true)}
               hoveredCard={hoveredCard}
               onHoverCard={setHoveredCard}
               headPosition={headPosition}
               scrollProgress={smoothedHeroProgress}
             />
+
+            {/* ── Hero glassmorphism panel ── */}
+            <GlassPanel opacity={heroPlaceholderOpacity} y={heroPanelY} scale={heroPanelScale}>
+              <HeroPanel />
+            </GlassPanel>
+
+            {/* ── Bottom-left project slideshow ── */}
+            <motion.div
+              style={{
+                position: "absolute",
+                bottom: "24px",
+                left: "24px",
+                zIndex: 10,
+                pointerEvents: "auto",
+                opacity: heroPlaceholderOpacity,
+                y: heroSlideshowY,
+              }}
+            >
+              <ProjectSlideshow />
+            </motion.div>
           </div>
         </div>
 
@@ -308,22 +337,27 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Services wrapper — owns its own scroll progress */}
+        {/* Services wrapper — scroll tracking only, content is fixed */}
         <div ref={servicesWrapperRef} style={{ height: "1000vh", position: "relative" }}>
-          <div style={{ position: "sticky", top: 0, height: "100vh", width: "100%", overflow: "hidden" }}>
+          <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "100vh", overflow: "hidden" }}>
             <ServicesSection
               progress={smoothedServicesProgress}
-              visible={activeIndex >= 3}
+              visible={activeIndex >= 3 && !behindProjectsCurtain}
             />
           </div>
         </div>
 
-
-        {/* Interlude spacer — transparent, architect drifts to center */}
-        <div ref={interludeWrapperRef} style={{ height: "200vh", position: "relative" }} />
-
-        {/* Text section — 3D depth text animates through scene */}
-        <div ref={textWrapperRef} style={{ height: "300vh", position: "relative" }} />
+        {/* Projects wrapper — 1600vh on desktop for scroll-driven acts; auto on mobile */}
+        {/* Negative margin overlaps the end of services so the curtain sweeps in
+            while the fixed services content is still visible on screen. */}
+        <div ref={projectsWrapperRef} style={{ height: isMobile ? "auto" : "1600vh", position: "relative", marginTop: isMobile ? 0 : "-100vh" }}>
+          <div style={{ position: isMobile ? "relative" : "sticky", top: 0, height: isMobile ? "auto" : "100vh", width: "100%", overflow: isMobile ? "visible" : "hidden" }}>
+            <ProjectsSection
+              progress={smoothedProjectsProgress}
+              visible={isMobile || activeIndex >= 3}
+            />
+          </div>
+        </div>
 
       </div>
     </>

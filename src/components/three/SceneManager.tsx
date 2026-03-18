@@ -5,7 +5,6 @@ import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
 import { motion, useTransform, MotionValue } from "framer-motion";
-import DepthText from "./DepthText";
 
 // Architect pose per service (index 0-4)
 const SERVICE_ANIMS = ["nod", "armGesture", "looking", "idle", "lookingBehind"] as const;
@@ -87,12 +86,12 @@ const boltFragmentShader = `
 function WebGLSparkSystem({ active }: { active: boolean }) {
   const meshRef = useRef<THREE.InstancedMesh>(null);
   const MAX_INSTANCES = 500;
-  
+
   const startAttr = useMemo(() => new Float32Array(MAX_INSTANCES * 3), []);
   const endAttr = useMemo(() => new Float32Array(MAX_INSTANCES * 3), []);
   const opacityAttr = useMemo(() => new Float32Array(MAX_INSTANCES), []);
   const widthAttr = useMemo(() => new Float32Array(MAX_INSTANCES), []);
-  
+
   const arcsRef = useRef<{
     life: number;
     segments: { start: THREE.Vector3; end: THREE.Vector3; width: number }[];
@@ -103,34 +102,34 @@ function WebGLSparkSystem({ active }: { active: boolean }) {
 
     if (active && Math.random() < 0.18 && arcsRef.current.length < 12) {
       const segments: any[] = [];
-      const startX = (Math.random() - 0.5) * 5.5; 
-      const startY = 1.15; 
-      
+      const startX = (Math.random() - 0.5) * 5.5;
+      const startY = 1.15;
+
       const generateArc = (start: THREE.Vector3, dir: THREE.Vector3, depth: number, width: number) => {
         if (depth <= 0) return;
         let curr = start.clone();
         const steps = 4 + Math.floor(Math.random() * 3);
-        
+
         for (let i = 0; i < steps; i++) {
           let next = curr.clone().add(dir.clone().multiplyScalar(0.12));
           next.x += (Math.random() - 0.5) * 0.18;
           next.y += (Math.random() - 0.2) * 0.18;
           next.z += (Math.random() - 0.5) * 0.08;
-          
+
           segments.push({ start: curr.clone(), end: next.clone(), width });
           curr = next.clone();
-          
+
           if (Math.random() < 0.25 && depth > 1) {
-            const branchDir = dir.clone().applyAxisAngle(new THREE.Vector3(0,0,1), (Math.random()-0.5)*2.5);
+            const branchDir = dir.clone().applyAxisAngle(new THREE.Vector3(0, 0, 1), (Math.random() - 0.5) * 2.5);
             generateArc(curr, branchDir, depth - 1, width * 0.5);
           }
         }
       };
 
       generateArc(
-        new THREE.Vector3(startX, startY, 0.05), 
-        new THREE.Vector3((Math.random() - 0.5) * 0.4, 1, 0), 
-        3, 
+        new THREE.Vector3(startX, startY, 0.05),
+        new THREE.Vector3((Math.random() - 0.5) * 0.4, 1, 0),
+        3,
         0.07
       );
       arcsRef.current.push({ life: 1.0, segments });
@@ -208,10 +207,10 @@ function ArchitectModel({
   const lookingData = useLoader(FBXLoader, LOOKING_ANIM);
   const armGestureData = useLoader(FBXLoader, ARM_GESTURE_ANIM);
   const lookingBehindData = useLoader(FBXLoader, LOOKING_BEHIND_ANIM);
-  
+
   const mixerRef = useRef<THREE.AnimationMixer | null>(null);
   const actionsRef = useRef<{ [key: string]: THREE.AnimationAction }>({});
-  
+
   const headBoneRef = useRef<THREE.Object3D | null>(null);
   const chestBoneRef = useRef<THREE.Object3D | null>(null);
   const materialsRef = useRef<THREE.Material[]>([]);
@@ -247,7 +246,7 @@ function ArchitectModel({
         const mesh = child as THREE.Mesh;
         mesh.castShadow = true;
         const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-        
+
         mats.forEach((mat) => {
           if (mat instanceof THREE.MeshStandardMaterial || mat instanceof THREE.MeshPhongMaterial) {
             const m = mat as THREE.MeshStandardMaterial;
@@ -290,7 +289,7 @@ function ArchitectModel({
   }, [baseModel, idleData, nodData, lookingData, armGestureData, lookingBehindData]);
 
   // Track current animation state
-  const currentAnimRef  = useRef<string>("idle");
+  const currentAnimRef = useRef<string>("idle");
   const serviceIndexRef = useRef(serviceIndex);
   serviceIndexRef.current = serviceIndex;
 
@@ -298,7 +297,7 @@ function ArchitectModel({
   const crossfadeTo = useCallback((target: string) => {
     if (currentAnimRef.current === target) return;
     const current = actionsRef.current[currentAnimRef.current];
-    const next    = actionsRef.current[target];
+    const next = actionsRef.current[target];
     if (!current || !next) return;
     current.fadeOut(0.5);
     next.reset().fadeIn(0.5).play();
@@ -355,17 +354,17 @@ function ArchitectModel({
 
     if (modelGroupRef.current) {
       const inInterlude = activeSection >= 4;
-      const inServices  = activeSection === 3;
-      const inClients   = activeSection === 2;
+      const inServices = activeSection === 3;
+      const inClients = activeSection === 2;
       const p = THREE.MathUtils.clamp(scrollVal / 0.5, 0, 1);
 
       // Services: right side of screen, body turned to face left
       // Lerp speed 0.06 — fast enough to fully settle while the curtain
       // still covers the viewport (curtain clears at ~progress 0.30).
-      const targetX    = inInterlude ?  0.00 : inServices ?  0.55 : inClients ? -0.55 : -0.95 * p;
-      const targetZ    = inInterlude ? -0.60 : inServices ?  0.05 : inClients ?  0.05 : -0.30 * p;
-      const targetRotY = inInterlude ?  0.00 : inServices ? -0.50 : inClients ?  0.18 :  0.60 * p;
-      const lerpSpeed  = inInterlude ?  0.04 : inServices ?  0.06 : inClients ?  0.025 : 0.1;
+      const targetX = inInterlude ? 0.00 : inServices ? 0.55 : inClients ? -0.55 : -0.70 - 0.40 * p;
+      const targetZ = inInterlude ? -0.60 : inServices ? 0.05 : inClients ? 0.05 : -0.30;
+      const targetRotY = inInterlude ? 0.00 : inServices ? -0.50 : inClients ? 0.18 : 0.60;
+      const lerpSpeed = inInterlude ? 0.04 : inServices ? 0.06 : inClients ? 0.025 : 0.1;
 
       modelGroupRef.current.position.x = THREE.MathUtils.lerp(modelGroupRef.current.position.x, targetX, lerpSpeed);
       modelGroupRef.current.position.z = THREE.MathUtils.lerp(modelGroupRef.current.position.z, targetZ, lerpSpeed);
@@ -377,7 +376,7 @@ function ArchitectModel({
       head.getWorldPosition(tempVec);
       tempVec.setY(tempVec.y + 0.1);
       tempVec.project(camera);
-      
+
       const screenX = (tempVec.x * 0.5 + 0.5) * size.width;
       const screenY = (-(tempVec.y * 0.5) + 0.5) * size.height;
 
@@ -447,7 +446,6 @@ export default function SceneManager({
   onHeadPositionUpdate,
   sparkActive,
   serviceIndex = 0,
-  textProgress,
 }: {
   activeSection: number;
   scrollProgress: MotionValue<number>;
@@ -455,13 +453,12 @@ export default function SceneManager({
   onHeadPositionUpdate: (pos: { x: number; y: number }) => void;
   sparkActive: boolean;
   serviceIndex?: number;
-  textProgress?: MotionValue<number>;
 }) {
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}>
       <Canvas gl={{ antialias: true, alpha: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 0.8 }}
-              camera={{ fov: 50, near: 0.1, far: 100, position: [0.083, 1.651, 1.225] }} shadows
-              style={{ width: "100%", height: "100%", background: "transparent" }}>
+        camera={{ fov: 50, near: 0.1, far: 100, position: [0.083, 1.651, 1.225] }} shadows
+        style={{ width: "100%", height: "100%", background: "transparent" }}>
         <CameraRig />
         <directionalLight color="#00ff88" intensity={1.2} position={[3, 5, 2]} castShadow />
         <directionalLight color="#004422" intensity={0.4} position={[-3, 2, -1]} />
@@ -474,9 +471,6 @@ export default function SceneManager({
           scrollProgress={scrollProgress}
           serviceIndex={serviceIndex}
         />
-        {activeSection >= 5 && textProgress && (
-          <DepthText progress={textProgress} />
-        )}
       </Canvas>
     </div>
   );

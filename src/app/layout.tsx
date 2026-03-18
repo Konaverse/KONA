@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Rubik_Glitch } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
-import { ConditionalNav } from "@/components/layout/conditional-nav";
+import HeroNav from "@/components/layout/HeroNav";
 import Footer from "@/components/layout/footer";
 import FluidWrapper from "@/components/fluid/fluid-wrapper";
 import { JsonLd, organizationJsonLd } from "@/components/seo/json-ld";
@@ -16,6 +16,13 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const rubikGlitch = Rubik_Glitch({
+  variable: "--font-rubik-glitch",
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
 });
 
 const monumentExtended = localFont({
@@ -122,9 +129,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${monumentExtended.variable} antialiased bg-[#111111] flex flex-col min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} ${monumentExtended.variable} ${rubikGlitch.variable} antialiased bg-[#111111] flex flex-col min-h-screen`}
       >
         <JsonLd data={organizationJsonLd()} />
+        <HeroNav />
         <main id="main-content" className="flex-grow">
           {children}
         </main>
