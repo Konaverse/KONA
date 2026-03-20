@@ -9,13 +9,17 @@ import BlueprintSection from "@/components/sections/BlueprintSection";
 import ClientsSection from "@/components/sections/ClientsSection";
 import ServicesSection from "@/components/sections/ServicesSection";
 import ServicesBackground from "@/components/three/ServicesBackground";
+import ProjectsIntro from "@/components/sections/ProjectsIntro";
 import ProjectsSection from "@/components/sections/ProjectsSection";
+import ProjectsMobile from "@/components/sections/ProjectsMobile";
+import HolographicTableBackground from "@/components/three/HolographicTableBackground";
 import GlobeBackground from "@/components/three/GlobeBackground";
 import HeroPanel, { ProjectSlideshow } from "@/components/sections/HeroPanel";
 import GlassPanel from "@/components/sections/GlassPanel";
 import MusicToggle from "@/components/ui/MusicToggle";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { HoveredCardState } from "@/components/three/SceneManager";
+import { ACT_1_START, ACT_2_START, ACT_3_START } from "@/components/sections/projects-timing";
 
 
 // Mirror of ServicesSection timing — used to lift serviceSolIndex for SceneManager + ServicesBackground
@@ -39,6 +43,9 @@ export default function HomePage() {
   const [hoveredCard, setHoveredCard] = useState<HoveredCardState | null>(null);
   const [headPosition, setHeadPosition] = useState({ x: 0, y: 0 });
 
+  // ── Projects active act (for holographic table color) ──
+  const [projectsActiveAct, setProjectsActiveAct] = useState(0);
+
   // ── Welcome Text position ──
   const welcomeTop = 44; // vh
 
@@ -47,12 +54,13 @@ export default function HomePage() {
     window.scrollTo(0, 0);
   }, []);
 
-  // ── Three wrapper refs ──
+  // ── Wrapper refs ──
   const heroWrapperRef = useRef<HTMLDivElement>(null);
   const blueprintWrapperRef = useRef<HTMLDivElement>(null);
   const clientsWrapperRef = useRef<HTMLDivElement>(null);
   const servicesWrapperRef = useRef<HTMLDivElement>(null);
-  const projectsWrapperRef = useRef<HTMLDivElement>(null);
+  const projectsIntroRef = useRef<HTMLDivElement>(null);
+  const projectsActsRef = useRef<HTMLDivElement>(null);
 
   // ── Section-scoped scroll progress ──
   const { scrollYProgress: heroScrollY } = useScroll({
@@ -71,11 +79,12 @@ export default function HomePage() {
     target: servicesWrapperRef,
     offset: ["start start", "end start"],
   });
-  const { scrollYProgress: projectsScrollY } = useScroll({
-    target: projectsWrapperRef,
-    // "end end" keeps the sticky viewport active for the full 0→1 range.
-    // With "end start" the sticky element would unstick at progress 0.9 (1000-100/1000),
-    // cutting off Act 3 project 3 which starts at 0.9067.
+  const { scrollYProgress: projectsIntroScrollY } = useScroll({
+    target: projectsIntroRef,
+    offset: ["start start", "end end"],
+  });
+  const { scrollYProgress: projectsActsScrollY } = useScroll({
+    target: projectsActsRef,
     offset: ["start start", "end end"],
   });
 
@@ -100,7 +109,12 @@ export default function HomePage() {
     damping: 28,
     restDelta: 0.001,
   });
-  const smoothedProjectsProgress = useSpring(projectsScrollY, {
+  const smoothedProjectsIntroProgress = useSpring(projectsIntroScrollY, {
+    stiffness: 80,
+    damping: 28,
+    restDelta: 0.001,
+  });
+  const smoothedProjectsActsProgress = useSpring(projectsActsScrollY, {
     stiffness: 80,
     damping: 28,
     restDelta: 0.001,
@@ -127,8 +141,22 @@ export default function HomePage() {
     else if (blueprintScrollY.get() > 0.02) setActiveIndex(1);
     else setActiveIndex(0);
   });
-  useMotionValueEvent(projectsScrollY, "change", (val) => {
+  // Projects intro — sets activeIndex to 4 (projects)
+  useMotionValueEvent(projectsIntroScrollY, "change", (val) => {
     if (val > 0.02) setActiveIndex(4);
+    else if (servicesScrollY.get() > 0.02) setActiveIndex(3);
+    else if (clientsScrollY.get() > 0.02) setActiveIndex(2);
+    else if (blueprintScrollY.get() > 0.02) setActiveIndex(1);
+    else setActiveIndex(0);
+  });
+  // Projects acts — also activeIndex 4, plus active act tracking
+  useMotionValueEvent(projectsActsScrollY, "change", (val) => {
+    if (val > 0.02) {
+      setActiveIndex(4);
+      // Track active act for holographic table color shift
+      const act = val < ACT_2_START ? 0 : val < ACT_3_START ? 1 : 2;
+      setProjectsActiveAct(act);
+    } else if (projectsIntroScrollY.get() > 0.02) setActiveIndex(4);
     else if (servicesScrollY.get() > 0.02) setActiveIndex(3);
     else if (clientsScrollY.get() > 0.02) setActiveIndex(2);
     else if (blueprintScrollY.get() > 0.02) setActiveIndex(1);
@@ -147,10 +175,12 @@ export default function HomePage() {
     if (val < 0.09 && behindServicesCurtain) setBehindServicesCurtain(false);
     setServiceSolIndex(getSvcIndex(val));
   });
-  // ── behindProjectsCurtain — hides services once the projects curtain covers the screen ──
-  useMotionValueEvent(smoothedProjectsProgress, "change", (val) => {
-    if (val >= 0.05 && !behindProjectsCurtain) setBehindProjectsCurtain(true);
-    if (val < 0.05 && behindProjectsCurtain) setBehindProjectsCurtain(false);
+  // ── behindProjectsCurtain — fires at 0.20, just after curtain fully covers
+  //    viewport (CURTAIN_IN = 0.17). Services unmounts and holographic table
+  //    mounts while the curtain is still opaque, so the swap is invisible.
+  useMotionValueEvent(smoothedProjectsIntroProgress, "change", (val) => {
+    if (val >= 0.17 && !behindProjectsCurtain) setBehindProjectsCurtain(true);
+    if (val < 0.17 && behindProjectsCurtain) setBehindProjectsCurtain(false);
   });
 
   // ── Scroll lock (replaces overflowY on container) ──
@@ -265,6 +295,11 @@ export default function HomePage() {
       {/* Rendered BEFORE SceneManager so SceneManager (alpha:true) paints on top at the same zIndex */}
       {behindServicesCurtain && <ServicesBackground serviceIndex={serviceSolIndex} />}
 
+      {/* ══════ Holographic Table Background — projects section ══════ */}
+      {behindProjectsCurtain && (
+        <HolographicTableBackground activeAct={projectsActiveAct} />
+      )}
+
       {/* ══════ 3D Canvas ══════ */}
       <SceneManager
         activeSection={activeIndex}
@@ -273,6 +308,8 @@ export default function HomePage() {
         onHeadPositionUpdate={setHeadPosition}
         sparkActive={entranceComplete}
         serviceIndex={serviceSolIndex}
+        projectsAct={projectsActiveAct}
+        projectsProgress={smoothedProjectsActsProgress}
       />
 
       {/* ══════ Main Scroll Container ══════ */}
@@ -347,17 +384,36 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Projects wrapper — 1600vh on desktop for scroll-driven acts; auto on mobile */}
-        {/* Negative margin overlaps the end of services so the curtain sweeps in
-            while the fixed services content is still visible on screen. */}
-        <div ref={projectsWrapperRef} style={{ height: isMobile ? "auto" : "1600vh", position: "relative", marginTop: isMobile ? 0 : "-100vh" }}>
-          <div style={{ position: isMobile ? "relative" : "sticky", top: 0, height: isMobile ? "auto" : "100vh", width: "100%", overflow: isMobile ? "visible" : "hidden" }}>
-            <ProjectsSection
-              progress={smoothedProjectsProgress}
-              visible={isMobile || activeIndex >= 3}
-            />
+        {/* ══════ PROJECTS — three separate wrappers ══════ */}
+
+        {isMobile ? (
+          /* Mobile: single static layout for all project acts */
+          <div style={{ position: "relative" }}>
+            <ProjectsMobile />
           </div>
-        </div>
+        ) : (
+          <>
+            {/* 1) Projects intro — curtain + "Selected Work" header (sticky) */}
+            <div ref={projectsIntroRef} style={{ height: "600vh", position: "relative", marginTop: "-100vh" }}>
+              <div style={{ position: "sticky", top: 0, height: "100vh", width: "100%", overflow: "hidden" }}>
+                <ProjectsIntro
+                  progress={smoothedProjectsIntroProgress}
+                  visible={activeIndex >= 3}
+                />
+              </div>
+            </div>
+
+            {/* 2) Acts 1, 2 & 3 — Websites + Videos + Social (sticky, scroll-progress-driven) */}
+            <div ref={projectsActsRef} style={{ height: "1500vh", position: "relative" }}>
+              <div style={{ position: "sticky", top: 0, height: "100vh", width: "100%", overflow: "hidden" }}>
+                <ProjectsSection
+                  progress={smoothedProjectsActsProgress}
+                  visible={activeIndex >= 4}
+                />
+              </div>
+            </div>
+          </>
+        )}
 
       </div>
     </>

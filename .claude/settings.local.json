@@ -28,7 +28,9 @@
       "Bash(node_modules/.bin/tsc --noEmit 2>&1 | head -40)",
       "Bash(node_modules/.bin/tsc --noEmit 2>&1)",
       "Bash(cd:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(xargs grep:*)",
+      "Bash(export PATH=\"/c/Program Files/nodejs:$PATH\")"
     ]
   }
 }

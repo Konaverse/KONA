@@ -5,6 +5,7 @@ import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
 import { motion, useTransform, MotionValue } from "framer-motion";
+import ProjectScenes from "./ProjectScenes";
 
 // Architect pose per service (index 0-4)
 const SERVICE_ANIMS = ["nod", "armGesture", "looking", "idle", "lookingBehind"] as const;
@@ -194,12 +195,14 @@ function ArchitectModel({
   activeSection,
   scrollProgress,
   serviceIndex = 0,
+  projectsAct = 0,
 }: {
   hoveredCard: HoveredCardState | null;
   onHeadPositionUpdate: (pos: { x: number; y: number }) => void;
   activeSection: number;
   scrollProgress: MotionValue<number>;
   serviceIndex?: number;
+  projectsAct?: number;
 }) {
   const baseModel = useLoader(FBXLoader, BASE_MODEL);
   const idleData = useLoader(FBXLoader, IDLE_ANIM);
@@ -292,6 +295,8 @@ function ArchitectModel({
   const currentAnimRef = useRef<string>("idle");
   const serviceIndexRef = useRef(serviceIndex);
   serviceIndexRef.current = serviceIndex;
+  const projectsActRef = useRef(projectsAct);
+  projectsActRef.current = projectsAct;
 
   // Stable crossfade helper — safe to call before actions are loaded (guards internally)
   const crossfadeTo = useCallback((target: string) => {
@@ -361,9 +366,11 @@ function ArchitectModel({
       // Services: right side of screen, body turned to face left
       // Lerp speed 0.06 — fast enough to fully settle while the curtain
       // still covers the viewport (curtain clears at ~progress 0.30).
-      const targetX = inInterlude ? 0.00 : inServices ? 0.55 : inClients ? -0.55 : -0.70 - 0.40 * p;
-      const targetZ = inInterlude ? -0.60 : inServices ? 0.05 : inClients ? 0.05 : -0.30;
-      const targetRotY = inInterlude ? 0.00 : inServices ? -0.50 : inClients ? 0.18 : 0.60;
+      const inProjectsAct1 = inInterlude && projectsActRef.current === 0;
+      const inProjectsAct2 = inInterlude && projectsActRef.current === 1;
+      const targetX = inInterlude ? (inProjectsAct1 ? 0.55 : inProjectsAct2 ? -0.55 : 0.00) : inServices ? 0.55 : inClients ? -0.55 : -0.70 - 0.40 * p;
+      const targetZ = inInterlude ? (inProjectsAct1 ? 0.05 : inProjectsAct2 ? 0.05 : -0.35) : inServices ? 0.05 : inClients ? 0.05 : -0.30;
+      const targetRotY = inInterlude ? (inProjectsAct1 ? -0.45 : inProjectsAct2 ? 0.45 : 0.00) : inServices ? -0.50 : inClients ? 0.18 : 0.60;
       const lerpSpeed = inInterlude ? 0.04 : inServices ? 0.06 : inClients ? 0.025 : 0.1;
 
       modelGroupRef.current.position.x = THREE.MathUtils.lerp(modelGroupRef.current.position.x, targetX, lerpSpeed);
@@ -408,7 +415,9 @@ function ArchitectModel({
 
       const lerpS = hoveredCard ? 0.2 : 0.1;
       head.rotation.y = THREE.MathUtils.lerp(head.rotation.y, tRY, lerpS);
-      head.rotation.x = THREE.MathUtils.lerp(head.rotation.x, tRX, lerpS);
+      // Bias head downward during projects section (looking at the holographic table)
+      const headTiltBias = activeSection >= 4 ? -0.15 : 0;
+      head.rotation.x = THREE.MathUtils.lerp(head.rotation.x, tRX + headTiltBias, lerpS);
     }
 
     if (shockwaveRef.current > 0) shockwaveRef.current -= delta * 1.5;
@@ -446,6 +455,8 @@ export default function SceneManager({
   onHeadPositionUpdate,
   sparkActive,
   serviceIndex = 0,
+  projectsAct = 0,
+  projectsProgress,
 }: {
   activeSection: number;
   scrollProgress: MotionValue<number>;
@@ -453,6 +464,8 @@ export default function SceneManager({
   onHeadPositionUpdate: (pos: { x: number; y: number }) => void;
   sparkActive: boolean;
   serviceIndex?: number;
+  projectsAct?: number;
+  projectsProgress?: MotionValue<number>;
 }) {
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}>
@@ -470,7 +483,14 @@ export default function SceneManager({
           activeSection={activeSection}
           scrollProgress={scrollProgress}
           serviceIndex={serviceIndex}
+          projectsAct={projectsAct}
         />
+        {projectsProgress && (
+          <ProjectScenes
+            progress={projectsProgress}
+            visible={activeSection >= 4}
+          />
+        )}
       </Canvas>
     </div>
   );
