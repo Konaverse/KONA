@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { WEBSITE_PROJECTS } from "@/data/projects";
@@ -52,15 +53,15 @@ function FitText({
 }
 
 // ─── Video Card (2/3 of bottom row) ─────────────────────────────────────────
-function VideoCard() {
+function VideoCard({ entranceComplete }: { entranceComplete?: boolean }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [expanded, setExpanded] = useState(false);
 
-  // Pause / play based on expanded state
+  // Delay video play until entrance is complete
   useEffect(() => {
-    if (!videoRef.current) return;
+    if (!videoRef.current || !entranceComplete) return;
     videoRef.current.play().catch(() => {});
-  }, []);
+  }, [entranceComplete]);
 
   return (
     <>
@@ -108,83 +109,65 @@ function VideoCard() {
         </div>
       </motion.button>
 
-      {/* Expanded overlay */}
-      <AnimatePresence>
-        {expanded && (
-          <motion.div
-            className="fixed inset-0 z-[9999] flex items-center justify-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            onClick={() => setExpanded(false)}
-          >
-            {/* Backdrop */}
-            <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
-            {/* Video container */}
-            <motion.div
-              className="relative w-[90vw] max-w-[1100px] aspect-video rounded-2xl overflow-hidden"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                border: "1px solid rgba(255,255,255,0.1)",
-                boxShadow: "0 24px 80px rgba(0,0,0,0.6)",
-              }}
-            >
-              <video
-                src="/konavers_video.mp4"
-                autoPlay
-                controls
-                playsInline
-                className="w-full h-full object-cover"
-              />
-              {/* Close button */}
-              <button
+      {/* Expanded overlay — portaled to body to escape transform/overflow trapping */}
+      {typeof document !== "undefined" &&
+        createPortal(
+          <AnimatePresence>
+            {expanded && (
+              <motion.div
+                className="fixed inset-0 z-[9999] flex items-center justify-center"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
                 onClick={() => setExpanded(false)}
-                className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center cursor-pointer"
-                style={{
-                  background: "rgba(0,0,0,0.5)",
-                  border: "1px solid rgba(255,255,255,0.15)",
-                }}
               >
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <path d="M1 1L13 13M13 1L1 13" stroke="white" strokeWidth="1.5" />
-                </svg>
-              </button>
-            </motion.div>
-          </motion.div>
+                {/* Backdrop */}
+                <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+                {/* Video container */}
+                <motion.div
+                  className="relative w-[90vw] max-w-[1100px] aspect-video rounded-2xl overflow-hidden"
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.8, opacity: 0 }}
+                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    boxShadow: "0 24px 80px rgba(0,0,0,0.6)",
+                  }}
+                >
+                  <video
+                    src="/konavers_video.mp4"
+                    autoPlay
+                    controls
+                    playsInline
+                    className="w-full h-full object-cover"
+                  />
+                  {/* Close button */}
+                  <button
+                    onClick={() => setExpanded(false)}
+                    className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center cursor-pointer"
+                    style={{
+                      background: "rgba(0,0,0,0.5)",
+                      border: "1px solid rgba(255,255,255,0.15)",
+                    }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                      <path d="M1 1L13 13M13 1L1 13" stroke="white" strokeWidth="1.5" />
+                    </svg>
+                  </button>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body
         )}
-      </AnimatePresence>
     </>
   );
 }
 
-// ─── Music Card (1/3 of bottom row) ──────────────────────────────────────────
-function MusicCard() {
-  return (
-    <div
-      className="relative w-full h-full rounded-xl overflow-hidden"
-      style={{
-        background: "rgba(255,255,255,0.04)",
-        border: "1px solid rgba(255,255,255,0.08)",
-      }}
-    >
-      <iframe
-        id="kona-music-player"
-        src="https://www.youtube.com/embed/videoseries?list=PL3UiQj8UB5ARvgfRXJMMAB7e4tQ1PgtjW&autoplay=0&loop=1&enablejsapi=1"
-        className="absolute inset-0 w-full h-full"
-        allow="autoplay; encrypted-media"
-        allowFullScreen
-        style={{ border: "none", borderRadius: "12px" }}
-      />
-    </div>
-  );
-}
-
-// ─── Project Slideshow (top-left 16:9 card) ──────────────────────────────────
+// ─── Project Slideshow card ──────────────────────────────────────────────────
 function ProjectSlideshow() {
   const [current, setCurrent] = useState(0);
   const projects = WEBSITE_PROJECTS;
@@ -201,21 +184,17 @@ function ProjectSlideshow() {
 
   return (
     <motion.a
-      href={project.href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="block relative overflow-hidden rounded-xl cursor-pointer group"
+      href="/projects/website-projects"
+      className="block relative overflow-hidden rounded-xl cursor-pointer group w-full h-full"
       style={{
-        aspectRatio: "16/9",
-        width: "clamp(200px, 20vw, 320px)",
         background: "rgba(255,255,255,0.05)",
         backdropFilter: "blur(16px)",
         WebkitBackdropFilter: "blur(16px)",
         border: "1px solid rgba(255,255,255,0.1)",
         boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
       }}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ scale: 1.01 }}
+      whileTap={{ scale: 0.99 }}
     >
       {/* Project image */}
       <AnimatePresence mode="wait">
@@ -271,7 +250,7 @@ function ProjectSlideshow() {
 }
 
 // ─── Main Hero Panel ─────────────────────────────────────────────────────────
-export default function HeroPanel() {
+export default function HeroPanel({ entranceComplete }: { entranceComplete?: boolean }) {
   return (
     <div className="absolute inset-0 flex flex-col p-8 pointer-events-auto">
       {/* Top area: title + description + CTAs — compact, no flex-1 */}
@@ -319,18 +298,16 @@ export default function HeroPanel() {
         </div>
       </div>
 
-      {/* Cards row: video (2/3) + spotify (1/3) — fills remaining space */}
+      {/* Cards row: video (1/2) + project slideshow (1/2) — fills remaining space */}
       <div className="flex gap-3 flex-1 mt-4 min-h-0">
-        <div className="flex-[2] min-w-0">
-          <VideoCard />
+        <div className="flex-1 min-w-0">
+          <VideoCard entranceComplete={entranceComplete} />
         </div>
-        <div className="flex-[1] min-w-0">
-          <MusicCard />
+        <div className="flex-1 min-w-0">
+          <ProjectSlideshow />
         </div>
       </div>
     </div>
   );
 }
 
-// Export the slideshow separately — it lives outside the main panel
-export { ProjectSlideshow };

@@ -12,14 +12,19 @@ import ServicesBackground from "@/components/three/ServicesBackground";
 import ProjectsIntro from "@/components/sections/ProjectsIntro";
 import ProjectsSection from "@/components/sections/ProjectsSection";
 import ProjectsMobile from "@/components/sections/ProjectsMobile";
+import TestimonialsSection from "@/components/sections/TestimonialsSection";
+import CtaSection from "@/components/sections/CtaSection";
+import HomeFooter from "@/components/sections/HomeFooter";
 import HolographicTableBackground from "@/components/three/HolographicTableBackground";
+import StarFieldBackground from "@/components/three/StarFieldBackground";
 import GlobeBackground from "@/components/three/GlobeBackground";
-import HeroPanel, { ProjectSlideshow } from "@/components/sections/HeroPanel";
+import HeroPanel from "@/components/sections/HeroPanel";
 import GlassPanel from "@/components/sections/GlassPanel";
-import MusicToggle from "@/components/ui/MusicToggle";
+import EntranceGate from "@/components/ui/EntranceGate";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { HoveredCardState } from "@/components/three/SceneManager";
 import { ACT_1_START, ACT_2_START, ACT_3_START } from "@/components/sections/projects-timing";
+import { TEST_CURTAIN_IN } from "@/components/sections/testimonials-timing";
 
 
 // Mirror of ServicesSection timing — used to lift serviceSolIndex for SceneManager + ServicesBackground
@@ -36,6 +41,8 @@ function getSvcIndex(p: number): number {
 export default function HomePage() {
   const isMobile = useMediaQuery("(max-width: 1023px)");
   const [entranceComplete, setEntranceComplete] = useState(false);
+  const [sceneReady, setSceneReady] = useState(false);
+  const [canMountCanvas, setCanMountCanvas] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [serviceSolIndex, setServiceSolIndex] = useState(0);
 
@@ -61,6 +68,8 @@ export default function HomePage() {
   const servicesWrapperRef = useRef<HTMLDivElement>(null);
   const projectsIntroRef = useRef<HTMLDivElement>(null);
   const projectsActsRef = useRef<HTMLDivElement>(null);
+  const testimonialsRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
 
   // ── Section-scoped scroll progress ──
   const { scrollYProgress: heroScrollY } = useScroll({
@@ -85,6 +94,14 @@ export default function HomePage() {
   });
   const { scrollYProgress: projectsActsScrollY } = useScroll({
     target: projectsActsRef,
+    offset: ["start start", "end end"],
+  });
+  const { scrollYProgress: testimonialsScrollY } = useScroll({
+    target: testimonialsRef,
+    offset: ["start start", "end end"],
+  });
+  const { scrollYProgress: ctaScrollY } = useScroll({
+    target: ctaRef,
     offset: ["start start", "end end"],
   });
 
@@ -119,11 +136,22 @@ export default function HomePage() {
     damping: 28,
     restDelta: 0.001,
   });
+  const smoothedTestimonialsProgress = useSpring(testimonialsScrollY, {
+    stiffness: 80,
+    damping: 28,
+    restDelta: 0.001,
+  });
+  const smoothedCtaProgress = useSpring(ctaScrollY, {
+    stiffness: 80,
+    damping: 28,
+    restDelta: 0.001,
+  });
 
   // ── Scene environment: swap instantly behind the curtain ──
   const [behindCurtain, setBehindCurtain] = useState(false);
   const [behindServicesCurtain, setBehindServicesCurtain] = useState(false);
   const [behindProjectsCurtain, setBehindProjectsCurtain] = useState(false);
+  const [behindTestimonialsCurtain, setBehindTestimonialsCurtain] = useState(false);
 
   // ── activeIndex — raw scroll for instant section detection ──
   useMotionValueEvent(blueprintScrollY, "change", (val) => {
@@ -162,6 +190,27 @@ export default function HomePage() {
     else if (blueprintScrollY.get() > 0.02) setActiveIndex(1);
     else setActiveIndex(0);
   });
+  // Testimonials — activeIndex 5
+  useMotionValueEvent(testimonialsScrollY, "change", (val) => {
+    if (val > 0.02) setActiveIndex(5);
+    else if (projectsActsScrollY.get() > 0.02) setActiveIndex(4);
+    else if (projectsIntroScrollY.get() > 0.02) setActiveIndex(4);
+    else if (servicesScrollY.get() > 0.02) setActiveIndex(3);
+    else if (clientsScrollY.get() > 0.02) setActiveIndex(2);
+    else if (blueprintScrollY.get() > 0.02) setActiveIndex(1);
+    else setActiveIndex(0);
+  });
+  // CTA — activeIndex 6
+  useMotionValueEvent(ctaScrollY, "change", (val) => {
+    if (val > 0.02) setActiveIndex(6);
+    else if (testimonialsScrollY.get() > 0.02) setActiveIndex(5);
+    else if (projectsActsScrollY.get() > 0.02) setActiveIndex(4);
+    else if (projectsIntroScrollY.get() > 0.02) setActiveIndex(4);
+    else if (servicesScrollY.get() > 0.02) setActiveIndex(3);
+    else if (clientsScrollY.get() > 0.02) setActiveIndex(2);
+    else if (blueprintScrollY.get() > 0.02) setActiveIndex(1);
+    else setActiveIndex(0);
+  });
 
   // ── behindCurtain — driven by the SPRING so it fires exactly when curtains
   //    reach y:0% (full viewport coverage at smoothed progress = 0.05) ──
@@ -182,6 +231,13 @@ export default function HomePage() {
     if (val >= 0.17 && !behindProjectsCurtain) setBehindProjectsCurtain(true);
     if (val < 0.17 && behindProjectsCurtain) setBehindProjectsCurtain(false);
   });
+  // ── behindTestimonialsCurtain — fires at TEST_CURTAIN_IN (0.18), when the
+  //    bottom-to-top green sweep fully covers the viewport. Holographic table
+  //    unmounts and star field mounts while the curtain is opaque.
+  useMotionValueEvent(smoothedTestimonialsProgress, "change", (val) => {
+    if (val >= TEST_CURTAIN_IN && !behindTestimonialsCurtain) setBehindTestimonialsCurtain(true);
+    if (val < TEST_CURTAIN_IN && behindTestimonialsCurtain) setBehindTestimonialsCurtain(false);
+  });
 
   // ── Scroll lock (replaces overflowY on container) ──
   useEffect(() => {
@@ -193,7 +249,6 @@ export default function HomePage() {
   const heroPlaceholderOpacity = useTransform(heroScrollY, [0, 0.15], [1, 0]);
   // Parallax exit — each layer moves at a different speed
   const heroPanelY = useTransform(heroScrollY, [0, 0.2], [0, -120]);
-  const heroSlideshowY = useTransform(heroScrollY, [0, 0.2], [0, -200]);
   const heroPanelScale = useTransform(heroScrollY, [0, 0.15], [1, 0.96]);
   const lineScaleX = useTransform(heroScrollY, [0.40, 0.47], [0, 1]);
   const lineOpacity = useTransform(heroScrollY, [0.40, 0.44, 0.90, 0.99], [0, 1, 1, 0]);
@@ -204,8 +259,14 @@ export default function HomePage() {
 
   return (
     <>
-      {/* ══════ Music toggle — appears after hero ══════ */}
-      <MusicToggle scrollProgress={heroScrollY} />
+      {/* ══════ ENTRANCE GATE — cinematic reveal ══════ */}
+      {!entranceComplete && (
+        <EntranceGate
+          sceneReady={sceneReady}
+          onIntroComplete={() => setCanMountCanvas(true)}
+          onRevealComplete={() => setEntranceComplete(true)}
+        />
+      )}
 
       {/* ══════ WELCOME TEXT — fixed overlay, scroll-driven ══════ */}
       <div
@@ -288,29 +349,35 @@ export default function HomePage() {
         )}
       </motion.div>
 
-      {/* ══════ Globe background — hero section ══════ */}
-      <GlobeBackground heroScrollY={smoothedHeroProgress} />
+      {/* ══════ Globe background — hero section (deferred until gate intro done) ══════ */}
+      {canMountCanvas && <GlobeBackground heroScrollY={smoothedHeroProgress} />}
 
       {/* ══════ Services Background — mounts behind the curtain, unmounts behind it too ══════ */}
       {/* Rendered BEFORE SceneManager so SceneManager (alpha:true) paints on top at the same zIndex */}
       {behindServicesCurtain && <ServicesBackground serviceIndex={serviceSolIndex} />}
 
       {/* ══════ Holographic Table Background — projects section ══════ */}
-      {behindProjectsCurtain && (
+      {behindProjectsCurtain && !behindTestimonialsCurtain && (
         <HolographicTableBackground activeAct={projectsActiveAct} />
       )}
 
-      {/* ══════ 3D Canvas ══════ */}
-      <SceneManager
-        activeSection={activeIndex}
-        scrollProgress={smoothedHeroProgress}
-        hoveredCard={hoveredCard}
-        onHeadPositionUpdate={setHeadPosition}
-        sparkActive={entranceComplete}
-        serviceIndex={serviceSolIndex}
-        projectsAct={projectsActiveAct}
-        projectsProgress={smoothedProjectsActsProgress}
-      />
+      {/* ══════ Star Field Background — testimonials section ══════ */}
+      {behindTestimonialsCurtain && <StarFieldBackground />}
+
+      {/* ══════ 3D Canvas (deferred until gate intro done) ══════ */}
+      {canMountCanvas && (
+        <SceneManager
+          activeSection={activeIndex}
+          scrollProgress={smoothedHeroProgress}
+          hoveredCard={hoveredCard}
+          onHeadPositionUpdate={setHeadPosition}
+          sparkActive={entranceComplete}
+          serviceIndex={serviceSolIndex}
+          projectsAct={projectsActiveAct}
+          projectsProgress={smoothedProjectsActsProgress}
+          onSceneReady={() => setSceneReady(true)}
+        />
+      )}
 
       {/* ══════ Main Scroll Container ══════ */}
       <div
@@ -324,7 +391,6 @@ export default function HomePage() {
         <div ref={heroWrapperRef} style={{ height: "200vh", position: "relative" }}>
           <div style={{ position: "sticky", top: 0, height: "100vh", width: "100%", overflow: "visible" }}>
             <ArchitectHeroV2
-              onEntranceComplete={() => setEntranceComplete(true)}
               hoveredCard={hoveredCard}
               onHoverCard={setHoveredCard}
               headPosition={headPosition}
@@ -333,23 +399,9 @@ export default function HomePage() {
 
             {/* ── Hero glassmorphism panel ── */}
             <GlassPanel opacity={heroPlaceholderOpacity} y={heroPanelY} scale={heroPanelScale}>
-              <HeroPanel />
+              <HeroPanel entranceComplete={entranceComplete} />
             </GlassPanel>
 
-            {/* ── Bottom-left project slideshow ── */}
-            <motion.div
-              style={{
-                position: "absolute",
-                bottom: "24px",
-                left: "24px",
-                zIndex: 10,
-                pointerEvents: "auto",
-                opacity: heroPlaceholderOpacity,
-                y: heroSlideshowY,
-              }}
-            >
-              <ProjectSlideshow />
-            </motion.div>
           </div>
         </div>
 
@@ -408,12 +460,35 @@ export default function HomePage() {
               <div style={{ position: "sticky", top: 0, height: "100vh", width: "100%", overflow: "hidden" }}>
                 <ProjectsSection
                   progress={smoothedProjectsActsProgress}
+                  visible={activeIndex >= 4 && !behindTestimonialsCurtain}
+                />
+              </div>
+            </div>
+
+            {/* 3) Testimonials — green curtain + star field + testimonial cards */}
+            <div ref={testimonialsRef} style={{ height: "800vh", position: "relative" }}>
+              <div style={{ position: "sticky", top: 0, height: "100vh", width: "100%", overflow: "hidden" }}>
+                <TestimonialsSection
+                  progress={smoothedTestimonialsProgress}
                   visible={activeIndex >= 4}
+                />
+              </div>
+            </div>
+
+            {/* 4) CTA — contact call-to-action */}
+            <div ref={ctaRef} style={{ height: "400vh", position: "relative" }}>
+              <div style={{ position: "sticky", top: 0, height: "100vh", width: "100%", overflow: "hidden" }}>
+                <CtaSection
+                  progress={smoothedCtaProgress}
+                  visible={activeIndex >= 5}
                 />
               </div>
             </div>
           </>
         )}
+
+        {/* ══════ FOOTER — scrolls over the fixed canvas ══════ */}
+        <HomeFooter />
 
       </div>
     </>

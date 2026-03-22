@@ -15,6 +15,21 @@ const NAV_LINKS = [
   { id: "pricing", label: "Pricing", href: "/pricing" },
 ] as const;
 
+const DROPDOWNS: Record<string, { label: string; href: string }[]> = {
+  solutions: [
+    { label: "Web Development", href: "/solutions/web-development" },
+    { label: "Videography", href: "/solutions/videography" },
+    { label: "Social Media", href: "/solutions/social-media" },
+    { label: "Digital Ads", href: "/solutions/digital-advertising" },
+    { label: "Web Apps", href: "/solutions/web-applications" },
+  ],
+  projects: [
+    { label: "Website Projects", href: "/projects/website-projects" },
+    { label: "Videography Projects", href: "/projects/videography" },
+    { label: "Social Media Projects", href: "/projects/social-media" },
+  ],
+};
+
 function getActiveId(pathname: string): string | null {
   for (const link of NAV_LINKS) {
     if (pathname === link.href || pathname.startsWith(link.href + "/")) return link.id;
@@ -29,6 +44,7 @@ export default function HeroNav() {
   const pathname = usePathname();
   const activeId = getActiveId(pathname);
   const [hovered, setHovered] = useState<string | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
 
   // Hide on /journey
   if (pathname === "/journey") return null;
@@ -65,59 +81,122 @@ export default function HeroNav() {
         {NAV_LINKS.map((link) => {
           const isActive = activeId === link.id;
           const isHovered = hovered === link.id;
+          const dropdown = DROPDOWNS[link.id];
+          const isDropdownOpen = dropdownOpen === link.id;
 
           return (
-            <Link
+            <div
               key={link.id}
-              href={link.href}
-              className="relative px-4 py-2 rounded-xl"
-              onMouseEnter={() => setHovered(link.id)}
-              onMouseLeave={() => setHovered(null)}
+              className="relative"
+              onMouseEnter={() => {
+                setHovered(link.id);
+                if (dropdown) setDropdownOpen(link.id);
+              }}
+              onMouseLeave={() => {
+                setHovered(null);
+                if (dropdown) setDropdownOpen(null);
+              }}
             >
-              {/* Active glassmorphism pill — layoutId drives the sliding animation */}
-              {isActive && (
-                <motion.div
-                  layoutId="globalNavActive"
-                  className="absolute inset-0 rounded-xl"
-                  style={{
-                    background: "rgba(255,255,255,0.08)",
-                    backdropFilter: "blur(12px)",
-                    WebkitBackdropFilter: "blur(12px)",
-                    border: "1px solid rgba(255,255,255,0.12)",
-                    boxShadow:
-                      "0 2px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.06)",
-                  }}
-                  transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                />
-              )}
-
-              {/* Hover glow (non-active) */}
-              <AnimatePresence>
-                {isHovered && !isActive && (
+              <Link
+                href={link.href}
+                className="relative px-4 py-2 rounded-xl block"
+              >
+                {/* Active glassmorphism pill — layoutId drives the sliding animation */}
+                {isActive && (
                   <motion.div
+                    layoutId="globalNavActive"
                     className="absolute inset-0 rounded-xl"
-                    style={{ background: "rgba(255,255,255,0.04)" }}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.15 }}
+                    style={{
+                      background: "rgba(255,255,255,0.08)",
+                      backdropFilter: "blur(12px)",
+                      WebkitBackdropFilter: "blur(12px)",
+                      border: "1px solid rgba(255,255,255,0.12)",
+                      boxShadow:
+                        "0 2px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.06)",
+                    }}
+                    transition={{ type: "spring", stiffness: 350, damping: 30 }}
                   />
                 )}
-              </AnimatePresence>
 
-              <span
-                className="relative z-10 font-mono text-[11px] tracking-[0.12em] uppercase transition-colors duration-200 whitespace-nowrap"
-                style={{
-                  color: isActive
-                    ? "#00ff88"
-                    : isHovered
-                      ? "rgba(255,255,255,0.9)"
-                      : "rgba(255,255,255,0.5)",
-                }}
-              >
-                {link.label}
-              </span>
-            </Link>
+                {/* Hover glow (non-active) */}
+                <AnimatePresence>
+                  {isHovered && !isActive && (
+                    <motion.div
+                      className="absolute inset-0 rounded-xl"
+                      style={{ background: "rgba(255,255,255,0.04)" }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.15 }}
+                    />
+                  )}
+                </AnimatePresence>
+
+                <span
+                  className="relative z-10 font-mono text-[11px] tracking-[0.12em] uppercase transition-colors duration-200 whitespace-nowrap"
+                  style={{
+                    color: isActive
+                      ? "#00ff88"
+                      : isHovered
+                        ? "rgba(255,255,255,0.9)"
+                        : "rgba(255,255,255,0.5)",
+                  }}
+                >
+                  {link.label}
+                </span>
+              </Link>
+
+              {/* Dropdown panel — with invisible bridge to prevent gap-hover loss */}
+              <AnimatePresence>
+                {dropdown && isDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 6 }}
+                    transition={{ duration: 0.18, ease: "easeOut" }}
+                    style={{
+                      position: "absolute",
+                      top: "100%",
+                      left: 0,
+                      paddingTop: 8,
+                      zIndex: 50,
+                    }}
+                  >
+                    <div
+                      style={{
+                        minWidth: 200,
+                        background: "rgba(10, 14, 10, 0.92)",
+                        backdropFilter: "blur(16px)",
+                        WebkitBackdropFilter: "blur(16px)",
+                        border: "1px solid rgba(0, 255, 136, 0.1)",
+                        borderRadius: 10,
+                        padding: "8px 0",
+                        boxShadow: "0 8px 32px rgba(0,0,0,0.5), 0 0 1px rgba(0,255,136,0.15)",
+                      }}
+                    >
+                    {dropdown.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className="block px-4 py-2.5 font-mono text-[11px] tracking-[0.08em] transition-colors duration-150 whitespace-nowrap"
+                        style={{ color: "rgba(255,255,255,0.55)" }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.color = "#00ff88";
+                          e.currentTarget.style.background = "rgba(0, 255, 136, 0.06)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.color = "rgba(255,255,255,0.55)";
+                          e.currentTarget.style.background = "transparent";
+                        }}
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           );
         })}
       </div>

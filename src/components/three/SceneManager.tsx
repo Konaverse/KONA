@@ -16,6 +16,7 @@ const THOUGHTFUL_NOD_ANIM = "/models/architect/Thoughtful Head Nod.fbx";
 const LOOKING_ANIM = "/models/architect/Looking.fbx";
 const ARM_GESTURE_ANIM = "/models/architect/Arm Gesture.fbx";
 const LOOKING_BEHIND_ANIM = "/models/architect/Looking Behind.fbx";
+const TALKING_ANIM = "/models/architect/Talking.fbx";
 
 // ─── Shared State Types ───────────────────────────────────────
 export interface HoveredCardState {
@@ -99,9 +100,12 @@ function WebGLSparkSystem({ active }: { active: boolean }) {
   }[]>([]);
 
   useFrame((state, delta) => {
-    if (!meshRef.current) return;
+    if (!meshRef.current || !active) {
+      if (meshRef.current) meshRef.current.count = 0;
+      return;
+    }
 
-    if (active && Math.random() < 0.18 && arcsRef.current.length < 12) {
+    if (Math.random() < 0.18 && arcsRef.current.length < 12) {
       const segments: any[] = [];
       const startX = (Math.random() - 0.5) * 5.5;
       const startY = 1.15;
@@ -196,6 +200,7 @@ function ArchitectModel({
   scrollProgress,
   serviceIndex = 0,
   projectsAct = 0,
+  onSceneReady,
 }: {
   hoveredCard: HoveredCardState | null;
   onHeadPositionUpdate: (pos: { x: number; y: number }) => void;
@@ -203,6 +208,7 @@ function ArchitectModel({
   scrollProgress: MotionValue<number>;
   serviceIndex?: number;
   projectsAct?: number;
+  onSceneReady?: () => void;
 }) {
   const baseModel = useLoader(FBXLoader, BASE_MODEL);
   const idleData = useLoader(FBXLoader, IDLE_ANIM);
@@ -210,6 +216,7 @@ function ArchitectModel({
   const lookingData = useLoader(FBXLoader, LOOKING_ANIM);
   const armGestureData = useLoader(FBXLoader, ARM_GESTURE_ANIM);
   const lookingBehindData = useLoader(FBXLoader, LOOKING_BEHIND_ANIM);
+  const talkingData = useLoader(FBXLoader, TALKING_ANIM);
 
   const mixerRef = useRef<THREE.AnimationMixer | null>(null);
   const actionsRef = useRef<{ [key: string]: THREE.AnimationAction }>({});
@@ -225,6 +232,8 @@ function ArchitectModel({
   const { viewport, camera, size } = useThree();
   const lastUpdateRef = useRef({ x: 0, y: 0 });
   const trackingWeightRef = useRef(1.0);
+  const frameCountRef = useRef(0);
+  const sceneReadyFiredRef = useRef(false);
 
   useMemo(() => {
     if (!baseModel) return;
@@ -264,7 +273,7 @@ function ArchitectModel({
   }, [baseModel]);
 
   useEffect(() => {
-    if (!baseModel || !idleData || !nodData || !lookingData || !armGestureData || !lookingBehindData) return;
+    if (!baseModel || !idleData || !nodData || !lookingData || !armGestureData || !lookingBehindData || !talkingData) return;
 
     const mixer = new THREE.AnimationMixer(baseModel);
     mixerRef.current = mixer;
@@ -274,8 +283,9 @@ function ArchitectModel({
     const looking = mixer.clipAction(lookingData.animations[0]);
     const armGesture = mixer.clipAction(armGestureData.animations[0]);
     const lookingBehind = mixer.clipAction(lookingBehindData.animations[0]);
+    const talking = mixer.clipAction(talkingData.animations[0]);
 
-    actionsRef.current = { idle, nod, looking, armGesture, lookingBehind };
+    actionsRef.current = { idle, nod, looking, armGesture, lookingBehind, talking };
 
     idle.play();
 
@@ -283,13 +293,15 @@ function ArchitectModel({
       mouseRef.current.x = (e.clientX / window.innerWidth) * 2 - 1;
       mouseRef.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
     };
+    const handleClick = () => { shockwaveRef.current = 1.0; };
     window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("click", () => { shockwaveRef.current = 1.0; });
+    window.addEventListener("click", handleClick);
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("click", handleClick);
     };
-  }, [baseModel, idleData, nodData, lookingData, armGestureData, lookingBehindData]);
+  }, [baseModel, idleData, nodData, lookingData, armGestureData, lookingBehindData, talkingData]);
 
   // Track current animation state
   const currentAnimRef = useRef<string>("idle");
@@ -311,7 +323,11 @@ function ArchitectModel({
 
   // Effect: section-level transitions + hero scroll-driven poses
   useEffect(() => {
-    if (activeSection >= 4) {
+    if (activeSection >= 6) {
+      crossfadeTo("talking");
+    } else if (activeSection >= 5) {
+      crossfadeTo("idle");
+    } else if (activeSection >= 4) {
       crossfadeTo("idle");
     } else if (activeSection >= 3) {
       crossfadeTo(SERVICE_ANIMS[serviceIndexRef.current]);
@@ -322,7 +338,11 @@ function ArchitectModel({
     }
 
     const unsubscribe = scrollProgress.on("change", (val) => {
-      if (activeSection >= 4) {
+      if (activeSection >= 6) {
+        crossfadeTo("talking");
+      } else if (activeSection >= 5) {
+        crossfadeTo("idle");
+      } else if (activeSection >= 4) {
         crossfadeTo("idle");
       } else if (activeSection >= 3) {
         crossfadeTo(SERVICE_ANIMS[serviceIndexRef.current]);
@@ -354,11 +374,20 @@ function ArchitectModel({
     if (!mixerRef.current) return;
     mixerRef.current.update(delta);
 
+    // Fire scene-ready after a few frames so the model is positioned
+    frameCountRef.current++;
+    if (frameCountRef.current === 3 && !sceneReadyFiredRef.current) {
+      sceneReadyFiredRef.current = true;
+      onSceneReady?.();
+    }
+
     // High Performance: Get value from MotionValue without state update
     const scrollVal = scrollProgress.get();
 
     if (modelGroupRef.current) {
-      const inInterlude = activeSection >= 4;
+      const inCta = activeSection >= 6;
+      const inTestimonials = activeSection === 5;
+      const inInterlude = activeSection === 4;
       const inServices = activeSection === 3;
       const inClients = activeSection === 2;
       const p = THREE.MathUtils.clamp(scrollVal / 0.5, 0, 1);
@@ -368,14 +397,17 @@ function ArchitectModel({
       // still covers the viewport (curtain clears at ~progress 0.30).
       const inProjectsAct1 = inInterlude && projectsActRef.current === 0;
       const inProjectsAct2 = inInterlude && projectsActRef.current === 1;
-      const targetX = inInterlude ? (inProjectsAct1 ? 0.55 : inProjectsAct2 ? -0.55 : 0.00) : inServices ? 0.55 : inClients ? -0.55 : -0.70 - 0.40 * p;
-      const targetZ = inInterlude ? (inProjectsAct1 ? 0.05 : inProjectsAct2 ? 0.05 : -0.35) : inServices ? 0.05 : inClients ? 0.05 : -0.30;
-      const targetRotY = inInterlude ? (inProjectsAct1 ? -0.45 : inProjectsAct2 ? 0.45 : 0.00) : inServices ? -0.50 : inClients ? 0.18 : 0.60;
-      const lerpSpeed = inInterlude ? 0.04 : inServices ? 0.06 : inClients ? 0.025 : 0.1;
+      // CTA: architect on left side, pushed further back, facing right
+      // Testimonials: architect on right 1/3, closer to camera, facing left
+      const targetX = inCta ? -0.65 : inTestimonials ? 0.65 : inInterlude ? (inProjectsAct1 ? 0.55 : inProjectsAct2 ? -0.55 : 0.00) : inServices ? 0.55 : inClients ? -0.55 : -0.70 - 0.40 * p;
+      const targetZ = inCta ? -0.50 : inTestimonials ? 0.25 : inInterlude ? (inProjectsAct1 ? 0.05 : inProjectsAct2 ? 0.05 : -0.35) : inServices ? 0.05 : inClients ? 0.05 : -0.30;
+      const targetRotY = inCta ? 0.45 : inTestimonials ? -0.55 : inInterlude ? (inProjectsAct1 ? -0.45 : inProjectsAct2 ? 0.45 : 0.00) : inServices ? -0.50 : inClients ? 0.18 : 0.60;
+      const lerpSpeed = inCta ? 0.04 : inTestimonials ? 0.04 : inInterlude ? 0.04 : inServices ? 0.06 : inClients ? 0.025 : 0.1;
 
-      modelGroupRef.current.position.x = THREE.MathUtils.lerp(modelGroupRef.current.position.x, targetX, lerpSpeed);
-      modelGroupRef.current.position.z = THREE.MathUtils.lerp(modelGroupRef.current.position.z, targetZ, lerpSpeed);
-      modelGroupRef.current.rotation.y = THREE.MathUtils.lerp(modelGroupRef.current.rotation.y, targetRotY, lerpSpeed);
+      const dtFactor = 1 - Math.pow(1 - lerpSpeed, delta * 60);
+      modelGroupRef.current.position.x = THREE.MathUtils.lerp(modelGroupRef.current.position.x, targetX, dtFactor);
+      modelGroupRef.current.position.z = THREE.MathUtils.lerp(modelGroupRef.current.position.z, targetZ, dtFactor);
+      modelGroupRef.current.rotation.y = THREE.MathUtils.lerp(modelGroupRef.current.rotation.y, targetRotY, dtFactor);
     }
 
     if (headBoneRef.current) {
@@ -416,7 +448,7 @@ function ArchitectModel({
       const lerpS = hoveredCard ? 0.2 : 0.1;
       head.rotation.y = THREE.MathUtils.lerp(head.rotation.y, tRY, lerpS);
       // Bias head downward during projects section (looking at the holographic table)
-      const headTiltBias = activeSection >= 4 ? -0.15 : 0;
+      const headTiltBias = activeSection >= 6 ? 0 : activeSection >= 5 ? -0.05 : activeSection >= 4 ? -0.15 : 0;
       head.rotation.x = THREE.MathUtils.lerp(head.rotation.x, tRX + headTiltBias, lerpS);
     }
 
@@ -457,6 +489,7 @@ export default function SceneManager({
   serviceIndex = 0,
   projectsAct = 0,
   projectsProgress,
+  onSceneReady,
 }: {
   activeSection: number;
   scrollProgress: MotionValue<number>;
@@ -466,12 +499,18 @@ export default function SceneManager({
   serviceIndex?: number;
   projectsAct?: number;
   projectsProgress?: MotionValue<number>;
+  onSceneReady?: () => void;
 }) {
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}>
       <Canvas gl={{ antialias: true, alpha: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 0.8 }}
         camera={{ fov: 50, near: 0.1, far: 100, position: [0.083, 1.651, 1.225] }} shadows
-        style={{ width: "100%", height: "100%", background: "transparent" }}>
+        style={{ width: "100%", height: "100%", background: "transparent", pointerEvents: "none" }}
+        onCreated={(state) => {
+          state.gl.domElement.style.pointerEvents = "none";
+          const parent = state.gl.domElement.parentElement;
+          if (parent) parent.style.pointerEvents = "none";
+        }}>
         <CameraRig />
         <directionalLight color="#00ff88" intensity={1.2} position={[3, 5, 2]} castShadow />
         <directionalLight color="#004422" intensity={0.4} position={[-3, 2, -1]} />
@@ -484,6 +523,7 @@ export default function SceneManager({
           scrollProgress={scrollProgress}
           serviceIndex={serviceIndex}
           projectsAct={projectsAct}
+          onSceneReady={onSceneReady}
         />
         {projectsProgress && (
           <ProjectScenes

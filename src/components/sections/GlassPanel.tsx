@@ -79,6 +79,7 @@ export default function GlassPanel({
         y,
         scale,
         overflow: "hidden",
+        zIndex: 5,
       }}
     >
       {/* Border light trace — conic gradient rotates toward cursor */}
