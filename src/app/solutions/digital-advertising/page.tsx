@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/metadata";
 import { JsonLd, serviceJsonLd, breadcrumbJsonLd } from "@/components/seo/json-ld";
-import { SolutionHero } from "@/components/ui/solution-hero";
+import DigitalAdvertisingContent from "./digital-advertising-content";
 
 export const metadata: Metadata = buildMetadata({
   title: "Digital Advertising",
@@ -40,13 +40,7 @@ export default function DigitalAdvertisingPage() {
           { name: "Digital Advertising", href: "/solutions/digital-advertising" },
         ])}
       />
-      <div className="flex flex-col w-full">
-        <SolutionHero
-          title="Digital Advertising"
-          subtitle="Solution 04"
-          description="Precision-targeted campaigns that convert casual interest into sustainable business growth."
-        />
-      </div>
+      <DigitalAdvertisingContent />
     </>
   );
 }

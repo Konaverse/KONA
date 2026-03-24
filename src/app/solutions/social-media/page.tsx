@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/metadata";
 import { JsonLd, serviceJsonLd, breadcrumbJsonLd } from "@/components/seo/json-ld";
-import { SolutionHero } from "@/components/ui/solution-hero";
+import SocialMediaContent from "./social-media-content";
 
 export const metadata: Metadata = buildMetadata({
   title: "Social Media Management",
@@ -40,13 +40,7 @@ export default function SocialMediaPage() {
           { name: "Social Media", href: "/solutions/social-media" },
         ])}
       />
-      <div className="flex flex-col w-full">
-        <SolutionHero
-          title="Social Media"
-          subtitle="Solution 03"
-          description="Cultivating digital communities and capturing market attention through cohesive brand narrative."
-        />
-      </div>
+      <SocialMediaContent />
     </>
   );
 }

@@ -33,7 +33,8 @@
       "Bash(export PATH=\"/c/Program Files/nodejs:$PATH\")",
       "Bash(find /Users/konst/Projects/KONA/public -type f \\\\\\(-iname *logo* -o -iname *kona* \\\\\\) -ls)",
       "Bash(find /c/Users/konst/Projects/KONA -type f -name *.png -o -name *.svg)",
-      "Bash(find /c/Users/konst/Projects/KONA/src -type f \\\\\\(-iname *preload* -o -iname *loader* -o -iname *loading* \\\\\\))"
+      "Bash(find /c/Users/konst/Projects/KONA/src -type f \\\\\\(-iname *preload* -o -iname *loader* -o -iname *loading* \\\\\\))",
+      "Bash(find /c/Users/konst/Projects/KONA/.claude/skills -type d -name *scroll* -o -type d -name *animation* -o -type d -name *design* -o -type d -name *parallax* -o -type d -name *entrance* -o -type d -name *interactive*)"
     ]
   }
 }

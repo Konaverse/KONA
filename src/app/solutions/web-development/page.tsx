@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/metadata";
 import { JsonLd, serviceJsonLd, breadcrumbJsonLd } from "@/components/seo/json-ld";
-import { SolutionHero } from "@/components/ui/solution-hero";
+import WebDevelopmentContent from "./web-development-content";
 
 export const metadata: Metadata = buildMetadata({
   title: "Web Development Services",
@@ -40,13 +40,7 @@ export default function WebDevelopmentPage() {
           { name: "Web Development", href: "/solutions/web-development" },
         ])}
       />
-      <div className="flex flex-col w-full">
-        <SolutionHero
-          title="Web Development"
-          subtitle="Solution 01"
-          description="We build fast, scalable, and beautifully crafted websites that perform across all dimensions of the modern web."
-        />
-      </div>
+      <WebDevelopmentContent />
     </>
   );
 }

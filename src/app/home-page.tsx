@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, useSpring, useMotionValueEvent } from "framer-motion";
 import ArchitectHeroV2 from "@/components/three/ArchitectHeroV2";
 import SceneManager from "@/components/three/SceneManager";
@@ -43,15 +43,23 @@ export default function HomePage() {
   const [entranceComplete, setEntranceComplete] = useState(false);
   const [sceneReady, setSceneReady] = useState(false);
   const [canMountCanvas, setCanMountCanvas] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [serviceSolIndex, setServiceSolIndex] = useState(0);
+  const [activeIndex, _setActiveIndex] = useState(0);
+  const activeIndexRef = useRef(0);
+  const setActiveIndex = (v: number) => { if (v !== activeIndexRef.current) { activeIndexRef.current = v; _setActiveIndex(v); } };
+
+  const [serviceSolIndex, _setServiceSolIndex] = useState(0);
+  const serviceSolIndexRef = useRef(0);
+  const setServiceSolIndex = (v: number) => { if (v !== serviceSolIndexRef.current) { serviceSolIndexRef.current = v; _setServiceSolIndex(v); } };
 
   // Lifted state for 3D interactions
   const [hoveredCard, setHoveredCard] = useState<HoveredCardState | null>(null);
-  const [headPosition, setHeadPosition] = useState({ x: 0, y: 0 });
+  const headPositionRef = useRef({ x: 0, y: 0 });
+  const stableHeadUpdate = useCallback((pos: { x: number; y: number }) => { headPositionRef.current = pos; }, []);
 
   // ── Projects active act (for holographic table color) ──
-  const [projectsActiveAct, setProjectsActiveAct] = useState(0);
+  const [projectsActiveAct, _setProjectsActiveAct] = useState(0);
+  const projectsActiveActRef = useRef(0);
+  const setProjectsActiveAct = (v: number) => { if (v !== projectsActiveActRef.current) { projectsActiveActRef.current = v; _setProjectsActiveAct(v); } };
 
   // ── Welcome Text position ──
   const welcomeTop = 44; // vh
@@ -350,11 +358,11 @@ export default function HomePage() {
       </motion.div>
 
       {/* ══════ Globe background — hero section (deferred until gate intro done) ══════ */}
-      {canMountCanvas && <GlobeBackground heroScrollY={smoothedHeroProgress} />}
+      {canMountCanvas && !behindCurtain && <GlobeBackground heroScrollY={smoothedHeroProgress} />}
 
       {/* ══════ Services Background — mounts behind the curtain, unmounts behind it too ══════ */}
       {/* Rendered BEFORE SceneManager so SceneManager (alpha:true) paints on top at the same zIndex */}
-      {behindServicesCurtain && <ServicesBackground serviceIndex={serviceSolIndex} />}
+      {behindServicesCurtain && !behindProjectsCurtain && <ServicesBackground serviceIndex={serviceSolIndex} />}
 
       {/* ══════ Holographic Table Background — projects section ══════ */}
       {behindProjectsCurtain && !behindTestimonialsCurtain && (
@@ -370,7 +378,7 @@ export default function HomePage() {
           activeSection={activeIndex}
           scrollProgress={smoothedHeroProgress}
           hoveredCard={hoveredCard}
-          onHeadPositionUpdate={setHeadPosition}
+          onHeadPositionUpdate={stableHeadUpdate}
           sparkActive={entranceComplete}
           serviceIndex={serviceSolIndex}
           projectsAct={projectsActiveAct}
@@ -393,7 +401,7 @@ export default function HomePage() {
             <ArchitectHeroV2
               hoveredCard={hoveredCard}
               onHoverCard={setHoveredCard}
-              headPosition={headPosition}
+              headPosition={headPositionRef.current}
               scrollProgress={smoothedHeroProgress}
             />
 

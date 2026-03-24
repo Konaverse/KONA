@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useMemo, useState, useCallback } from "react";
+import { useEffect, useRef, useMemo, useState, useCallback, Suspense } from "react";
 import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader.js";
@@ -256,7 +256,7 @@ function ArchitectModel({
 
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
-        mesh.castShadow = true;
+        mesh.castShadow = false;
         const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
 
         mats.forEach((mat) => {
@@ -503,8 +503,9 @@ export default function SceneManager({
 }) {
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}>
-      <Canvas gl={{ antialias: true, alpha: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 0.8 }}
-        camera={{ fov: 50, near: 0.1, far: 100, position: [0.083, 1.651, 1.225] }} shadows
+      <Canvas gl={{ antialias: false, alpha: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 0.8 }}
+        dpr={[1, 1.5]}
+        camera={{ fov: 50, near: 0.1, far: 100, position: [0.083, 1.651, 1.225] }}
         style={{ width: "100%", height: "100%", background: "transparent", pointerEvents: "none" }}
         onCreated={(state) => {
           state.gl.domElement.style.pointerEvents = "none";
@@ -512,19 +513,21 @@ export default function SceneManager({
           if (parent) parent.style.pointerEvents = "none";
         }}>
         <CameraRig />
-        <directionalLight color="#00ff88" intensity={1.2} position={[3, 5, 2]} castShadow />
+        <directionalLight color="#00ff88" intensity={1.2} position={[3, 5, 2]} />
         <directionalLight color="#004422" intensity={0.4} position={[-3, 2, -1]} />
         <ambientLight intensity={0.15} />
         <WebGLSparkSystem active={sparkActive && (activeSection === 0 || activeSection === 2)} />
-        <ArchitectModel
-          hoveredCard={hoveredCard}
-          onHeadPositionUpdate={onHeadPositionUpdate}
-          activeSection={activeSection}
-          scrollProgress={scrollProgress}
-          serviceIndex={serviceIndex}
-          projectsAct={projectsAct}
-          onSceneReady={onSceneReady}
-        />
+        <Suspense fallback={null}>
+          <ArchitectModel
+            hoveredCard={hoveredCard}
+            onHeadPositionUpdate={onHeadPositionUpdate}
+            activeSection={activeSection}
+            scrollProgress={scrollProgress}
+            serviceIndex={serviceIndex}
+            projectsAct={projectsAct}
+            onSceneReady={onSceneReady}
+          />
+        </Suspense>
         {projectsProgress && (
           <ProjectScenes
             progress={projectsProgress}

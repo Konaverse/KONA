@@ -156,6 +156,7 @@ export default function StarFieldBackground() {
     >
       <Canvas
         style={{ width: "100%", height: "100%" }}
+        dpr={1}
         camera={{ fov: 60, near: 0.1, far: 200, position: [0, 0, 0] }}
         gl={{ antialias: false, alpha: false }}
       >

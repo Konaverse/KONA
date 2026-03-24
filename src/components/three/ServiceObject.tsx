@@ -140,7 +140,8 @@ export default function ServiceObject({ serviceIndex = 0 }: { serviceIndex?: num
   return (
     <Canvas
       style={{ width: "100%", height: "100%", background: "transparent" }}
-      gl={{ alpha: true, antialias: true }}
+      dpr={[1, 1.5]}
+      gl={{ alpha: true, antialias: false }}
       camera={{ position: [0, 0, 5], fov: 50, near: 0.1, far: 100 }}
     >
       <ambientLight intensity={0.4} />

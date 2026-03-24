@@ -263,8 +263,9 @@ export default function HolographicTableBackground({ activeAct }: HolographicTab
     >
       <Canvas
         style={{ width: "100%", height: "100%" }}
+        dpr={1}
         camera={{ fov: 68, near: 0.1, far: 200 }}
-        gl={{ antialias: true, alpha: false }}
+        gl={{ antialias: false, alpha: false }}
       >
         <CameraSetup />
         <TableSurface activeAct={activeAct} />
