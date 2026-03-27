@@ -28,7 +28,7 @@ const solutionsItems = [
 
 const projectsItems = [
     { label: "Website Projects", href: "/projects/website-projects" },
-    { label: "Web App Projects", href: "/projects/web-apps" },
+    { label: "Videography", href: "/projects/videography" },
     { label: "Social Media Projects", href: "/projects/social-media" },
 ];
 
@@ -220,7 +220,8 @@ export function GlobalNav() {
                             >
                                 <NavDropdown
                                     trigger={
-                                        <span
+                                        <Link
+                                            href="/projects"
                                             className="text-[13px] font-light uppercase transition-colors duration-200"
                                             style={{
                                                 color: hoveredItem === "projects" ? colors.parchment : colors.sand,
@@ -231,7 +232,7 @@ export function GlobalNav() {
                                             onMouseLeave={() => setHoveredItem(null)}
                                         >
                                             PROJECTS
-                                        </span>
+                                        </Link>
                                     }
                                     items={projectsItems}
                                     footerLink={{ label: "View all projects", href: "/projects" }}

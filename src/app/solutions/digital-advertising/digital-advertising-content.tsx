@@ -82,6 +82,189 @@ const SERVICES = [
   "Monthly reporting & strategy calls",
 ];
 
+/* ── MetricCard ── */
+function MetricCard({
+  metric,
+  index,
+}: {
+  metric: (typeof METRICS)[0];
+  index: number;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [spotlight, setSpotlight] = useState({ x: 0, y: 0, opacity: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = cardRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setSpotlight({ x: e.clientX - rect.left, y: e.clientY - rect.top, opacity: 1 });
+  };
+
+  return (
+    <motion.div
+      ref={cardRef}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.6, delay: index * 0.1 }}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        setSpotlight((prev) => ({ ...prev, opacity: 0 }));
+      }}
+      className="relative rounded-xl px-6 py-8 md:py-10 cursor-default"
+      style={{
+        background: isHovered ? "rgba(0,255,136,0.04)" : "rgba(255,255,255,0.02)",
+        border: "1px solid rgba(255,255,255,0.04)",
+        borderTopColor: isHovered ? "#00ff88" : "#00ff88",
+        borderTopWidth: 2,
+        boxShadow: isHovered ? "0 0 40px rgba(0,255,136,0.08), 0 -1px 0 rgba(0,255,136,0.5)" : "none",
+        transform: isHovered ? "translateY(-3px)" : "translateY(0)",
+        transition: "background 0.4s ease, box-shadow 0.4s ease, transform 0.4s ease",
+        overflow: "hidden",
+      }}
+    >
+      {/* Mouse spotlight */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(260px circle at ${spotlight.x}px ${spotlight.y}px, rgba(0,255,136,0.08), transparent 50%)`,
+          opacity: spotlight.opacity,
+          transition: "opacity 0.3s ease",
+        }}
+      />
+
+      <div className="relative">
+        <div
+          className="mb-3"
+          style={{
+            fontFamily: "var(--font-monument), sans-serif",
+            fontWeight: 800,
+            fontSize: "clamp(28px, 4vw, 44px)",
+            color: "#00ff88",
+            textShadow: isHovered ? "0 0 20px rgba(0,255,136,0.4)" : "none",
+            transition: "text-shadow 0.4s ease",
+          }}
+        >
+          <CountUp target={metric.value} suffix={metric.suffix} prefix={metric.prefix || ""} />
+        </div>
+        <div
+          className="font-mono text-[10px] tracking-[0.2em] uppercase"
+          style={{ color: "rgba(255,255,255,0.4)" }}
+        >
+          {metric.label}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ── FunnelCard ── */
+function FunnelCard({
+  funnel,
+  index,
+}: {
+  funnel: (typeof FUNNEL)[0];
+  index: number;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [spotlight, setSpotlight] = useState({ x: 0, y: 0, opacity: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = cardRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setSpotlight({ x: e.clientX - rect.left, y: e.clientY - rect.top, opacity: 1 });
+  };
+
+  // Funnel opacity: topmost is brightest, dims toward bottom
+  const baseOpacity = 1 - index * 0.12;
+
+  return (
+    <motion.div
+      ref={cardRef}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.6, delay: index * 0.15 }}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        setSpotlight((prev) => ({ ...prev, opacity: 0 }));
+      }}
+      className="relative rounded-xl px-6 py-6 md:px-8 md:py-7 cursor-default"
+      style={{
+        width: "100%",
+        background: isHovered ? "rgba(0,255,136,0.03)" : `rgba(255,255,255,${baseOpacity * 0.025})`,
+        border: `1px solid ${isHovered ? "rgba(0,255,136,0.2)" : `rgba(255,255,255,${baseOpacity * 0.07})`}`,
+        boxShadow: isHovered ? "0 0 30px rgba(0,255,136,0.06)" : "none",
+        transform: isHovered ? "translateY(-2px)" : "translateY(0)",
+        transition: "background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, transform 0.4s ease",
+        overflow: "hidden",
+      }}
+    >
+      {/* Top accent line */}
+      <div
+        className="absolute top-0 left-0 right-0 h-px"
+        style={{
+          background: "linear-gradient(90deg, transparent, #00ff88, transparent)",
+          opacity: isHovered ? 0.5 : 0,
+          transition: "opacity 0.4s ease",
+        }}
+      />
+
+      {/* Mouse spotlight */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(300px circle at ${spotlight.x}px ${spotlight.y}px, rgba(0,255,136,0.07), transparent 50%)`,
+          opacity: spotlight.opacity,
+          transition: "opacity 0.3s ease",
+        }}
+      />
+
+      <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-2 md:gap-8">
+        <div className="flex items-center gap-3 whitespace-nowrap">
+          {/* Stage number badge */}
+          <div
+            className="w-6 h-6 rounded-full flex items-center justify-center font-mono text-[10px] flex-shrink-0"
+            style={{
+              background: isHovered ? "#00ff88" : "rgba(0,255,136,0.08)",
+              border: `1px solid ${isHovered ? "#00ff88" : "rgba(0,255,136,0.2)"}`,
+              color: isHovered ? "#000" : "rgba(0,255,136,0.5)",
+              fontWeight: 700,
+              transition: "all 0.4s ease",
+            }}
+          >
+            {index + 1}
+          </div>
+          <h3
+            className="uppercase"
+            style={{
+              fontFamily: "var(--font-monument), sans-serif",
+              fontWeight: 800,
+              fontSize: "clamp(14px, 2vw, 20px)",
+              color: isHovered ? "#fff" : "rgba(255,255,255,0.85)",
+              letterSpacing: "0.04em",
+              transition: "color 0.4s ease",
+            }}
+          >
+            {funnel.stage}
+          </h3>
+        </div>
+        <p
+          className="text-sm leading-[1.6]"
+          style={{ color: "rgba(255,255,255,0.45)" }}
+        >
+          {funnel.text}
+        </p>
+      </div>
+    </motion.div>
+  );
+}
+
 /* ── Component ── */
 export default function DigitalAdvertisingContent() {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -94,7 +277,7 @@ export default function DigitalAdvertisingContent() {
   const titleY = useTransform(heroProgress, [0, 1], [0, -80]);
 
   return (
-    <div className="bg-black min-h-screen overflow-x-hidden">
+    <div className="bg-black min-h-screen" style={{ overflowX: "clip" }}>
 
       {/* ══════════════════════════════════════════════════════════
           HERO — single image, title parallax
@@ -192,38 +375,7 @@ export default function DigitalAdvertisingContent() {
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {METRICS.map((m, i) => (
-              <motion.div
-                key={m.label}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-40px" }}
-                transition={{ duration: 0.6, delay: i * 0.1 }}
-                className="rounded-xl px-6 py-8 md:py-10"
-                style={{
-                  background: "rgba(255,255,255,0.02)",
-                  borderTop: "2px solid #00ff88",
-                  border: "1px solid rgba(255,255,255,0.04)",
-                  borderTopColor: "#00ff88",
-                }}
-              >
-                <div
-                  className="mb-3"
-                  style={{
-                    fontFamily: "var(--font-monument), sans-serif",
-                    fontWeight: 800,
-                    fontSize: "clamp(28px, 4vw, 44px)",
-                    color: "#00ff88",
-                  }}
-                >
-                  <CountUp target={m.value} suffix={m.suffix} prefix={m.prefix || ""} />
-                </div>
-                <div
-                  className="font-mono text-[10px] tracking-[0.2em] uppercase"
-                  style={{ color: "rgba(255,255,255,0.4)" }}
-                >
-                  {m.label}
-                </div>
-              </motion.div>
+              <MetricCard key={m.label} metric={m} index={i} />
             ))}
           </div>
         </div>
@@ -247,41 +399,7 @@ export default function DigitalAdvertisingContent() {
 
           <div className="flex flex-col items-center gap-5">
             {FUNNEL.map((f, i) => (
-              <motion.div
-                key={f.stage}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-40px" }}
-                transition={{ duration: 0.6, delay: i * 0.15 }}
-                className="rounded-xl px-6 py-6 md:px-8 md:py-7 backdrop-blur-md"
-                style={{
-                  width: f.width,
-                  maxWidth: "100%",
-                  background: "rgba(255,255,255,0.02)",
-                  border: "1px solid rgba(255,255,255,0.05)",
-                }}
-              >
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 md:gap-8">
-                  <h3
-                    className="uppercase whitespace-nowrap"
-                    style={{
-                      fontFamily: "var(--font-monument), sans-serif",
-                      fontWeight: 800,
-                      fontSize: "clamp(14px, 2vw, 20px)",
-                      color: "#fff",
-                      letterSpacing: "0.04em",
-                    }}
-                  >
-                    {f.stage}
-                  </h3>
-                  <p
-                    className="text-sm leading-[1.6]"
-                    style={{ color: "rgba(255,255,255,0.45)" }}
-                  >
-                    {f.text}
-                  </p>
-                </div>
-              </motion.div>
+              <FunnelCard key={f.stage} funnel={f} index={i} />
             ))}
           </div>
         </div>

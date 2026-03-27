@@ -9,7 +9,7 @@ import { Button } from "../ui/button";
 
 const NAV_LINKS = [
   { id: "solutions", label: "Solutions", href: "/solutions" },
-  { id: "projects", label: "Projects", href: "/projects/website-projects" },
+  { id: "projects", label: "Projects", href: "/projects" },
   { id: "about", label: "About", href: "/about" },
   { id: "contact", label: "Contact", href: "/contact" },
   { id: "pricing", label: "Pricing", href: "/pricing" },

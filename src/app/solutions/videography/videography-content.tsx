@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -66,6 +66,237 @@ const PRODUCTION = [
   },
 ];
 
+/* ── Film Card — spotlight + glow ── */
+function FilmCard({
+  film,
+  index,
+}: {
+  film: { title: string; text: string };
+  index: number;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [spotlight, setSpotlight] = useState({ x: 0, y: 0, opacity: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = cardRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setSpotlight({ x: e.clientX - rect.left, y: e.clientY - rect.top, opacity: 1 });
+  };
+
+  return (
+    <div className="flex-shrink-0 w-[320px] md:w-[400px]">
+      <div
+        ref={cardRef}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => { setIsHovered(false); setSpotlight((s) => ({ ...s, opacity: 0 })); }}
+        className="relative overflow-hidden rounded-lg px-7 py-8 md:px-9 md:py-10 h-full transition-all duration-500 cursor-default"
+        style={{
+          background: "rgba(255,255,255,0.02)",
+          border: `1px solid ${isHovered ? "rgba(0,255,136,0.18)" : "rgba(255,255,255,0.07)"}`,
+          boxShadow: isHovered
+            ? "0 0 50px rgba(0,255,136,0.07), 0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04)"
+            : "0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.03)",
+          transform: isHovered ? "translateY(-3px)" : "translateY(0)",
+        }}
+      >
+        {/* Mouse-tracking green spotlight */}
+        <div
+          className="pointer-events-none absolute inset-0 transition-opacity duration-300"
+          style={{
+            opacity: spotlight.opacity,
+            background: `radial-gradient(500px circle at ${spotlight.x}px ${spotlight.y}px, rgba(0,255,136,0.08), transparent 40%)`,
+          }}
+        />
+
+        {/* Top accent line — reveals on hover */}
+        <div
+          className="absolute top-0 left-0 right-0 h-px transition-opacity duration-500"
+          style={{
+            opacity: isHovered ? 1 : 0,
+            background: "linear-gradient(90deg, transparent, rgba(0,255,136,0.4), transparent)",
+          }}
+        />
+
+        {/* Sprocket holes */}
+        <div className="absolute top-3 left-3 flex gap-1.5">
+          {[0, 1].map((d) => (
+            <div
+              key={d}
+              className="w-2 h-2 rounded-sm transition-colors duration-500"
+              style={{ background: isHovered ? "rgba(0,255,136,0.2)" : "rgba(255,255,255,0.06)" }}
+            />
+          ))}
+        </div>
+        <div className="absolute bottom-3 right-3 flex gap-1.5">
+          {[0, 1].map((d) => (
+            <div
+              key={d}
+              className="w-2 h-2 rounded-sm transition-colors duration-500"
+              style={{ background: isHovered ? "rgba(0,255,136,0.2)" : "rgba(255,255,255,0.06)" }}
+            />
+          ))}
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10">
+          {/* Frame number */}
+          <div
+            className="font-mono text-[10px] tracking-[0.2em] mb-6 transition-colors duration-400"
+            style={{ color: isHovered ? "rgba(0,255,136,0.7)" : "rgba(0,255,136,0.35)" }}
+          >
+            FRAME 0{index + 1}
+          </div>
+
+          <h3
+            className="uppercase mb-4 transition-colors duration-400"
+            style={{
+              fontFamily: "var(--font-monument), sans-serif",
+              fontWeight: 800,
+              fontSize: "clamp(18px, 2.2vw, 26px)",
+              letterSpacing: "0.04em",
+              color: isHovered ? "#ffffff" : "rgba(255,255,255,0.85)",
+            }}
+          >
+            {film.title}
+          </h3>
+
+          {/* Green divider — grows on hover */}
+          <div
+            className="mb-5 transition-all duration-500 origin-left"
+            style={{
+              width: isHovered ? "50px" : "24px",
+              height: 1,
+              background: "#00ff88",
+              boxShadow: isHovered ? "0 0 10px rgba(0,255,136,0.4)" : "none",
+            }}
+          />
+
+          <p
+            className="text-sm leading-[1.75] transition-colors duration-400"
+            style={{ color: isHovered ? "rgba(255,255,255,0.65)" : "rgba(255,255,255,0.45)" }}
+          >
+            {film.text}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Production Card — same spotlight treatment as FilmCard ── */
+function ProductionCard({
+  phase,
+  index,
+}: {
+  phase: { phase: string; items: string[] };
+  index: number;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [spotlight, setSpotlight] = useState({ x: 0, y: 0, opacity: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = cardRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setSpotlight({ x: e.clientX - rect.left, y: e.clientY - rect.top, opacity: 1 });
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.6, delay: index * 0.15 }}
+    >
+      <div
+        ref={cardRef}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => { setIsHovered(false); setSpotlight((s) => ({ ...s, opacity: 0 })); }}
+        className="relative overflow-hidden backdrop-blur-md rounded-xl px-6 py-7 md:px-7 md:py-8 h-full transition-all duration-500 cursor-default"
+        style={{
+          background: "rgba(255,255,255,0.02)",
+          border: `1px solid ${isHovered ? "rgba(0,255,136,0.18)" : "rgba(255,255,255,0.05)"}`,
+          boxShadow: isHovered
+            ? "0 0 50px rgba(0,255,136,0.07), 0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04)"
+            : "0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.03)",
+          transform: isHovered ? "translateY(-3px)" : "translateY(0)",
+        }}
+      >
+        {/* Mouse-tracking green spotlight */}
+        <div
+          className="pointer-events-none absolute inset-0 transition-opacity duration-300"
+          style={{
+            opacity: spotlight.opacity,
+            background: `radial-gradient(500px circle at ${spotlight.x}px ${spotlight.y}px, rgba(0,255,136,0.08), transparent 40%)`,
+          }}
+        />
+
+        {/* Top accent line */}
+        <div
+          className="absolute top-0 left-0 right-0 h-px transition-opacity duration-500"
+          style={{
+            opacity: isHovered ? 1 : 0,
+            background: "linear-gradient(90deg, transparent, rgba(0,255,136,0.4), transparent)",
+          }}
+        />
+
+        {/* Content */}
+        <div className="relative z-10">
+          <div
+            className="font-mono text-[10px] tracking-[0.2em] mb-4 transition-colors duration-400"
+            style={{ color: isHovered ? "rgba(0,255,136,0.7)" : "rgba(0,255,136,0.4)" }}
+          >
+            PHASE 0{index + 1}
+          </div>
+
+          <h3
+            className="uppercase mb-4 transition-colors duration-400"
+            style={{
+              fontFamily: "var(--font-monument), sans-serif",
+              fontWeight: 800,
+              fontSize: "clamp(14px, 1.6vw, 18px)",
+              letterSpacing: "0.04em",
+              color: isHovered ? "#ffffff" : "rgba(255,255,255,0.85)",
+            }}
+          >
+            {phase.phase}
+          </h3>
+
+          {/* Green divider — grows on hover */}
+          <div
+            className="mb-5 transition-all duration-500 origin-left"
+            style={{
+              width: isHovered ? "50px" : "24px",
+              height: 1,
+              background: "#00ff88",
+              boxShadow: isHovered ? "0 0 10px rgba(0,255,136,0.4)" : "none",
+            }}
+          />
+
+          <ul className="flex flex-col gap-3">
+            {phase.items.map((item) => (
+              <li
+                key={item}
+                className="text-xs leading-[1.7] flex items-start gap-2 transition-colors duration-400"
+                style={{ color: isHovered ? "rgba(255,255,255,0.6)" : "rgba(255,255,255,0.45)" }}
+              >
+                <span
+                  className="w-1 h-1 rounded-full mt-1.5 flex-shrink-0 transition-colors duration-400"
+                  style={{ background: isHovered ? "rgba(0,255,136,0.6)" : "rgba(0,255,136,0.35)" }}
+                />
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 /* ── Component ── */
 export default function VideographyContent() {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -86,7 +317,7 @@ export default function VideographyContent() {
   const filmstripX = useTransform(filmstripProgress, [0, 1], ["0%", "-60%"]);
 
   return (
-    <div className="bg-black min-h-screen overflow-x-hidden">
+    <div className="bg-black min-h-screen" style={{ overflowX: "clip" }}>
 
       {/* ══════════════════════════════════════════════════════════
           HERO — 2-layer parallax + horizontal line
@@ -283,69 +514,7 @@ export default function VideographyContent() {
               style={{ x: filmstripX }}
             >
               {FILM_TYPES.map((film, i) => (
-                <div
-                  key={film.title}
-                  className="flex-shrink-0 w-[320px] md:w-[400px]"
-                >
-                  <div
-                    className="rounded-lg px-7 py-8 md:px-9 md:py-10 h-full relative"
-                    style={{
-                      background: "rgba(255,255,255,0.02)",
-                      border: "1px solid rgba(255,255,255,0.08)",
-                    }}
-                  >
-                    {/* Sprocket-hole decoration */}
-                    <div className="absolute top-3 left-3 flex gap-1.5">
-                      {[0, 1].map((d) => (
-                        <div
-                          key={d}
-                          className="w-2 h-2 rounded-sm"
-                          style={{
-                            background: "rgba(255,255,255,0.06)",
-                          }}
-                        />
-                      ))}
-                    </div>
-                    <div className="absolute bottom-3 right-3 flex gap-1.5">
-                      {[0, 1].map((d) => (
-                        <div
-                          key={d}
-                          className="w-2 h-2 rounded-sm"
-                          style={{
-                            background: "rgba(255,255,255,0.06)",
-                          }}
-                        />
-                      ))}
-                    </div>
-
-                    {/* Frame number */}
-                    <div
-                      className="font-mono text-[10px] tracking-[0.2em] mb-6"
-                      style={{ color: "rgba(0,255,136,0.35)" }}
-                    >
-                      FRAME 0{i + 1}
-                    </div>
-
-                    <h3
-                      className="uppercase mb-4"
-                      style={{
-                        fontFamily: "var(--font-monument), sans-serif",
-                        fontWeight: 800,
-                        fontSize: "clamp(18px, 2.2vw, 26px)",
-                        letterSpacing: "0.04em",
-                        color: "#fff",
-                      }}
-                    >
-                      {film.title}
-                    </h3>
-                    <p
-                      className="text-sm leading-[1.75]"
-                      style={{ color: "rgba(255,255,255,0.5)" }}
-                    >
-                      {film.text}
-                    </p>
-                  </div>
-                </div>
+                <FilmCard key={film.title} film={film} index={i} />
               ))}
             </motion.div>
           </div>
@@ -397,54 +566,7 @@ export default function VideographyContent() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6">
             {PRODUCTION.map((p, i) => (
-              <motion.div
-                key={p.phase}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.6, delay: i * 0.15 }}
-                className="backdrop-blur-md rounded-xl px-6 py-7 md:px-7 md:py-8"
-                style={{
-                  background: "rgba(255,255,255,0.02)",
-                  border: "1px solid rgba(255,255,255,0.05)",
-                }}
-              >
-                <div
-                  className="font-mono text-[10px] tracking-[0.2em] mb-4"
-                  style={{ color: "rgba(0,255,136,0.4)" }}
-                >
-                  PHASE 0{i + 1}
-                </div>
-
-                <h3
-                  className="uppercase mb-5"
-                  style={{
-                    fontFamily: "var(--font-monument), sans-serif",
-                    fontWeight: 800,
-                    fontSize: "clamp(14px, 1.6vw, 18px)",
-                    letterSpacing: "0.04em",
-                    color: "#fff",
-                  }}
-                >
-                  {p.phase}
-                </h3>
-
-                <ul className="flex flex-col gap-3">
-                  {p.items.map((item) => (
-                    <li
-                      key={item}
-                      className="text-xs leading-[1.7] flex items-start gap-2"
-                      style={{ color: "rgba(255,255,255,0.45)" }}
-                    >
-                      <span
-                        className="w-1 h-1 rounded-full mt-1.5 flex-shrink-0"
-                        style={{ background: "rgba(0,255,136,0.35)" }}
-                      />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
+              <ProductionCard key={p.phase} phase={p} index={i} />
             ))}
           </div>
         </div>

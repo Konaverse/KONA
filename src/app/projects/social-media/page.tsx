@@ -23,7 +23,7 @@ export default function SocialMediaProjectsPage() {
       <JsonLd
         data={breadcrumbJsonLd([
           { name: "Home", href: "/" },
-          { name: "Projects", href: "/projects/social-media" },
+          { name: "Projects", href: "/projects" },
           { name: "Social Media", href: "/projects/social-media" },
         ])}
       />

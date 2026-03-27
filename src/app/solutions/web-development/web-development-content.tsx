@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -8,6 +8,7 @@ import {
   useScroll,
   useTransform,
   useInView,
+  useMotionValue,
 } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import HomeFooter from "@/components/sections/HomeFooter";
@@ -38,15 +39,128 @@ const PROCESS = [
 ];
 
 const TECH = [
-  "React",
-  "Next.js",
-  "TypeScript",
-  "Tailwind CSS",
-  "Framer Motion",
-  "Vercel",
-  "Node.js",
-  "PostgreSQL",
+  { name: "React", abbr: "Re", color: "#61DAFB", label: "UI Framework" },
+  { name: "Next.js", abbr: "N/", color: "#e2e2e2", label: "Full-Stack Framework" },
+  { name: "TypeScript", abbr: "TS", color: "#3178C6", label: "Type Safety" },
+  { name: "Tailwind CSS", abbr: "Tw", color: "#06B6D4", label: "Styling" },
+  { name: "Framer Motion", abbr: "FM", color: "#AA50FF", label: "Animations" },
+  { name: "Vercel", abbr: "▲", color: "#e2e2e2", label: "Deployment" },
+  { name: "Node.js", abbr: "No", color: "#68A063", label: "Backend Runtime" },
+  { name: "PostgreSQL", abbr: "Pg", color: "#4169E1", label: "Database" },
 ];
+
+function TechCard({ tech, index }: { tech: typeof TECH[number]; index: number }) {
+  const [isHovered, setIsHovered] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = cardRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    mouseX.set(e.clientX - rect.left);
+    mouseY.set(e.clientY - rect.top);
+  };
+
+  return (
+    <motion.div
+      ref={cardRef}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.5, delay: index * 0.07, ease: [0.25, 0.46, 0.45, 0.94] }}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="relative overflow-hidden rounded-sm backdrop-blur-sm cursor-default transition-all duration-500"
+      style={{
+        background: "rgba(255,255,255,0.02)",
+        border: `1px solid ${isHovered ? "rgba(0,255,136,0.12)" : "rgba(255,255,255,0.05)"}`,
+        boxShadow: isHovered ? "0 0 30px rgba(0,255,136,0.05), 0 8px 24px rgba(0,0,0,0.2)" : "none",
+        transform: isHovered ? "translateY(-2px)" : "translateY(0)",
+        padding: "clamp(20px, 2.5vw, 32px)",
+      }}
+    >
+      {/* Mouse-following spotlight */}
+      {isHovered && (
+        <motion.div
+          className="absolute pointer-events-none rounded-full"
+          style={{
+            width: 120,
+            height: 120,
+            x: mouseX,
+            y: mouseY,
+            translateX: "-50%",
+            translateY: "-50%",
+            background: "rgba(0,255,136,0.06)",
+            filter: "blur(40px)",
+          }}
+        />
+      )}
+
+      {/* Color mark */}
+      <div className="relative z-10 mb-4">
+        <div
+          className="inline-flex items-center justify-center w-10 h-10 rounded-sm"
+          style={{
+            background: `${tech.color}12`,
+            border: `1px solid ${tech.color}25`,
+            boxShadow: isHovered ? `0 0 16px ${tech.color}20` : "none",
+            transition: "box-shadow 0.4s ease",
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "var(--font-geist-mono), monospace",
+              fontWeight: 700,
+              fontSize: tech.abbr === "▲" ? "14px" : "11px",
+              letterSpacing: tech.abbr === "▲" ? "0" : "0.05em",
+              color: tech.color,
+            }}
+          >
+            {tech.abbr}
+          </span>
+        </div>
+      </div>
+
+      {/* Name */}
+      <p
+        className="relative z-10 mb-1 transition-colors duration-300"
+        style={{
+          fontFamily: "var(--font-geist-sans), sans-serif",
+          fontSize: "clamp(13px, 1vw, 15px)",
+          fontWeight: 500,
+          color: isHovered ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.7)",
+        }}
+      >
+        {tech.name}
+      </p>
+
+      {/* Label */}
+      <p
+        className="relative z-10"
+        style={{
+          fontFamily: "var(--font-geist-mono), monospace",
+          fontSize: "9px",
+          letterSpacing: "0.15em",
+          textTransform: "uppercase",
+          color: "rgba(255,255,255,0.2)",
+        }}
+      >
+        {tech.label}
+      </p>
+
+      {/* Top accent line on hover */}
+      <motion.div
+        className="absolute top-0 left-0 right-0 h-px origin-left"
+        initial={{ scaleX: 0 }}
+        animate={{ scaleX: isHovered ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
+        style={{ background: `linear-gradient(90deg, ${tech.color}60, transparent)` }}
+      />
+    </motion.div>
+  );
+}
 
 const STATS = [
   { value: "99+", label: "Lighthouse Score" },
@@ -353,7 +467,7 @@ export default function WebDevelopmentContent() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════
-          TECH STACK — floating badges
+          TECH STACK — interactive card grid
       ══════════════════════════════════════════════════════════ */}
       <section className="relative py-24 md:py-36 px-[clamp(1.5rem,4vw,4rem)]">
         <div className="relative z-[1] max-w-5xl mx-auto">
@@ -362,29 +476,49 @@ export default function WebDevelopmentContent() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.6 }}
-            className="font-mono text-[10px] tracking-[0.3em] uppercase mb-12"
+            className="font-mono text-[10px] tracking-[0.3em] uppercase mb-4"
             style={{ color: "rgba(0,255,136,0.5)" }}
           >
             Tech Stack
           </motion.p>
 
-          <div className="flex flex-wrap gap-3 md:gap-4">
-            {TECH.map((t, i) => (
-              <motion.div
-                key={t}
-                initial={{ opacity: 0, y: 20, scale: 0.92 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                viewport={{ once: true, margin: "-40px" }}
-                transition={{ duration: 0.5, delay: i * 0.06 }}
-                className="backdrop-blur-md rounded-lg px-5 py-2.5 font-mono text-[11px] tracking-[0.15em] uppercase"
-                style={{
-                  background: "rgba(255,255,255,0.025)",
-                  border: "1px solid rgba(255,255,255,0.06)",
-                  color: "rgba(255,255,255,0.6)",
-                }}
-              >
-                {t}
-              </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="uppercase leading-[0.95] mb-3"
+            style={{
+              fontFamily: "var(--font-monument), sans-serif",
+              fontWeight: 800,
+              fontSize: "clamp(24px, 3.5vw, 48px)",
+              color: "#ffffff",
+            }}
+          >
+            Built With The
+            <br />
+            <span style={{ color: "#00ff88" }}>Best Tools</span>
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="mb-12 max-w-md"
+            style={{
+              fontFamily: "var(--font-geist-sans), sans-serif",
+              fontSize: "clamp(13px, 1vw, 15px)",
+              color: "rgba(255,255,255,0.4)",
+              lineHeight: 1.7,
+            }}
+          >
+            Every technology in our stack is chosen for performance, scalability, and developer experience.
+          </motion.p>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+            {TECH.map((tech, i) => (
+              <TechCard key={tech.name} tech={tech} index={i} />
             ))}
           </div>
         </div>

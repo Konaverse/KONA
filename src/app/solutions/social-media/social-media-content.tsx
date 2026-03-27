@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -12,6 +12,14 @@ import {
 import { Button } from "@/components/ui/button";
 import HomeFooter from "@/components/sections/HomeFooter";
 import { ArrowUpRight } from "lucide-react";
+import {
+  FaInstagram,
+  FaTiktok,
+  FaFacebookF,
+  FaLinkedinIn,
+  FaYoutube,
+  FaXTwitter,
+} from "react-icons/fa6";
 
 /* ── Counter hook ── */
 function CountUp({
@@ -76,12 +84,42 @@ const FLOW_STEPS = [
 ];
 
 const PLATFORMS = [
-  { name: "Instagram", services: "Reels, Stories, Carousels, Grid Curation" },
-  { name: "TikTok", services: "Short-Form Video, Trends, Duets, Hooks" },
-  { name: "Facebook", services: "Page Management, Groups, Events, Ads" },
-  { name: "LinkedIn", services: "Thought Leadership, Articles, Company Page" },
-  { name: "YouTube", services: "Shorts, Long-Form, Thumbnails, SEO" },
-  { name: "X", services: "Threads, Engagement, Real-Time Content" },
+  {
+    name: "Instagram",
+    services: "Reels, Stories, Carousels, Grid Curation",
+    Icon: FaInstagram,
+    color: "#E1306C",
+  },
+  {
+    name: "TikTok",
+    services: "Short-Form Video, Trends, Duets, Hooks",
+    Icon: FaTiktok,
+    color: "#ffffff",
+  },
+  {
+    name: "Facebook",
+    services: "Page Management, Groups, Events, Ads",
+    Icon: FaFacebookF,
+    color: "#1877F2",
+  },
+  {
+    name: "LinkedIn",
+    services: "Thought Leadership, Articles, Company Page",
+    Icon: FaLinkedinIn,
+    color: "#0A66C2",
+  },
+  {
+    name: "YouTube",
+    services: "Shorts, Long-Form, Thumbnails, SEO",
+    Icon: FaYoutube,
+    color: "#FF0000",
+  },
+  {
+    name: "X",
+    services: "Threads, Engagement, Real-Time Content",
+    Icon: FaXTwitter,
+    color: "#ffffff",
+  },
 ];
 
 const STATS_DATA = [
@@ -90,9 +128,257 @@ const STATS_DATA = [
   { value: 40, suffix: "%", label: "Avg. Engagement Increase" },
 ];
 
+/* ── PlatformCard ── */
+function PlatformCard({
+  platform,
+  index,
+}: {
+  platform: (typeof PLATFORMS)[0];
+  index: number;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [spotlight, setSpotlight] = useState({ x: 0, y: 0, opacity: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = cardRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setSpotlight({ x: e.clientX - rect.left, y: e.clientY - rect.top, opacity: 1 });
+  };
+
+  const { Icon, color } = platform;
+
+  return (
+    <motion.div
+      ref={cardRef}
+      initial={{ opacity: 0, scale: 0.95, y: 12 }}
+      whileInView={{ opacity: 1, scale: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.5, delay: index * 0.08 }}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        setSpotlight((prev) => ({ ...prev, opacity: 0 }));
+      }}
+      className="relative rounded-xl cursor-default"
+      style={{
+        background: isHovered ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.02)",
+        border: `1px solid ${isHovered ? `${color}30` : "rgba(255,255,255,0.05)"}`,
+        boxShadow: isHovered ? `0 0 30px ${color}0d` : "none",
+        transition: "border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease",
+        overflow: "hidden",
+        transform: isHovered ? "translateY(-3px)" : "translateY(0)",
+        transitionProperty: "border-color, box-shadow, background, transform",
+        transitionDuration: "0.4s",
+        transitionTimingFunction: "ease",
+      }}
+    >
+      {/* Top accent line — brand color */}
+      <div
+        className="absolute top-0 left-0 right-0 h-px"
+        style={{
+          background: `linear-gradient(90deg, transparent, ${color}, transparent)`,
+          opacity: isHovered ? 0.6 : 0,
+          transition: "opacity 0.4s ease",
+        }}
+      />
+
+      {/* Mouse spotlight */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(280px circle at ${spotlight.x}px ${spotlight.y}px, ${color}12, transparent 50%)`,
+          opacity: spotlight.opacity,
+          transition: "opacity 0.3s ease",
+        }}
+      />
+
+      <div className="relative px-6 py-6 md:px-7 md:py-7">
+        {/* Icon box */}
+        <div
+          className="w-10 h-10 rounded-lg flex items-center justify-center mb-5"
+          style={{
+            background: isHovered ? `${color}20` : `${color}12`,
+            border: `1px solid ${color}30`,
+            transition: "background 0.4s ease",
+          }}
+        >
+          <Icon
+            style={{
+              color: color,
+              width: 18,
+              height: 18,
+              filter: isHovered ? `drop-shadow(0 0 6px ${color}80)` : "none",
+              transition: "filter 0.4s ease",
+            }}
+          />
+        </div>
+
+        {/* Growing divider */}
+        <div
+          className="rounded-full mb-4"
+          style={{
+            height: 2,
+            width: isHovered ? 40 : 20,
+            background: color,
+            boxShadow: isHovered ? `0 0 10px ${color}60` : "none",
+            transition: "width 0.4s ease, box-shadow 0.4s ease",
+          }}
+        />
+
+        <h3
+          className="uppercase mb-2"
+          style={{
+            fontFamily: "var(--font-monument), sans-serif",
+            fontWeight: 800,
+            fontSize: "clamp(14px, 1.6vw, 18px)",
+            letterSpacing: "0.04em",
+            color: isHovered ? "#fff" : "rgba(255,255,255,0.8)",
+            transition: "color 0.4s ease",
+          }}
+        >
+          {platform.name}
+        </h3>
+        <p className="text-xs leading-[1.7]" style={{ color: "rgba(255,255,255,0.45)" }}>
+          {platform.services}
+        </p>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ── FlowCard ── */
+function FlowCard({
+  step,
+  index,
+  isActive,
+  onActivate,
+}: {
+  step: (typeof FLOW_STEPS)[0];
+  index: number;
+  isActive: boolean;
+  onActivate: (i: number) => void;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const [spotlight, setSpotlight] = useState({ x: 0, y: 0, opacity: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const isInView = useInView(triggerRef, { once: true, margin: "-100px" });
+  useEffect(() => {
+    if (isInView) onActivate(index);
+  }, [isInView, index, onActivate]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = cardRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setSpotlight({ x: e.clientX - rect.left, y: e.clientY - rect.top, opacity: 1 });
+  };
+
+  const isLeft = index % 2 === 0;
+
+  return (
+    <div ref={triggerRef} className={`flex ${isLeft ? "md:justify-start" : "md:justify-end"}`}>
+      <motion.div
+        ref={cardRef}
+        initial={{ opacity: 0, x: isLeft ? -30 : 30 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6, delay: index * 0.1 }}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => {
+          setIsHovered(false);
+          setSpotlight((prev) => ({ ...prev, opacity: 0 }));
+        }}
+        className="relative rounded-xl max-w-md w-full cursor-default"
+        style={{
+          background: isActive ? "rgba(0,255,136,0.03)" : "rgba(255,255,255,0.02)",
+          border: `1px solid ${isActive ? "rgba(0,255,136,0.25)" : isHovered ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.05)"}`,
+          boxShadow: isActive
+            ? "0 0 40px rgba(0,255,136,0.07), inset 0 0 20px rgba(0,255,136,0.02)"
+            : "none",
+          transition: "border-color 0.5s ease, box-shadow 0.5s ease, background 0.5s ease",
+          overflow: "hidden",
+        }}
+      >
+        {/* Top accent line */}
+        <div
+          className="absolute top-0 left-0 right-0 h-px"
+          style={{
+            background: "linear-gradient(90deg, transparent, #00ff88, transparent)",
+            opacity: isActive ? 0.7 : isHovered ? 0.3 : 0,
+            transition: "opacity 0.5s ease",
+          }}
+        />
+
+        {/* Mouse spotlight */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: `radial-gradient(300px circle at ${spotlight.x}px ${spotlight.y}px, rgba(0,255,136,0.07), transparent 50%)`,
+            opacity: spotlight.opacity,
+            transition: "opacity 0.3s ease",
+          }}
+        />
+
+        <div className="relative px-6 py-7 md:px-8 md:py-8">
+          {/* Step badge */}
+          <div
+            className="w-9 h-9 rounded-full flex items-center justify-center font-mono text-[11px] mb-5"
+            style={{
+              background: isActive ? "#00ff88" : "rgba(0,255,136,0.08)",
+              border: `1px solid ${isActive ? "#00ff88" : "rgba(0,255,136,0.2)"}`,
+              color: isActive ? "#000" : "rgba(0,255,136,0.5)",
+              boxShadow: isActive ? "0 0 18px rgba(0,255,136,0.35)" : "none",
+              fontWeight: 700,
+              transition: "all 0.5s ease",
+            }}
+          >
+            0{index + 1}
+          </div>
+
+          {/* Growing divider */}
+          <div
+            className="rounded-full mb-5"
+            style={{
+              height: 2,
+              width: isActive ? 52 : isHovered ? 32 : 20,
+              background: "#00ff88",
+              boxShadow: isActive ? "0 0 14px rgba(0,255,136,0.5)" : "none",
+              transition: "width 0.5s ease, box-shadow 0.5s ease",
+            }}
+          />
+
+          <h3
+            className="uppercase mb-3"
+            style={{
+              fontFamily: "var(--font-monument), sans-serif",
+              fontWeight: 800,
+              fontSize: "clamp(16px, 2vw, 22px)",
+              letterSpacing: "0.04em",
+              color: isActive ? "#fff" : "rgba(255,255,255,0.7)",
+              transition: "color 0.5s ease",
+            }}
+          >
+            {step.title}
+          </h3>
+          <p className="text-sm leading-[1.75]" style={{ color: "rgba(255,255,255,0.5)" }}>
+            {step.text}
+          </p>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
 /* ── Component ── */
 export default function SocialMediaContent() {
   const heroRef = useRef<HTMLDivElement>(null);
+  const [activeStep, setActiveStep] = useState(-1);
+  const handleActivate = useCallback((i: number) => {
+    setActiveStep((prev) => Math.max(prev, i));
+  }, []);
 
   const { scrollYProgress: heroProgress } = useScroll({
     target: heroRef,
@@ -103,7 +389,7 @@ export default function SocialMediaContent() {
   const layer2Y = useTransform(heroProgress, [0, 1], [0, -180]);
 
   return (
-    <div className="bg-black min-h-screen overflow-x-hidden">
+    <div className="bg-black min-h-screen" style={{ overflowX: "clip" }}>
 
       {/* ══════════════════════════════════════════════════════════
           HERO — 2-layer parallax
@@ -229,71 +515,37 @@ export default function SocialMediaContent() {
             <span style={{ color: "#00ff88" }}>To Growth</span>
           </motion.h2>
 
-          {/* Dotted SVG connector */}
-          <div className="absolute left-1/2 top-[280px] bottom-[80px] w-px hidden md:block -translate-x-1/2">
-            <motion.div
-              initial={{ scaleY: 0 }}
-              whileInView={{ scaleY: 1 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 1.2, delay: 0.3 }}
-              className="w-full h-full origin-top"
+          {/* Progressive connector line */}
+          <div
+            className="absolute left-1/2 top-[280px] bottom-[80px] hidden md:block -translate-x-1/2"
+            style={{ width: 2, background: "rgba(255,255,255,0.06)", borderRadius: 2 }}
+          >
+            <div
               style={{
-                backgroundImage:
-                  "repeating-linear-gradient(to bottom, rgba(0,255,136,0.2) 0px, rgba(0,255,136,0.2) 4px, transparent 4px, transparent 12px)",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: `${((activeStep + 1) / FLOW_STEPS.length) * 100}%`,
+                background: "linear-gradient(to bottom, #00ff88, rgba(0,255,136,0.3))",
+                boxShadow: "0 0 10px rgba(0,255,136,0.3)",
+                borderRadius: 2,
+                transition: "height 0.6s ease",
               }}
             />
           </div>
 
           {/* Flow cards */}
           <div className="flex flex-col gap-12 md:gap-16">
-            {FLOW_STEPS.map((step, i) => {
-              const isLeft = i % 2 === 0;
-              return (
-                <motion.div
-                  key={step.title}
-                  initial={{ opacity: 0, x: isLeft ? -30 : 30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, margin: "-60px" }}
-                  transition={{ duration: 0.6, delay: i * 0.08 }}
-                  className={`flex ${isLeft ? "md:justify-start" : "md:justify-end"}`}
-                >
-                  <div
-                    className="backdrop-blur-md rounded-xl px-6 py-6 md:px-8 md:py-7 max-w-md relative"
-                    style={{
-                      background: "rgba(255,255,255,0.02)",
-                      border: "1px solid rgba(255,255,255,0.05)",
-                    }}
-                  >
-                    {/* Step number */}
-                    <div
-                      className="absolute -top-3 font-mono text-[10px] tracking-[0.2em]"
-                      style={{ color: "rgba(0,255,136,0.4)" }}
-                    >
-                      0{i + 1}
-                    </div>
-
-                    <h3
-                      className="uppercase mb-3 mt-2"
-                      style={{
-                        fontFamily: "var(--font-monument), sans-serif",
-                        fontWeight: 800,
-                        fontSize: "clamp(16px, 2vw, 22px)",
-                        letterSpacing: "0.04em",
-                        color: "#fff",
-                      }}
-                    >
-                      {step.title}
-                    </h3>
-                    <p
-                      className="text-sm leading-[1.75]"
-                      style={{ color: "rgba(255,255,255,0.5)" }}
-                    >
-                      {step.text}
-                    </p>
-                  </div>
-                </motion.div>
-              );
-            })}
+            {FLOW_STEPS.map((step, i) => (
+              <FlowCard
+                key={step.title}
+                step={step}
+                index={i}
+                isActive={i <= activeStep}
+                onActivate={handleActivate}
+              />
+            ))}
           </div>
         </div>
       </section>
@@ -316,37 +568,7 @@ export default function SocialMediaContent() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
             {PLATFORMS.map((p, i) => (
-              <motion.div
-                key={p.name}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true, margin: "-40px" }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
-                className="backdrop-blur-md rounded-xl px-6 py-6 md:px-7 md:py-7"
-                style={{
-                  background: "rgba(255,255,255,0.02)",
-                  border: "1px solid rgba(255,255,255,0.05)",
-                }}
-              >
-                <h3
-                  className="uppercase mb-2"
-                  style={{
-                    fontFamily: "var(--font-monument), sans-serif",
-                    fontWeight: 800,
-                    fontSize: "clamp(14px, 1.6vw, 18px)",
-                    letterSpacing: "0.04em",
-                    color: "#fff",
-                  }}
-                >
-                  {p.name}
-                </h3>
-                <p
-                  className="text-xs leading-[1.7]"
-                  style={{ color: "rgba(255,255,255,0.45)" }}
-                >
-                  {p.services}
-                </p>
-              </motion.div>
+              <PlatformCard key={p.name} platform={p} index={i} />
             ))}
           </div>
         </div>

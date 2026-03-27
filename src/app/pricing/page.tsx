@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/metadata";
 import { JsonLd, breadcrumbJsonLd } from "@/components/seo/json-ld";
-import { SolutionHero } from "@/components/ui/solution-hero";
+import PricingContent from "./pricing-content";
 
 export const metadata: Metadata = buildMetadata({
   title: "Pricing",
@@ -28,13 +28,7 @@ export default function PricingPage() {
           { name: "Pricing", href: "/pricing" },
         ])}
       />
-      <div className="flex flex-col w-full">
-        <SolutionHero
-          title="Investment Strategy"
-          subtitle="Pricing"
-          description="Transparent, performance-driven pricing models designed to scale alongside your business growth."
-        />
-      </div>
+      <PricingContent />
     </>
   );
 }

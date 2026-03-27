@@ -34,7 +34,15 @@
       "Bash(find /Users/konst/Projects/KONA/public -type f \\\\\\(-iname *logo* -o -iname *kona* \\\\\\) -ls)",
       "Bash(find /c/Users/konst/Projects/KONA -type f -name *.png -o -name *.svg)",
       "Bash(find /c/Users/konst/Projects/KONA/src -type f \\\\\\(-iname *preload* -o -iname *loader* -o -iname *loading* \\\\\\))",
-      "Bash(find /c/Users/konst/Projects/KONA/.claude/skills -type d -name *scroll* -o -type d -name *animation* -o -type d -name *design* -o -type d -name *parallax* -o -type d -name *entrance* -o -type d -name *interactive*)"
+      "Bash(find /c/Users/konst/Projects/KONA/.claude/skills -type d -name *scroll* -o -type d -name *animation* -o -type d -name *design* -o -type d -name *parallax* -o -type d -name *entrance* -o -type d -name *interactive*)",
+      "Bash(grep -E '\\\\.\\(ts|tsx\\)$')",
+      "Bash(where npm:*)",
+      "Bash(find /c/Users/konst/Projects/KONA/.claude/skills -type f -name *.md)",
+      "Bash(grep -r \"background.*video\\\\|<video\\\\|useScroll\\\\|useTransform\" /c/Users/konst/Projects/KONA/src/components/sections/*.tsx)",
+      "Bash(grep -l \"framer-motion\\\\|motion\" /c/Users/konst/Projects/KONA/src/components/sections/*.tsx)",
+      "Bash(find /c/Users/konst/Projects/KONA -type f -name *pricing*)",
+      "mcp__magic__21st_magic_component_inspiration",
+      "Bash(\"/c/Program Files/nodejs/npx.cmd\" next build)"
     ]
   }
 }

@@ -22,7 +22,7 @@ export default function WebsiteProjectsPage() {
       <JsonLd
         data={breadcrumbJsonLd([
           { name: "Home", href: "/" },
-          { name: "Projects", href: "/projects/website-projects" },
+          { name: "Projects", href: "/projects" },
           { name: "Website Projects", href: "/projects/website-projects" },
         ])}
       />
