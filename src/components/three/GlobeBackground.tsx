@@ -5,58 +5,115 @@ import { MotionValue, useMotionValueEvent } from "framer-motion";
 import { Globe } from "@/components/ui/globe";
 
 // Render size for the canvas (cheap to draw)
-const RENDER_SIZE = 600;
+const RENDER_SIZE = 1000;
 
-// Clockwise cubic bezier arc: bottom-left → swings right → top-right
-function arcPos(rawT: number): { left: number; top: number; scale: number } {
-  // Active during hero scroll 0.25 → 0.75
-  const t = Math.max(0, Math.min(1, (rawT - 0.25) / 0.5));
-  // Ease in-out cubic
-  const e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+// Desktop: globe right side, above the headline area
+// Uses percentage-based positioning for the CENTER of the globe.
+// centerX/centerY are viewport percentages (0-100).
+function desktopPos(rawT: number): { centerX: number; centerY: number; scale: number; opacity: number } {
+  const vh = window.innerHeight;
 
-  const vm = Math.min(window.innerWidth, window.innerHeight) / 100;
-  const vw = window.innerWidth / 100;
-  const vh = window.innerHeight / 100;
-  const S = 340 * vm; // visual size (px)
-  const V = 130 * vm; // visible corner amount (px)
-  const scale = S / RENDER_SIZE; // CSS scale factor
+  // Globe visual size: sharp at ≤ 2x scale (600px canvas → max 1200px)
+  const S = Math.max(1200, Math.min(1000, vh * 0.65));
+  const scale = S / RENDER_SIZE;
 
-  // P0: bottom-left (globe mostly off-screen)
-  const x0 = -(S - V) + 60 * vm, y0 = 100 * vh - V + 8 * vm;
-  // P1: swing hard right + slightly below (creates the clockwise arc)
-  const x1 = 100 * vw + S * 0.3, y1 = 100 * vh + S * 0.15;
-  // P2: right side, rising up toward final position
-  const x2 = 100 * vw + S * 0.3, y2 = -(S - V);
-  // P3: top-right (globe mostly off-screen)
-  const x3 = 100 * vw - V, y3 = -(S - V);
+  // Scroll-driven drift (0 → 0.5 of hero progress)
+  const drift = Math.max(0, Math.min(1, rawT / 0.5));
+  const eased = drift < 0.5 ? 2 * drift * drift : 1 - Math.pow(-2 * drift + 2, 2) / 2;
 
-  const m = 1 - e;
+  const scaleMul = 1.0 + 0.15 * eased;
+
+  // Position: right side, upper area above headline
+  const centerX = 105;
+  const centerY = 40;
+  const driftY = -4 * eased; // drift up 4vh on scroll
+
+  // Opacity: visible on load, fades after 0.50
+  const opacity = rawT < 0.50
+    ? 0.60 + 0.15 * eased
+    : rawT > 0.75 ? 0 : 0.75 * (1 - (rawT - 0.50) / 0.25);
+
   return {
-    left: m * m * m * x0 + 3 * m * m * e * x1 + 3 * m * e * e * x2 + e * e * e * x3,
-    top: m * m * m * y0 + 3 * m * m * e * y1 + 3 * m * e * e * y2 + e * e * e * y3,
-    scale,
+    centerX,
+    centerY: centerY + driftY,
+    scale: scale * scaleMul,
+    opacity,
   };
+}
+
+// Mobile: globe centered behind architect, drifts up + fades out on scroll
+function mobileArcPos(rawT: number): { left: number; top: number; scale: number; opacity: number } {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  // Size the globe to 120% of viewport width so it bleeds off edges — feels immersive
+  const S = vw * 1.2;
+  const scale = S / RENDER_SIZE;
+
+  // Scroll-driven drift: 0 → 0.5
+  const drift = Math.max(0, Math.min(1, rawT / 0.5));
+  const eased = drift < 0.5 ? 2 * drift * drift : 1 - Math.pow(-2 * drift + 2, 2) / 2;
+
+  // Start: centered horizontally, globe center at ~60% down viewport (behind architect)
+  // End: centered horizontally, globe center at ~15% down viewport, scaled down
+  const startScale = scale;
+  const endScale = scale * 0.5;
+  const currentScale = startScale + (endScale - startScale) * eased;
+  const renderedSize = RENDER_SIZE * currentScale;
+
+  const left = (vw - renderedSize) / 2;
+  const startTop = vh * 0.60 - renderedSize / 2;
+  const endTop = vh * 0.15 - renderedSize / 2;
+  const top = startTop + (endTop - startTop) * eased;
+
+  // Fade out: 0.5 → 0.75
+  const fade = rawT < 0.5 ? 1 : rawT > 0.75 ? 0 : 1 - (rawT - 0.5) / 0.25;
+
+  return { left, top, scale: currentScale, opacity: fade };
 }
 
 export default function GlobeBackground({
   heroScrollY,
+  isMobile,
 }: {
   heroScrollY: MotionValue<number>;
+  isMobile?: boolean;
 }) {
   const posRef = useRef<HTMLDivElement>(null);
 
   const applyPosition = (t: number) => {
     const el = posRef.current;
     if (!el) return;
-    const { left, top, scale } = arcPos(t);
-    // Use transform for both positioning and scaling — single composite layer, no layout thrash
-    el.style.transform = `translate3d(${left}px, ${top}px, 0) scale(${scale})`;
+
+    if (isMobile) {
+      el.style.transformOrigin = "0 0";
+      const { left, top, scale, opacity } = mobileArcPos(t);
+      el.style.transform = `translate3d(${left}px, ${top}px, 0) scale(${scale})`;
+      el.style.opacity = `${opacity}`;
+    } else {
+      // Desktop: position by center point (viewport %)
+      el.style.transformOrigin = "center center";
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const { centerX, centerY, scale, opacity } = desktopPos(t);
+      // Move center of the 600px element to the target viewport point
+      const targetLeft = (vw * centerX / 100) - RENDER_SIZE / 2;
+      const targetTop = (vh * centerY / 100) - RENDER_SIZE / 2;
+      el.style.transform = `translate3d(${targetLeft}px, ${targetTop}px, 0) scale(${scale})`;
+      el.style.opacity = `${opacity}`;
+    }
   };
 
-  // Set position from JS on mount so it always matches arcPos(currentScroll)
+  // Set position from JS on mount so it always matches current scroll
   useEffect(() => {
     applyPosition(heroScrollY.get());
-  }, [heroScrollY]);
+  }, [heroScrollY, isMobile]);
+
+  // Recompute on resize/orientation change
+  useEffect(() => {
+    const handleResize = () => applyPosition(heroScrollY.get());
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [heroScrollY, isMobile]);
 
   useMotionValueEvent(heroScrollY, "change", applyPosition);
 
@@ -69,13 +126,13 @@ export default function GlobeBackground({
         top: 0,
         width: `${RENDER_SIZE}px`,
         height: `${RENDER_SIZE}px`,
-        transformOrigin: "0 0",
+        transformOrigin: isMobile ? "0 0" : "center center",
         willChange: "transform",
         zIndex: 0,
         pointerEvents: "none",
       }}
     >
-      <Globe className="max-w-none" />
+      <Globe className="max-w-none" dpr={isMobile ? 1 : 2} />
     </div>
   );
 }

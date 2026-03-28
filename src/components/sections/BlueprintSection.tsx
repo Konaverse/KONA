@@ -30,39 +30,19 @@ function PrincipleEntry({
   label,
   claim,
   text,
-  index,
-  progress,
 }: {
   num: string;
   label: string;
   claim: string;
   text: string;
-  index: number;
-  progress: MotionValue<number>;
 }) {
-  const start = 0.28 + index * 0.07;
-  const end = start + 0.08;
-
-  const opacity = useTransform(progress, [start, end, 0.87, 0.94], [0, 1, 1, 0]);
-  const y = useTransform(progress, [start, end], [22, 0]);
-  const lineScaleX = useTransform(progress, [start, start + 0.05], [0, 1]);
-
   return (
-    <motion.div
-      style={{
-        position: "relative",
-        opacity,
-        y,
-        willChange: "transform, opacity",
-      }}
-    >
+    <div style={{ position: "relative" }}>
       {/* Hairline above */}
-      <motion.div
+      <div
         style={{
           height: 1,
           background: "var(--kona-accent)",
-          scaleX: lineScaleX,
-          transformOrigin: "left center",
           opacity: 0.35,
           marginBottom: 14,
         }}
@@ -103,7 +83,7 @@ function PrincipleEntry({
             {label}
           </div>
 
-          {/* Bold claim — the memorable hook */}
+          {/* Bold claim */}
           <div
             style={{
               fontFamily: "var(--font-monument), sans-serif",
@@ -135,15 +115,12 @@ function PrincipleEntry({
           </p>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
-// ─── Blueprint Grid (unchanged) ───────────────────────────
-function BlueprintGrid({ progress }: { progress: MotionValue<number> }) {
-  const dashOffset = useTransform(progress, [0.15, 0.4], [1000, 0]);
-  const gridOpacity = useTransform(progress, [0.15, 0.25, 0.85, 1.0], [0, 0.08, 0.08, 0]);
-
+// ─── Blueprint Grid ───────────────────────────────────────
+function BlueprintGrid({ opacity }: { opacity: MotionValue<number> }) {
   return (
     <motion.svg
       style={{
@@ -151,30 +128,26 @@ function BlueprintGrid({ progress }: { progress: MotionValue<number> }) {
         inset: 0,
         width: "100%",
         height: "100%",
-        opacity: gridOpacity,
+        opacity,
         pointerEvents: "none",
       }}
       viewBox="0 0 800 600"
       preserveAspectRatio="xMidYMid slice"
     >
       {[100, 200, 300, 400, 500].map((y) => (
-        <motion.line
+        <line
           key={`h-${y}`}
           x1="0" y1={y} x2="800" y2={y}
           stroke="var(--kona-accent)"
           strokeWidth="0.5"
-          strokeDasharray="1000"
-          style={{ strokeDashoffset: dashOffset }}
         />
       ))}
       {[100, 200, 400, 600, 700].map((x) => (
-        <motion.line
+        <line
           key={`v-${x}`}
           x1={x} y1="0" x2={x} y2="600"
           stroke="var(--kona-accent)"
           strokeWidth="0.5"
-          strokeDasharray="1000"
-          style={{ strokeDashoffset: dashOffset }}
         />
       ))}
     </motion.svg>
@@ -192,27 +165,15 @@ export default function BlueprintSection({ progress, visible }: BlueprintSection
   const curtainY = useTransform(progress, [0, 0.05], [100, 0]);
   const curtainX = useTransform(progress, [0.06, 0.14], [0, 105]);
 
-  // Section label
-  const headerOpacity = useTransform(progress, [0.10, 0.14, 0.88, 0.95], [0, 1, 1, 0]);
-  const headerY = useTransform(progress, [0.10, 0.14], [14, 0]);
+  // Everything behind the curtain: single scroll-driven Y offset
+  // Starts at +50vh (bottom half of viewport), scrolls up to -100vh (exits top)
+  const contentY = useTransform(progress, [0.14, 0.92], ["50vh", "-100vh"]);
 
-  // Title line 1 — thin weight
-  const t1Opacity = useTransform(progress, [0.13, 0.18, 0.88, 0.95], [0, 1, 1, 0]);
-  const t1X = useTransform(progress, [0.13, 0.18], [-28, 0]);
-
-  // Title line 2 — bold green
-  const t2Opacity = useTransform(progress, [0.17, 0.22, 0.88, 0.95], [0, 1, 1, 0]);
-  const t2X = useTransform(progress, [0.17, 0.22], [-28, 0]);
-
-  // Divider hairline
-  const divOpacity = useTransform(progress, [0.22, 0.26, 0.88, 0.95], [0, 1, 1, 0]);
-  const divScaleX = useTransform(progress, [0.22, 0.30], [0, 1]);
-
-  // Bottom annotation
-  const footerOpacity = useTransform(progress, [0.56, 0.62, 0.88, 0.95], [0, 1, 1, 0]);
+  // Fade in after curtain clears, fade out at end
+  const contentOpacity = useTransform(progress, [0.14, 0.18, 0.88, 0.95], [0, 1, 1, 0]);
 
   // Boundary rule
-  const ruleOpacity = useTransform(progress, [0.10, 0.14, 0.88, 0.95], [0, 0.14, 0.14, 0]);
+  const ruleOpacity = useTransform(progress, [0.14, 0.18, 0.88, 0.95], [0, 0.14, 0.14, 0]);
 
   return (
     <>
@@ -260,10 +221,7 @@ export default function BlueprintSection({ progress, visible }: BlueprintSection
           pointerEvents: "none",
         }}
       >
-        {/* Subtle blueprint grid */}
-        <BlueprintGrid progress={progress} />
-
-        {/* Vertical boundary rule at the left edge of the content zone */}
+        {/* Vertical boundary rule */}
         <motion.div
           style={{
             position: "absolute",
@@ -276,28 +234,20 @@ export default function BlueprintSection({ progress, visible }: BlueprintSection
           }}
         />
 
-        {/* ── Content column (right ~52%) ── */}
-        <div
+        {/* ── Content column — single scrolling block ── */}
+        <motion.div
           style={{
             position: "absolute",
-            top: 0,
-            bottom: 0,
             right: "4%",
             width: "50%",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
             zIndex: 2,
-            paddingTop: "10vh",
-            paddingBottom: "6vh",
-            gap: 0,
+            y: contentY,
+            opacity: contentOpacity,
           }}
         >
           {/* Section label */}
-          <motion.div
+          <div
             style={{
-              opacity: headerOpacity,
-              y: headerY,
               fontFamily: "var(--font-geist-mono), monospace",
               fontSize: 10,
               fontWeight: 500,
@@ -305,7 +255,6 @@ export default function BlueprintSection({ progress, visible }: BlueprintSection
               textTransform: "uppercase",
               color: "var(--kona-accent)",
               marginBottom: 24,
-              willChange: "transform, opacity",
               display: "flex",
               alignItems: "center",
               gap: 10,
@@ -313,14 +262,12 @@ export default function BlueprintSection({ progress, visible }: BlueprintSection
           >
             <span style={{ opacity: 0.5 }}>◆</span>
             <span>02 — The Blueprint</span>
-          </motion.div>
+          </div>
 
-          {/* Headline: counter-weight contrast */}
+          {/* Headline */}
           <div style={{ marginBottom: 28 }}>
-            <motion.div
+            <div
               style={{
-                opacity: t1Opacity,
-                x: t1X,
                 fontFamily: "var(--font-monument), sans-serif",
                 fontSize: "clamp(24px, 3.4vw, 52px)",
                 fontWeight: 200,
@@ -328,15 +275,12 @@ export default function BlueprintSection({ progress, visible }: BlueprintSection
                 textTransform: "uppercase",
                 color: "rgba(255, 255, 255, 0.88)",
                 lineHeight: 1.1,
-                willChange: "transform, opacity",
               }}
             >
               Not an agency.
-            </motion.div>
-            <motion.div
+            </div>
+            <div
               style={{
-                opacity: t2Opacity,
-                x: t2X,
                 fontFamily: "var(--font-monument), sans-serif",
                 fontSize: "clamp(24px, 3.4vw, 52px)",
                 fontWeight: 800,
@@ -344,50 +288,41 @@ export default function BlueprintSection({ progress, visible }: BlueprintSection
                 textTransform: "uppercase",
                 color: "var(--kona-accent)",
                 lineHeight: 1.1,
-                willChange: "transform, opacity",
               }}
             >
               A creative partner.
-            </motion.div>
+            </div>
           </div>
 
-          {/* Divider — scans left to right */}
-          <motion.div
+          {/* Divider */}
+          <div
             style={{
               height: 1,
               background: "linear-gradient(to right, var(--kona-accent), rgba(0,255,136,0.1))",
-              opacity: divOpacity,
-              scaleX: divScaleX,
-              transformOrigin: "left center",
               marginBottom: 28,
-              willChange: "transform, opacity",
             }}
           />
 
           {/* Principles */}
           <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
-            {PRINCIPLES.map((p, i) => (
+            {PRINCIPLES.map((p) => (
               <PrincipleEntry
                 key={p.num}
                 num={p.num}
                 label={p.label}
                 claim={p.claim}
                 text={p.text}
-                index={i}
-                progress={progress}
               />
             ))}
           </div>
 
           {/* Footer annotation */}
-          <motion.div
+          <div
             style={{
-              opacity: footerOpacity,
               marginTop: 30,
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              willChange: "opacity",
             }}
           >
             <span
@@ -412,8 +347,8 @@ export default function BlueprintSection({ progress, visible }: BlueprintSection
             >
               Est. 2024
             </span>
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
       </div>
     </>
   );

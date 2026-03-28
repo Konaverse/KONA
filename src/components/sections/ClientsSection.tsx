@@ -36,28 +36,28 @@ const CARDS = [
   },
 ];
 
-// ─── Each card has its own entry window spread across 0→1 ─
-// Wider gaps ensure each card is fully visible before the next begins
+// ─── Card timing: border draws fast, content brightens with it ─
+// Cards are always visible (dimmed), border draws and content brightens as they enter view
 const CARD_TIMING = [
-  { start: 0.18, borderDone: 0.27, textIn: 0.23, textDone: 0.32 },
-  { start: 0.40, borderDone: 0.49, textIn: 0.45, textDone: 0.54 },
-  { start: 0.62, borderDone: 0.71, textIn: 0.67, textDone: 0.76 },
+  { drawStart: 0.20, drawDone: 0.28 },
+  { drawStart: 0.20, drawDone: 0.45 },
+  { drawStart: 0.30, drawDone: 0.60 },
 ];
 
-const FADE_OUT = [0.88, 0.95] as const;
+const FADE_OUT = [0.86, 0.93] as const;
 
 // ─── Stat Data ────────────────────────────────────────────
 const STATS = [
   { value: "12+", label: "FOUNDERS\nLAUNCHED" },
-  { value: "3",   label: "INDUSTRIES\nSERVED"  },
-  { value: "100%", label: "CLIENT\nRETENTION"  },
+  { value: "3", label: "INDUSTRIES\nSERVED" },
+  { value: "100%", label: "CLIENT\nRETENTION" },
 ];
 
-// Stat entry timing — slightly ahead of its paired card
+// Stat entry timing — fast fade-in, slightly ahead of paired card
 const STAT_TIMING = [
-  { start: 0.14, done: 0.22 },
-  { start: 0.36, done: 0.44 },
-  { start: 0.58, done: 0.66 },
+  { start: 0.08, done: 0.13 },
+  { start: 0.26, done: 0.31 },
+  { start: 0.44, done: 0.49 },
 ];
 
 // ─── Stat Pillar ──────────────────────────────────────────
@@ -80,7 +80,7 @@ function StatPillar({
     [start, done, fadeOut0, fadeOut1],
     [0, 1, 1, 0]
   );
-  const y = useTransform(progress, [start, done], [24, 0]);
+  const y = useTransform(progress, [start, done], [16, 0]);
 
   return (
     <motion.div
@@ -105,8 +105,6 @@ function StatPillar({
           flexShrink: 0,
         }}
       />
-
-      {/* Value */}
       <div
         style={{
           fontFamily: "var(--font-monument), sans-serif",
@@ -119,8 +117,6 @@ function StatPillar({
       >
         {value}
       </div>
-
-      {/* Label */}
       <div
         style={{
           fontFamily: "var(--font-geist-mono), monospace",
@@ -154,21 +150,23 @@ function ClientCard({
   index: number;
   progress: MotionValue<number>;
 }) {
-  const { start, borderDone, textIn, textDone } = CARD_TIMING[index];
+  const { drawStart, drawDone } = CARD_TIMING[index];
   const [fadeOut0, fadeOut1] = FADE_OUT;
 
-  const pathLength = useTransform(progress, [start, borderDone], [0, 1]);
+  // SVG border draws in quickly
+  const pathLength = useTransform(progress, [drawStart, drawDone], [0, 1]);
   const borderOpacity = useTransform(
     progress,
-    [start, start + 0.02, fadeOut0, fadeOut1],
+    [drawStart, drawStart + 0.01, fadeOut0, fadeOut1],
     [0, 1, 1, 0]
   );
+
+  // Card content: starts dimmed, brightens as border draws — always structurally visible
   const contentOpacity = useTransform(
     progress,
-    [textIn, textDone, fadeOut0, fadeOut1],
-    [0, 1, 1, 0]
+    [drawStart, drawDone, fadeOut0, fadeOut1],
+    [0.35, 1, 1, 0]
   );
-  const contentY = useTransform(progress, [textIn, textDone], [16, 0]);
 
   return (
     <div
@@ -204,12 +202,11 @@ function ClientCard({
         />
       </motion.svg>
 
-      {/* Card content */}
+      {/* Card content — visible from the start, brightens on draw */}
       <motion.div
         style={{
           opacity: contentOpacity,
-          y: contentY,
-          willChange: "transform, opacity",
+          willChange: "opacity",
         }}
       >
         {/* Archetype label */}
@@ -281,27 +278,25 @@ function ClientCard({
 
 // ─── Main Section ─────────────────────────────────────────
 interface ClientsSectionProps {
-  progress: MotionValue<number>;   // smoothed spring — drives card animations
-  scrollY: MotionValue<number>;    // raw scroll — drives Y translation
+  progress: MotionValue<number>;
+  scrollY: MotionValue<number>;
   visible: boolean;
 }
 
 export default function ClientsSection({ progress, scrollY, visible }: ClientsSectionProps) {
   const [fadeOut0, fadeOut1] = FADE_OUT;
 
-  // Section label — appears early, lower in viewport
-  const headerOpacity = useTransform(progress, [0.05, 0.11, fadeOut0, fadeOut1], [0, 1, 1, 0]);
-  const headerY = useTransform(progress, [0.05, 0.11], [14, 0]);
+  // Single scroll-driven Y — starts fully below viewport, scrolls up like credits
+  const contentTranslateY = useTransform(progress, [0.02, 0.92], ["105vh", "-120vh"]);
 
-  // Opening line
-  const lineOpacity = useTransform(progress, [0.09, 0.15, fadeOut0, fadeOut1], [0, 1, 1, 0]);
-  const lineX = useTransform(progress, [0.09, 0.15], [-24, 0]);
+  // Section label — appears fast
+  const headerOpacity = useTransform(progress, [0.04, 0.08, fadeOut0, fadeOut1], [0, 1, 1, 0]);
+
+  // Opening line — appears fast
+  const lineOpacity = useTransform(progress, [0.06, 0.10, fadeOut0, fadeOut1], [0, 1, 1, 0]);
 
   // Vertical rule
-  const ruleOpacity = useTransform(progress, [0.05, 0.11, fadeOut0, fadeOut1], [0, 0.14, 0.14, 0]);
-
-  // Content column scroll translation — raw scroll, no spring lag
-  const contentTranslateY = useTransform(scrollY, [0, 1], ["0vh", "-120vh"]);
+  const ruleOpacity = useTransform(progress, [0.04, 0.08, fadeOut0, fadeOut1], [0, 0.14, 0.14, 0]);
 
   if (!visible) return null;
 
@@ -329,7 +324,7 @@ export default function ClientsSection({ progress, scrollY, visible }: ClientsSe
         }}
       />
 
-      {/* Stat pillars — left column, scrolls with content */}
+      {/* Stat pillars — left column */}
       <motion.div
         style={{
           position: "absolute",
@@ -341,7 +336,7 @@ export default function ClientsSection({ progress, scrollY, visible }: ClientsSe
           justifyContent: "flex-start",
           gap: "clamp(32px, 5vh, 56px)",
           zIndex: 2,
-          paddingTop: "108vh",
+          paddingTop: "14vh",
           y: contentTranslateY,
           willChange: "transform",
         }}
@@ -357,19 +352,14 @@ export default function ClientsSection({ progress, scrollY, visible }: ClientsSe
         ))}
       </motion.div>
 
-      {/* Content column — starts below fold, scrolls upward with progress */}
+      {/* Content column */}
       <motion.div
         style={{
           position: "absolute",
           top: 0,
           right: "4%",
           width: "48%",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "flex-start",
           zIndex: 2,
-          paddingTop: "100vh",
-          paddingBottom: "20vh",
           y: contentTranslateY,
           willChange: "transform",
         }}
@@ -378,7 +368,6 @@ export default function ClientsSection({ progress, scrollY, visible }: ClientsSe
         <motion.div
           style={{
             opacity: headerOpacity,
-            y: headerY,
             fontFamily: "var(--font-geist-mono), monospace",
             fontSize: 10,
             fontWeight: 500,
@@ -386,7 +375,6 @@ export default function ClientsSection({ progress, scrollY, visible }: ClientsSe
             textTransform: "uppercase",
             color: "var(--kona-accent)",
             marginBottom: 18,
-            willChange: "transform, opacity",
             display: "flex",
             alignItems: "center",
             gap: 10,
@@ -400,7 +388,6 @@ export default function ClientsSection({ progress, scrollY, visible }: ClientsSe
         <motion.div
           style={{
             opacity: lineOpacity,
-            x: lineX,
             fontFamily: "var(--font-monument), sans-serif",
             fontSize: "clamp(20px, 2.8vw, 40px)",
             fontWeight: 200,
@@ -409,13 +396,12 @@ export default function ClientsSection({ progress, scrollY, visible }: ClientsSe
             color: "rgba(255, 255, 255, 0.88)",
             lineHeight: 1.1,
             marginBottom: 28,
-            willChange: "transform, opacity",
           }}
         >
           We build for ambition.
         </motion.div>
 
-        {/* Cards — all in DOM, each animates on its own scroll window */}
+        {/* Cards — always visible (dimmed), border draws as they scroll into view */}
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           {CARDS.map((card, i) => (
             <ClientCard

@@ -318,11 +318,13 @@ function SolutionCard({ solution, direction }: { solution: Solution; direction: 
 // ── Main section ──────────────────────────────────────────────
 interface ServicesSectionProps {
   progress: MotionValue<number>;
+  rawProgress: MotionValue<number>;
   visible: boolean;
 }
 
 export default function ServicesSection({
   progress,
+  rawProgress,
   visible,
 }: ServicesSectionProps) {
   // ── Active index + direction tracking ─────────────────────
@@ -352,23 +354,25 @@ export default function ServicesSection({
     return () => clearTimeout(t);
   }, [visible]);
 
-  const curtainX = useTransform(progress, [0, 0.09, 0.21], [-100, 0, 105]);
-  const curtainOp = useTransform(progress, [0, 0.005, 0.19, 0.23], [0, 1, 1, 0]);
+  // Curtain uses raw scroll — no spring lag
+  // Starts AFTER component mounts (activeIndex triggers at 0.02)
+  // Slides from fully off-screen left (-101%) → covers viewport (0%) → exits right (101%)
+  const curtainX = useTransform(rawProgress, [0.02, 0.09, 0.21], [-101, 0, 101]);
   const curtainTranslateX = useTransform(curtainX, (v) => `${v}%`);
-  const sectionOpacity = useTransform(progress, [0.23, 0.28], [0, 1]);
+  const sectionOpacity = useTransform(rawProgress, [0.23, 0.28], [0, 1]);
 
   if (!visible) return null;
 
   return (
     <>
       {/* Curtain */}
-      <motion.div
+      <div
         style={{
           position: "fixed",
           inset: 0,
           zIndex: 20,
           pointerEvents: "none",
-          opacity: curtainOp,
+          overflow: "hidden",
         }}
       >
         <motion.div
@@ -380,7 +384,7 @@ export default function ServicesSection({
             x: curtainTranslateX,
           }}
         />
-      </motion.div>
+      </div>
 
       {/* Section overlay */}
       <motion.div
@@ -401,6 +405,7 @@ export default function ServicesSection({
             background: "rgba(3, 10, 6, 0.88)",
             borderRight: "1px solid rgba(0,255,136,0.08)",
             overflow: "hidden",
+            pointerEvents: "auto",
           }}
         >
           <AnimatePresence mode="wait">

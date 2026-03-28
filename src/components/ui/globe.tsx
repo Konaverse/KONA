@@ -11,7 +11,7 @@ const GLOBE_CONFIG: COBEOptions = {
   onRender: () => { },
   devicePixelRatio: 1,
   phi: 0,
-  theta: 0.3,
+  theta: 0,
   dark: 1,
   diffuse: 0.5,
   mapSamples: 5000,
@@ -36,9 +36,11 @@ const GLOBE_CONFIG: COBEOptions = {
 export function Globe({
   className,
   config = GLOBE_CONFIG,
+  dpr,
 }: {
   className?: string
   config?: COBEOptions
+  dpr?: number
 }) {
   let phi = 0
   let width = 0
@@ -86,6 +88,7 @@ export function Globe({
       ...config,
       width: width,
       height: width,
+      devicePixelRatio: dpr ?? config.devicePixelRatio,
       onRender,
     })
 

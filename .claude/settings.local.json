@@ -42,7 +42,13 @@
       "Bash(grep -l \"framer-motion\\\\|motion\" /c/Users/konst/Projects/KONA/src/components/sections/*.tsx)",
       "Bash(find /c/Users/konst/Projects/KONA -type f -name *pricing*)",
       "mcp__magic__21st_magic_component_inspiration",
-      "Bash(\"/c/Program Files/nodejs/npx.cmd\" next build)"
+      "Bash(\"/c/Program Files/nodejs/npx.cmd\" next build)",
+      "Bash(find /c/Users/konst/Projects/KONA -name *.css -o -name *.module.css)",
+      "Bash(grep -r \"max-w\\\\|md:\\\\|lg:\\\\|sm:\\\\|768\\\\|1024\\\\|640\" /c/Users/konst/Projects/KONA/src/components/sections --include=*.tsx)",
+      "Bash(grep -r \"dpr=\\\\|antialias\\\\|performance\\\\|mobile\" /c/Users/konst/Projects/KONA/src/components/three --include=*.tsx)",
+      "Bash(where npx:*)",
+      "Bash(/c/Program Files/nodejs/npx.cmd tsc --noEmit)",
+      "Bash(\"C:\\\\Users\\\\konst\\\\Projects\\\\KONA\\\\node_modules\\\\.bin\\\\tsc.cmd\" --noEmit --pretty)"
     ]
   }
 }

@@ -18,8 +18,8 @@ import HomeFooter from "@/components/sections/HomeFooter";
 import HolographicTableBackground from "@/components/three/HolographicTableBackground";
 import StarFieldBackground from "@/components/three/StarFieldBackground";
 import GlobeBackground from "@/components/three/GlobeBackground";
-import HeroPanel from "@/components/sections/HeroPanel";
-import GlassPanel from "@/components/sections/GlassPanel";
+import DesktopHeroContent from "@/components/sections/DesktopHeroContent";
+import MobileHeroContent from "@/components/sections/MobileHeroContent";
 import EntranceGate from "@/components/ui/EntranceGate";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { HoveredCardState } from "@/components/three/SceneManager";
@@ -280,16 +280,17 @@ export default function HomePage() {
       <div
         style={{
           position: "fixed",
-          top: `${welcomeTop}vh`,
+          top: isMobile ? "40%" : `${welcomeTop}vh`,
           left: "50%",
-          right: "5%",
+          right: isMobile ? "auto" : "5%",
+          transform: isMobile ? "translate(-50%, -50%)" : undefined,
           zIndex: 15,
           display: "flex",
-          justifyContent: "flex-start",
+          justifyContent: isMobile ? "center" : "flex-start",
           pointerEvents: "none",
         }}
       >
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: isMobile ? "center" : "flex-start", textAlign: isMobile ? "center" : undefined }}>
           <motion.div
             style={{
               opacity: topTextOpacity,
@@ -343,6 +344,7 @@ export default function HomePage() {
           inset: 0,
           zIndex: -1,
           background: "#000000",
+          pointerEvents: "none",
         }}
       >
         {/* Blueprint world — swaps instantly behind the curtain */}
@@ -353,12 +355,52 @@ export default function HomePage() {
               inset: 0,
               background: "radial-gradient(ellipse at 50% 50%, #0a1a12 0%, #050e09 50%, #020804 100%)",
             }}
-          />
+          >
+            {/* Animated blueprint grid lines */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                backgroundImage: `
+                  linear-gradient(to right, rgba(0,255,136,0.06) 1px, transparent 1px),
+                  linear-gradient(to bottom, rgba(0,255,136,0.06) 1px, transparent 1px)
+                `,
+                backgroundSize: "80px 80px",
+                maskImage: "radial-gradient(ellipse at 50% 50%, black 0%, transparent 75%)",
+                WebkitMaskImage: "radial-gradient(ellipse at 50% 50%, black 0%, transparent 75%)",
+                animation: "gridPulse 8s ease-in-out infinite",
+              }}
+            />
+            {/* Finer sub-grid */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                backgroundImage: `
+                  linear-gradient(to right, rgba(0,255,136,0.025) 1px, transparent 1px),
+                  linear-gradient(to bottom, rgba(0,255,136,0.025) 1px, transparent 1px)
+                `,
+                backgroundSize: "20px 20px",
+                maskImage: "radial-gradient(ellipse at 50% 50%, black 0%, transparent 60%)",
+                WebkitMaskImage: "radial-gradient(ellipse at 50% 50%, black 0%, transparent 60%)",
+                animation: "gridPulse 8s ease-in-out infinite reverse",
+              }}
+            />
+            <style jsx>{`
+              @keyframes gridPulse {
+                0%, 100% { opacity: 0.4; }
+                50% { opacity: 1; }
+              }
+            `}</style>
+          </div>
         )}
       </motion.div>
 
-      {/* ══════ Globe background — hero section (deferred until gate intro done) ══════ */}
-      {canMountCanvas && !behindCurtain && <GlobeBackground heroScrollY={smoothedHeroProgress} />}
+      {/* ══════ Globe background — all devices ══════ */}
+      {canMountCanvas && !behindCurtain && <GlobeBackground heroScrollY={smoothedHeroProgress} isMobile={isMobile} />}
+
+      {/* ══════ Star Field Background — hero section ══════ */}
+      {!behindCurtain && <StarFieldBackground />}
 
       {/* ══════ Services Background — mounts behind the curtain, unmounts behind it too ══════ */}
       {/* Rendered BEFORE SceneManager so SceneManager (alpha:true) paints on top at the same zIndex */}
@@ -369,11 +411,11 @@ export default function HomePage() {
         <HolographicTableBackground activeAct={projectsActiveAct} />
       )}
 
-      {/* ══════ Star Field Background — testimonials section ══════ */}
+      {/* ══════ Star Field Background — testimonials + CTA sections ══════ */}
       {behindTestimonialsCurtain && <StarFieldBackground />}
 
       {/* ══════ 3D Canvas (deferred until gate intro done) ══════ */}
-      {canMountCanvas && (
+      {canMountCanvas && (!isMobile || !behindCurtain) && (
         <SceneManager
           activeSection={activeIndex}
           scrollProgress={smoothedHeroProgress}
@@ -384,6 +426,7 @@ export default function HomePage() {
           projectsAct={projectsActiveAct}
           projectsProgress={smoothedProjectsActsProgress}
           onSceneReady={() => setSceneReady(true)}
+          isMobile={isMobile}
         />
       )}
 
@@ -396,8 +439,8 @@ export default function HomePage() {
         }}
       >
         {/* Hero wrapper — owns its own scroll progress */}
-        <div ref={heroWrapperRef} style={{ height: "200vh", position: "relative" }}>
-          <div style={{ position: "sticky", top: 0, height: "100vh", width: "100%", overflow: "visible" }}>
+        <div ref={heroWrapperRef} style={{ height: "200vh", position: "relative", pointerEvents: "none" }}>
+          <div style={{ position: "sticky", top: 0, height: "100vh", width: "100%", overflow: "visible", pointerEvents: "none" }}>
             <ArchitectHeroV2
               hoveredCard={hoveredCard}
               onHoverCard={setHoveredCard}
@@ -405,17 +448,24 @@ export default function HomePage() {
               scrollProgress={smoothedHeroProgress}
             />
 
-            {/* ── Hero glassmorphism panel ── */}
-            <GlassPanel opacity={heroPlaceholderOpacity} y={heroPanelY} scale={heroPanelScale}>
-              <HeroPanel entranceComplete={entranceComplete} />
-            </GlassPanel>
+            {/* ── Hero content ── */}
+            {!isMobile ? (
+              <DesktopHeroContent
+                opacity={heroPlaceholderOpacity}
+                y={heroPanelY}
+                scale={heroPanelScale}
+                entranceComplete={entranceComplete}
+              />
+            ) : (
+              <MobileHeroContent opacity={heroPlaceholderOpacity} y={heroPanelY} />
+            )}
 
           </div>
         </div>
 
         {/* Blueprint wrapper — owns its own scroll progress */}
         <div ref={blueprintWrapperRef} style={{ height: "150vh", position: "relative" }}>
-          <div style={{ position: "sticky", top: 0, height: "100vh", width: "100%", overflow: "hidden" }}>
+          <div style={{ position: "sticky", top: 0, height: "100vh", width: "100%", overflow: "hidden", pointerEvents: "none" }}>
             <BlueprintSection
               progress={smoothedBlueprintProgress}
               visible={activeIndex >= 1}
@@ -425,9 +475,9 @@ export default function HomePage() {
 
         {/* Clients wrapper — owns its own scroll progress */}
         <div ref={clientsWrapperRef} style={{ height: "320vh", position: "relative" }}>
-          <div style={{ position: "sticky", top: 0, height: "100vh", width: "100%", overflow: "visible" }}>
+          <div style={{ position: "sticky", top: 0, height: "0vh", width: "100%", overflow: "visible", pointerEvents: "none" }}>
             <ClientsSection
-              progress={smoothedClientsProgress}
+              progress={clientsScrollY}
               scrollY={clientsScrollY}
               visible={activeIndex >= 2}
             />
@@ -436,9 +486,10 @@ export default function HomePage() {
 
         {/* Services wrapper — scroll tracking only, content is fixed */}
         <div ref={servicesWrapperRef} style={{ height: "1000vh", position: "relative" }}>
-          <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "100vh", overflow: "hidden" }}>
+          <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "100vh", overflow: "hidden", pointerEvents: "none" }}>
             <ServicesSection
               progress={smoothedServicesProgress}
+              rawProgress={servicesScrollY}
               visible={activeIndex >= 3 && !behindProjectsCurtain}
             />
           </div>
@@ -455,7 +506,7 @@ export default function HomePage() {
           <>
             {/* 1) Projects intro — curtain + "Selected Work" header (sticky) */}
             <div ref={projectsIntroRef} style={{ height: "600vh", position: "relative", marginTop: "-100vh" }}>
-              <div style={{ position: "sticky", top: 0, height: "100vh", width: "100%", overflow: "hidden" }}>
+              <div style={{ position: "sticky", top: 0, height: "100vh", width: "100%", overflow: "hidden", pointerEvents: "none" }}>
                 <ProjectsIntro
                   progress={smoothedProjectsIntroProgress}
                   visible={activeIndex >= 3}
@@ -465,7 +516,7 @@ export default function HomePage() {
 
             {/* 2) Acts 1, 2 & 3 — Websites + Videos + Social (sticky, scroll-progress-driven) */}
             <div ref={projectsActsRef} style={{ height: "1500vh", position: "relative" }}>
-              <div style={{ position: "sticky", top: 0, height: "100vh", width: "100%", overflow: "hidden" }}>
+              <div style={{ position: "sticky", top: 0, height: "100vh", width: "100%", overflow: "hidden", pointerEvents: "none" }}>
                 <ProjectsSection
                   progress={smoothedProjectsActsProgress}
                   visible={activeIndex >= 4 && !behindTestimonialsCurtain}
@@ -475,7 +526,7 @@ export default function HomePage() {
 
             {/* 3) Testimonials — green curtain + star field + testimonial cards */}
             <div ref={testimonialsRef} style={{ height: "800vh", position: "relative" }}>
-              <div style={{ position: "sticky", top: 0, height: "100vh", width: "100%", overflow: "hidden" }}>
+              <div style={{ position: "sticky", top: 0, height: "100vh", width: "100%", overflow: "hidden", pointerEvents: "none" }}>
                 <TestimonialsSection
                   progress={smoothedTestimonialsProgress}
                   visible={activeIndex >= 4}
@@ -485,7 +536,7 @@ export default function HomePage() {
 
             {/* 4) CTA — contact call-to-action */}
             <div ref={ctaRef} style={{ height: "400vh", position: "relative" }}>
-              <div style={{ position: "sticky", top: 0, height: "100vh", width: "100%", overflow: "hidden" }}>
+              <div style={{ position: "sticky", top: 0, height: "100vh", width: "100%", overflow: "hidden", pointerEvents: "none" }}>
                 <CtaSection
                   progress={smoothedCtaProgress}
                   visible={activeIndex >= 5}

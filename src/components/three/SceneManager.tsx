@@ -85,7 +85,7 @@ const boltFragmentShader = `
   }
 `;
 
-function WebGLSparkSystem({ active }: { active: boolean }) {
+function WebGLSparkSystem({ active, isMobile }: { active: boolean; isMobile?: boolean }) {
   const meshRef = useRef<THREE.InstancedMesh>(null);
   const MAX_INSTANCES = 500;
 
@@ -105,7 +105,9 @@ function WebGLSparkSystem({ active }: { active: boolean }) {
       return;
     }
 
-    if (Math.random() < 0.18 && arcsRef.current.length < 12) {
+    const spawnChance = isMobile ? 0.06 : 0.18;
+    const maxArcs = isMobile ? 4 : 12;
+    if (Math.random() < spawnChance && arcsRef.current.length < maxArcs) {
       const segments: any[] = [];
       const startX = (Math.random() - 0.5) * 5.5;
       const startY = 1.15;
@@ -201,6 +203,7 @@ function ArchitectModel({
   serviceIndex = 0,
   projectsAct = 0,
   onSceneReady,
+  isMobile,
 }: {
   hoveredCard: HoveredCardState | null;
   onHeadPositionUpdate: (pos: { x: number; y: number }) => void;
@@ -209,6 +212,7 @@ function ArchitectModel({
   serviceIndex?: number;
   projectsAct?: number;
   onSceneReady?: () => void;
+  isMobile?: boolean;
 }) {
   const baseModel = useLoader(FBXLoader, BASE_MODEL);
   const idleData = useLoader(FBXLoader, IDLE_ANIM);
@@ -294,14 +298,14 @@ function ArchitectModel({
       mouseRef.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
     };
     const handleClick = () => { shockwaveRef.current = 1.0; };
-    window.addEventListener("mousemove", handleMouseMove);
+    if (!isMobile) window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("click", handleClick);
 
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
+      if (!isMobile) window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("click", handleClick);
     };
-  }, [baseModel, idleData, nodData, lookingData, armGestureData, lookingBehindData, talkingData]);
+  }, [baseModel, idleData, nodData, lookingData, armGestureData, lookingBehindData, talkingData, isMobile]);
 
   // Track current animation state
   const currentAnimRef = useRef<string>("idle");
@@ -322,7 +326,13 @@ function ArchitectModel({
   }, []);
 
   // Effect: section-level transitions + hero scroll-driven poses
+  // Mobile: lock to idle — no animation crossfades that could shift the model
   useEffect(() => {
+    if (isMobile) {
+      crossfadeTo("idle");
+      return;
+    }
+
     if (activeSection >= 6) {
       crossfadeTo("talking");
     } else if (activeSection >= 5) {
@@ -399,13 +409,16 @@ function ArchitectModel({
       const inProjectsAct2 = inInterlude && projectsActRef.current === 1;
       // CTA: architect on left side, pushed further back, facing right
       // Testimonials: architect on right 1/3, closer to camera, facing left
-      const targetX = inCta ? -0.65 : inTestimonials ? 0.65 : inInterlude ? (inProjectsAct1 ? 0.55 : inProjectsAct2 ? -0.55 : 0.00) : inServices ? 0.55 : inClients ? -0.55 : -0.70 - 0.40 * p;
-      const targetZ = inCta ? -0.50 : inTestimonials ? 0.25 : inInterlude ? (inProjectsAct1 ? 0.05 : inProjectsAct2 ? 0.05 : -0.35) : inServices ? 0.05 : inClients ? 0.05 : -0.30;
-      const targetRotY = inCta ? 0.45 : inTestimonials ? -0.55 : inInterlude ? (inProjectsAct1 ? -0.45 : inProjectsAct2 ? 0.45 : 0.00) : inServices ? -0.50 : inClients ? 0.18 : 0.60;
+      // Mobile: architect centered, pushed back + down so he occupies bottom ~50% of viewport
+      const targetX = isMobile ? -0.07 : inCta ? -0.65 : inTestimonials ? 0.65 : inInterlude ? (inProjectsAct1 ? 0.55 : inProjectsAct2 ? -0.55 : 0.00) : inServices ? 0.55 : inClients ? -0.55 : -0.85 - 0.15 * p;
+      const targetZ = isMobile ? -0.80 : inCta ? -0.50 : inTestimonials ? 0.25 : inInterlude ? (inProjectsAct1 ? 0.05 : inProjectsAct2 ? 0.05 : -0.35) : inServices ? 0.05 : inClients ? 0.05 : -0.25;
+      const targetY = isMobile ? -0.35 : 0;
+      const targetRotY = isMobile ? 0 : inCta ? 0.45 : inTestimonials ? -0.55 : inInterlude ? (inProjectsAct1 ? -0.45 : inProjectsAct2 ? 0.45 : 0.00) : inServices ? -0.50 : inClients ? 0.18 : 0.45 - 0.10 * p;
       const lerpSpeed = inCta ? 0.04 : inTestimonials ? 0.04 : inInterlude ? 0.04 : inServices ? 0.06 : inClients ? 0.025 : 0.1;
 
       const dtFactor = 1 - Math.pow(1 - lerpSpeed, delta * 60);
       modelGroupRef.current.position.x = THREE.MathUtils.lerp(modelGroupRef.current.position.x, targetX, dtFactor);
+      modelGroupRef.current.position.y = THREE.MathUtils.lerp(modelGroupRef.current.position.y, targetY, dtFactor);
       modelGroupRef.current.position.z = THREE.MathUtils.lerp(modelGroupRef.current.position.z, targetZ, dtFactor);
       modelGroupRef.current.rotation.y = THREE.MathUtils.lerp(modelGroupRef.current.rotation.y, targetRotY, dtFactor);
     }
@@ -490,6 +503,7 @@ export default function SceneManager({
   projectsAct = 0,
   projectsProgress,
   onSceneReady,
+  isMobile,
 }: {
   activeSection: number;
   scrollProgress: MotionValue<number>;
@@ -500,11 +514,12 @@ export default function SceneManager({
   projectsAct?: number;
   projectsProgress?: MotionValue<number>;
   onSceneReady?: () => void;
+  isMobile?: boolean;
 }) {
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}>
       <Canvas gl={{ antialias: false, alpha: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 0.8 }}
-        dpr={[1, 1.5]}
+        dpr={isMobile ? 1 : [1, 1.5]}
         camera={{ fov: 50, near: 0.1, far: 100, position: [0.083, 1.651, 1.225] }}
         style={{ width: "100%", height: "100%", background: "transparent", pointerEvents: "none" }}
         onCreated={(state) => {
@@ -516,7 +531,7 @@ export default function SceneManager({
         <directionalLight color="#00ff88" intensity={1.2} position={[3, 5, 2]} />
         <directionalLight color="#004422" intensity={0.4} position={[-3, 2, -1]} />
         <ambientLight intensity={0.15} />
-        <WebGLSparkSystem active={sparkActive && (activeSection === 0 || activeSection === 2)} />
+        <WebGLSparkSystem active={sparkActive && (activeSection === 0 || activeSection === 2)} isMobile={isMobile} />
         <Suspense fallback={null}>
           <ArchitectModel
             hoveredCard={hoveredCard}
@@ -526,9 +541,10 @@ export default function SceneManager({
             serviceIndex={serviceIndex}
             projectsAct={projectsAct}
             onSceneReady={onSceneReady}
+            isMobile={isMobile}
           />
         </Suspense>
-        {projectsProgress && (
+        {!isMobile && projectsProgress && (
           <ProjectScenes
             progress={projectsProgress}
             visible={activeSection >= 4}

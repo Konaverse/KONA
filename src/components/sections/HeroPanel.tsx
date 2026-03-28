@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { WEBSITE_PROJECTS } from "@/data/projects";
 
 // ─── FitText — scales font-size so text fills available width ────────────────
-function FitText({
+export function FitText({
   children,
   style,
 }: {
@@ -53,7 +53,7 @@ function FitText({
 }
 
 // ─── Video Card (2/3 of bottom row) ─────────────────────────────────────────
-function VideoCard({ entranceComplete }: { entranceComplete?: boolean }) {
+export function VideoCard({ entranceComplete }: { entranceComplete?: boolean }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [expanded, setExpanded] = useState(false);
 
@@ -168,7 +168,7 @@ function VideoCard({ entranceComplete }: { entranceComplete?: boolean }) {
 }
 
 // ─── Project Slideshow card ──────────────────────────────────────────────────
-function ProjectSlideshow() {
+export function ProjectSlideshow() {
   const [current, setCurrent] = useState(0);
   const projects = WEBSITE_PROJECTS;
 
