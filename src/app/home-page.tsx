@@ -25,6 +25,7 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import type { HoveredCardState } from "@/components/three/SceneManager";
 import { ACT_1_START, ACT_2_START, ACT_3_START } from "@/components/sections/projects-timing";
 import { TEST_CURTAIN_IN } from "@/components/sections/testimonials-timing";
+import MobileHomeSections from "@/components/sections/mobile/MobileHomeSections";
 
 
 // Mirror of ServicesSection timing — used to lift serviceSolIndex for SceneManager + ServicesBackground
@@ -68,6 +69,14 @@ export default function HomePage() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  // On mobile, force sceneReady after a short timeout so the entrance gate
+  // opens even if the 3D scene fails to load or takes too long.
+  useEffect(() => {
+    if (!isMobile) return;
+    const t = setTimeout(() => setSceneReady(true), 2000);
+    return () => clearTimeout(t);
+  }, [isMobile]);
 
   // ── Wrapper refs ──
   const heroWrapperRef = useRef<HTMLDivElement>(null);
@@ -463,47 +472,45 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Blueprint wrapper — owns its own scroll progress */}
-        <div ref={blueprintWrapperRef} style={{ height: "150vh", position: "relative" }}>
-          <div style={{ position: "sticky", top: 0, height: "100vh", width: "100%", overflow: "hidden", pointerEvents: "none" }}>
-            <BlueprintSection
-              progress={smoothedBlueprintProgress}
-              visible={activeIndex >= 1}
-            />
-          </div>
-        </div>
-
-        {/* Clients wrapper — owns its own scroll progress */}
-        <div ref={clientsWrapperRef} style={{ height: "320vh", position: "relative" }}>
-          <div style={{ position: "sticky", top: 0, height: "0vh", width: "100%", overflow: "visible", pointerEvents: "none" }}>
-            <ClientsSection
-              progress={clientsScrollY}
-              scrollY={clientsScrollY}
-              visible={activeIndex >= 2}
-            />
-          </div>
-        </div>
-
-        {/* Services wrapper — scroll tracking only, content is fixed */}
-        <div ref={servicesWrapperRef} style={{ height: "1000vh", position: "relative" }}>
-          <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "100vh", overflow: "hidden", pointerEvents: "none" }}>
-            <ServicesSection
-              progress={smoothedServicesProgress}
-              rawProgress={servicesScrollY}
-              visible={activeIndex >= 3 && !behindProjectsCurtain}
-            />
-          </div>
-        </div>
-
-        {/* ══════ PROJECTS — three separate wrappers ══════ */}
-
         {isMobile ? (
-          /* Mobile: single static layout for all project acts */
-          <div style={{ position: "relative" }}>
-            <ProjectsMobile />
-          </div>
+          /* ══════ MOBILE: all post-hero sections in normal document flow ══════ */
+          <MobileHomeSections />
         ) : (
           <>
+            {/* Blueprint wrapper — owns its own scroll progress */}
+            <div ref={blueprintWrapperRef} style={{ height: "150vh", position: "relative" }}>
+              <div style={{ position: "sticky", top: 0, height: "100vh", width: "100%", overflow: "hidden", pointerEvents: "none" }}>
+                <BlueprintSection
+                  progress={smoothedBlueprintProgress}
+                  visible={activeIndex >= 1}
+                />
+              </div>
+            </div>
+
+            {/* Clients wrapper — owns its own scroll progress */}
+            <div ref={clientsWrapperRef} style={{ height: "320vh", position: "relative" }}>
+              <div style={{ position: "sticky", top: 0, height: "0vh", width: "100%", overflow: "visible", pointerEvents: "none" }}>
+                <ClientsSection
+                  progress={clientsScrollY}
+                  scrollY={clientsScrollY}
+                  visible={activeIndex >= 2}
+                />
+              </div>
+            </div>
+
+            {/* Services wrapper — scroll tracking only, content is fixed */}
+            <div ref={servicesWrapperRef} style={{ height: "1000vh", position: "relative" }}>
+              <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "100vh", overflow: "hidden", pointerEvents: "none" }}>
+                <ServicesSection
+                  progress={smoothedServicesProgress}
+                  rawProgress={servicesScrollY}
+                  visible={activeIndex >= 3 && !behindProjectsCurtain}
+                />
+              </div>
+            </div>
+
+            {/* ══════ PROJECTS — three separate wrappers ══════ */}
+
             {/* 1) Projects intro — curtain + "Selected Work" header (sticky) */}
             <div ref={projectsIntroRef} style={{ height: "600vh", position: "relative", marginTop: "-100vh" }}>
               <div style={{ position: "sticky", top: 0, height: "100vh", width: "100%", overflow: "hidden", pointerEvents: "none" }}>
