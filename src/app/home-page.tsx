@@ -171,16 +171,22 @@ export default function HomePage() {
   const [behindTestimonialsCurtain, setBehindTestimonialsCurtain] = useState(false);
 
   // ── activeIndex — raw scroll for instant section detection ──
+  // On mobile the desktop wrapper refs are null, so useScroll falls back to
+  // full-page tracking.  That would cause all curtain/section states to fire
+  // spuriously — guard every handler so they only run on desktop.
   useMotionValueEvent(blueprintScrollY, "change", (val) => {
+    if (isMobile) return;
     if (val > 0.02 && clientsScrollY.get() <= 0.02) setActiveIndex(1);
     if (val <= 0.02) setActiveIndex(0);
   });
   useMotionValueEvent(clientsScrollY, "change", (val) => {
+    if (isMobile) return;
     if (val > 0.02) setActiveIndex(2);
     else if (blueprintScrollY.get() > 0.02) setActiveIndex(1);
     else setActiveIndex(0);
   });
   useMotionValueEvent(servicesScrollY, "change", (val) => {
+    if (isMobile) return;
     if (val > 0.02) setActiveIndex(3);
     else if (clientsScrollY.get() > 0.02) setActiveIndex(2);
     else if (blueprintScrollY.get() > 0.02) setActiveIndex(1);
@@ -188,6 +194,7 @@ export default function HomePage() {
   });
   // Projects intro — sets activeIndex to 4 (projects)
   useMotionValueEvent(projectsIntroScrollY, "change", (val) => {
+    if (isMobile) return;
     if (val > 0.02) setActiveIndex(4);
     else if (servicesScrollY.get() > 0.02) setActiveIndex(3);
     else if (clientsScrollY.get() > 0.02) setActiveIndex(2);
@@ -196,6 +203,7 @@ export default function HomePage() {
   });
   // Projects acts — also activeIndex 4, plus active act tracking
   useMotionValueEvent(projectsActsScrollY, "change", (val) => {
+    if (isMobile) return;
     if (val > 0.02) {
       setActiveIndex(4);
       // Track active act for holographic table color shift
@@ -209,6 +217,7 @@ export default function HomePage() {
   });
   // Testimonials — activeIndex 5
   useMotionValueEvent(testimonialsScrollY, "change", (val) => {
+    if (isMobile) return;
     if (val > 0.02) setActiveIndex(5);
     else if (projectsActsScrollY.get() > 0.02) setActiveIndex(4);
     else if (projectsIntroScrollY.get() > 0.02) setActiveIndex(4);
@@ -219,6 +228,7 @@ export default function HomePage() {
   });
   // CTA — activeIndex 6
   useMotionValueEvent(ctaScrollY, "change", (val) => {
+    if (isMobile) return;
     if (val > 0.02) setActiveIndex(6);
     else if (testimonialsScrollY.get() > 0.02) setActiveIndex(5);
     else if (projectsActsScrollY.get() > 0.02) setActiveIndex(4);
@@ -232,11 +242,13 @@ export default function HomePage() {
   // ── behindCurtain — driven by the SPRING so it fires exactly when curtains
   //    reach y:0% (full viewport coverage at smoothed progress = 0.05) ──
   useMotionValueEvent(smoothedBlueprintProgress, "change", (val) => {
+    if (isMobile) return;
     if (val >= 0.05 && !behindCurtain) setBehindCurtain(true);
     if (val < 0.05 && behindCurtain) setBehindCurtain(false);
   });
   // ── behindServicesCurtain + serviceSolIndex ──────────────────
   useMotionValueEvent(smoothedServicesProgress, "change", (val) => {
+    if (isMobile) return;
     if (val >= 0.09 && !behindServicesCurtain) setBehindServicesCurtain(true);
     if (val < 0.09 && behindServicesCurtain) setBehindServicesCurtain(false);
     setServiceSolIndex(getSvcIndex(val));
@@ -245,6 +257,7 @@ export default function HomePage() {
   //    viewport (CURTAIN_IN = 0.17). Services unmounts and holographic table
   //    mounts while the curtain is still opaque, so the swap is invisible.
   useMotionValueEvent(smoothedProjectsIntroProgress, "change", (val) => {
+    if (isMobile) return;
     if (val >= 0.17 && !behindProjectsCurtain) setBehindProjectsCurtain(true);
     if (val < 0.17 && behindProjectsCurtain) setBehindProjectsCurtain(false);
   });
@@ -252,6 +265,7 @@ export default function HomePage() {
   //    bottom-to-top green sweep fully covers the viewport. Holographic table
   //    unmounts and star field mounts while the curtain is opaque.
   useMotionValueEvent(smoothedTestimonialsProgress, "change", (val) => {
+    if (isMobile) return;
     if (val >= TEST_CURTAIN_IN && !behindTestimonialsCurtain) setBehindTestimonialsCurtain(true);
     if (val < TEST_CURTAIN_IN && behindTestimonialsCurtain) setBehindTestimonialsCurtain(false);
   });
@@ -293,7 +307,7 @@ export default function HomePage() {
           left: "50%",
           right: isMobile ? "auto" : "5%",
           transform: isMobile ? "translate(-50%, -50%)" : undefined,
-          zIndex: 15,
+          zIndex: isMobile ? 1 : 15,
           display: "flex",
           justifyContent: isMobile ? "center" : "flex-start",
           pointerEvents: "none",
@@ -405,11 +419,11 @@ export default function HomePage() {
         )}
       </motion.div>
 
-      {/* ══════ Globe background — all devices ══════ */}
-      {canMountCanvas && !behindCurtain && <GlobeBackground heroScrollY={smoothedHeroProgress} isMobile={isMobile} />}
-
-      {/* ══════ Star Field Background — hero section ══════ */}
+      {/* ══════ Star Field Background — hero section (renders BEFORE globe so globe paints on top) ══════ */}
       {!behindCurtain && <StarFieldBackground />}
+
+      {/* ══════ Globe background — all devices ═══��══ */}
+      {canMountCanvas && !behindCurtain && <GlobeBackground heroScrollY={smoothedHeroProgress} isMobile={isMobile} />}
 
       {/* ══════ Services Background — mounts behind the curtain, unmounts behind it too ══════ */}
       {/* Rendered BEFORE SceneManager so SceneManager (alpha:true) paints on top at the same zIndex */}

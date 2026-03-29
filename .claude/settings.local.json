@@ -49,7 +49,8 @@
       "Bash(where npx:*)",
       "Bash(/c/Program Files/nodejs/npx.cmd tsc --noEmit)",
       "Bash(\"C:\\\\Users\\\\konst\\\\Projects\\\\KONA\\\\node_modules\\\\.bin\\\\tsc.cmd\" --noEmit --pretty)",
-      "Bash(npx.cmd next:*)"
+      "Bash(npx.cmd next:*)",
+      "Bash(npm run:*)"
     ]
   }
 }
