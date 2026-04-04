@@ -26,12 +26,17 @@ export interface HoveredCardState {
 }
 
 // ─── Camera setup ─────────────────────────────────────────────
-function CameraRig() {
+function CameraRig({ isMobile }: { isMobile?: boolean }) {
   const { camera } = useThree();
   useEffect(() => {
-    camera.position.set(0.083, 1.651, 1.225);
-    camera.lookAt(-0.071, 1.513, -0.015);
-  }, [camera]);
+    if (isMobile) {
+      camera.position.set(0, 1.651, 1.225);
+      camera.lookAt(0, 1.513, -0.015);
+    } else {
+      camera.position.set(0.083, 1.651, 1.225);
+      camera.lookAt(-0.071, 1.513, -0.015);
+    }
+  }, [camera, isMobile]);
   return null;
 }
 
@@ -410,7 +415,7 @@ function ArchitectModel({
       // CTA: architect on left side, pushed further back, facing right
       // Testimonials: architect on right 1/3, closer to camera, facing left
       // Mobile: architect centered, pushed back + down so he occupies bottom ~50% of viewport
-      const targetX = isMobile ? -0.07 : inCta ? -0.65 : inTestimonials ? 0.65 : inInterlude ? (inProjectsAct1 ? 0.55 : inProjectsAct2 ? -0.55 : 0.00) : inServices ? 0.55 : inClients ? -0.55 : -0.85 - 0.15 * p;
+      const targetX = isMobile ? 0 : inCta ? -0.65 : inTestimonials ? 0.65 : inInterlude ? (inProjectsAct1 ? 0.55 : inProjectsAct2 ? -0.55 : 0.00) : inServices ? 0.55 : inClients ? -0.55 : -0.85 - 0.15 * p;
       const targetZ = isMobile ? -0.80 : inCta ? -0.50 : inTestimonials ? 0.25 : inInterlude ? (inProjectsAct1 ? 0.05 : inProjectsAct2 ? 0.05 : -0.35) : inServices ? 0.05 : inClients ? 0.05 : -0.25;
       const targetY = isMobile ? -0.35 : 0;
       const targetRotY = isMobile ? 0 : inCta ? 0.45 : inTestimonials ? -0.55 : inInterlude ? (inProjectsAct1 ? -0.45 : inProjectsAct2 ? 0.45 : 0.00) : inServices ? -0.50 : inClients ? 0.18 : 0.45 - 0.10 * p;
@@ -527,7 +532,7 @@ export default function SceneManager({
           const parent = state.gl.domElement.parentElement;
           if (parent) parent.style.pointerEvents = "none";
         }}>
-        <CameraRig />
+        <CameraRig isMobile={isMobile} />
         <directionalLight color="#00ff88" intensity={1.2} position={[3, 5, 2]} />
         <directionalLight color="#004422" intensity={0.4} position={[-3, 2, -1]} />
         <ambientLight intensity={0.15} />

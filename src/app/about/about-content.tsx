@@ -481,7 +481,7 @@ export default function AboutContent() {
               style={{
                 fontFamily: "var(--font-monument), sans-serif",
                 fontWeight: 800,
-                fontSize: "clamp(48px, 10vw, 120px)",
+                fontSize: "clamp(36px, 10vw, 120px)",
                 color: "#ffffff",
               }}
             >

@@ -460,7 +460,7 @@ export default function SocialMediaContent() {
             style={{
               fontFamily: "var(--font-monument), sans-serif",
               fontWeight: 800,
-              fontSize: "clamp(44px, 9vw, 110px)",
+              fontSize: "clamp(32px, 9vw, 110px)",
               color: "#fff",
             }}
           >

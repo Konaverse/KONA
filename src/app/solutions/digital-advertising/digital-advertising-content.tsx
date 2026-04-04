@@ -323,7 +323,7 @@ export default function DigitalAdvertisingContent() {
             style={{
               fontFamily: "var(--font-monument), sans-serif",
               fontWeight: 800,
-              fontSize: "clamp(40px, 11vw, 130px)",
+              fontSize: "clamp(26px, 9vw, 130px)",
               color: "#fff",
             }}
           >

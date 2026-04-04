@@ -20,21 +20,25 @@ const PROCESS = [
     num: "01",
     title: "Discovery",
     text: "Deep-dive into your business goals, audience, and competitive landscape. We map the terrain before we build.",
+    color: "#00ff88", // brand green
   },
   {
     num: "02",
     title: "Architecture",
     text: "Information architecture, wireframes, and technical planning. The blueprint that makes everything else possible.",
+    color: "#00c8ff", // cyan — blueprint feel
   },
   {
     num: "03",
     title: "Development",
     text: "React, Next.js, TypeScript. Component-driven development with performance baked into every decision.",
+    color: "#818cf8", // indigo — code / tech
   },
   {
     num: "04",
     title: "Launch & Iterate",
     text: "Deployment, analytics integration, and continuous optimization. Your site gets better every month.",
+    color: "#fb923c", // orange — launch energy
   },
 ];
 
@@ -65,20 +69,21 @@ function TechCard({ tech, index }: { tech: typeof TECH[number]; index: number })
   return (
     <motion.div
       ref={cardRef}
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.5, delay: index * 0.07, ease: [0.25, 0.46, 0.45, 0.94] }}
+      transition={{ duration: 0.4, delay: index * 0.06 }}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="relative overflow-hidden rounded-sm backdrop-blur-sm cursor-default transition-all duration-500"
+      className="relative overflow-hidden rounded-sm backdrop-blur-sm cursor-default"
       style={{
         background: "rgba(255,255,255,0.02)",
         border: `1px solid ${isHovered ? "rgba(0,255,136,0.12)" : "rgba(255,255,255,0.05)"}`,
         boxShadow: isHovered ? "0 0 30px rgba(0,255,136,0.05), 0 8px 24px rgba(0,0,0,0.2)" : "none",
         transform: isHovered ? "translateY(-2px)" : "translateY(0)",
         padding: "clamp(20px, 2.5vw, 32px)",
+        transition: "border-color 0.5s, box-shadow 0.5s, transform 0.5s",
       }}
     >
       {/* Mouse-following spotlight */}
@@ -258,7 +263,7 @@ export default function WebDevelopmentContent() {
             style={{
               fontFamily: "var(--font-monument), sans-serif",
               fontWeight: 800,
-              fontSize: "clamp(44px, 9vw, 110px)",
+              fontSize: "clamp(28px, 9vw, 110px)",
               color: "#fff",
             }}
           >
@@ -388,13 +393,26 @@ export default function WebDevelopmentContent() {
           </motion.p>
 
           <div className="relative">
-            {/* SVG connector line — draws on scroll */}
-            <div className="absolute left-[28px] md:left-[44px] top-0 bottom-0 w-px overflow-hidden hidden md:block">
+            {/* Vertical connector line — visible on both mobile and desktop */}
+            <div className="absolute left-[28px] md:left-[44px] top-0 bottom-0 w-px overflow-hidden">
               <motion.div
                 className="w-full origin-top"
                 style={{
                   height: lineHeight,
-                  background: "linear-gradient(to bottom, #00ff88, rgba(0,255,136,0.1))",
+                  background: "linear-gradient(to bottom, #00ff88, rgba(0,255,136,0.08))",
+                  boxShadow: "0 0 10px rgba(0,255,136,0.7), 0 0 24px rgba(0,255,136,0.35)",
+                  filter: "blur(0.4px)",
+                }}
+              />
+            </div>
+            {/* Bloom duplicate for extra glow width */}
+            <div className="absolute left-[27px] md:left-[43px] top-0 bottom-0 w-[3px] overflow-hidden pointer-events-none">
+              <motion.div
+                className="w-full origin-top"
+                style={{
+                  height: lineHeight,
+                  background: "linear-gradient(to bottom, rgba(0,255,136,0.25), transparent)",
+                  filter: "blur(3px)",
                 }}
               />
             </div>
@@ -410,7 +428,7 @@ export default function WebDevelopmentContent() {
                   transition={{ duration: 0.7, delay: i * 0.08 }}
                   className="grid grid-cols-[56px_1fr] md:grid-cols-[88px_1fr] gap-6 md:gap-10 items-start"
                 >
-                  {/* Number */}
+                  {/* Number + dot */}
                   <div
                     className="relative flex items-center justify-center"
                     style={{
@@ -422,26 +440,44 @@ export default function WebDevelopmentContent() {
                     }}
                   >
                     {step.num}
-                    {/* Dot on the connector line */}
+                    {/* Dot — visible on both mobile and desktop */}
                     <div
-                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full hidden md:block"
+                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full"
                       style={{
-                        background: "#00ff88",
-                        boxShadow: "0 0 12px rgba(0,255,136,0.4)",
+                        background: step.color,
+                        boxShadow: `0 0 10px ${step.color}cc, 0 0 24px ${step.color}66`,
                       }}
                     />
                   </div>
 
-                  {/* Card */}
+                  {/* Glassmorphism card */}
                   <div
-                    className="backdrop-blur-md rounded-xl px-6 py-6 md:px-8 md:py-7"
+                    className="relative overflow-hidden backdrop-blur-xl rounded-xl px-6 py-6 md:px-8 md:py-7"
                     style={{
-                      background: "rgba(255,255,255,0.02)",
-                      border: "1px solid rgba(255,255,255,0.05)",
+                      /* layered glass + tinted gradient */
+                      background: `linear-gradient(135deg, ${step.color}0f 0%, rgba(255,255,255,0.03) 50%, rgba(0,0,0,0.15) 100%)`,
+                      border: `1px solid ${step.color}33`,
+                      boxShadow: `0 0 28px ${step.color}1a, inset 0 1px 0 rgba(255,255,255,0.08), inset 0 0 40px ${step.color}08`,
                     }}
                   >
+                    {/* Top edge accent */}
+                    <div
+                      className="absolute top-0 left-0 right-0 h-px"
+                      style={{
+                        background: `linear-gradient(90deg, transparent, ${step.color}80, transparent)`,
+                      }}
+                    />
+                    {/* Ambient corner glow */}
+                    <div
+                      className="absolute -top-8 -left-8 w-24 h-24 rounded-full pointer-events-none"
+                      style={{
+                        background: `radial-gradient(circle, ${step.color}18 0%, transparent 70%)`,
+                        filter: "blur(12px)",
+                      }}
+                    />
+
                     <h3
-                      className="uppercase mb-3"
+                      className="relative z-10 uppercase mb-3"
                       style={{
                         fontFamily: "var(--font-monument), sans-serif",
                         fontWeight: 800,
@@ -453,8 +489,8 @@ export default function WebDevelopmentContent() {
                       {step.title}
                     </h3>
                     <p
-                      className="text-sm leading-[1.75]"
-                      style={{ color: "rgba(255,255,255,0.5)" }}
+                      className="relative z-10 text-sm leading-[1.75]"
+                      style={{ color: "rgba(255,255,255,0.55)" }}
                     >
                       {step.text}
                     </p>

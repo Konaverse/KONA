@@ -397,7 +397,7 @@ export default function ContactContent() {
             style={{
               fontFamily: "var(--font-monument), sans-serif",
               fontWeight: 800,
-              fontSize: "clamp(40px, 8vw, 100px)",
+              fontSize: "clamp(24px, 8vw, 100px)",
               color: "#ffffff",
             }}
           >

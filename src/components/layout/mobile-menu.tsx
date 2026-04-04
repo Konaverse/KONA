@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const colors = {
     deepForest: "#1a1d18",
@@ -48,8 +49,19 @@ const navItems = [
  * Full-viewport mobile menu with radial expansion from hamburger position.
  */
 export function MobileMenu({ isOpen, onClose, originX, originY }: MobileMenuProps) {
+    const pathname = usePathname();
     const [expandedSection, setExpandedSection] = useState<string | null>(null);
     const menuRef = useRef<HTMLDivElement>(null);
+
+    // Auto-expand the section whose sub-item matches the current route
+    useEffect(() => {
+        if (isOpen) {
+            const activeParent = navItems.find(
+                (item) => item.subItems?.some((sub) => sub.href === pathname)
+            );
+            setExpandedSection(activeParent?.label ?? null);
+        }
+    }, [isOpen, pathname]);
 
     // Handle escape key
     useEffect(() => {
@@ -209,14 +221,14 @@ export function MobileMenu({ isOpen, onClose, originX, originY }: MobileMenuProp
                                                                         onClick={onClose}
                                                                         className="block text-lg font-light transition-colors duration-200"
                                                                         style={{
-                                                                            color: colors.sand,
+                                                                            color: pathname === subItem.href ? colors.parchment : colors.sand,
                                                                             letterSpacing: "0.03em",
                                                                         }}
                                                                         onMouseEnter={(e) => {
                                                                             e.currentTarget.style.color = colors.parchment;
                                                                         }}
                                                                         onMouseLeave={(e) => {
-                                                                            e.currentTarget.style.color = colors.sand;
+                                                                            e.currentTarget.style.color = pathname === subItem.href ? colors.parchment : colors.sand;
                                                                         }}
                                                                     >
                                                                         {subItem.label}

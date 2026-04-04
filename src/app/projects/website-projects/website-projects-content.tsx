@@ -255,7 +255,7 @@ export default function WebsiteProjectsContent() {
             style={{
               fontFamily: "var(--font-monument), sans-serif",
               fontWeight: 800,
-              fontSize: "clamp(44px, 10vw, 120px)",
+              fontSize: "clamp(28px, 10vw, 120px)",
               color: "#ffffff",
             }}
           >

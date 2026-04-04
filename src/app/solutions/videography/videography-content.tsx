@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   motion,
+  AnimatePresence,
   useScroll,
   useTransform,
 } from "framer-motion";
@@ -297,6 +298,238 @@ function ProductionCard({
   );
 }
 
+/* ─────────────────────────────────────────────────────────────────
+   MOBILE: Vertical accordion stack with filmstrip rail + swipe nav
+───────────────────────────────────────────────────────────────── */
+function MobileWhatWeShoot() {
+  const [active, setActive] = useState(0);
+
+  const navigate = (dir: 1 | -1) => {
+    setActive((prev) =>
+      Math.max(0, Math.min(FILM_TYPES.length - 1, prev + dir))
+    );
+  };
+
+  return (
+    <div className="px-5 py-10">
+      {/* Section label */}
+      <p
+        className="font-mono text-[10px] tracking-[0.3em] uppercase mb-8"
+        style={{ color: "rgba(0,255,136,0.5)" }}
+      >
+        What We Shoot
+      </p>
+
+      {/* Filmstrip rail + cards */}
+      <div className="relative">
+        {/* Continuous vertical rail on the left */}
+        <div
+          className="absolute left-[18px] top-0 bottom-0 w-px"
+          style={{
+            background:
+              "linear-gradient(to bottom, rgba(0,255,136,0.6) 0%, rgba(0,255,136,0.15) 100%)",
+            boxShadow: "0 0 6px rgba(0,255,136,0.4)",
+          }}
+        />
+
+        <div className="flex flex-col gap-3 pl-10">
+          {FILM_TYPES.map((film, i) => {
+            const isActive = active === i;
+
+            return (
+              <motion.div
+                key={film.title}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true, margin: "-20px" }}
+                transition={{ duration: 0.35, delay: i * 0.07 }}
+                className="relative"
+              >
+                {/* Rail dot */}
+                <div
+                  className="absolute -left-[34px] top-[22px] rounded-full transition-all duration-300"
+                  style={{
+                    width: isActive ? 10 : 6,
+                    height: isActive ? 10 : 6,
+                    marginLeft: isActive ? -2 : 0,
+                    background: isActive ? "#00ff88" : "rgba(0,255,136,0.3)",
+                    boxShadow: isActive
+                      ? "0 0 10px rgba(0,255,136,0.8), 0 0 20px rgba(0,255,136,0.3)"
+                      : "none",
+                    transition: "width 0.3s, height 0.3s, box-shadow 0.3s, background 0.3s",
+                  }}
+                />
+
+                {/* Card — drag x to navigate */}
+                <motion.div
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.x < -40) navigate(1);
+                    else if (info.offset.x > 40) navigate(-1);
+                  }}
+                  className="relative overflow-hidden rounded-xl cursor-pointer select-none"
+                  style={{
+                    background: isActive
+                      ? "linear-gradient(135deg, rgba(0,255,136,0.06) 0%, rgba(255,255,255,0.03) 100%)"
+                      : "rgba(255,255,255,0.02)",
+                    border: `1px solid ${isActive ? "rgba(0,255,136,0.28)" : "rgba(255,255,255,0.07)"}`,
+                    boxShadow: isActive
+                      ? "0 0 28px rgba(0,255,136,0.1), inset 0 1px 0 rgba(255,255,255,0.07)"
+                      : "none",
+                    transition: "border-color 0.4s, box-shadow 0.4s, background 0.4s",
+                  }}
+                  onClick={() => setActive(i)}
+                >
+                  {/* Top accent line (active only) */}
+                  <div
+                    className="absolute top-0 left-0 right-0 h-px transition-opacity duration-500"
+                    style={{
+                      opacity: isActive ? 1 : 0,
+                      background:
+                        "linear-gradient(90deg, transparent, rgba(0,255,136,0.5), transparent)",
+                    }}
+                  />
+
+                  {/* Sprocket holes — top left */}
+                  <div className="absolute top-2.5 left-3 flex gap-1.5">
+                    {[0, 1].map((d) => (
+                      <div
+                        key={d}
+                        className="w-1.5 h-1.5 rounded-sm transition-colors duration-400"
+                        style={{
+                          background: isActive
+                            ? "rgba(0,255,136,0.25)"
+                            : "rgba(255,255,255,0.06)",
+                        }}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Header row — always visible */}
+                  <div className="flex items-center justify-between px-5 pt-7 pb-4">
+                    <div>
+                      <div
+                        className="font-mono text-[9px] tracking-[0.2em] mb-1.5 transition-colors duration-300"
+                        style={{
+                          color: isActive
+                            ? "rgba(0,255,136,0.75)"
+                            : "rgba(0,255,136,0.35)",
+                        }}
+                      >
+                        FRAME 0{i + 1}
+                      </div>
+                      <h3
+                        className="uppercase transition-colors duration-300"
+                        style={{
+                          fontFamily: "var(--font-monument), sans-serif",
+                          fontWeight: 800,
+                          fontSize: "clamp(15px, 4.5vw, 20px)",
+                          letterSpacing: "0.04em",
+                          color: isActive
+                            ? "#ffffff"
+                            : "rgba(255,255,255,0.7)",
+                        }}
+                      >
+                        {film.title}
+                      </h3>
+                    </div>
+
+                    {/* +/× toggle */}
+                    <motion.div
+                      animate={{ rotate: isActive ? 45 : 0 }}
+                      transition={{ duration: 0.25 }}
+                      className="flex-shrink-0 w-7 h-7 flex items-center justify-center rounded-full"
+                      style={{
+                        border: `1px solid ${isActive ? "rgba(0,255,136,0.35)" : "rgba(255,255,255,0.1)"}`,
+                        background: isActive
+                          ? "rgba(0,255,136,0.08)"
+                          : "transparent",
+                        transition: "border-color 0.3s, background 0.3s",
+                      }}
+                    >
+                      <svg
+                        width="10"
+                        height="10"
+                        viewBox="0 0 10 10"
+                        fill="none"
+                      >
+                        <path
+                          d="M5 1V9M1 5H9"
+                          stroke={isActive ? "#00ff88" : "rgba(255,255,255,0.4)"}
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    </motion.div>
+                  </div>
+
+                  {/* Expandable body */}
+                  <AnimatePresence initial={false}>
+                    {isActive && (
+                      <motion.div
+                        key="body"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-5 pb-6">
+                          {/* Divider line */}
+                          <div
+                            className="mb-4 origin-left"
+                            style={{
+                              width: 40,
+                              height: 1,
+                              background: "#00ff88",
+                              boxShadow: "0 0 8px rgba(0,255,136,0.4)",
+                            }}
+                          />
+                          <p
+                            className="text-sm leading-[1.8]"
+                            style={{ color: "rgba(255,255,255,0.62)" }}
+                          >
+                            {film.text}
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Sprocket holes — bottom right */}
+                  <div className="absolute bottom-2.5 right-3 flex gap-1.5">
+                    {[0, 1].map((d) => (
+                      <div
+                        key={d}
+                        className="w-1.5 h-1.5 rounded-sm transition-colors duration-400"
+                        style={{
+                          background: isActive
+                            ? "rgba(0,255,136,0.25)"
+                            : "rgba(255,255,255,0.06)",
+                        }}
+                      />
+                    ))}
+                  </div>
+                </motion.div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Swipe hint */}
+      <p
+        className="font-mono text-[9px] tracking-[0.2em] text-center mt-6"
+        style={{ color: "rgba(255,255,255,0.2)" }}
+      >
+        ← swipe card to navigate →
+      </p>
+    </div>
+  );
+}
+
 /* ── Component ── */
 export default function VideographyContent() {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -388,7 +621,7 @@ export default function VideographyContent() {
             style={{
               fontFamily: "var(--font-monument), sans-serif",
               fontWeight: 800,
-              fontSize: "clamp(44px, 9vw, 110px)",
+              fontSize: "clamp(28px, 9vw, 110px)",
               color: "#fff",
             }}
           >
@@ -493,9 +726,17 @@ export default function VideographyContent() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════
-          SERVICE TYPES — filmstrip horizontal scroll
+          SERVICE TYPES — filmstrip horizontal scroll (desktop)
+                        — vertical accordion stack  (mobile)
       ══════════════════════════════════════════════════════════ */}
-      <div ref={filmstripRef} className="relative" style={{ height: `${FILM_TYPES.length * 60}vh` }}>
+
+      {/* Mobile */}
+      <div className="md:hidden">
+        <MobileWhatWeShoot />
+      </div>
+
+      {/* Desktop */}
+      <div ref={filmstripRef} className="relative hidden md:block" style={{ height: `${FILM_TYPES.length * 60}vh` }}>
         <div className="sticky top-0 h-screen overflow-hidden flex items-center">
           <div className="w-full px-[clamp(1.5rem,4vw,4rem)]">
             <motion.p

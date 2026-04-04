@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Rubik_Glitch } from "next/font/google";
+import { Geist, Geist_Mono, Rubik_Glitch, Comfortaa } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import HeroNav from "@/components/layout/HeroNav";
@@ -7,6 +7,7 @@ import Footer from "@/components/layout/footer";
 import FluidWrapper from "@/components/fluid/fluid-wrapper";
 import { JsonLd, organizationJsonLd } from "@/components/seo/json-ld";
 import { siteConfig } from "@/lib/metadata";
+import SmoothScroll from "@/components/SmoothScroll";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,6 +23,13 @@ const rubikGlitch = Rubik_Glitch({
   variable: "--font-rubik-glitch",
   subsets: ["latin"],
   weight: "400",
+  display: "swap",
+});
+
+const comfortaa = Comfortaa({
+  variable: "--font-comfortaa",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -129,13 +137,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${monumentExtended.variable} ${rubikGlitch.variable} antialiased bg-[#111111] flex flex-col min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} ${monumentExtended.variable} ${rubikGlitch.variable} ${comfortaa.variable} antialiased bg-[#111111] flex flex-col min-h-screen`}
       >
-        <JsonLd data={organizationJsonLd()} />
-        <HeroNav />
-        <main id="main-content" className="flex-grow">
-          {children}
-        </main>
+        <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>
   );

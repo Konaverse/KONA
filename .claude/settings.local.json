@@ -50,7 +50,18 @@
       "Bash(/c/Program Files/nodejs/npx.cmd tsc --noEmit)",
       "Bash(\"C:\\\\Users\\\\konst\\\\Projects\\\\KONA\\\\node_modules\\\\.bin\\\\tsc.cmd\" --noEmit --pretty)",
       "Bash(npx.cmd next:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "mcp__claude_ai_Vercel__list_teams",
+      "mcp__claude_ai_Vercel__list_projects",
+      "mcp__claude_ai_Vercel__list_deployments",
+      "Bash(netstat -ano)",
+      "Bash(find:*)",
+      "Bash(pkill -f \"ffmpeg.*scrub\")",
+      "Bash(rm -f \"C:/Users/konst/Projects/KONA/public/homepage/beat2-hero-scrub/frames/\"*.webp)",
+      "Bash(ffmpeg -i \"C:/Users/konst/Projects/KONA/public/homepage/beat2-hero-scrub/scrub.mp4\" -vf \"fps=30,scale=1920:-1\" -q:v 3 \"C:/Users/konst/Projects/KONA/public/homepage/beat2-hero-scrub/frames/frame-%04d.jpg\")",
+      "Bash(ffmpeg -i \"C:/Users/konst/Projects/KONA/public/homepage/beat2-hero-scrub/scrub2.mp4\")",
+      "Bash(ffprobe:*)",
+      "Bash(ffmpeg -i \"C:/Users/konst/Projects/KONA/public/homepage/beat2-hero-scrub/scrub2.mp4\" -vf \"scale=1920:1080\" -start_number 234 \"C:/Users/konst/Projects/KONA/public/homepage/beat2-hero-scrub/frames/frame-%04d.jpg\" -y)"
     ]
   }
 }

@@ -299,7 +299,7 @@ export default function SocialMediaProjectsContent() {
             style={{
               fontFamily: "var(--font-monument), sans-serif",
               fontWeight: 800,
-              fontSize: "clamp(40px, 9vw, 110px)",
+              fontSize: "clamp(22px, 9vw, 110px)",
               color: "#ffffff",
             }}
           >

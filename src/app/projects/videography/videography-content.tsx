@@ -262,7 +262,7 @@ export default function VideographyProjectsContent() {
             style={{
               fontFamily: "var(--font-monument), sans-serif",
               fontWeight: 800,
-              fontSize: "clamp(44px, 10vw, 120px)",
+              fontSize: "clamp(26px, 10vw, 120px)",
               color: "#ffffff",
             }}
           >
