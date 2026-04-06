@@ -61,7 +61,10 @@
       "Bash(ffmpeg -i \"C:/Users/konst/Projects/KONA/public/homepage/beat2-hero-scrub/scrub.mp4\" -vf \"fps=30,scale=1920:-1\" -q:v 3 \"C:/Users/konst/Projects/KONA/public/homepage/beat2-hero-scrub/frames/frame-%04d.jpg\")",
       "Bash(ffmpeg -i \"C:/Users/konst/Projects/KONA/public/homepage/beat2-hero-scrub/scrub2.mp4\")",
       "Bash(ffprobe:*)",
-      "Bash(ffmpeg -i \"C:/Users/konst/Projects/KONA/public/homepage/beat2-hero-scrub/scrub2.mp4\" -vf \"scale=1920:1080\" -start_number 234 \"C:/Users/konst/Projects/KONA/public/homepage/beat2-hero-scrub/frames/frame-%04d.jpg\" -y)"
+      "Bash(ffmpeg -i \"C:/Users/konst/Projects/KONA/public/homepage/beat2-hero-scrub/scrub2.mp4\" -vf \"scale=1920:1080\" -start_number 234 \"C:/Users/konst/Projects/KONA/public/homepage/beat2-hero-scrub/frames/frame-%04d.jpg\" -y)",
+      "Bash(ffmpeg -i \"C:/Users/konst/Projects/KONA/public/homepage/beat2-hero-scrub/scrub.mp4\" -q:v 2 \"C:/Users/konst/Projects/KONA/public/homepage/beat2-hero-scrub/frames/frame-%04d.jpg\")",
+      "Bash(ffmpeg -i \"C:/Users/konst/Projects/KONA/public/homepage/beat2-hero-scrub/scrub2.mp4\" -start_number 241 -q:v 2 \"C:/Users/konst/Projects/KONA/public/homepage/beat2-hero-scrub/frames/frame-%04d.jpg\")",
+      "Bash(npm -v)"
     ]
   }
 }

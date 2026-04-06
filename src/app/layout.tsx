@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Rubik_Glitch, Comfortaa } from "next/font/google";
+import { Geist, Geist_Mono, Rubik_Glitch, Comfortaa, Bricolage_Grotesque, Inter } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import HeroNav from "@/components/layout/HeroNav";
@@ -30,6 +30,20 @@ const comfortaa = Comfortaa({
   variable: "--font-comfortaa",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
+
+const bricolageGrotesque = Bricolage_Grotesque({
+  variable: "--font-bricolage",
+  subsets: ["latin"],
+  weight: ["400", "600", "700", "800"],
+  display: "swap",
+});
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -137,7 +151,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${monumentExtended.variable} ${rubikGlitch.variable} ${comfortaa.variable} antialiased bg-[#111111] flex flex-col min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} ${monumentExtended.variable} ${rubikGlitch.variable} ${comfortaa.variable} ${bricolageGrotesque.variable} ${inter.variable} antialiased bg-[#111111] flex flex-col min-h-screen`}
       >
         <SmoothScroll>{children}</SmoothScroll>
       </body>

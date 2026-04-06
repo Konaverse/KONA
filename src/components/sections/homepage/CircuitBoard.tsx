@@ -220,7 +220,7 @@ export default function CircuitBoard({
                 textAnchor="middle"
                 fill={isDimmed ? "rgba(255,255,255,0.15)" : "rgba(255,255,255,0.6)"}
                 fontSize="11"
-                fontFamily="var(--font-comfortaa)"
+                fontFamily="var(--font-body)"
                 fontWeight="600"
                 letterSpacing="0.1em"
                 style={{ transition: "fill 0.3s", textTransform: "uppercase" } as React.CSSProperties}
@@ -276,7 +276,7 @@ export default function CircuitBoard({
                     />
                     <span
                       className="text-[10px] tracking-[0.3em] uppercase"
-                      style={{ color: node.color, fontFamily: "var(--font-comfortaa)", opacity: 0.8 }}
+                      style={{ color: node.color, fontFamily: "var(--font-body)", opacity: 0.8 }}
                     >
                       {node.label}
                     </span>
@@ -289,7 +289,7 @@ export default function CircuitBoard({
                   </div>
                   <p
                     className="text-[11px] leading-[1.6]"
-                    style={{ color: "rgba(255,255,255,0.5)", fontFamily: "var(--font-comfortaa)" }}
+                    style={{ color: "rgba(255,255,255,0.5)", fontFamily: "var(--font-body)" }}
                   >
                     {node.detail}
                   </p>
@@ -310,7 +310,7 @@ export default function CircuitBoard({
       >
         <span
           className="text-[8px] tracking-[0.4em] uppercase"
-          style={{ color: "rgba(255,255,255,0.15)", fontFamily: "var(--font-comfortaa)" }}
+          style={{ color: "rgba(255,255,255,0.15)", fontFamily: "var(--font-body)" }}
         >
           hover to explore
         </span>

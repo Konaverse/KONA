@@ -57,6 +57,7 @@ const remap = (inLo: number, inHi: number, v: number) =>
 export default function ArchetypesSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
+  const ctxRef = useRef<ReturnType<typeof gsap.context> | null>(null);
 
   // ── Pin & scrub ──
   useLayoutEffect(() => {
@@ -64,6 +65,9 @@ export default function ArchetypesSection() {
     if (!section) return;
 
     const timer = setTimeout(() => {
+      // Kill any previous context to prevent duplicates
+      ctxRef.current?.revert();
+
       const ctx = gsap.context(() => {
         ScrollTrigger.create({
           trigger: section,
@@ -73,13 +77,20 @@ export default function ArchetypesSection() {
           pin: true,
           pinSpacing: true,
           onUpdate: (self) => setProgress(self.progress),
+          // Direct DOM manipulation — no React render cycle delay
+          onLeave: () => { section.style.visibility = "hidden"; },
+          onEnterBack: () => { section.style.visibility = "visible"; },
         });
       }, section);
 
-      return () => ctx.revert();
+      ctxRef.current = ctx;
     }, 150);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      ctxRef.current?.revert();
+      ctxRef.current = null;
+    };
   }, []);
 
   // ── Progress mappings ──────────────────────────────────
@@ -87,16 +98,15 @@ export default function ArchetypesSection() {
   // Phase 0: Builders image slides up covering previous section
   const slideUpY = (1 - remap(0, 0.06, progress)) * 100; // 100% → 0%
 
-  // Per-archetype progress: each gets ~0.31 of total, with 0.03 transition overlap
+  // Per-archetype progress
   // Archetype 0: 0.06 – 0.35
   // Archetype 1: 0.35 – 0.65
-  // Archetype 2: 0.65 – 0.95
-  // Exit: 0.95 – 1.00
+  // Archetype 2: 0.65 – 1.00 (fills to end, no dead zone)
 
   const archRanges = [
     [0.06, 0.35],
     [0.35, 0.65],
-    [0.65, 0.95],
+    [0.65, 1.0],
   ] as const;
 
   // Which archetype is dominant (for content)
@@ -192,6 +202,7 @@ export default function ArchetypesSection() {
   // Background goes black only after the image fully covers the viewport
   const bgBlack = slideUpY <= 0;
 
+
   return (
     <section
       ref={sectionRef}
@@ -283,7 +294,7 @@ export default function ArchetypesSection() {
                       className="text-[10px] md:text-[11px] tracking-[0.4em] uppercase"
                       style={{
                         color: `${NEON}99`,
-                        fontFamily: "var(--font-comfortaa)",
+                        fontFamily: "var(--font-body)",
                       }}
                     >
                       {arch.tagline}
@@ -295,7 +306,7 @@ export default function ArchetypesSection() {
                 <h2
                   className="text-5xl md:text-7xl lg:text-[6rem] font-bold leading-[0.95] tracking-tight mb-6 will-change-transform"
                   style={{
-                    fontFamily: "var(--font-comfortaa)",
+                    fontFamily: "var(--font-heading)",
                     color: "rgba(255,255,255,0.95)",
                     transform: `translateY(${cY}px)`,
                     textShadow: "0 2px 40px rgba(0,0,0,0.5)",
@@ -311,7 +322,7 @@ export default function ArchetypesSection() {
                       key={li}
                       className="text-sm md:text-base leading-[1.6] will-change-transform"
                       style={{
-                        fontFamily: "var(--font-comfortaa)",
+                        fontFamily: "var(--font-body)",
                         color: "rgba(255,255,255,0.55)",
                         opacity: lineOpacity(i, li),
                         transform: `translateY(${(1 - lineOpacity(i, li)) * 20}px)`,

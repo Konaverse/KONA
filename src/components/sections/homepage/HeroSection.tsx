@@ -9,7 +9,7 @@ import { gsap, ScrollTrigger } from "@/utils/gsap";
 // ── Constants ──────────────────────────────────────────────
 const NEON = "#00ff88";
 const NEON_DIM = "rgba(0, 255, 136, 0.4)";
-const TOTAL_FRAMES = 353;
+const TOTAL_FRAMES = 579;
 const FRAME_PATH = "/homepage/beat2-hero-scrub/frames/frame-";
 
 // ── Typewriter Cycle ──────────────────────────────────────
@@ -65,7 +65,7 @@ function TypewriterCycle({
       className={className}
       style={{
         color: "rgba(0,255,136,0.5)",
-        fontFamily: "var(--font-comfortaa)",
+        fontFamily: "var(--font-body)",
         minWidth: "8em",
         display: "inline-block",
       }}
@@ -237,14 +237,30 @@ export default function HeroSection() {
     });
   }, []);
 
-  // ── Scroll lock while entry video plays (via Lenis) ──
-  useLayoutEffect(() => {
-    if (!videoEnded) {
-      stop();
-    } else {
-      start();
-    }
+  // ── Scroll lock while entry video plays ──
+  useEffect(() => {
+    if (videoEnded) return;
+
+    stop();
+    window.scrollTo(0, 0);
+
+    // Position: fixed removes the element from scroll flow entirely
+    const html = document.documentElement;
+    const body = document.body;
+    body.style.position = "fixed";
+    body.style.top = "0";
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.overflow = "hidden";
+    html.style.overflow = "hidden";
+
     return () => {
+      body.style.position = "";
+      body.style.top = "";
+      body.style.left = "";
+      body.style.right = "";
+      body.style.overflow = "";
+      html.style.overflow = "";
       start();
     };
   }, [videoEnded, stop, start]);
@@ -296,7 +312,7 @@ export default function HeroSection() {
             trigger: section,
             start: "top top",
             end: "+=100%",
-            scrub: 1.5,
+            scrub: 0.8,
             pin: true,
             pinSpacing: true,
             onUpdate: (self) => {
@@ -365,7 +381,7 @@ export default function HeroSection() {
       ref={sectionRef}
       onMouseMove={handleMouseMove}
       className="relative w-full h-screen overflow-hidden bg-[#111111]"
-      style={{ fontFamily: "var(--font-comfortaa)" }}
+      style={{ fontFamily: "var(--font-body)" }}
     >
       {/* ── Entry Video (z-0) — hidden once scrub starts ── */}
       <video
@@ -455,7 +471,7 @@ export default function HeroSection() {
             className="text-[11px] md:text-xs tracking-[0.2em] uppercase"
             style={{
               color: "rgba(255,255,255,0.25)",
-              fontFamily: "var(--font-comfortaa)",
+              fontFamily: "var(--font-body)",
             }}
           >
             Crafted in the{" "}
@@ -519,7 +535,7 @@ export default function HeroSection() {
           >
             <motion.span
               className="block text-5xl md:text-7xl lg:text-8xl leading-[1.05] tracking-tight"
-              style={{ fontFamily: "var(--font-comfortaa)" }}
+              style={{ fontFamily: "var(--font-heading)" }}
               initial={{ opacity: 0, y: 40, filter: "blur(8px)" }}
               animate={
                 titleRevealed ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}
@@ -581,7 +597,7 @@ export default function HeroSection() {
 
           <motion.p
             className="text-[11px] md:text-xs leading-[1.7] text-right"
-            style={{ color: "rgba(255,255,255,0.4)", fontFamily: "var(--font-comfortaa)" }}
+            style={{ color: "rgba(255,255,255,0.4)", fontFamily: "var(--font-body)" }}
             initial={{ opacity: 0, x: 20 }}
             animate={titleRevealed ? { opacity: 1, x: 0 } : {}}
             transition={{ delay: 1.3, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
@@ -653,7 +669,7 @@ export default function HeroSection() {
               />
               <span
                 className="text-[9px] md:text-[10px] tracking-[0.35em] uppercase"
-                style={{ color: NEON_DIM, fontFamily: "var(--font-comfortaa)" }}
+                style={{ color: NEON_DIM, fontFamily: "var(--font-body)" }}
               >
                 Now exploring
               </span>
@@ -673,7 +689,7 @@ export default function HeroSection() {
             <h2
               className="text-2xl md:text-3xl lg:text-5xl font-bold leading-[1.1] tracking-tight will-change-transform"
               style={{
-                fontFamily: "var(--font-comfortaa)",
+                fontFamily: "var(--font-heading)",
                 color: "rgba(255,255,255,0.9)",
                 opacity: headlineOpacity,
                 transform: `translateY(${(1 - headlineOpacity) * 20}px)`,
@@ -689,7 +705,7 @@ export default function HeroSection() {
             <p
               className="mt-4 text-[11px] md:text-sm leading-[1.8] will-change-transform"
               style={{
-                fontFamily: "var(--font-comfortaa)",
+                fontFamily: "var(--font-body)",
                 color: "rgba(255,255,255,0.4)",
                 opacity: subtitleOpacity,
                 transform: `translateY(${(1 - subtitleOpacity) * 15}px)`,
@@ -728,13 +744,13 @@ export default function HeroSection() {
                 >
                   <span
                     className="block text-lg md:text-2xl lg:text-3xl font-bold"
-                    style={{ color: NEON, fontFamily: "var(--font-comfortaa)" }}
+                    style={{ color: NEON, fontFamily: "var(--font-heading)" }}
                   >
                     {stat.value}
                   </span>
                   <span
                     className="block text-[8px] md:text-[9px] tracking-[0.3em] uppercase mt-1"
-                    style={{ color: "rgba(255,255,255,0.3)", fontFamily: "var(--font-comfortaa)" }}
+                    style={{ color: "rgba(255,255,255,0.3)", fontFamily: "var(--font-body)" }}
                   >
                     {stat.label}
                   </span>
@@ -757,14 +773,14 @@ export default function HeroSection() {
                 />
                 <span
                   className="text-[9px] md:text-[10px] tracking-[0.4em] uppercase"
-                  style={{ color: "rgba(255,255,255,0.2)", fontFamily: "var(--font-comfortaa)" }}
+                  style={{ color: "rgba(255,255,255,0.2)", fontFamily: "var(--font-body)" }}
                 >
                   Our philosophy
                 </span>
               </div>
               <p
                 className="text-xs md:text-sm leading-[1.8]"
-                style={{ color: "rgba(255,255,255,0.35)", fontFamily: "var(--font-comfortaa)" }}
+                style={{ color: "rgba(255,255,255,0.35)", fontFamily: "var(--font-body)" }}
               >
                 Every pixel serves a purpose.
                 <br />
