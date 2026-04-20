@@ -1,213 +1,143 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
-// ── Config ───────────────────────────────────────────────
-const MANIFESTO =
-  "We're a small team that builds digital experiences for builders, brands, and visionaries who refuse to blend in.";
+const ACCENT = "#6B7F62";
 
-const NEON = "#00ff88";
-const NEON_DIM = "rgba(0, 255, 136, 0.4)";
+const words: { text: string; italic?: boolean; accent?: boolean }[] = [
+  { text: "We" },
+  { text: "don\u2019t" },
+  { text: "just" },
+  { text: "build" },
+  { text: "websites" },
+  { text: "or" },
+  { text: "shoot" },
+  { text: "videos" },
+  { text: "\u2014" },
+  { text: "we" },
+  { text: "craft", italic: true },
+  { text: "digital", accent: true },
+  { text: "experiences", accent: true },
+  { text: "that" },
+  { text: "breathe", italic: true },
+  { text: "life", accent: true },
+  { text: "into" },
+  { text: "every" },
+  { text: "brand" },
+  { text: "we" },
+  { text: "touch." },
+];
 
-// Words that get neon highlight treatment
-const KEYWORD_SET = new Set([
-  "builders,",
-  "brands,",
-  "visionaries",
-  "refuse",
-  "blend",
-  "in.",
-]);
-
-// ── Word component — opacity + weight + color driven by scroll ───
-function Word({
-  children,
-  progress,
-  range,
-  isKeyword,
-  index,
-  total,
-}: {
-  children: string;
-  progress: MotionValue<number>;
-  range: [number, number];
-  isKeyword: boolean;
-  index: number;
-  total: number;
-}) {
-  // ── Reveal phase (0.25–0.55) ──
-  const opacity = useTransform(progress, range, [0.12, 1]);
-
-  // ── Exit phase ──
-  // Each word exits at a slightly different time for a burst/spread effect.
-  // Words near the center of the sentence exit slightly later (linger longer).
-  const centeredness = 1 - Math.abs(index / total - 0.5) * 2; // 0 at edges, 1 at center
-  const exitStart = 0.58 + centeredness * 0.03; // center words start exiting later
-  const exitEnd = exitStart + 0.12;
-
-  const exitOpacity = useTransform(
-    progress,
-    [exitStart, exitEnd],
-    [1, 0]
-  );
-
-  // Words scatter outward: left-half words drift left, right-half drift right
-  const side = index < total / 2 ? -1 : 1;
-  const drift = (1 - centeredness) * 60 * side; // outer words drift further
-  const exitX = useTransform(progress, [exitStart, exitEnd], [0, drift]);
-
-  // All words scale up (rushing toward camera)
-  const exitScale = useTransform(
-    progress,
-    [exitStart, exitEnd],
-    [1, 1.3 + centeredness * 0.5] // center words scale more (closer to camera)
-  );
-
-  // Blur as words rush past
-  const exitBlur = useTransform(
-    progress,
-    [exitStart, exitStart + 0.06],
-    [0, 6 + centeredness * 4]
-  );
-
-  return (
-    <motion.span
-      className="relative mx-[0.3em] inline-block will-change-transform"
-      style={{
-        opacity: exitOpacity,
-        x: exitX,
-        scale: exitScale,
-        filter: useTransform(exitBlur, (v) => `blur(${v}px)`),
-      }}
-    >
-      {/* Ghost layer — always visible at low opacity for context */}
-      <span
-        style={{
-          position: "absolute",
-          opacity: 0.12,
-          color: isKeyword ? NEON : "white",
-        }}
-      >
-        {children}
-      </span>
-      {/* Revealed layer — scroll-driven */}
-      <motion.span
-        style={{
-          opacity,
-          color: isKeyword ? NEON : "white",
-          textShadow: isKeyword
-            ? `0 0 20px ${NEON_DIM}, 0 0 40px rgba(0,255,136,0.15)`
-            : "none",
-        }}
-      >
-        {children}
-      </motion.span>
-    </motion.span>
-  );
-}
-
-// ── Component ────────────────────────────────────────────
 export default function ManifestoSection() {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const [progress, setProgress] = useState(0);
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"],
-  });
+  useEffect(() => {
+    const onScroll = () => {
+      const section = sectionRef.current;
+      if (!section) return;
+      const rect = section.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const raw = (vh - rect.top) / (vh + rect.height);
+      const clamped = Math.min(1, Math.max(0, raw));
+      const reveal = Math.min(1, Math.max(0, (clamped - 0.2) / 0.6));
+      setProgress(reveal);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
-  const words = MANIFESTO.split(" ");
-
-  // Each word gets an evenly distributed slice of the scroll range.
-  const rangeStart = 0.25;
-  const rangeEnd = 0.55;
-  const step = (rangeEnd - rangeStart) / words.length;
-
-  // Ambient glow behind the text block — intensifies as more words reveal, fades on exit
-  const ambientOpacity = useTransform(
-    scrollYProgress,
-    [0.25, 0.42, 0.55, 0.68],
-    [0, 0.3, 0.15, 0]
-  );
-  const ambientScale = useTransform(
-    scrollYProgress,
-    [0.25, 0.42, 0.58, 0.72],
-    [0.8, 1.2, 1.2, 2.0]
-  );
-
-  // Accent line: appears after reveal, exits with the text
-  const lineOpacity = useTransform(
-    scrollYProgress,
-    [0.48, 0.54, 0.58, 0.66],
-    [0, 0.4, 0.4, 0]
-  );
-  const lineScale = useTransform(
-    scrollYProgress,
-    [0.58, 0.68],
-    [1, 2.5]
-  );
+  const wordsToShow = Math.floor(progress * words.length);
+  const progressPct = progress * 100;
 
   return (
     <section
-      ref={containerRef}
-      className="relative w-full bg-black"
-      style={{ minHeight: "500vh" }}
+      ref={sectionRef}
+      style={{
+        position: "relative",
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "10vh 8vw",
+        overflow: "hidden",
+        background: "#0a0a0c",
+      }}
     >
-      {/* Sticky container — centered in viewport */}
+      {/* Vertical progress line */}
       <div
-        className="sticky top-0 flex h-screen w-full items-center justify-center"
-        style={{ pointerEvents: "none" }}
+        style={{
+          position: "absolute",
+          left: "6vw",
+          top: "10%",
+          bottom: "10%",
+          width: 2,
+          background: "rgba(255,255,255,0.06)",
+          borderRadius: 1,
+        }}
       >
-        {/* Ambient neon radial glow behind text */}
-        <motion.div
-          className="absolute"
+        <div
           style={{
-            width: "clamp(300px, 50vw, 700px)",
-            height: "clamp(200px, 30vh, 400px)",
-            background: `radial-gradient(ellipse, ${NEON}18 0%, transparent 70%)`,
-            opacity: ambientOpacity,
-            scale: ambientScale,
-            filter: "blur(60px)",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: `${progressPct}%`,
+            background: ACCENT,
+            borderRadius: 1,
+            boxShadow: `0 0 20px rgba(107,127,98,0.6), 0 0 60px rgba(107,127,98,0.2)`,
+            transition: "height 0.05s linear",
           }}
         />
-
-        <p
-          className="relative flex max-w-4xl flex-wrap items-center justify-center px-6 text-center text-3xl leading-[1.4] tracking-tight md:text-5xl lg:text-6xl"
-          style={{ fontFamily: "var(--font-heading)" }}
-        >
-          {words.map((word, i) => {
-            const start = rangeStart + i * step;
-            const end = start + step;
-            const isKeyword = KEYWORD_SET.has(word.toLowerCase());
-
-            return (
-              <Word
-                key={i}
-                progress={scrollYProgress}
-                range={[start, end]}
-                isKeyword={isKeyword}
-                index={i}
-                total={words.length}
-              >
-                {word}
-              </Word>
-            );
-          })}
-        </p>
-
-        {/* Subtle neon accent line below text — exits with burst */}
-        <motion.div
-          className="absolute bottom-[15vh] left-1/2 -translate-x-1/2"
+        <div
           style={{
-            width: "clamp(60px, 8vw, 120px)",
-            height: 1,
-            background: NEON,
-            opacity: lineOpacity,
-            scale: lineScale,
-            boxShadow: `0 0 20px ${NEON}40`,
+            position: "absolute",
+            left: -4,
+            top: `${progressPct}%`,
+            width: 10,
+            height: 10,
+            borderRadius: "50%",
+            background: ACCENT,
+            boxShadow: `0 0 16px rgba(107,127,98,0.8), 0 0 40px rgba(107,127,98,0.3)`,
+            transition: "top 0.05s linear",
           }}
         />
       </div>
+
+      {/* Manifesto text */}
+      <p
+        style={{
+          fontFamily: "var(--font-cormorant), serif",
+          fontSize: "clamp(2.8rem, 5.5vw, 5.5rem)",
+          fontWeight: 300,
+          lineHeight: 1.3,
+          maxWidth: 900,
+          marginLeft: "6vw",
+        }}
+      >
+        {words.map((w, i) => (
+          <span
+            key={i}
+            style={{
+              display: "inline",
+              color: i < wordsToShow
+                ? w.accent
+                  ? ACCENT
+                  : "#f0ede8"
+                : "rgba(240,237,232,0.08)",
+              fontStyle: w.italic ? "italic" : "normal",
+              textShadow: i < wordsToShow && w.accent
+                ? "0 0 40px rgba(107,127,98,0.3)"
+                : "none",
+              transition: "color 0.6s cubic-bezier(0.23,1,0.32,1), text-shadow 0.6s cubic-bezier(0.23,1,0.32,1)",
+            }}
+          >
+            {w.text}
+            {i < words.length - 1 ? " " : ""}
+          </span>
+        ))}
+      </p>
     </section>
   );
 }

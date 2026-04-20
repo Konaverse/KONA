@@ -64,7 +64,26 @@
       "Bash(ffmpeg -i \"C:/Users/konst/Projects/KONA/public/homepage/beat2-hero-scrub/scrub2.mp4\" -vf \"scale=1920:1080\" -start_number 234 \"C:/Users/konst/Projects/KONA/public/homepage/beat2-hero-scrub/frames/frame-%04d.jpg\" -y)",
       "Bash(ffmpeg -i \"C:/Users/konst/Projects/KONA/public/homepage/beat2-hero-scrub/scrub.mp4\" -q:v 2 \"C:/Users/konst/Projects/KONA/public/homepage/beat2-hero-scrub/frames/frame-%04d.jpg\")",
       "Bash(ffmpeg -i \"C:/Users/konst/Projects/KONA/public/homepage/beat2-hero-scrub/scrub2.mp4\" -start_number 241 -q:v 2 \"C:/Users/konst/Projects/KONA/public/homepage/beat2-hero-scrub/frames/frame-%04d.jpg\")",
-      "Bash(npm -v)"
+      "Bash(npm -v)",
+      "Bash(awk NR>=100 && NR<=300:*)",
+      "Bash(awk NR>=300 && NR<=528:*)",
+      "Bash(awk NR<=200:*)",
+      "Bash(awk NR>=200 && NR<=552:*)",
+      "Bash(awk NR<=120:*)",
+      "Bash(\"/c/Program Files/nodejs/npx.cmd\" tsc --noEmit)",
+      "Bash(grep -n \"image\\\\|Image\\\\|img\\\\|video\\\\|mp4\\\\|webm\" C:/Users/konst/Projects/KONA/src/components/sections/homepage/*.tsx)",
+      "Bash(grep -n \"sizes=\\\\|priority\\\\|loading=\" C:/Users/konst/Projects/KONA/src/components/sections/homepage/*.tsx)",
+      "Bash(wc:*)",
+      "Bash(grep:*)",
+      "Bash(dir \"C:\\\\Users\\\\konst\\\\.claude\\\\skills\" /b)",
+      "Bash(findstr /i \"perform mobile scroll parallax optim\")",
+      "Bash(git checkout *)",
+      "Bash(where node.exe)",
+      "WebFetch(domain:api.anthropic.com)",
+      "Bash(gunzip)",
+      "Bash(tar -tf /tmp/design_bundle.tar)",
+      "Bash(tar -xf /tmp/design_bundle.tar -C /tmp/)",
+      "Read(//tmp/konaverse/project/**)"
     ]
   }
 }

@@ -88,9 +88,15 @@ export default function ParallaxStackingProjects({
 
     const cardHeight = isMobile ? windowHeight * 0.5 : windowHeight;
 
+    // Hold ctx outside the timeout so cleanup can revert it.
+    // (return inside setTimeout is ignored by JS — that was a silent bug)
+    // Also: never use ScrollTrigger.getAll().kill() — it nukes every trigger
+    // on the page including the Hero frame scrub.
+    let gsapCtx: ReturnType<typeof gsap.context> | null = null;
+
     const timer = setTimeout(() => {
-      const ctx = gsap.context(() => {
-        canvasRefs.current.slice(0, -1).forEach((canvas, index) => {
+      gsapCtx = gsap.context(() => {
+        canvasRefs.current.forEach((canvas, index) => {
           if (!canvas) return;
           gsap.set(canvas, { yPercent: 0 });
           gsap.timeline({
@@ -98,7 +104,8 @@ export default function ParallaxStackingProjects({
               trigger: root,
               start: `top+=${cardHeight * index}`,
               end: `+=${cardHeight * (projects.length - 1)}`,
-              scrub: true,
+              // Mobile: tighter scrub so cards track the finger, not lag behind
+              scrub: isMobile ? 0.4 : 0.5,
               invalidateOnRefresh: true,
             },
           }).to(canvas, {
@@ -107,16 +114,15 @@ export default function ParallaxStackingProjects({
           });
         });
       }, root);
-
-      return () => ctx.revert();
     }, 200);
 
     return () => {
       clearTimeout(timer);
-      ScrollTrigger.getAll().forEach((t) => t.kill());
+      gsapCtx?.revert();
     };
   }, [windowHeight, isMobile, projects.length]);
 
+  /* ── Sticky wrapper helpers ── */
   const getWrapHeight = (index: number): string => {
     if (isMobile) {
       return index === projects.length - 1
@@ -130,7 +136,6 @@ export default function ParallaxStackingProjects({
 
   const getWrapTop = (index: number): string => {
     if (isMobile) {
-      if (index === projects.length - 1) return "-25svh";
       return index === 0 ? "0px" : "-50svh";
     }
     return index === 0 ? "0px" : "-100svh";
@@ -144,10 +149,10 @@ export default function ParallaxStackingProjects({
       className="relative w-full block"
       style={{
         backgroundColor: "#000000",
-        paddingLeft: "clamp(1rem, 4vw, 5rem)",
-        paddingRight: "clamp(1rem, 4vw, 5rem)",
-        paddingTop: "3rem",
-        paddingBottom: "3rem",
+        paddingLeft: isMobile ? 0 : "clamp(1rem, 4vw, 5rem)",
+        paddingRight: isMobile ? 0 : "clamp(1rem, 4vw, 5rem)",
+        paddingTop: isMobile ? 0 : "3rem",
+        paddingBottom: isMobile ? 0 : "3rem",
         overflowX: "clip",
       }}
     >
@@ -171,64 +176,64 @@ export default function ParallaxStackingProjects({
         <rect width="100%" height="100%" fill="url(#stack-grid)" />
       </svg>
 
-      {/* ── Outer glow blobs — massive, one per project ── */}
-      {!isMobile &&
-        projects.map((_, index) => {
-          const accent = getAccent(index);
-          const isEven = index % 2 === 0;
-          return (
-            <React.Fragment key={`glow-${index}`}>
-              {/* Primary glow — huge, alternates sides */}
-              <div
-                className="absolute pointer-events-none"
-                style={{
-                  top: `calc(${index} * 100svh + 15svh)`,
-                  left: isEven ? "-15%" : "auto",
-                  right: isEven ? "auto" : "-15%",
-                  width: "clamp(500px, 70vw, 1100px)",
-                  height: "clamp(500px, 70vh, 1100px)",
-                  background: `radial-gradient(ellipse at center, ${accent}40 0%, ${accent}20 30%, ${accent}08 55%, transparent 75%)`,
-                  filter: "blur(40px)",
-                  zIndex: 0,
-                }}
-              />
-              {/* Secondary glow — opposite side */}
-              <div
-                className="absolute pointer-events-none"
-                style={{
-                  top: `calc(${index} * 100svh + 55svh)`,
-                  left: isEven ? "auto" : "-10%",
-                  right: isEven ? "-10%" : "auto",
-                  width: "clamp(300px, 45vw, 700px)",
-                  height: "clamp(300px, 45vh, 700px)",
-                  background: `radial-gradient(circle at center, ${accent}30 0%, ${accent}12 40%, transparent 70%)`,
-                  filter: "blur(50px)",
-                  zIndex: 0,
-                }}
-              />
-              {/* Center bloom — sits right behind the container edge */}
-              <div
-                className="absolute pointer-events-none"
-                style={{
-                  top: `calc(${index} * 100svh + 35svh)`,
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  width: "clamp(400px, 60vw, 900px)",
-                  height: "clamp(200px, 30vh, 400px)",
-                  background: `radial-gradient(ellipse at center, ${accent}18 0%, transparent 60%)`,
-                  filter: "blur(30px)",
-                  zIndex: 0,
-                }}
-              />
-            </React.Fragment>
-          );
-        })}
+      {/* ── Glow blobs — desktop: massive; mobile: smaller, 50svh spacing ── */}
+      {projects.map((_, index) => {
+        const accent = getAccent(index);
+        const isEven = index % 2 === 0;
+        const cardVh = isMobile ? 50 : 100;
+        return (
+          <React.Fragment key={`glow-${index}`}>
+            {/* Primary glow — alternates sides */}
+            <div
+              className="absolute pointer-events-none"
+              style={{
+                top: `calc(${index} * ${cardVh}svh + ${cardVh * 0.15}svh)`,
+                left: isEven ? "-15%" : "auto",
+                right: isEven ? "auto" : "-15%",
+                width: isMobile ? "clamp(220px, 90vw, 380px)" : "clamp(500px, 70vw, 1100px)",
+                height: isMobile ? "clamp(220px, 60vh, 380px)" : "clamp(500px, 70vh, 1100px)",
+                background: `radial-gradient(ellipse at center, ${accent}${isMobile ? "30" : "40"} 0%, ${accent}${isMobile ? "14" : "20"} 30%, ${accent}08 55%, transparent 75%)`,
+                filter: `blur(${isMobile ? 30 : 40}px)`,
+                zIndex: 0,
+              }}
+            />
+            {/* Secondary glow — opposite side */}
+            <div
+              className="absolute pointer-events-none"
+              style={{
+                top: `calc(${index} * ${cardVh}svh + ${cardVh * 0.55}svh)`,
+                left: isEven ? "auto" : "-10%",
+                right: isEven ? "-10%" : "auto",
+                width: isMobile ? "clamp(160px, 70vw, 260px)" : "clamp(300px, 45vw, 700px)",
+                height: isMobile ? "clamp(160px, 40vh, 260px)" : "clamp(300px, 45vh, 700px)",
+                background: `radial-gradient(circle at center, ${accent}${isMobile ? "22" : "30"} 0%, ${accent}${isMobile ? "0a" : "12"} 40%, transparent 70%)`,
+                filter: `blur(${isMobile ? 35 : 50}px)`,
+                zIndex: 0,
+              }}
+            />
+            {/* Center bloom */}
+            <div
+              className="absolute pointer-events-none"
+              style={{
+                top: `calc(${index} * ${cardVh}svh + ${cardVh * 0.35}svh)`,
+                left: "50%",
+                transform: "translateX(-50%)",
+                width: isMobile ? "clamp(200px, 80vw, 340px)" : "clamp(400px, 60vw, 900px)",
+                height: isMobile ? "clamp(100px, 25vh, 180px)" : "clamp(200px, 30vh, 400px)",
+                background: `radial-gradient(ellipse at center, ${accent}${isMobile ? "14" : "18"} 0%, transparent 60%)`,
+                filter: `blur(${isMobile ? 25 : 30}px)`,
+                zIndex: 0,
+              }}
+            />
+          </React.Fragment>
+        );
+      })}
 
-      {/* Inner container with border radius */}
+      {/* Inner container */}
       <div
         className="relative w-full block mx-auto"
         style={{
-          borderRadius: isMobile ? "0.75rem" : "1.25rem",
+          borderRadius: isMobile ? 0 : "1.25rem",
           overflow: "clip",
         }}
       >
@@ -240,11 +245,11 @@ export default function ParallaxStackingProjects({
               height: isMobile ? "50svh" : "100svh",
               padding: 0,
               contain: "paint",
-              borderRadius: isMobile ? "0.75rem" : 0,
-              marginBottom:
-                isMobile && index !== projects.length - 1 ? "1rem" : 0,
+              borderRadius: 0,
+              marginBottom: 0,
             }}
           >
+            {/* ── Front content layer ── */}
             {/* ── Sticky content layer (z-index: 1, in front) ── */}
             <div
               className="absolute left-0 right-0 w-full pointer-events-none"
@@ -252,7 +257,7 @@ export default function ParallaxStackingProjects({
                 zIndex: 1,
                 height: getWrapHeight(index),
                 top: getWrapTop(index),
-                willChange: "transform",
+                willChange: isMobile ? "auto" : "transform",
               }}
             >
               <div
@@ -267,102 +272,119 @@ export default function ParallaxStackingProjects({
                 {isMobile ? (
                   /* ── MOBILE layout ── */
                   <div className="relative w-full h-full pointer-events-auto">
-                    {/* Faded watermark number */}
-                    <div
-                      className="absolute top-4 right-4 select-none pointer-events-none"
-                      style={{
-                        fontFamily: "var(--font-monument), sans-serif",
-                        fontWeight: 800,
-                        fontSize: "120px",
-                        lineHeight: 1,
-                        color: "rgba(255,255,255,0.025)",
-                      }}
-                    >
-                      {padIndex(index)}
-                    </div>
+                {/* Faded watermark number */}
+                <div
+                  className="absolute top-4 right-4 select-none pointer-events-none"
+                  style={{
+                    fontFamily: "var(--font-monument), sans-serif",
+                    fontWeight: 800,
+                    fontSize: "120px",
+                    lineHeight: 1,
+                    color: "rgba(255,255,255,0.025)",
+                  }}
+                >
+                  {padIndex(index)}
+                </div>
 
-                    {/* Image */}
-                    <div
-                      className="absolute"
-                      style={{
-                        width: "83%",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -55%)",
-                        aspectRatio: project.isVideo ? "16 / 9" : "16 / 10",
-                      }}
-                    >
-                      <Image
-                        src={project.image}
-                        alt={project.title}
-                        fill
-                        className="object-cover"
+                {/* Front image */}
+                <div
+                  className="absolute"
+                  style={{
+                    width: "83%",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -55%)",
+                    aspectRatio: project.isVideo ? "16 / 9" : "16 / 10",
+                  }}
+                >
+                  {/* Glow halo behind the front image (mobile) */}
+                  <div
+                    className="absolute pointer-events-none"
+                    style={{
+                      inset: "-1.5rem",
+                      background: `radial-gradient(ellipse at 50% 50%, ${getAccent(index)}40 0%, ${getAccent(index)}20 35%, transparent 70%)`,
+                      filter: "blur(12px)",
+                    }}
+                  />
+                  {/* Tight glow ring */}
+                  <div
+                    className="absolute -inset-[2px] rounded-[0.6rem] pointer-events-none"
+                    style={{
+                      boxShadow: `0 0 20px ${getAccent(index)}35, 0 0 40px ${getAccent(index)}20`,
+                      border: `1px solid ${getAccent(index)}25`,
+                    }}
+                  />
+                  <Image
+                    src={project.image}
+                    alt={project.title}
+                    fill
+                    className="object-cover"
+                    style={{
+                      borderRadius: "0.5rem",
+                      boxShadow: `0 4px 30px rgba(0,0,0,0.3), 0 0 40px ${getAccent(index)}18`,
+                    }}
+                    sizes="83vw"
+                  />
+                  {project.isVideo && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div
+                        className="w-12 h-12 rounded-full flex items-center justify-center"
                         style={{
-                          borderRadius: "0.5rem",
-                          boxShadow: `0 4px 30px rgba(0,0,0,0.3), 0 0 40px ${getAccent(index)}12`,
+                          background: "rgba(0,255,136,0.15)",
+                          backdropFilter: "blur(8px)",
+                          border: "1px solid rgba(0,255,136,0.3)",
                         }}
-                        sizes="83vw"
-                      />
-                      {project.isVideo && (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div
-                            className="w-12 h-12 rounded-full flex items-center justify-center"
-                            style={{
-                              background: "rgba(0,255,136,0.15)",
-                              backdropFilter: "blur(8px)",
-                              border: "1px solid rgba(0,255,136,0.3)",
-                            }}
-                          >
-                            <Play
-                              className="w-5 h-5 ml-0.5"
-                              fill="#00ff88"
-                              color="#00ff88"
-                            />
-                          </div>
-                          {project.duration && (
-                            <span
-                              className="absolute bottom-2 right-2 px-2 py-0.5 rounded text-[10px]"
-                              style={{
-                                fontFamily:
-                                  "var(--font-geist-mono), monospace",
-                                background: "rgba(0,0,0,0.7)",
-                                color: "#00ff88",
-                              }}
-                            >
-                              {project.duration}
-                            </span>
-                          )}
-                        </div>
+                      >
+                        <Play
+                          className="w-5 h-5 ml-0.5"
+                          fill="#00ff88"
+                          color="#00ff88"
+                        />
+                      </div>
+                      {project.duration && (
+                        <span
+                          className="absolute bottom-2 right-2 px-2 py-0.5 rounded text-[10px]"
+                          style={{
+                            fontFamily:
+                              "var(--font-geist-mono), monospace",
+                            background: "rgba(0,0,0,0.7)",
+                            color: "#00ff88",
+                          }}
+                        >
+                          {project.duration}
+                        </span>
                       )}
                     </div>
+                  )}
+                </div>
 
-                    {/* Bottom text */}
-                    <div
-                      className="absolute w-full flex flex-col items-center justify-end pb-4"
-                      style={{ height: "100%", gap: "0.25rem" }}
-                    >
-                      <span
-                        className="text-[10px] tracking-[0.25em] uppercase"
-                        style={{
-                          fontFamily: "var(--font-geist-mono), monospace",
-                          color: "#00ff88",
-                        }}
-                      >
-                        {project.year}
-                      </span>
-                      <h3
-                        className="text-lg text-center px-4"
-                        style={{
-                          fontFamily: "var(--font-monument), sans-serif",
-                          fontWeight: 800,
-                          color: "#ffffff",
-                          textShadow: "0 2px 10px rgba(0,0,0,0.5)",
-                        }}
-                      >
-                        {project.title}
-                      </h3>
-                    </div>
-                  </div>
+                {/* Bottom text */}
+                <div
+                  className="absolute w-full flex flex-col items-center justify-end pb-4"
+                  style={{ height: "100%", gap: "0.25rem" }}
+                >
+                  <span
+                    className="text-[10px] tracking-[0.25em] uppercase"
+                    style={{
+                      fontFamily: "var(--font-geist-mono), monospace",
+                      color: "#00ff88",
+                    }}
+                  >
+                    {project.year}
+                  </span>
+                  <h3
+                    className="text-lg text-center px-4"
+                    style={{
+                      fontFamily: "var(--font-monument), sans-serif",
+                      fontWeight: 800,
+                      color: "#ffffff",
+                      textShadow: "0 2px 10px rgba(0,0,0,0.5)",
+                    }}
+                  >
+                    {project.title}
+                  </h3>
+                </div>
+                </div>
                 ) : (
                   /* ── DESKTOP layout ── */
                   <div className="w-full h-full px-8 lg:px-16 grid grid-cols-2 items-center pointer-events-auto">
@@ -569,104 +591,108 @@ export default function ParallaxStackingProjects({
             </div>
 
             {/* ── Canvas — background image that peels away ── */}
-            <div
-              ref={(el) => {
-                canvasRefs.current[index] = el;
-              }}
-              className="absolute inset-0 transition-opacity duration-500"
-              style={{ opacity: 0.45, willChange: "transform" }}
-            >
-              <Image
-                src={project.image}
-                alt={project.title}
-                fill
-                className="object-cover"
-                sizes="100vw"
-                priority={index < 2}
-              />
-              {/* Color shader overlay — strong tint per project */}
+            <div className="absolute inset-0 overflow-hidden">
               <div
-                className="absolute inset-0"
-                style={{
-                  background: `linear-gradient(135deg, ${getAccent(index)}35 0%, ${getAccent(index)}10 30%, transparent 50%, ${getAccent(index)}08 75%, ${getAccent(index)}30 100%)`,
-                  mixBlendMode: "screen",
+                ref={(el) => {
+                  canvasRefs.current[index] = el;
                 }}
-              />
-              {/* Corner color wash — big radial bloom */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  background: `radial-gradient(ellipse at ${index % 2 === 0 ? "15% 85%" : "85% 15%"}, ${getAccent(index)}28 0%, ${getAccent(index)}10 30%, transparent 60%)`,
-                }}
-              />
-              {/* Top edge color bleed */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  background: `linear-gradient(to bottom, ${getAccent(index)}15 0%, transparent 25%)`,
-                }}
-              />
-              {/* Animated diagonal film sweep */}
-              <div
-                className="absolute inset-0 pointer-events-none"
-                style={{ overflow: "hidden" }}
+                className="absolute inset-0 transition-opacity duration-500"
+                style={{ opacity: 0.45, willChange: "transform" }}
               >
-                {/* Primary sweep — wide colored band */}
+                <Image
+                  src={project.image}
+                  alt={project.title}
+                  fill
+                  className="object-cover"
+                  sizes="100vw"
+                  priority={index < 2}
+                />
+                {/* Color shader overlay — strong tint per project */}
                 <div
+                  className="absolute inset-0"
                   style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "120%",
-                    height: "300%",
-                    background: `linear-gradient(
-                      90deg,
-                      transparent 0%,
-                      transparent 35%,
-                      ${getAccent(index)}08 40%,
-                      ${getAccent(index)}18 45%,
-                      rgba(255,255,255,0.06) 50%,
-                      ${getAccent(index)}18 55%,
-                      ${getAccent(index)}08 60%,
-                      transparent 65%,
-                      transparent 100%
-                    )`,
-                    animation: `filmSweep ${8 + index * 1.5}s linear infinite`,
-                    animationDelay: `${index * -2.5}s`,
+                    background: `linear-gradient(135deg, ${getAccent(index)}35 0%, ${getAccent(index)}10 30%, transparent 50%, ${getAccent(index)}08 75%, ${getAccent(index)}30 100%)`,
+                    mixBlendMode: "screen",
                   }}
                 />
-                {/* Secondary sweep — thinner, faster, subtle white */}
+                {/* Corner color wash — big radial bloom */}
                 <div
+                  className="absolute inset-0"
                   style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "120%",
-                    height: "300%",
-                    background: `linear-gradient(
-                      90deg,
-                      transparent 0%,
-                      transparent 44%,
-                      rgba(255,255,255,0.03) 48%,
-                      rgba(255,255,255,0.07) 50%,
-                      rgba(255,255,255,0.03) 52%,
-                      transparent 56%,
-                      transparent 100%
-                    )`,
-                    animation: `filmSweep ${6 + index}s linear infinite`,
-                    animationDelay: `${index * -1.8 + 3}s`,
+                    background: `radial-gradient(ellipse at ${index % 2 === 0 ? "15% 85%" : "85% 15%"}, ${getAccent(index)}28 0%, ${getAccent(index)}10 30%, transparent 60%)`,
+                  }}
+                />
+                {/* Top edge color bleed */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background: `linear-gradient(to bottom, ${getAccent(index)}15 0%, transparent 25%)`,
+                  }}
+                />
+                {/* Animated diagonal film sweep — desktop only */}
+                {!isMobile && (
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{ overflow: "hidden" }}
+                >
+                  {/* Primary sweep — wide colored band */}
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "120%",
+                      height: "300%",
+                      background: `linear-gradient(
+                        90deg,
+                        transparent 0%,
+                        transparent 35%,
+                        ${getAccent(index)}08 40%,
+                        ${getAccent(index)}18 45%,
+                        rgba(255,255,255,0.06) 50%,
+                        ${getAccent(index)}18 55%,
+                        ${getAccent(index)}08 60%,
+                        transparent 65%,
+                        transparent 100%
+                      )`,
+                      animation: `filmSweep ${8 + index * 1.5}s linear infinite`,
+                      animationDelay: `${index * -2.5}s`,
+                    }}
+                  />
+                  {/* Secondary sweep — thinner, faster, subtle white */}
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "120%",
+                      height: "300%",
+                      background: `linear-gradient(
+                        90deg,
+                        transparent 0%,
+                        transparent 44%,
+                        rgba(255,255,255,0.03) 48%,
+                        rgba(255,255,255,0.07) 50%,
+                        rgba(255,255,255,0.03) 52%,
+                        transparent 56%,
+                        transparent 100%
+                      )`,
+                      animation: `filmSweep ${6 + index}s linear infinite`,
+                      animationDelay: `${index * -1.8 + 3}s`,
+                    }}
+                  />
+                </div>
+                )}
+                {/* Dark gradient overlay for text readability */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background: isMobile
+                      ? "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.1) 100%)"
+                      : "linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%)",
                   }}
                 />
               </div>
-              {/* Dark gradient overlay for text readability */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  background: isMobile
-                    ? "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.1) 100%)"
-                    : "linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%)",
-                }}
-              />
             </div>
           </div>
         ))}

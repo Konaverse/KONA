@@ -13,6 +13,7 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  typedRoutes: false,
   images: {
     remotePatterns: [
       {

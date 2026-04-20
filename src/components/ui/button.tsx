@@ -1,104 +1,124 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
+import { cn } from "@/lib/cn";
 
-/**
- * Konaverse Standard Button - "The Authorization Style"
- * 
- * Features:
- * - 1px border framing
- * - Geometric mono typography
- * - Bottom-up background fill on hover
- * - Optional architectural corner frame
- */
+type ButtonVariant = "primary" | "secondary";
+type Tone = "dark" | "light";
 
-interface ButtonProps {
-    children: React.ReactNode;
-    href?: string;
-    onClick?: () => void;
-    className?: string;
-    variant?: "primary" | "secondary";
-    size?: "sm" | "md" | "lg";
-    showCorners?: boolean;
-    type?: "button" | "submit" | "reset";
-}
-
-const colors = {
-    oak: "#6b5545",
-    sand: "#c8b4a0",
-    parchment: "#f8f7f5",
-    void: "#0d0f0c",
+type CommonProps = {
+  variant?: ButtonVariant;
+  tone?: Tone;
+  className?: string;
+  children: ReactNode;
 };
 
-export const Button = ({
-    children,
-    href,
-    onClick,
-    className = "",
-    variant = "primary",
-    size = "lg",
-    showCorners = false,
-    type = "button"
-}: ButtonProps) => {
-    const content = (
+type AsButton = CommonProps &
+  Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof CommonProps> & {
+    href?: undefined;
+  };
+
+type AsLink = CommonProps & {
+  href: string;
+  external?: boolean;
+};
+
+type Props = AsButton | AsLink;
+
+const baseCls =
+  "relative inline-flex items-center gap-3 px-7 py-3.5 text-[11px] tracking-[0.24em] uppercase transition-all duration-[450ms] ease-[cubic-bezier(0.16,1,0.3,1)] select-none";
+
+const primaryDark =
+  "bg-[var(--color-black)] text-[var(--color-text-primary-dark)] border border-[var(--color-border-dark)] hover:border-[var(--color-green-neon)] hover:shadow-[0_0_30px_rgba(0,255,136,0.12)]";
+
+const primaryLight =
+  "bg-[var(--color-off-white)] text-[var(--color-text-primary-light)] border border-[var(--color-border-light)] hover:border-[var(--color-green-deep)]";
+
+const secondaryBase =
+  "px-0 py-1 border-0 bg-transparent group relative inline-flex items-center gap-2 text-[11px] tracking-[0.24em] uppercase";
+
+export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
+  function Button(props, ref) {
+    const { variant = "primary", tone = "dark", className, children, ...rest } = props as CommonProps &
+      Record<string, unknown>;
+
+    if (variant === "secondary") {
+      const color = tone === "light" ? "var(--color-green-deep)" : "var(--color-green-neon)";
+      const textColor =
+        tone === "light" ? "text-[var(--color-text-primary-light)]" : "text-[var(--color-text-primary-dark)]";
+      const content = (
         <>
-            <span className={`relative z-10 font-mono uppercase ${size === "sm" ? "text-[10px] tracking-[0.2em]" : size === "md" ? "text-xs tracking-[0.3em]" : "text-xs sm:text-sm tracking-[0.3em] sm:tracking-[0.4em]"
-                }`}>
-                {children}
-            </span>
-
-            {/* Subtle Background Fill on Hover */}
-            <div className="absolute inset-0 bg-white/[0.04] translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
+          <span className={cn(textColor, "transition-colors duration-300 group-hover:text-[var(--color-green-neon)]")}>
+            {children}
+          </span>
+          <span
+            aria-hidden
+            className="pointer-events-none absolute left-0 -bottom-0.5 h-px w-full origin-left scale-x-0 transition-transform duration-[450ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100"
+            style={{ background: color }}
+          />
         </>
-    );
+      );
 
-    const padding = size === "sm" ? "px-3 py-1" : size === "md" ? "px-6 py-3" : "px-8 sm:px-12 py-4 sm:py-6";
-    const sharedClasses = `relative group overflow-hidden border transition-all duration-500 outline-none focus-visible:ring-2 focus-visible:ring-oak ${padding} ${className}`;
-    const borderStyle = variant === "primary" ? "border-white/20" : "border-white/10";
-    const textColor = colors.parchment;
-
-    const buttonStyle = {
-        color: textColor,
-    };
-
-    const corners = showCorners && (
-        <div className="absolute -top-12 -left-12 w-24 h-24 opacity-20 pointer-events-none group-hover:opacity-40 transition-opacity duration-500">
-            <div className="absolute top-0 left-0 w-full h-px" style={{ backgroundColor: colors.sand }} />
-            <div className="absolute top-0 left-0 w-px h-full" style={{ backgroundColor: colors.sand }} />
-        </div>
-    );
-
-    if (href) {
+      if ("href" in props && props.href) {
+        const external = "external" in props && props.external;
         return (
-            <Link href={href} className="relative inline-block font-mono">
-                {corners}
-                <motion.div
-                    whileHover={{ scale: 1.01 }}
-                    whileTap={{ scale: 0.99 }}
-                    className={`${sharedClasses} ${borderStyle}`}
-                    style={buttonStyle}
-                >
-                    {content}
-                </motion.div>
-            </Link>
+          <Link
+            ref={ref as React.Ref<HTMLAnchorElement>}
+            href={props.href}
+            data-cursor="hover"
+            className={cn(secondaryBase, className)}
+            target={external ? "_blank" : undefined}
+            rel={external ? "noopener noreferrer" : undefined}
+          >
+            {content}
+          </Link>
         );
+      }
+      return (
+        <button
+          ref={ref as React.Ref<HTMLButtonElement>}
+          data-cursor="hover"
+          className={cn(secondaryBase, className)}
+          {...(rest as ButtonHTMLAttributes<HTMLButtonElement>)}
+        >
+          {content}
+        </button>
+      );
+    }
+
+    const fontFamily = { fontFamily: "var(--font-geist-mono), monospace" };
+    const toneCls = tone === "light" ? primaryLight : primaryDark;
+
+    if ("href" in props && props.href) {
+      const external = "external" in props && props.external;
+      return (
+        <Link
+          ref={ref as React.Ref<HTMLAnchorElement>}
+          href={props.href}
+          data-cursor="hover"
+          className={cn(baseCls, toneCls, className)}
+          style={fontFamily}
+          target={external ? "_blank" : undefined}
+          rel={external ? "noopener noreferrer" : undefined}
+        >
+          {children}
+        </Link>
+      );
     }
 
     return (
-        <div className="relative inline-block font-mono">
-            {corners}
-            <motion.button
-                type={type}
-                onClick={onClick}
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
-                className={`${sharedClasses} ${borderStyle}`}
-                style={buttonStyle}
-            >
-                {content}
-            </motion.button>
-        </div>
+      <button
+        ref={ref as React.Ref<HTMLButtonElement>}
+        data-cursor="hover"
+        className={cn(baseCls, toneCls, className)}
+        style={fontFamily}
+        {...(rest as ButtonHTMLAttributes<HTMLButtonElement>)}
+      >
+        {children}
+      </button>
     );
-};
+  }
+);
+
+export default Button;
