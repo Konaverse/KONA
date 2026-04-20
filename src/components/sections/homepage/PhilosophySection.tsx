@@ -79,14 +79,11 @@ export default function PhilosophySection() {
             color: "#f0ede8",
           }}
         >
-          Every pixel we place, every frame we capture — exists to tell{" "}
+          Every pixel we place, every frame we capture, exists to tell{" "}
           <em style={{ fontStyle: "italic", color: ACCENT }}>your story</em> in a way that only{" "}
           <em style={{ fontStyle: "italic", color: ACCENT }}>you</em> can own.
         </blockquote>
-        <div style={{ width: 60, height: 1, background: ACCENT, margin: "2.5rem auto", opacity: 0.5 }} />
-        <p style={{ fontSize: "0.7rem", fontWeight: 500, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(240,237,232,0.45)", fontFamily: "var(--font-jakarta), sans-serif" }}>
-          The Konaverse Philosophy
-        </p>
+
       </div>
     </section>
   );

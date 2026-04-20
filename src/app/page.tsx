@@ -15,9 +15,7 @@ export default function Home() {
       <HeroV2 />
       <ManifestoSection />
       <ServicesBento />
-      <ServicesCarousel />
       <ProjectsSection />
-      <KeyElements />
       <PhilosophySection />
       <TestimonialsSection />
       <CTASection />
