@@ -1,102 +1,135 @@
 @import "tailwindcss";
 
 @theme {
+  /* Breakpoints */
+  --breakpoint-xs: 480px;
+
+  /* Colors */
+  --color-obsidian: #111111;
+  --color-near-black: #0a0a0a;
+  --color-sage: #6b7f62;
+  --color-warm-sand: #b6a492;
+  --color-pale-warm: #c8b4a0;
+  --color-soft-white: #faf7f2;
+  --color-off-white: #ededea;
+
+  /* Legacy palette kept for any remaining references */
   --color-black: #0a0a0a;
-  --color-off-white: #f5f2ed;
   --color-surface: #111111;
   --color-surface-light: #ece9e3;
-
-  --color-text-primary-dark: #f0ede8;
+  --color-text-primary-dark: #ededea;
   --color-text-primary-light: #141414;
   --color-text-muted-dark: #6b6b6b;
   --color-text-muted-light: #8a8a8a;
-
-  --color-green-neon: #00ff88;
-  --color-green-deep: #0a8f4a;
-  --color-accent: #6B7F62;
-
+  --color-accent: #6b7f62;
   --color-border-dark: rgba(255, 255, 255, 0.08);
   --color-border-light: rgba(0, 0, 0, 0.1);
 
-  --radius-card: 0.875rem;
-
-  --font-display: var(--font-display-serif);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-monument: var(--font-monument);
+  /* Typography — these reference the CSS variables injected by next/font */
+  --font-display: var(--font-cormorant), serif;
+  --font-sans: var(--font-dm-sans), sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
 }
 
-:root {
-  --accent: #6B7F62;
-  --bg: #0a0a0c;
-  --text: #f0ede8;
-  --text-muted: rgba(240, 237, 232, 0.45);
-  --glass-bg: rgba(255, 255, 255, 0.04);
-  --glass-border: rgba(255, 255, 255, 0.08);
+/* ─── Reset ─────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-:root {
+body { margin: 0; padding: 0; }
+h1, h2, h3, h4, h5, h6, p { margin: 0; padding: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+
+/* ─── Base ───────────────────────────────────────────────── */
+html {
+  height: 100%;
+  background: #0a0a0a;
+  color: #ededea;
+  font-family: var(--font-dm-sans), sans-serif;
+  scroll-behavior: auto; /* Lenis owns scrolling */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(107, 127, 98, 0.3) transparent;
+  overflow-x: clip;
   color-scheme: dark;
 }
 
-html {
-  background: var(--color-black);
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 255, 136, 0.3) transparent;
-  overflow-x: hidden;
-}
-
 body {
-  background: var(--color-black);
-  color: var(--color-text-primary-dark);
-  overflow-x: hidden;
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  height: 100%;
+  background: #0a0a0a;
+  color: #ededea;
+  font-family: var(--font-dm-sans), sans-serif;
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
   overscroll-behavior: none;
 }
 
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
+/* ─── Scrollbar ──────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 255, 136, 0.3);
-  border-radius: 4px;
+  background: rgba(107, 127, 98, 0.3);
+  border-radius: 3px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 255, 136, 0.6);
-}
+::-webkit-scrollbar-thumb:hover { background: rgba(107, 127, 98, 0.6); }
 
 ::selection {
-  background: rgba(0, 255, 136, 0.25);
-  color: var(--color-text-primary-dark);
+  background: rgba(107, 127, 98, 0.3);
+  color: #ededea;
 }
 
-/* Lenis smooth scroll hooks */
+/* ─── Lenis ──────────────────────────────────────────────── */
 html.lenis,
-html.lenis body {
-  height: auto;
-}
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-.lenis.lenis-stopped {
-  overflow: clip;
+html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: clip; }
+
+/* ─── Grain overlay ──────────────────────────────────────── */
+.grain::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  opacity: 0.035;
 }
 
+/* ─── GPU acceleration utility ───────────────────────────── */
+.gpu {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* ─── Layout Spacing Utilities ───────────────────────────── */
+/* Applied to top-level sections to guarantee vertical rhythm */
+.section-padding {
+  @apply py-24 md:py-32 lg:py-40;
+}
+/* Applied to inner wrappers to guarantee horizontal grid alignment */
+.container-padding {
+  @apply px-6 md:px-12 lg:px-24;
+}
+
+/* ─── Mask reveal utilities ──────────────────────────────── */
+.mask-parent { overflow: hidden; }
+/* translateY(100%) is the GSAP animation starting state — do not remove */
+.mask-child { display: block; transform: translateY(100%); }
+
+/* ─── Nav sub-menu ───────────────────────────────────────── */
+.nav-submenu { height: 0; overflow: hidden; }
+
+/* ─── Reduced motion ─────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
   }
 }

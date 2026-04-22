@@ -450,6 +450,7 @@ export default function Navbar() {
 
   return (
     <div
+      id="global-navbar"
       style={{
         position: "fixed",
         top: 0,

@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { gsap, ScrollTrigger } from "@/utils/gsap";
+import { Button } from "@/components/ui/button";
 
 const ACCENT = "#6B7F62";
 
@@ -20,10 +22,13 @@ const PROJECTS = [
   { label: "Branding", href: "/work?filter=brand" },
 ];
 
-const PAGES = [
+const STUDIO = [
   { label: "About", href: "/about" },
   { label: "Process", href: "/process" },
   { label: "Contact", href: "/contact" },
+];
+
+const LEGAL = [
   { label: "Privacy Policy", href: "/privacy" },
   { label: "Terms of Use", href: "/terms" },
 ];
@@ -35,55 +40,24 @@ const SOCIALS = [
   { label: "X / Twitter", href: "https://x.com" },
 ];
 
-// Reusable column
-function FooterCol({
-  heading,
-  links,
-  accentHover = false,
-}: {
-  heading: string;
-  links: { label: string; href: string }[];
-  accentHover?: boolean;
-}) {
+// Reusable column component
+function FooterCol({ heading, links, accentHover = false }: { heading: string; links: { label: string; href: string }[]; accentHover?: boolean }) {
   return (
-    <div>
-      <p
-        style={{
-          fontFamily: "var(--font-jakarta), sans-serif",
-          fontWeight: 500,
-          fontSize: "0.52rem",
-          letterSpacing: "0.24em",
-          textTransform: "uppercase",
-          color: "rgba(255,255,255,0.22)",
-          marginBottom: "1.2rem",
-        }}
-      >
+    <div className="flex flex-col space-y-6">
+      <h4 className="font-mono text-[10px] tracking-[0.2em] uppercase text-white/30">
         {heading}
-      </p>
-      <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "0.7rem" }}>
-        {links.map((l) => (
-          <li key={l.label}>
+      </h4>
+      <ul className="flex flex-col space-y-3">
+        {links.map((link) => (
+          <li key={link.label}>
             <a
-              href={l.href}
-              target={l.href.startsWith("http") ? "_blank" : undefined}
-              rel="noopener noreferrer"
-              style={{
-                fontFamily: "var(--font-jakarta), sans-serif",
-                fontWeight: 300,
-                fontSize: "0.82rem",
-                color: "rgba(240,237,232,0.42)",
-                textDecoration: "none",
-                letterSpacing: "0.01em",
-                transition: "color 0.3s ease",
-              }}
-              onMouseEnter={(e) =>
-                ((e.currentTarget as HTMLElement).style.color = accentHover ? ACCENT : "#f0ede8")
-              }
-              onMouseLeave={(e) =>
-                ((e.currentTarget as HTMLElement).style.color = "rgba(240,237,232,0.42)")
-              }
+              href={link.href}
+              className="font-sans text-sm font-light text-white/60 hover:text-white transition-colors duration-300"
+              style={accentHover ? { transition: "color 0.3s" } : {}}
+              onMouseEnter={(e) => accentHover && (e.currentTarget.style.color = ACCENT)}
+              onMouseLeave={(e) => accentHover && (e.currentTarget.style.color = "")}
             >
-              {l.label}
+              {link.label}
             </a>
           </li>
         ))}
@@ -93,264 +67,154 @@ function FooterCol({
 }
 
 export default function FooterSection() {
-  const [isMobile, setIsMobile] = useState(false);
+  const footerRef = useRef<HTMLElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
 
+  // GSAP Reveal Animation (stuck behind previous content)
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
+    if (!footerRef.current || !innerRef.current) return;
+
+    const ctx = gsap.context(() => {
+      // True faux-sticky parallax reveal effect using exact element percentages
+      gsap.fromTo(
+        innerRef.current,
+        { yPercent: -100 }, 
+        {
+          yPercent: 0,
+          ease: "none",
+          scrollTrigger: {
+            trigger: footerRef.current,
+            start: "top bottom",
+            end: "bottom bottom",
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        }
+      );
+
+      // Hide the global navbar using fixed pixels.
+      // Must use document.querySelector because the context is scoped to footerRef
+      const navbar = document.querySelector("#global-navbar");
+      if (navbar) {
+        ScrollTrigger.create({
+          trigger: footerRef.current,
+          start: "top 80%",
+          onEnter: () => gsap.to(navbar, { y: -150, duration: 0.5, ease: "power3.inOut" }),
+          onLeaveBack: () => gsap.to(navbar, { y: 0, duration: 0.5, ease: "power3.inOut" }),
+        });
+      }
+    }, footerRef);
+
+    return () => ctx.revert();
   }, []);
 
   return (
     <footer
-      style={{
-        position: "relative",
-        width: "100%",
-        height: "100vh",
-        minHeight: isMobile ? 580 : 640,
-        background: "#080809",
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
+      ref={footerRef}
+      className="relative w-full h-[100dvh] bg-[#050505] overflow-hidden flex flex-col"
+      style={{ 
+        marginTop: "-1px", 
+        // ── This shadow prevents the subpixel "white line/beige line" rounding error gap from the previous section
+        boxShadow: "0 -2px 0 0 #050505" 
       }}
     >
-      {/* ── Ambient orbs ── */}
-      <div aria-hidden style={{ position: "absolute", width: "50vw", height: "50vw", borderRadius: "50%", background: "rgba(107,127,98,0.16)", filter: "blur(14vw)", bottom: "-15%", left: "-10%", pointerEvents: "none", zIndex: 0 }} />
-      <div aria-hidden style={{ position: "absolute", width: "28vw", height: "28vw", borderRadius: "50%", background: "rgba(107,127,98,0.10)", filter: "blur(10vw)", top: "5%", right: "-4%", pointerEvents: "none", zIndex: 0 }} />
+      {/* ── Ambient Glows ── */}
+      <div className="absolute bottom-[-20%] left-[-10%] w-[50vw] h-[50vw] bg-[#6B7F62]/10 blur-[120px] rounded-full pointer-events-none" />
 
-      {/* ── Top accent rule ── */}
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg, transparent, rgba(107,127,98,0.35) 30%, rgba(255,255,255,0.06) 70%, transparent)", zIndex: 1 }} />
-
-      {/* ─────────────── CONTENT ─────────────── */}
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          padding: isMobile ? "3rem 1.25rem 2rem" : "3.5rem 2.5rem 2.5rem",
-          position: "relative",
-          zIndex: 2,
-        }}
+      {/* ── Inner Parallax Wrapper ── */}
+      <div 
+        ref={innerRef} 
+        className="absolute inset-0 w-full h-[100dvh] flex flex-col justify-between pt-16 md:pt-24 pb-8 px-6 md:px-12 lg:px-24 will-change-transform z-10"
       >
-
-        {isMobile ? (
-          /* ═══════════════════════════════════════
-             MOBILE LAYOUT (unchanged from before)
-             ═══════════════════════════════════════ */
-          <>
-            {/* Headline */}
-            <div style={{ marginBottom: "2.5rem" }}>
-              <div style={{ containerType: "inline-size", width: "100%" }}>
-                <h2
-                  style={{
-                    fontFamily: "var(--font-cormorant), serif",
-                    fontSize: "clamp(3rem, 19cqi, 6.5rem)",
-                    fontWeight: 300,
-                    lineHeight: 0.9,
-                    letterSpacing: "-0.025em",
-                    color: "#f0ede8",
-                    margin: 0,
-                    userSelect: "none",
-                  }}
-                >
-                  Crafted
-                  <br />
-                  <em style={{ fontStyle: "italic", color: ACCENT }}>In</em>
-                  <br />
-                  Konaverse
-                  <em style={{ fontStyle: "italic", color: ACCENT, fontSize: "0.6em" }}>.</em>
-                </h2>
-              </div>
+        {/* ── Top Half: Master Layout ── */}
+        <div className="flex flex-col lg:flex-row justify-between w-full h-full pb-10">
+          
+          {/* ── Left Column: Brand, Desc, Contacts & CTA ── */}
+          <div className="flex flex-col max-w-sm shrink-0">
+            {/* Logo */}
+            <div className="relative w-40 h-10 mb-8">
+              <Image
+                src="/About/KonaLogoNoBg.png"
+                alt="Konaverse"
+                fill
+                className="object-contain object-left opacity-90"
+              />
             </div>
 
-            {/* Mobile nav grid */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", marginBottom: "2.5rem" }}>
-              <FooterCol heading="Services" links={SERVICES} />
-              <FooterCol heading="Connect" links={[{ label: "info@kona-verse.com", href: "mailto:info@kona-verse.com" }, ...SOCIALS]} accentHover />
-            </div>
-          </>
-        ) : (
-          /* ═══════════════════════════════════════
-             DESKTOP LAYOUT
-             ═══════════════════════════════════════ */
-          <>
-            {/* ── TOP ROW: headline (3/5) + logo (2/5) ── */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "3fr 2fr",
-                gap: "2rem",
-                alignItems: "flex-end",
-                marginBottom: "3.5rem",
-              }}
-            >
-              {/* Headline — 3/5 */}
-              <div style={{ containerType: "inline-size" }}>
-                <h2
-                  style={{
-                    fontFamily: "var(--font-cormorant), serif",
-                    fontSize: "clamp(2.8rem, 9.5cqi, 7.5rem)",
-                    fontWeight: 300,
-                    lineHeight: 0.9,
-                    letterSpacing: "-0.028em",
-                    color: "#f0ede8",
-                    margin: 0,
-                    userSelect: "none",
-                  }}
-                >
-                  A creative studio,
-                  <br />
-                  <em style={{ fontStyle: "italic", color: ACCENT }}>limitless</em> experiences
-                  <em style={{ fontStyle: "italic", color: ACCENT, fontSize: "0.55em" }}>.</em>
-                </h2>
-              </div>
-
-              {/* Logo — 2/5 */}
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "flex-end",
-                  justifyContent: "flex-end",
-                  paddingBottom: "0.3rem",
-                }}
-              >
-                <div style={{ position: "relative", width: "min(260px, 80%)", aspectRatio: "3 / 1" }}>
-                  <Image
-                    src="/About/KonaLogoNoBg.png"
-                    alt="Konaverse"
-                    fill
-                    style={{ objectFit: "contain", objectPosition: "right bottom", opacity: 0.75 }}
-                  />
+            {/* Description */}
+            <p className="font-sans text-sm text-white/50 leading-relaxed font-light mb-12">
+              We are a creative studio based in Cyprus, specializing in bringing ambitious ideas to the digital space through structural code and cinematic visuals. 
+            </p>
+            
+            {/* Action Block: CTA */}
+            <div className="flex flex-col gap-10">
+                <div>
+                  <Button href="/contact" variant="primary">
+                    START A PROJECT
+                  </Button>
                 </div>
-              </div>
             </div>
+          </div>
 
-            {/* ── MIDDLE ROW: 4 link columns + 1 wider contact column ── */}
-            {/*  Grid: 4 equal cols + 1 wider contact col (1.5x)           */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr 1fr 1fr 1.6fr",
-                gap: "1.5rem",
-                marginBottom: "3rem",
-                alignItems: "start",
-              }}
-            >
-              {/* Col 1: Services */}
-              <FooterCol heading="Services" links={SERVICES} />
-
-              {/* Col 2: Projects */}
-              <FooterCol heading="Projects" links={PROJECTS} />
-
-              {/* Col 3: Pages & Legal */}
-              <FooterCol heading="Studio" links={PAGES} />
-
-              {/* Col 4: Socials */}
+          {/* ── Right Column: Links Grid ── */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-12 gap-x-8 lg:gap-x-16 mt-16 lg:mt-0 lg:ml-12 w-full lg:max-w-3xl">
+            <FooterCol heading="Services" links={SERVICES} />
+            <FooterCol heading="Projects" links={PROJECTS} />
+            <FooterCol heading="Studio" links={STUDIO} />
+            <div className="flex flex-col gap-12">
               <FooterCol heading="Follow" links={SOCIALS} accentHover />
-
-              {/* Col 5: Contact — wider */}
-              <div style={{ borderLeft: "1px solid rgba(255,255,255,0.05)", paddingLeft: "1.5rem" }}>
-                <p
-                  style={{
-                    fontFamily: "var(--font-jakarta), sans-serif",
-                    fontWeight: 500,
-                    fontSize: "0.52rem",
-                    letterSpacing: "0.24em",
-                    textTransform: "uppercase",
-                    color: "rgba(255,255,255,0.22)",
-                    marginBottom: "1.2rem",
-                  }}
-                >
-                  Contact
-                </p>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: "1.1rem" }}>
-                  {/* Email */}
-                  <div>
-                    <div style={{ fontFamily: "var(--font-jakarta), sans-serif", fontWeight: 500, fontSize: "0.52rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.16)", marginBottom: "0.3rem" }}>
-                      Email
-                    </div>
-                    <a
-                      href="mailto:info@kona-verse.com"
-                      style={{
-                        fontFamily: "var(--font-cormorant), serif",
-                        fontWeight: 300,
-                        fontStyle: "italic",
-                        fontSize: "clamp(0.9rem, 1.05vw, 1.1rem)",
-                        color: "rgba(240,237,232,0.55)",
-                        textDecoration: "none",
-                        transition: "color 0.3s ease",
-                      }}
-                      onMouseEnter={(e) => ((e.currentTarget).style.color = ACCENT)}
-                      onMouseLeave={(e) => ((e.currentTarget).style.color = "rgba(240,237,232,0.55)")}
-                    >
-                      info@kona-verse.com
-                    </a>
-                  </div>
-
-                  {/* Location */}
-                  <div>
-                    <div style={{ fontFamily: "var(--font-jakarta), sans-serif", fontWeight: 500, fontSize: "0.52rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,255,255,0.16)", marginBottom: "0.3rem" }}>
-                      Location
-                    </div>
-                    <span style={{ fontFamily: "var(--font-jakarta), sans-serif", fontWeight: 300, fontSize: "0.82rem", color: "rgba(240,237,232,0.42)" }}>
-                      Cyprus
-                    </span>
-                  </div>
-
-                  {/* CTA */}
-                  <a
-                    href="/contact"
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "0.5rem",
-                      marginTop: "0.6rem",
-                      fontFamily: "var(--font-jakarta), sans-serif",
-                      fontWeight: 500,
-                      fontSize: "0.62rem",
-                      letterSpacing: "0.14em",
-                      textTransform: "uppercase",
-                      color: ACCENT,
-                      textDecoration: "none",
-                      borderBottom: `1px solid ${ACCENT}44`,
-                      paddingBottom: "0.2rem",
-                      transition: "border-color 0.3s ease, color 0.3s ease",
-                      width: "fit-content",
-                    }}
-                    onMouseEnter={(e) => {
-                      (e.currentTarget).style.color = "#f0ede8";
-                      (e.currentTarget).style.borderColor = "rgba(240,237,232,0.3)";
-                    }}
-                    onMouseLeave={(e) => {
-                      (e.currentTarget).style.color = ACCENT;
-                      (e.currentTarget).style.borderColor = `${ACCENT}44`;
-                    }}
-                  >
-                    Start a project →
-                  </a>
-                </div>
-              </div>
+              <FooterCol heading="Legal" links={LEGAL} />
             </div>
-          </>
-        )}
+          </div>
 
-        {/* ── BOTTOM: rule + copyright (shared) ── */}
-        <div>
-          <div style={{ height: 1, background: "rgba(255,255,255,0.05)", marginBottom: isMobile ? "1.2rem" : "1.4rem" }} />
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
-            <span style={{ fontFamily: "var(--font-jakarta), sans-serif", fontWeight: 300, fontSize: "0.62rem", color: "rgba(255,255,255,0.18)", letterSpacing: "0.06em" }}>
-              &copy; {new Date().getFullYear()} Konaverse. All rights reserved.
-            </span>
-            <span style={{ fontFamily: "var(--font-jakarta), sans-serif", fontWeight: 300, fontSize: "0.62rem", color: "rgba(255,255,255,0.15)", letterSpacing: "0.04em" }}>
-              Cyprus
-            </span>
+        </div>
+
+        {/* ── Bottom Half: Tagline & Legal Info ── */}
+        <div className="flex flex-col w-full mt-auto">
+          {/* Tagline (Left) & Email (Right) */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 lg:mb-12 gap-10">
+            <h2 className="font-display font-light text-[8vw] md:text-[3.5vw] uppercase leading-[0.9] tracking-[-0.02em] text-[#f0ede8] opacity-90 max-w-3xl">
+              With Konaverse,<br/>
+              There is no limitation.
+            </h2>
+
+            {/* Action Block: Email moved to bottom right */}
+            <div className="flex flex-col md:items-end">
+               <h4 className="font-mono text-xs tracking-[0.2em] uppercase text-white/30 mb-3">General Inquiries</h4>
+               <a
+                 href="mailto:info@kona-verse.com"
+                 className="font-mono text-xl md:text-2xl tracking-widest text-[#6B7F62] hover:text-white transition-colors duration-300 inline-block border-b-2 border-transparent hover:border-[#6B7F62]/50 pb-2 w-max"
+               >
+                 INFO@KONA-VERSE.COM
+               </a>
+            </div>
+          </div>
+          
+          {/* Bottom Info Footer */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pt-6 border-t border-white/10 w-full text-white/30 font-mono text-[10px] tracking-[0.15em] uppercase">
+            <p className="order-2 md:order-1">© {new Date().getFullYear()} KONAVERSE. ALL RIGHTS RESERVED.</p>
+            <div className="flex items-center gap-8 order-1 md:order-2">
+              <span className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#6B7F62] animate-pulse" />
+                AVAILABLE FOR NEW PROJECTS
+              </span>
+              <span className="hidden md:inline">CYPRUS</span>
+            </div>
           </div>
         </div>
 
       </div>
+      
+      {/* Background Architectural Grid Lines */}
+      <div className="absolute inset-0 pointer-events-none opacity-5">
+         {/* Vertical lines */}
+         <div className="absolute left-[16.666%] top-0 bottom-0 w-px bg-white" />
+         <div className="absolute left-[33.333%] top-0 bottom-0 w-px bg-white" />
+         <div className="absolute left-[50%] top-0 bottom-0 w-px bg-white" />
+         <div className="absolute left-[66.666%] top-0 bottom-0 w-px bg-white" />
+         <div className="absolute left-[83.333%] top-0 bottom-0 w-px bg-white" />
+      </div>
+
     </footer>
   );
 }
