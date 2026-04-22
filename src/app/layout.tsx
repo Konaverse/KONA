@@ -3,6 +3,7 @@ import { Cormorant_Garamond, DM_Sans, Geist_Mono } from 'next/font/google'
 import Navbar from '@/components/layout/Navbar'
 import SmoothScroll from '@/components/SmoothScroll'
 import CustomCursor from '@/components/ui/CustomCursor'
+import FooterSection from '@/components/sections/homepage/FooterSection'
 import './globals.css'
 
 const cormorant = Cormorant_Garamond({
@@ -50,6 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SmoothScroll>
           <CustomCursor />
           {children}
+          <FooterSection />
         </SmoothScroll>
       </body>
     </html>

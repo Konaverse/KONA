@@ -6,32 +6,26 @@ import Image from "next/image";
 
 const ACCENT = "#6B7F62";
 
-type DropItem = { label: string; desc: string };
+type DropItem = { label: string; desc: string; href?: string };
 
-const SERVICES: DropItem[] = [
-  { label: "Web Design", desc: "Pixel-perfect interfaces" },
-  { label: "Web Development", desc: "Scalable, secure platforms" },
-  { label: "Videography", desc: "Cinematic brand narratives" },
-  { label: "Video Editing", desc: "Precision post-production" },
-  { label: "SEO & Strategy", desc: "Data-driven growth" },
-  { label: "Brand Identity", desc: "Visual systems that endure" },
+const SERVICES: (DropItem & { href: string })[] = [
+  { label: "Web Development", desc: "Scalable, secure platforms", href: "/services/web-development" },
+  { label: "Videography", desc: "Cinematic brand narratives", href: "/services/videography" },
 ];
 
-const PROJECTS: DropItem[] = [
-  { label: "Meridian Studios", desc: "Web Design · 2026" },
-  { label: "Onda Collective", desc: "Videography · 2025" },
-  { label: "Noctis Finance", desc: "Web Development · 2025" },
-  { label: "Forma Athletics", desc: "Video Editing · 2026" },
+const PROJECTS: (DropItem & { href: string })[] = [
+  { label: "Web Development Projects", desc: "Digital Architecture Archive", href: "/projects/web-development" },
+  { label: "Videography Projects", desc: "Visual Storytelling Portfolio", href: "/projects/videography" },
 ];
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const NAV_TRANSITION = { duration: 0.9, ease: EASE };
 
-function DropdownItem({ item, index }: { item: DropItem; index: number }) {
+function DropdownItem({ item, index }: { item: DropItem & { href: string }; index: number }) {
   const [hover, setHover] = useState(false);
   return (
     <a
-      href="#"
+      href={item.href}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       style={{
@@ -112,11 +106,13 @@ function Dropdown({
   cols = 1,
   header,
   footerText,
+  footerHref = "/services"
 }: {
-  items: DropItem[];
+  items: (DropItem & { href: string })[];
   cols?: number;
   header: string;
   footerText?: string;
+  footerHref?: string;
 }) {
   return (
     <motion.div
@@ -236,7 +232,7 @@ function Dropdown({
           }}
         >
           <a
-            href="#"
+            href={footerHref}
             style={{
               display: "inline-flex",
               alignItems: "center",
@@ -273,12 +269,16 @@ function NavItem({
   dropdownCols,
   dropdownHeader,
   dropdownFooter,
+  dropdownFooterHref,
+  href = "#",
 }: {
   label: string;
-  dropdown?: DropItem[];
+  dropdown?: (DropItem & { href: string })[];
   dropdownCols?: number;
   dropdownHeader?: string;
   dropdownFooter?: string;
+  dropdownFooterHref?: string;
+  href?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [hover, setHover] = useState(false);
@@ -299,7 +299,7 @@ function NavItem({
       }}
     >
       <a
-        href="#"
+        href={href || "#"}
         style={{
           display: "inline-flex",
           alignItems: "center",
@@ -362,6 +362,7 @@ function NavItem({
             cols={dropdownCols}
             header={dropdownHeader ?? label}
             footerText={dropdownFooter}
+            footerHref={dropdownFooterHref}
           />
         )}
       </AnimatePresence>
@@ -369,25 +370,35 @@ function NavItem({
   );
 }
 
-function MobileNavItem({ label, dropdown, itemVariants }: { label: string, dropdown?: DropItem[], itemVariants?: any }) {
+function MobileNavItem({ 
+  label, 
+  dropdown, 
+  itemVariants,
+  href 
+}: { 
+  label: string; 
+  dropdown?: (DropItem & { href: string })[]; 
+  itemVariants?: any;
+  href?: string;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
     <motion.div variants={itemVariants} className="flex flex-col border-b border-white/5 pb-4">
-      <button 
-        onClick={() => setOpen(!open)}
-        className="flex items-center justify-between w-full text-left outline-none group"
-      >
-        <span 
-          className="text-4xl font-light tracking-wide transition-colors duration-500" 
-          style={{ 
-            fontFamily: "var(--font-display-serif)",
-            color: open ? ACCENT : "#f0ede8"
-          }}
+      {dropdown ? (
+        <button 
+          onClick={() => setOpen(!open)}
+          className="flex items-center justify-between w-full text-left outline-none group"
         >
-          {label}
-        </span>
-        {dropdown && (
+          <span 
+            className="text-4xl font-light tracking-wide transition-colors duration-500" 
+            style={{ 
+              fontFamily: "var(--font-display-serif)",
+              color: open ? ACCENT : "#f0ede8"
+            }}
+          >
+            {label}
+          </span>
           <motion.svg
             animate={{ rotate: open ? 180 : 0 }}
             width={16}
@@ -399,8 +410,23 @@ function MobileNavItem({ label, dropdown, itemVariants }: { label: string, dropd
           >
             <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </motion.svg>
-        )}
-      </button>
+        </button>
+      ) : (
+        <a 
+          href={href || "#"}
+          className="flex items-center justify-between w-full text-left outline-none group no-underline"
+        >
+          <span 
+            className="text-4xl font-light tracking-wide transition-colors duration-500 hover:text-[var(--color-sage)]" 
+            style={{ 
+              fontFamily: "var(--font-display-serif)",
+              color: "#f0ede8"
+            }}
+          >
+            {label}
+          </span>
+        </a>
+      )}
 
       <AnimatePresence>
         {open && dropdown && (
@@ -412,8 +438,8 @@ function MobileNavItem({ label, dropdown, itemVariants }: { label: string, dropd
             className="overflow-hidden"
           >
             <div className="flex flex-col gap-5 pt-5">
-              {dropdown.map((item, i) => (
-                <a key={item.label} href="#" className="flex flex-col gap-1 opacity-80 hover:opacity-100 transition-opacity">
+              {dropdown.map((item: any, i) => (
+                <a key={item.label} href={item.href} className="flex flex-col gap-1 opacity-80 hover:opacity-100 transition-opacity">
                   <span className="text-base font-medium text-[#f0ede8]" style={{ fontFamily: "var(--font-jakarta), sans-serif" }}>{item.label}</span>
                   <span className="text-sm text-white/40" style={{ fontFamily: "var(--font-jakarta), sans-serif" }}>{item.desc}</span>
                 </a>
@@ -559,23 +585,27 @@ export default function Navbar() {
           <NavItem
             label="Services"
             dropdown={SERVICES}
-            dropdownCols={2}
+            dropdownCols={1}
             dropdownHeader="Our Services"
-            dropdownFooter="View all services"
+            dropdownFooter="View All Services"
+            dropdownFooterHref="/services"
+            href="/services"
           />
           <NavItem
             label="Projects"
             dropdown={PROJECTS}
             dropdownHeader="Selected Work"
-            dropdownFooter="View full archive"
+            dropdownFooter="View All Projects"
+            dropdownFooterHref="/projects"
+            href="/projects"
           />
-          <NavItem label="About" />
-          <NavItem label="Pricing" />
+          <NavItem label="About" href="/about" />
+          <NavItem label="Pricing" href="/pricing" />
         </div>
 
         {/* CTA */}
         <a
-          href="#"
+          href="/contact"
           className="hidden md:inline-flex"
           style={{
             alignItems: "center",
@@ -675,10 +705,10 @@ export default function Navbar() {
               className="flex flex-col gap-6 overflow-y-auto mt-4 relative z-10" 
               style={{ msOverflowStyle: "none", scrollbarWidth: "none" }}
             >
-              <MobileNavItem label="Services" dropdown={SERVICES} itemVariants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } }, exit: { opacity: 0, y: 10 } }} />
-              <MobileNavItem label="Projects" dropdown={PROJECTS} itemVariants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } }, exit: { opacity: 0, y: 10 } }} />
-              <MobileNavItem label="About" itemVariants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } }, exit: { opacity: 0, y: 10 } }} />
-              <MobileNavItem label="Pricing" itemVariants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } }, exit: { opacity: 0, y: 10 } }} />
+              <MobileNavItem label="Services" dropdown={SERVICES} href="/services" itemVariants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } }, exit: { opacity: 0, y: 10 } }} />
+              <MobileNavItem label="Projects" dropdown={PROJECTS} href="/projects" itemVariants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } }, exit: { opacity: 0, y: 10 } }} />
+              <MobileNavItem label="About" href="/about" itemVariants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } }, exit: { opacity: 0, y: 10 } }} />
+              <MobileNavItem label="Pricing" href="/pricing" itemVariants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } }, exit: { opacity: 0, y: 10 } }} />
             </motion.div>
 
             <motion.div 
@@ -689,7 +719,7 @@ export default function Navbar() {
               className="mt-auto pt-8 relative z-10"
             >
                <a
-                  href="#"
+                  href="/contact"
                   className="inline-flex items-center justify-center w-full gap-2 text-sm font-semibold tracking-widest uppercase rounded-[40px] py-[18px] transition-all active:scale-95"
                   style={{ fontFamily: "var(--font-jakarta), sans-serif", background: ACCENT, color: "#fff", boxShadow: "0 8px 30px -10px rgba(107,127,98,0.5)" }}
                 >

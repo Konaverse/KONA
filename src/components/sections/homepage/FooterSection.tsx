@@ -8,18 +8,13 @@ import { Button } from "@/components/ui/button";
 const ACCENT = "#6B7F62";
 
 const SERVICES = [
-  { label: "Web Design", href: "/services/web-design" },
   { label: "Web Development", href: "/services/web-development" },
   { label: "Videography", href: "/services/videography" },
-  { label: "Video Editing", href: "/services/video-editing" },
-  { label: "SEO & Strategy", href: "/services/seo" },
 ];
 
 const PROJECTS = [
-  { label: "All Work", href: "/work" },
-  { label: "Web Projects", href: "/work?filter=web" },
-  { label: "Film Projects", href: "/work?filter=film" },
-  { label: "Branding", href: "/work?filter=brand" },
+  { label: "Web Development Projects", href: "/projects/web-development" },
+  { label: "Videography Projects", href: "/projects/videography" },
 ];
 
 const STUDIO = [
