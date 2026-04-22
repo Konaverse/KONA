@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import ArchiveLabel from "@/components/ui/ArchiveLabel";
-import Button from "@/components/ui/Button";
+import Button from "@/components/ui/button";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 
 export default function BeatCTA() {

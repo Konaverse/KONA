@@ -18,7 +18,10 @@ export interface StackProject {
   title: string;
   href: string;
   image: string;
+  description?: string;
   tags?: string[];
+  tech?: string[];
+  linkLabel?: string;
 }
 
 interface ParallaxStackingProjectsProps {

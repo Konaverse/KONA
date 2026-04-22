@@ -6,7 +6,7 @@ const SIZE = 28;
 
 export default function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
-  const rafRef    = useRef<number>();
+  const rafRef    = useRef<number | null>(null);
   const prevPos   = useRef({ x: -SIZE, y: -SIZE });
   const targetPos = useRef({ x: -SIZE, y: -SIZE });
 

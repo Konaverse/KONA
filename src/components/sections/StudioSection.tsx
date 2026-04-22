@@ -242,7 +242,6 @@ export default function StudioSection() {
                       objectPosition: 'center top',
                     }}
                     className="grayscale mix-blend-normal transition-all duration-700 ease-out group-hover:grayscale-0"
-                    sizes="100vw"
                   />
                 </div>
 

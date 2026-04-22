@@ -11,6 +11,7 @@ type CommonProps = {
   className?: string;
   children: ReactNode;
   showArrow?: boolean;
+  tone?: "light" | "dark";
 };
 
 type AsButton = CommonProps &
