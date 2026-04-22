@@ -4,6 +4,8 @@ import PageWrapper from "@/components/layout/PageWrapper";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useRef, useLayoutEffect } from "react";
+import { gsap, ScrollTrigger } from "@/utils/gsap";
 
 const SERVICES = [
   {
@@ -27,40 +29,96 @@ const SERVICES = [
 ];
 
 export default function ServicesPage() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const serviceRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const imageWrappersRef = useRef<(HTMLDivElement | null)[]>([]);
+  const philosophyRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      // 1. Service Cards — text entrance only; image is always visible
+      serviceRefs.current.forEach((el, i) => {
+        if (!el) return;
+
+        gsap.fromTo(
+          el,
+          { y: 60, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1.2,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: el,
+              start: "top 85%",
+              toggleActions: "play none none none",
+            },
+          }
+        );
+
+        // Image Parallax (image container stays visible; only the inner wrapper moves)
+        const imgWrapper = imageWrappersRef.current[i];
+        if (imgWrapper) {
+          gsap.fromTo(
+            imgWrapper,
+            { yPercent: -15 },
+            {
+              yPercent: 15,
+              ease: "none",
+              scrollTrigger: {
+                trigger: imgWrapper.closest(".service-block") ?? el,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: true,
+              },
+            }
+          );
+        }
+      });
+
+      // 2. Philosophy Section Entrance
+      if (philosophyRef.current) {
+        gsap.fromTo(
+          philosophyRef.current,
+          { y: 50, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1.2,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: philosophyRef.current,
+              start: "top 80%",
+              toggleActions: "play none none none",
+            },
+          }
+        );
+      }
+    }, containerRef);
+    return () => ctx.revert();
+  }, []);
+
   return (
     <PageWrapper theme="dark">
+      <div ref={containerRef}>
       <PageHeader
         subtitle="Services"
         title="Our Disciplines"
         description="We don't do everything. We specialize in two core disciplines, combining technical precision with visual storytelling to build brands that refuse to be ignored."
       />
 
-      <section className="container-padding pb-40">
-        <div className="grid grid-cols-1 gap-24 md:gap-48">
+      <section className="container-padding pb-56">
+        <div className="grid grid-cols-1 gap-32 md:gap-56">
           {SERVICES.map((service, index) => (
-            <div 
+            <div
               key={service.id}
-              className={`flex flex-col ${index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"} gap-12 md:gap-32 items-center`}
+              className={`service-block flex flex-col ${index % 2 === 0 ? "md:flex-row-reverse" : "md:flex-row"} gap-16 md:gap-32 items-center`}
             >
-              {/* Image Container */}
-              <div className="flex-1 w-full aspect-[4/5] md:aspect-square relative overflow-hidden group rounded-2xl">
-                <Image
-                  src={service.image}
-                  alt={service.title}
-                  fill
-                  className="object-cover transition-transform duration-1000 group-hover:scale-105"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-                <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors duration-500" />
-                
-                {/* Float Number */}
-                <span className="absolute top-8 left-8 font-display text-7xl md:text-9xl opacity-10 pointer-events-none select-none">
-                  {service.number}
-                </span>
-              </div>
-
-              {/* Text Container */}
-              <div className="flex-1 flex flex-col items-start pt-8 md:pt-0 max-w-xl">
+              {/* Text Container — first in DOM so it sits on top in mobile flex-col */}
+              <div
+                ref={el => { serviceRefs.current[index] = el; }}
+                className="flex-1 flex flex-col items-start max-w-xl"
+              >
                 <span className="font-mono text-[10px] tracking-[0.4em] uppercase text-[var(--color-sage)] mb-8 flex items-center gap-4">
                   <span className="w-8 h-[1px] bg-[var(--color-sage)]" />
                   {service.number} / Discipline
@@ -75,8 +133,8 @@ export default function ServicesPage() {
                 <div className="grid grid-cols-2 gap-x-8 gap-y-6 mb-16 w-full">
                   {service.features.map(feature => (
                     <div key={feature} className="flex items-center gap-3">
-                       <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-sage)]/40" />
-                       <span className="font-mono text-[10px] tracking-widest uppercase opacity-60 italic">{feature}</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-sage)]/40" />
+                      <span className="font-mono text-[10px] tracking-widest uppercase opacity-60 italic">{feature}</span>
                     </div>
                   ))}
                 </div>
@@ -85,6 +143,26 @@ export default function ServicesPage() {
                   Explore Discipline
                 </Button>
               </div>
+
+              {/* Image Container — always visible (no opacity animation) */}
+              <div className="flex-1 w-full aspect-[4/5] md:aspect-square relative overflow-hidden group rounded-2xl bg-[#050505]">
+                <div
+                  ref={el => { imageWrappersRef.current[index] = el; }}
+                  className="absolute top-[-20%] left-0 w-full h-[140%] will-change-transform"
+                >
+                  <Image
+                    src={service.image}
+                    alt={service.title}
+                    fill
+                    className="object-cover transition-transform duration-1000 group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
+                <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors duration-500" />
+                <span className="absolute top-8 left-8 font-display text-7xl md:text-9xl opacity-10 pointer-events-none select-none">
+                  {service.number}
+                </span>
+              </div>
             </div>
           ))}
         </div>
@@ -92,7 +170,7 @@ export default function ServicesPage() {
 
       {/* Philosophy Section */}
       <section className="bg-[var(--color-soft-white)] text-[var(--color-obsidian)] section-padding container-padding">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto" ref={philosophyRef}>
            <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[var(--color-sage)] mb-10 block font-semibold text-center md:text-left">
             The Philosophy
           </span>
@@ -116,6 +194,7 @@ export default function ServicesPage() {
           </div>
         </div>
       </section>
+      </div>
     </PageWrapper>
   );
 }

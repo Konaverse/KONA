@@ -26,11 +26,13 @@ export default function PageHeader({
   const descriptionRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
+    let splitTitle: SplitType | null = null;
+
     const ctx = gsap.context(() => {
       if (!titleRef.current) return;
 
       // 1. Split title into lines
-      const splitTitle = new SplitType(titleRef.current, { types: "lines" });
+      splitTitle = new SplitType(titleRef.current, { types: "lines" });
       
       // Wrap each line in a mask (overflow-hidden)
       splitTitle.lines?.forEach((line) => {
@@ -45,33 +47,43 @@ export default function PageHeader({
       });
 
       // 2. Animation sequence
-      tl.set([titleRef.current, subtitleRef.current, descriptionRef.current], { opacity: 1 });
-      
       if (subtitleRef.current) {
-        tl.from(subtitleRef.current, {
+        tl.fromTo(subtitleRef.current, {
            opacity: 0,
            y: 10,
+        }, {
+           opacity: 1,
+           y: 0,
            duration: 1,
         }, 0.2);
       }
 
       if (splitTitle.lines) {
-        tl.from(splitTitle.lines, {
+        gsap.set(titleRef.current, { opacity: 1 });
+        tl.fromTo(splitTitle.lines, {
           yPercent: 100,
+        }, {
+          yPercent: 0,
           stagger: 0.1,
         }, 0.4);
       }
 
       if (descriptionRef.current) {
-        tl.from(descriptionRef.current, {
+        tl.fromTo(descriptionRef.current, {
           opacity: 0,
           y: 20,
+        }, {
+          opacity: 1,
+          y: 0,
           duration: 1.4,
         }, 0.8);
       }
     }, containerRef);
 
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      if (splitTitle) splitTitle.revert();
+    };
   }, []);
 
   const isDark = theme === "dark";

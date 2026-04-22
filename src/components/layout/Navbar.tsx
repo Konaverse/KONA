@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 const ACCENT = "#6B7F62";
 
@@ -604,49 +605,13 @@ export default function Navbar() {
         </div>
 
         {/* CTA */}
-        <a
+        <Button
           href="/contact"
-          className="hidden md:inline-flex"
-          style={{
-            alignItems: "center",
-            gap: "0.5rem",
-            fontSize: "0.7rem",
-            fontWeight: 500,
-            letterSpacing: "0.11em",
-            textTransform: "uppercase",
-            color: "#0a0a0c",
-            background: "#f0ede8",
-            borderRadius: 40,
-            textDecoration: "none",
-            fontFamily: "var(--font-jakarta), sans-serif",
-            transition: "opacity 0.25s, box-shadow 0.25s",
-            position: "relative",
-            zIndex: 1,
-            flexShrink: 0,
-            whiteSpace: "nowrap",
-            padding: "9px 20px",
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLElement).style.boxShadow =
-              "0 8px 24px -4px rgba(240,237,232,0.25)";
-            (e.currentTarget as HTMLElement).style.opacity = "0.92";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLElement).style.boxShadow = "none";
-            (e.currentTarget as HTMLElement).style.opacity = "1";
-          }}
+          variant="primary"
+          className="hidden md:inline-flex py-[9px] px-5 text-[0.7rem] tracking-[0.11em] shrink-0 relative z-[1]"
         >
           Get in Touch
-          <svg width={11} height={11} viewBox="0 0 12 12" fill="none">
-            <path
-              d="M2.5 9.5L9.5 2.5M9.5 2.5H4M9.5 2.5V8"
-              stroke="currentColor"
-              strokeWidth="1.3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </a>
+        </Button>
 
         {/* Mobile Hamburger Icon */}
         <button

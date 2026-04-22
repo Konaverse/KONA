@@ -3,7 +3,8 @@
 import PageWrapper from "@/components/layout/PageWrapper";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useRef, useLayoutEffect } from "react";
+import { gsap, ScrollTrigger } from "@/utils/gsap";
 
 const TIERS = [
   {
@@ -74,9 +75,75 @@ const FAQ = [
 
 export default function PricingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const tierRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const faqRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      // Tiers staggered entrance
+      gsap.fromTo(
+        tierRefs.current,
+        { y: 80, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1.2,
+          ease: "power3.out",
+          stagger: 0.15,
+          scrollTrigger: {
+            trigger: tierRefs.current[0],
+            start: "top 85%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+
+      // FAQ entrance
+      if (faqRef.current) {
+        gsap.fromTo(
+          faqRef.current,
+          { y: 50, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1.2,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: faqRef.current,
+              start: "top 85%",
+              toggleActions: "play none none none",
+            },
+          }
+        );
+      }
+
+      // CTA entrance
+      if (ctaRef.current) {
+        gsap.fromTo(
+          ctaRef.current,
+          { y: 50, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1.2,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: ctaRef.current,
+              start: "top 85%",
+              toggleActions: "play none none none",
+            },
+          }
+        );
+      }
+    }, containerRef);
+    return () => ctx.revert();
+  }, []);
 
   return (
     <PageWrapper theme="dark">
+      <div ref={containerRef}>
       <PageHeader
         subtitle="Investment"
         title="Transparent value. Custom craft."
@@ -90,13 +157,14 @@ export default function PricingPage() {
            <h2 className="font-display text-4xl md:text-7xl leading-tight">Investment Models.</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {TIERS.map((tier) => (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+          {TIERS.map((tier, index) => (
             <div 
               key={tier.n}
-              className={`relative flex flex-col p-10 rounded-2xl border transition-all duration-500 ${
+              ref={el => { tierRefs.current[index] = el; }}
+              className={`relative flex flex-col p-10 md:p-14 rounded-3xl border transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl ${
                 tier.featured 
-                ? "bg-[var(--color-obsidian)] text-[var(--color-off-white)] border-transparent shadow-2xl scale-[1.02] z-20" 
+                ? "bg-[var(--color-obsidian)] text-[var(--color-off-white)] border-transparent shadow-2xl z-20 md:scale-[1.04]" 
                 : "bg-white/50 border-black/10 text-[var(--color-obsidian)] z-10"
               }`}
             >
@@ -145,7 +213,7 @@ export default function PricingPage() {
            <h2 className="font-display text-4xl md:text-6xl text-[var(--color-off-white)]">Common Questions.</h2>
         </div>
 
-        <div className="max-w-4xl">
+        <div className="max-w-4xl" ref={faqRef}>
           {FAQ.map((item, i) => (
             <div key={i} className="border-b border-white/5 overflow-hidden">
               <button 
@@ -177,13 +245,16 @@ export default function PricingPage() {
 
       {/* CTA */}
       <section className="container-padding py-40 text-center flex flex-col items-center border-t border-white/5">
-         <h2 className="font-display text-4xl md:text-7xl mb-12 leading-tight max-w-3xl">
-           Ready to invest in your <em className="italic text-[var(--color-sage)]">authority</em>?
-         </h2>
-         <Button href="/contact" variant="primary">
-           Get Started
-         </Button>
+         <div ref={ctaRef} className="flex flex-col items-center">
+           <h2 className="font-display text-4xl md:text-7xl mb-12 leading-tight max-w-3xl">
+             Ready to invest in your <em className="italic text-[var(--color-sage)]">authority</em>?
+           </h2>
+           <Button href="/contact" variant="primary">
+             Get Started
+           </Button>
+         </div>
       </section>
+      </div>
     </PageWrapper>
   );
 }

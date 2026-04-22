@@ -46,25 +46,7 @@ export default function ProjectsSection() {
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
-      const vh = window.innerHeight
-
-      /*
-       * Stacking mechanic (Giats reference):
-       *
-       * Layer 1 (projectsWrap): absolute, z-index 1, tall height.
-       *   Contains a sticky child with text + foreground mockup image.
-       *   NEVER animated by GSAP.
-       *
-       * Layer 2 (canvas): absolute inset 0, full-bleed bg image + gradient.
-       *   GSAP scrubs yPercent: 0 → 100 (slides DOWN).
-       *   contain: paint on card clips at bottom edge.
-       *   Reveals next card in flow beneath.
-       *
-       * One ScrollTrigger per card (except last):
-       *   trigger: root
-       *   start: top += vh * index
-       *   end: += (N-1) * vh
-       */
+      // Match original: always use window.innerHeight (no mobile distinction)
       canvasRefs.current.slice(0, -1).forEach((canvasEl, index) => {
         if (!canvasEl) return
 
@@ -73,9 +55,10 @@ export default function ProjectsSection() {
         gsap
           .timeline({
             scrollTrigger: {
+              id: `canvas-${index}`,
               trigger: rootRef.current,
-              start: `top+=${vh * index} top`,
-              end: () => `+=${(PROJECTS.length - 1) * vh}`,
+              start: () => `top+=${window.innerHeight * index} top`,
+              end: () => `+=${(PROJECTS.length - 1) * window.innerHeight}`,
               scrub: true,
               invalidateOnRefresh: true,
             },
@@ -108,9 +91,13 @@ export default function ProjectsSection() {
       </div>
 
       {/* ── Stacking cards root ─────────────────────────── */}
+      {/*
+       * max-md:!flex + max-md:flex-col: on mobile, stack cards vertically
+       * (original innerContainer: display:flex; flex-direction:column on mobile)
+       */}
       <div
         ref={rootRef}
-        className="container-padding"
+        className="container-padding max-md:px-4 max-md:!flex max-md:flex-col"
         style={{
           position: 'relative',
           display: 'block',
@@ -123,14 +110,14 @@ export default function ProjectsSection() {
 
           return (
             /* ── Card container ───────────────────────── */
+            /* Desktop: 100svh | Mobile: 50svh (original .card mobile height) */
             <div
               key={project.num}
+              className="w-full max-md:h-[50svh] md:h-svh"
               style={{
                 display: 'block',
                 position: 'relative',
                 contain: 'paint',
-                height: '100svh',
-                width: '100%',
                 cursor: 'pointer',
                 borderRadius: 'clamp(12px, 1.5vw, 24px)',
               }}
@@ -145,11 +132,15 @@ export default function ProjectsSection() {
             >
               {/*
                * LAYER 1 — projectsWrap
-               * Absolute, z-index 1, tall height.
-               * Sticky child holds text + foreground mockup image.
-               * NEVER animated by GSAP.
+               * Desktop: top = 0 (first) or -100svh (rest), height = 200svh (last) or ${200+100*i}svh
+               * Mobile:  top = 0 (first) or -50svh  (rest), height = 100svh (last) or ${200+100*i}svh
+               * (matches original isMobile conditional inline styles exactly)
                */}
               <div
+                className={[
+                  index > 0 ? 'max-md:!top-[-50svh]' : '',
+                  isLast ? 'max-md:!h-[100svh]' : '',
+                ].filter(Boolean).join(' ')}
                 style={{
                   position: 'absolute',
                   left: 0,
@@ -164,8 +155,12 @@ export default function ProjectsSection() {
                   top: index === 0 ? 0 : '-100svh',
                 }}
               >
-                {/* Sticky child — pins to viewport top */}
+                {/*
+                 * Sticky child — pins to viewport top
+                 * Desktop: height 100svh | Mobile: height 50svh (original .container mobile)
+                 */}
                 <div
+                  className="max-md:!h-[50svh] max-md:!top-[25svh]"
                   style={{
                     position: 'sticky',
                     top: 0,
@@ -180,9 +175,9 @@ export default function ProjectsSection() {
                     paddingRight: 'clamp(24px, 4vw, 64px)',
                   }}
                 >
-                  {/* ── Left half: text + View Project ── */}
+                  {/* ── Left half: text + View Project (hidden on mobile) ── */}
                   <div
-                    className="w-full md:w-1/2"
+                    className="w-full md:w-1/2 max-md:hidden"
                     style={{
                       display: 'flex',
                       flexDirection: 'column',
@@ -203,7 +198,7 @@ export default function ProjectsSection() {
                       {project.num}
                     </span>
                     <h3
-                      className="text-[clamp(36px,5vw,72px)]"
+                      className="text-[clamp(32px,8vw,72px)]"
                       style={{
                         fontFamily: 'var(--font-display)',
                         fontWeight: 300,
@@ -286,9 +281,14 @@ export default function ProjectsSection() {
                     </a>
                   </div>
 
-                  {/* ── Right half: mockup card ────────── */}
+                  {/*
+                   * ── Right half: mockup card ────────────────────────────
+                   * Desktop: flex, half-width, centered
+                   * Mobile:  position:absolute, 83% wide, centered via translate
+                   * (matches original .imageContainer mobile styles exactly)
+                   */}
                   <div
-                    className="hidden md:flex w-1/2"
+                    className="flex w-full md:w-1/2 max-md:!absolute max-md:!w-[83%] max-md:!top-1/2 max-md:!left-1/2 max-md:!-translate-x-1/2 max-md:!-translate-y-1/2"
                     style={{
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -308,7 +308,7 @@ export default function ProjectsSection() {
                         alt={project.client}
                         fill
                         className="object-cover"
-                        sizes="50vw"
+                        sizes="(max-width: 768px) 83vw, 50vw"
                       />
                     </div>
                   </div>
@@ -317,8 +317,9 @@ export default function ProjectsSection() {
 
               {/*
                * LAYER 2 — canvas (background image + gradient)
-               * GSAP animates yPercent: 0 → 100 (slides DOWN).
-               * Gradient is inside so it peels away with the image.
+               * Fills card via top/right/bottom/left:0 — clipped by contain:paint on card.
+               * No mobile overrides needed: card height controls the clip.
+               * GSAP animates yPercent: 0 → 100 (slides DOWN revealing next card).
                */}
               <div
                 data-canvas

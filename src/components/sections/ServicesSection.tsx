@@ -90,7 +90,7 @@ export default function ServicesSection() {
         }}
       >
         <h2
-          className="reveal-target"
+          className="reveal-target max-md:text-6xl max-md:text-[var(--color-sage)]"
           style={{
             fontFamily: 'var(--font-cormorant), serif',
             fontWeight: 300,
@@ -124,7 +124,7 @@ export default function ServicesSection() {
 
       {/* ── Service 01: Web Development ──────────────────────── */}
       <div
-        className="flex flex-col md:flex-row md:items-center"
+        className="flex flex-col md:flex-row md:items-center max-md:mb-20 max-md:gap-10"
         style={{
           gap: 'clamp(40px, 8vw, 120px)',
           marginLeft: 'clamp(24px, 5vw, 80px)',
@@ -134,26 +134,27 @@ export default function ServicesSection() {
       >
         {/* Text Column (Left on Desktop, Top on Mobile) */}
         <div style={{ flex: 1 }} className="order-2 md:order-1">
-          <div
+          <p
             className="reveal-target"
             style={{
-              fontFamily: 'var(--font-geist-mono), monospace',
-              fontSize: 11,
-              letterSpacing: '0.15em',
-              color: 'var(--color-sage)',
+              fontFamily: 'var(--font-dm-sans), sans-serif',
+              fontWeight: 500,
+              fontSize: '11px',
+              letterSpacing: '0.18em',
               textTransform: 'uppercase',
-              marginBottom: 24,
+              color: 'rgba(250,247,242,0.35)',
+              marginBottom: 20,
               willChange: 'transform, opacity',
             }}
           >
-            01 / Scope
-          </div>
+            01 — Web Development
+          </p>
           <h3
             className="reveal-target"
             style={{
               fontFamily: 'var(--font-cormorant), serif',
               fontWeight: 300,
-              fontSize: 'clamp(40px, 5vw, 64px)',
+              fontSize: 'clamp(32px, 5vw, 64px)',
               letterSpacing: '-0.02em',
               lineHeight: 1.1,
               marginBottom: 32,
@@ -183,22 +184,17 @@ export default function ServicesSection() {
 
         {/* Image Column (Right on Desktop, Bottom on Mobile) */}
         <div
-          className="reveal-target order-1 md:order-2"
-          style={{
-            flex: 1,
-            position: 'relative',
-            height: 'clamp(400px, 60vh, 800px)',
-            overflow: 'hidden',
-            willChange: 'transform, opacity',
-            contain: 'paint',
-          }}
+          className="order-1 md:order-2 md:flex-1 relative w-full h-[300px] md:h-[clamp(400px,60vh,800px)] overflow-hidden"
         >
           {/* Inner Parallax Wrap */}
           <div
             ref={img1Ref}
             style={{
               position: 'absolute',
-              inset: '-20%',
+              top: '-20%',
+              left: 0,
+              width: '100%',
+              height: '140%',
               willChange: 'transform',
             }}
           >
@@ -215,7 +211,7 @@ export default function ServicesSection() {
 
       {/* ── Service 02: Videography ──────────────────────────── */}
       <div
-        className="flex flex-col md:flex-row md:items-center"
+        className="flex flex-col md:flex-row md:items-center max-md:gap-10"
         style={{
           gap: 'clamp(40px, 8vw, 120px)',
           marginLeft: 'clamp(24px, 5vw, 80px)',
@@ -224,22 +220,17 @@ export default function ServicesSection() {
       >
         {/* Image Column (Left on Desktop) */}
         <div
-          className="reveal-target"
-          style={{
-            flex: 1,
-            position: 'relative',
-            height: 'clamp(400px, 60vh, 800px)',
-            overflow: 'hidden',
-            willChange: 'transform, opacity',
-            contain: 'paint',
-          }}
+          className="md:flex-1 relative w-full h-[300px] md:h-[clamp(400px,60vh,800px)] overflow-hidden max-md:order-1"
         >
           {/* Inner Parallax Wrap */}
           <div
             ref={img2Ref}
             style={{
               position: 'absolute',
-              inset: '-20%',
+              top: '-20%',
+              left: 0,
+              width: '100%',
+              height: '140%',
               willChange: 'transform',
             }}
           >
@@ -254,27 +245,28 @@ export default function ServicesSection() {
         </div>
 
         {/* Text Column (Right on Desktop) */}
-        <div style={{ flex: 1 }}>
-          <div
+        <div style={{ flex: 1 }} className="max-md:order-2">
+          <p
             className="reveal-target"
             style={{
-              fontFamily: 'var(--font-geist-mono), monospace',
-              fontSize: 11,
-              letterSpacing: '0.15em',
-              color: 'var(--color-sage)',
+              fontFamily: 'var(--font-dm-sans), sans-serif',
+              fontWeight: 500,
+              fontSize: '11px',
+              letterSpacing: '0.18em',
               textTransform: 'uppercase',
-              marginBottom: 24,
+              color: 'rgba(250,247,242,0.35)',
+              marginBottom: 20,
               willChange: 'transform, opacity',
             }}
           >
-            02 / Scope
-          </div>
+            02 — Videography
+          </p>
           <h3
             className="reveal-target"
             style={{
               fontFamily: 'var(--font-cormorant), serif',
               fontWeight: 300,
-              fontSize: 'clamp(40px, 5vw, 64px)',
+              fontSize: 'clamp(32px, 5vw, 64px)',
               letterSpacing: '-0.02em',
               lineHeight: 1.1,
               marginBottom: 32,

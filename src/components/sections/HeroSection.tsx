@@ -325,10 +325,8 @@ export default function HeroSection() {
         {/* Z-4 — Headline + qualifying statement (bottom-left) */}
         <div
           ref={headlineRef}
-          className="gpu absolute flex flex-col"
+          className="gpu absolute flex flex-col max-md:top-[17vh] max-md:left-6 max-md:right-6 md:bottom-[80px] md:left-[48px]"
           style={{
-            bottom: 80,
-            left: 48,
             zIndex: 4,
             textAlign: 'left',
             willChange: 'transform',
@@ -337,6 +335,7 @@ export default function HeroSection() {
           {/* Qualifying statement */}
           <p
             ref={qualifyRef}
+            className="max-md:text-[14px]"
             style={{
               fontFamily: 'var(--font-dm-sans), sans-serif',
               fontWeight: 300,
@@ -353,7 +352,7 @@ export default function HeroSection() {
           <div className="mask-parent">
             <span
               ref={line1Ref}
-              className="mask-child gpu text-[clamp(56px,7vw,100px)]"
+              className="mask-child gpu max-md:text-[clamp(22px,6.5vw,28px)] md:text-[clamp(56px,7vw,100px)]"
               style={{
                 fontFamily: 'var(--font-cormorant), serif',
                 fontWeight: 300,
@@ -369,7 +368,7 @@ export default function HeroSection() {
           <div className="mask-parent">
             <span
               ref={line2Ref}
-              className="mask-child gpu text-[clamp(56px,7vw,100px)]"
+              className="mask-child gpu max-md:text-[clamp(22px,6.5vw,28px)] md:text-[clamp(56px,7vw,100px)]"
               style={{
                 fontFamily: 'var(--font-cormorant), serif',
                 fontWeight: 300,
@@ -386,70 +385,61 @@ export default function HeroSection() {
         {/* Z-4 — Beat 1: Info cards (bottom-right) */}
         <div
           ref={cardsWrapperRef}
-          className="absolute inset-0 pointer-events-none"
+          className="absolute md:inset-0 max-md:bottom-6 max-md:left-4 max-md:right-4 max-md:top-auto max-md:flex max-md:flex-row max-md:gap-2 pointer-events-none"
           style={{ zIndex: 4, willChange: 'transform, opacity' }}
         >
           {/* Card A — bottom-right corner */}
           <div
             ref={cardARef}
-            className="absolute hidden md:block gpu"
+            className="absolute md:block gpu max-md:relative max-md:flex-1 max-md:min-w-0 max-md:flex max-md:flex-col justify-center md:bottom-[48px] md:right-[48px]"
             style={{
-              bottom: 48,
-              right: 48,
               background: 'rgba(10,10,10,0.55)',
               backdropFilter: 'blur(12px)',
               WebkitBackdropFilter: 'blur(12px)',
               border: '1px solid rgba(107,127,98,0.25)',
-              padding: '16px 20px',
-              minWidth: 160,
+              padding: 'clamp(10px,2.5vw,16px) clamp(12px,3vw,20px)',
               willChange: 'transform, opacity',
             }}
           >
             <span style={{ display: 'block', fontFamily: 'var(--font-geist-mono), monospace', fontSize: 11, color: 'var(--color-sage)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 6 }}>04</span>
-            <span style={{ display: 'block', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 22, color: '#ffffff', marginBottom: 4 }}>Projects</span>
-            <span style={{ display: 'block', fontFamily: 'var(--font-dm-sans), sans-serif', fontWeight: 300, fontSize: 11, color: 'rgba(250,247,242,0.5)' }}>Delivered</span>
+            <span style={{ display: 'block', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(16px,4vw,22px)', color: '#ffffff', marginBottom: 4 }}>Projects</span>
+            <span className="max-md:hidden" style={{ display: 'block', fontFamily: 'var(--font-dm-sans), sans-serif', fontWeight: 300, fontSize: 11, color: 'rgba(250,247,242,0.5)' }}>Delivered</span>
           </div>
 
           {/* Card B — above Card A */}
           <div
             ref={cardBRef}
-            className="absolute hidden md:block gpu"
+            className="absolute md:block gpu max-md:relative max-md:flex-1 max-md:min-w-0 max-md:flex max-md:flex-col justify-center md:bottom-[168px] md:right-[48px]"
             style={{
-              bottom: 168,
-              right: 48,
               background: 'rgba(10,10,10,0.55)',
               backdropFilter: 'blur(12px)',
               WebkitBackdropFilter: 'blur(12px)',
               border: '1px solid rgba(107,127,98,0.25)',
-              padding: '16px 20px',
-              minWidth: 160,
+              padding: 'clamp(10px,2.5vw,16px) clamp(12px,3vw,20px)',
               willChange: 'transform, opacity',
             }}
           >
             <span style={{ display: 'block', fontFamily: 'var(--font-geist-mono), monospace', fontSize: 11, color: 'var(--color-sage)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 6 }}>Since</span>
-            <span style={{ display: 'block', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 22, color: '#ffffff', marginBottom: 4 }}>2023</span>
-            <span style={{ display: 'block', fontFamily: 'var(--font-dm-sans), sans-serif', fontWeight: 300, fontSize: 11, color: 'rgba(250,247,242,0.5)' }}>Cyprus · Greece · Europe</span>
+            <span style={{ display: 'block', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(16px,4vw,22px)', color: '#ffffff', marginBottom: 4 }}>2023</span>
+            <span className="max-md:hidden" style={{ display: 'block', fontFamily: 'var(--font-dm-sans), sans-serif', fontWeight: 300, fontSize: 11, color: 'rgba(250,247,242,0.5)' }}>Cyprus · Greece · Europe</span>
           </div>
 
           {/* Card C — left of Card A */}
           <div
             ref={cardCRef}
-            className="absolute hidden md:block gpu"
+            className="absolute md:block gpu max-md:relative max-md:flex-1 max-md:min-w-0 max-md:flex max-md:flex-col justify-center md:bottom-[48px] md:right-[220px]"
             style={{
-              bottom: 48,
-              right: 220,
               background: 'rgba(10,10,10,0.55)',
               backdropFilter: 'blur(12px)',
               WebkitBackdropFilter: 'blur(12px)',
               border: '1px solid rgba(107,127,98,0.25)',
-              padding: '16px 20px',
-              minWidth: 160,
+              padding: 'clamp(10px,2.5vw,16px) clamp(12px,3vw,20px)',
               willChange: 'transform, opacity',
             }}
           >
             <span style={{ display: 'block', fontFamily: 'var(--font-geist-mono), monospace', fontSize: 11, color: 'var(--color-sage)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 6 }}>Now Accepting</span>
-            <span style={{ display: 'block', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 22, color: '#ffffff', marginBottom: 4 }}>New Clients</span>
-            <span style={{ display: 'block', fontFamily: 'var(--font-dm-sans), sans-serif', fontWeight: 300, fontSize: 11, color: 'rgba(250,247,242,0.5)' }}>Limited availability</span>
+            <span style={{ display: 'block', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontSize: 'clamp(16px,4vw,22px)', color: '#ffffff', marginBottom: 4 }}>New Clients</span>
+            <span className="max-md:hidden" style={{ display: 'block', fontFamily: 'var(--font-dm-sans), sans-serif', fontWeight: 300, fontSize: 11, color: 'rgba(250,247,242,0.5)' }}>Limited availability</span>
           </div>
         </div>
 

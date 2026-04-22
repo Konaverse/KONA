@@ -39,11 +39,11 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
     // ─── Primary Variant: Editorial Pill Button ────────────────────────
     if (variant === "primary") {
       const primaryBase =
-        "relative overflow-hidden group inline-flex items-center justify-center gap-3 px-8 py-4 bg-[var(--color-off-white)] text-[var(--color-obsidian)] rounded-full font-sans text-xs font-bold tracking-widest uppercase transition-all duration-500 hover:scale-[1.02] select-none";
+        "relative overflow-hidden group inline-flex items-center justify-center gap-3 px-8 py-4 bg-[var(--color-off-white)] text-[var(--color-obsidian)] rounded-full font-sans text-xs font-bold tracking-widest uppercase transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_10px_40px_-10px_rgba(107,127,98,0.55)] select-none";
 
       const content = (
         <>
-          <span className="relative z-10 flex items-center gap-2 transition-colors duration-500 group-hover:text-white">
+          <span className="relative z-10 flex items-center gap-2 transition-colors duration-300 delay-[60ms] group-hover:text-white">
             {children}
             {showArrow && (
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -51,8 +51,13 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
               </svg>
             )}
           </span>
-          {/* Sweeping Sage Hover */}
+          {/* Sweeping Sage Fill */}
           <div className="absolute inset-0 bg-[var(--color-sage)] translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] rounded-full" />
+          {/* Shimmer sweep */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute top-0 left-0 h-full w-[60%] -skew-x-12 bg-gradient-to-r from-transparent via-white/[0.18] to-transparent -translate-x-full group-hover:translate-x-[167%] transition-transform duration-700 delay-100 ease-[cubic-bezier(0.22,1,0.36,1)]"
+          />
         </>
       );
 
