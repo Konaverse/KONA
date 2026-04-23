@@ -216,8 +216,7 @@ export default function WebProjectsArchive() {
                      href={project.href}
                      variant="secondary"
                      className="group/btn"
-                     target="_blank"
-                     rel="noopener noreferrer"
+                     external
                    >
                       <span className="flex items-center gap-3">
                         Visit Website
