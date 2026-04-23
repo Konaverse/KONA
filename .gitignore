@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# large media files — host on Cloudinary, not git
+*.mp4
+*.MP4
+*.mov
+*.MOV
+*.avi
+*.mkv
