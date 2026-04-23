@@ -118,7 +118,10 @@ export default function PrivacyPage() {
 
           <Section title="8. Cookies">
             <p>
-              Our website does not use cookies beyond technically necessary session cookies required for the site to function. We do not use advertising cookies, analytics cookies, or any cross-site tracking. No consent banner is required.
+              We use cookies and similar tracking technologies to track the activity on our website and hold certain information. Cookies are files with a small amount of data which may include an anonymous unique identifier.
+            </p>
+            <p className="mt-4">
+              We use Google Analytics to monitor and analyze the use of our website. Tracking only begins after you have provided explicit consent via our cookie banner. For detailed information on the cookies we use and how to manage your preferences, please view our <TransitionLink href="/cookies" className="text-[var(--color-sage)] hover:underline">Cookie Policy →</TransitionLink>
             </p>
           </Section>
 

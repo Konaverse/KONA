@@ -89,7 +89,7 @@ export default function CookieConsent() {
                 <Button 
                   onClick={handleDecline}
                   showArrow={false}
-                  className="w-full sm:flex-1 text-[10px] tracking-widest py-4 h-auto border border-white/10 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+                  className="w-full sm:flex-1 text-[10px] tracking-widest py-4 h-auto border border-white/10 rounded-full bg-white/5 hover:bg-white/10 transition-colors text-white"
                 >
                   Essential Only
                 </Button>

@@ -5,6 +5,8 @@ import SmoothScroll from '@/components/SmoothScroll'
 import CustomCursor from '@/components/ui/CustomCursor'
 import FooterSection from '@/components/sections/homepage/FooterSection'
 import JsonLd from '@/components/JsonLd'
+import CookieConsent from '@/components/layout/CookieConsent'
+import GoogleAnalytics from '@/components/layout/GoogleAnalytics'
 import './globals.css'
 
 const cormorant = Cormorant_Garamond({
@@ -123,6 +125,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
           <FooterSection />
         </SmoothScroll>
+        <GoogleAnalytics GA_MEASUREMENT_ID="G-2PEZX44FP9" />
+        <CookieConsent />
       </body>
     </html>
   )
