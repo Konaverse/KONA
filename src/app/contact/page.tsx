@@ -39,7 +39,7 @@ function SectionRow({ number, label }: { number: string; label: string }) {
         {number}
       </span>
       <span className="flex-1 h-px bg-white/[0.06]" />
-      <span className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/20 shrink-0">
+      <span className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/40 shrink-0">
         {label}
       </span>
     </div>
@@ -60,8 +60,8 @@ function FieldInput({
   required?: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-3">
-      <label className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/25">
+    <div className="flex flex-col gap-2.5">
+      <label className="font-mono text-[10px] tracking-[0.28em] uppercase text-white/55">
         {label}
       </label>
       <div className="relative group">
@@ -70,10 +70,10 @@ function FieldInput({
           name={name}
           required={required}
           placeholder={placeholder}
-          className="peer w-full bg-transparent py-3 text-xl md:text-2xl font-display font-light text-[var(--color-off-white)] placeholder:text-white/[0.12] outline-none transition-colors duration-300"
+          className="peer w-full bg-transparent py-3 text-xl md:text-2xl font-display font-light text-[var(--color-off-white)] placeholder:text-white/30 placeholder:font-light outline-none transition-colors duration-300"
         />
         {/* Base border */}
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-white/[0.08] group-focus-within:bg-white/[0.14] transition-colors duration-300" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-white/20 group-focus-within:bg-white/30 transition-colors duration-300" />
         {/* Sage focus sweep */}
         <div className="absolute bottom-0 left-0 h-px w-0 peer-focus:w-full bg-[var(--color-sage)] transition-[width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" />
       </div>
@@ -298,8 +298,8 @@ export default function ContactPage() {
                   {/* 04 — Vision */}
                   <motion.div variants={sectionVariants}>
                     <SectionRow number="04" label="The Vision" />
-                    <div className="flex flex-col gap-3">
-                      <label className="font-mono text-[9px] tracking-[0.3em] uppercase text-white/25">
+                    <div className="flex flex-col gap-2.5">
+                      <label className="font-mono text-[10px] tracking-[0.28em] uppercase text-white/55">
                         Tell us everything
                       </label>
                       <div className="relative group">
@@ -308,9 +308,9 @@ export default function ContactPage() {
                           required
                           rows={5}
                           placeholder="Your goals, timeline, vision, and any relevant context..."
-                          className="peer w-full bg-transparent py-3 text-lg md:text-xl font-display font-light text-[var(--color-off-white)] placeholder:text-white/[0.12] outline-none resize-none transition-colors duration-300"
+                          className="peer w-full bg-transparent py-3 text-lg md:text-xl font-display font-light text-[var(--color-off-white)] placeholder:text-white/30 placeholder:font-light outline-none resize-none transition-colors duration-300"
                         />
-                        <div className="absolute bottom-0 left-0 right-0 h-px bg-white/[0.08] group-focus-within:bg-white/[0.14] transition-colors duration-300" />
+                        <div className="absolute bottom-0 left-0 right-0 h-px bg-white/20 group-focus-within:bg-white/30 transition-colors duration-300" />
                         <div className="absolute bottom-0 left-0 h-px w-0 peer-focus:w-full bg-[var(--color-sage)] transition-[width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" />
                       </div>
                     </div>

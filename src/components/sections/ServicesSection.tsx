@@ -199,7 +199,7 @@ export default function ServicesSection() {
             }}
           >
             <Image
-              src="/General/web_dev_aesthetic..png"
+              src="/Solutions/Web Dev/aesth_brand_experiences.png"
               fill
               alt="Web development"
               className="object-cover"
@@ -235,7 +235,7 @@ export default function ServicesSection() {
             }}
           >
             <Image
-              src="/General/videography_aesthetic..png"
+              src="/Solutions/Videography/aesth_product_showcase.png"
               fill
               alt="Videography"
               className="object-cover"

@@ -15,7 +15,7 @@ export default function ManifestoSection() {
            trigger="#manifesto-scroll-trigger" 
            className="w-full md:w-[63%] font-display font-light text-[#111111] leading-tight text-[clamp(1.5rem,3.5vw,2.8rem)]"
         >
-          When starting a new project, it&apos;s crucial to choose the appropriate tools. With prior experience in this area, I am confident in selecting the tools that will guide us to success.
+          Every project we take on starts with one question: does this deserve to exist online? If the answer is yes, we build it like it matters. Because it does.
         </TextOpacity>
       </div>
     </section>

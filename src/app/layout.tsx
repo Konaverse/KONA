@@ -4,6 +4,7 @@ import Navbar from '@/components/layout/Navbar'
 import SmoothScroll from '@/components/SmoothScroll'
 import CustomCursor from '@/components/ui/CustomCursor'
 import FooterSection from '@/components/sections/homepage/FooterSection'
+import JsonLd from '@/components/JsonLd'
 import './globals.css'
 
 const cormorant = Cormorant_Garamond({
@@ -29,14 +30,57 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Konaverse — Premium Digital Agency',
+  metadataBase: new URL('https://kona-verse.com'),
+  title: {
+    default: 'Konaverse — Premium Digital Agency',
+    template: '%s | Konaverse',
+  },
   description:
     'Konaverse is a premium digital agency crafting web experiences, films, and brand presence that refuses to be ignored.',
+  keywords: [
+    'digital agency', 'web development', 'videography', 'brand identity',
+    'Next.js agency', 'cinematic production', 'web design', 'premium agency',
+  ],
+  authors: [{ name: 'Konaverse', url: 'https://kona-verse.com' }],
+  creator: 'Konaverse',
+  publisher: 'Konaverse',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   openGraph: {
     title: 'Konaverse — Premium Digital Agency',
     description:
-      'Web development, web applications, videography, digital advertising, social media — built with intent.',
+      'Web development, web applications, videography, and brand presence — built with intent.',
     type: 'website',
+    url: 'https://kona-verse.com',
+    siteName: 'Konaverse',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Konaverse — Premium Digital Agency',
+      },
+    ],
+    locale: 'en_US',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Konaverse — Premium Digital Agency',
+    description:
+      'Web development, videography, and digital brand presence — built with intent.',
+    images: ['/og-image.png'],
+  },
+  alternates: {
+    canonical: 'https://kona-verse.com',
   },
 }
 
@@ -47,6 +91,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${cormorant.variable} ${dmSans.variable} ${geistMono.variable}`}
     >
       <body className="antialiased">
+        <JsonLd data={{
+          '@context': 'https://schema.org',
+          '@type': 'Organization',
+          '@id': 'https://kona-verse.com/#organization',
+          name: 'Konaverse',
+          url: 'https://kona-verse.com',
+          logo: { '@type': 'ImageObject', url: 'https://kona-verse.com/About/Logo%2021.png' },
+          description: 'Premium digital agency specializing in high-end web development and cinematic videography.',
+          email: 'info@kona-verse.com',
+          areaServed: ['Europe', 'Middle East', 'North America'],
+          member: [
+            { '@type': 'Person', name: 'Konstantinos', jobTitle: 'Technical Architect & Co-Founder' },
+            { '@type': 'Person', name: 'Nabil', jobTitle: 'Creative Director & Co-Founder' },
+          ],
+        }} />
+        <JsonLd data={{
+          '@context': 'https://schema.org',
+          '@type': 'WebSite',
+          '@id': 'https://kona-verse.com/#website',
+          name: 'Konaverse',
+          url: 'https://kona-verse.com',
+          publisher: { '@id': 'https://kona-verse.com/#organization' },
+        }} />
         <Navbar />
         <SmoothScroll>
           <CustomCursor />

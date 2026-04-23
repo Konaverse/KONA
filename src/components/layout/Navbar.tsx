@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import TransitionLink from "./TransitionLink";
 
 const ACCENT = "#6B7F62";
 
@@ -25,20 +26,13 @@ const NAV_TRANSITION = { duration: 0.9, ease: EASE };
 function DropdownItem({ item, index }: { item: DropItem & { href: string }; index: number }) {
   const [hover, setHover] = useState(false);
   return (
-    <a
+    <TransitionLink
       href={item.href}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
+      className="flex items-center gap-[0.9rem] px-4 py-[0.8rem] no-underline rounded-[10px] transition-[background] duration-300 relative"
       style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "0.9rem",
-        padding: "0.8rem 1rem",
-        textDecoration: "none",
         background: hover ? "rgba(107,127,98,0.08)" : "transparent",
-        transition: "background 0.25s ease",
-        position: "relative",
-        borderRadius: 10,
       }}
     >
       {/* Number */}
@@ -98,7 +92,7 @@ function DropdownItem({ item, index }: { item: DropItem & { href: string }; inde
       >
         →
       </motion.span>
-    </a>
+    </TransitionLink>
   );
 }
 
@@ -232,21 +226,9 @@ function Dropdown({
             zIndex: 1,
           }}
         >
-          <a
+          <TransitionLink
             href={footerHref}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              fontSize: "0.68rem",
-              fontWeight: 500,
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              color: "rgba(240,237,232,0.65)",
-              textDecoration: "none",
-              fontFamily: "var(--font-jakarta), sans-serif",
-              transition: "color 0.25s",
-            }}
+            className="inline-flex items-center gap-2 text-[0.68rem] font-medium tracking-[0.18em] uppercase text-[rgba(240,237,232,0.65)] no-underline font-sans transition-colors duration-300"
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLElement).style.color = ACCENT;
             }}
@@ -256,7 +238,7 @@ function Dropdown({
           >
             {footerText}
             <span style={{ fontSize: "0.85rem", lineHeight: 1 }}>→</span>
-          </a>
+          </TransitionLink>
         </div>
       )}
     </div>
@@ -299,23 +281,11 @@ function NavItem({
         if (dropdown) setOpen(false);
       }}
     >
-      <a
+      <TransitionLink
         href={href || "#"}
+        className="inline-flex items-center gap-[0.35rem] text-[0.72rem] font-normal tracking-[0.08em] uppercase no-underline font-sans transition-colors duration-300 py-1.5 relative"
         style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: "0.35rem",
-          fontSize: "0.72rem",
-          fontWeight: 400,
-          letterSpacing: "0.08em",
-          textTransform: "uppercase",
           color: active ? "#f0ede8" : "rgba(240,237,232,0.62)",
-          textDecoration: "none",
-          fontFamily: "var(--font-jakarta), sans-serif",
-          transition: "color 0.3s ease",
-          padding: "0.4rem 0",
-          whiteSpace: "nowrap",
-          position: "relative",
         }}
       >
         {label}
@@ -355,7 +325,7 @@ function NavItem({
             boxShadow: active ? "0 0 8px rgba(107,127,98,0.5)" : "none",
           }}
         />
-      </a>
+      </TransitionLink>
       <AnimatePresence>
         {open && dropdown && (
           <Dropdown
@@ -413,7 +383,7 @@ function MobileNavItem({
           </motion.svg>
         </button>
       ) : (
-        <a 
+        <TransitionLink 
           href={href || "#"}
           className="flex items-center justify-between w-full text-left outline-none group no-underline"
         >
@@ -426,7 +396,7 @@ function MobileNavItem({
           >
             {label}
           </span>
-        </a>
+        </TransitionLink>
       )}
 
       <AnimatePresence>
@@ -440,10 +410,10 @@ function MobileNavItem({
           >
             <div className="flex flex-col gap-5 pt-5">
               {dropdown.map((item: any, i) => (
-                <a key={item.label} href={item.href} className="flex flex-col gap-1 opacity-80 hover:opacity-100 transition-opacity">
+                <TransitionLink key={item.label} href={item.href} className="flex flex-col gap-1 opacity-80 hover:opacity-100 transition-opacity no-underline">
                   <span className="text-base font-medium text-[#f0ede8]" style={{ fontFamily: "var(--font-jakarta), sans-serif" }}>{item.label}</span>
                   <span className="text-sm text-white/40" style={{ fontFamily: "var(--font-jakarta), sans-serif" }}>{item.desc}</span>
-                </a>
+                </TransitionLink>
               ))}
             </div>
           </motion.div>
@@ -534,44 +504,23 @@ export default function Navbar() {
         />
 
         {/* Logo */}
-        <a
+        <TransitionLink
           href="/"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "0.6rem",
-            textDecoration: "none",
-            flexShrink: 0,
-            position: "relative",
-            zIndex: 1,
-          }}
+          className="inline-flex items-center no-underline shrink-0 relative z-10"
         >
           <div
-            style={{ position: "relative", flexShrink: 0, width: 32, height: 32 }}
+            style={{ position: "relative", flexShrink: 0, width: 44, height: 44 }}
           >
             <Image
-              src="/About/KonaLogoNoBg.png"
+              src="/About/Logo 21.png"
               alt="Konaverse"
               fill
               className="object-contain"
-              sizes="32px"
+              sizes="44px"
               priority
             />
           </div>
-          <span
-            style={{
-              fontFamily: "var(--font-inter), sans-serif",
-              fontWeight: 200,
-              letterSpacing: "0.22em",
-              textTransform: "uppercase",
-              color: "#f0ede8",
-              display: "block",
-              fontSize: "0.85rem",
-            }}
-          >
-            Konaverse
-          </span>
-        </a>
+        </TransitionLink>
 
         {/* Links */}
         <div
@@ -683,13 +632,13 @@ export default function Navbar() {
               transition={{ duration: 0.6, ease: EASE, delay: 0.7 }}
               className="mt-auto pt-8 relative z-10"
             >
-               <a
+               <TransitionLink
                   href="/contact"
-                  className="inline-flex items-center justify-center w-full gap-2 text-sm font-semibold tracking-widest uppercase rounded-[40px] py-[18px] transition-all active:scale-95"
+                  className="inline-flex items-center justify-center w-full gap-2 text-sm font-semibold tracking-widest uppercase rounded-[40px] py-[18px] transition-all active:scale-95 no-underline"
                   style={{ fontFamily: "var(--font-jakarta), sans-serif", background: ACCENT, color: "#fff", boxShadow: "0 8px 30px -10px rgba(107,127,98,0.5)" }}
                 >
                   Get in Touch
-               </a>
+               </TransitionLink>
             </motion.div>
           </motion.div>
         )}

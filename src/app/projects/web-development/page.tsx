@@ -4,6 +4,8 @@ import PageWrapper from "@/components/layout/PageWrapper";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useRef, useLayoutEffect } from "react";
+import { gsap, ScrollTrigger } from "@/utils/gsap";
 
 const PROJECTS = [
   {
@@ -66,10 +68,101 @@ const PROJECTS = [
 ];
 
 export default function WebProjectsArchive() {
+  const mainRef = useRef<HTMLDivElement>(null);
+  const ctaSectionRef = useRef<HTMLElement>(null);
+  const ctaWrapperRef = useRef<HTMLDivElement>(null);
+  const ctaImageRef = useRef<HTMLDivElement>(null);
+  const ctaTextRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      // CTA Animation
+      if (ctaSectionRef.current && ctaWrapperRef.current && ctaImageRef.current && ctaTextRef.current) {
+        const isMobile = window.innerWidth < 768;
+
+        // Global Entrance Animations
+        gsap.utils.toArray<HTMLElement>(".fade-up").forEach((el) => {
+          gsap.fromTo(el, 
+            { opacity: 0, y: 40 },
+            { 
+              opacity: 1, 
+              y: 0, 
+              duration: 1, 
+              ease: "power3.out", 
+              scrollTrigger: {
+                trigger: el,
+                start: "top 85%",
+                toggleActions: "play none none reverse"
+              } 
+            }
+          );
+        });
+
+        // Global Parallax Backgrounds
+        gsap.utils.toArray<HTMLElement>(".parallax-bg").forEach((el) => {
+          const parent = el.parentElement;
+          if (parent) {
+            gsap.fromTo(el,
+              { yPercent: -10 },
+              {
+                yPercent: 10,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: parent,
+                  start: "top bottom",
+                  end: "bottom top",
+                  scrub: true,
+                }
+              }
+            );
+          }
+        });
+
+        
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: ctaSectionRef.current,
+            start: "top bottom", 
+            end: "center center", 
+            scrub: true,
+          }
+        });
+
+        // Expand clip-path
+        tl.fromTo(ctaWrapperRef.current,
+          { clipPath: isMobile ? "inset(15% 5% 15% 5% round 2rem)" : "inset(20% 15% 20% 15% round 3rem)" },
+          { clipPath: "inset(0% 0% 0% 0% round 0rem)", ease: "power2.inOut" }
+        );
+
+        // Zoom out image
+        tl.fromTo(ctaImageRef.current,
+          { scale: 1.2 },
+          { scale: 1, ease: "power2.inOut" },
+          "<"
+        );
+
+        // Reveal Text
+        gsap.to(ctaTextRef.current, {
+           opacity: 1,
+           y: 0,
+           duration: 1,
+           ease: "power3.out",
+           scrollTrigger: {
+             trigger: ctaSectionRef.current,
+             start: "center 70%",
+             toggleActions: "play none none reverse",
+           }
+        });
+      }
+    }, { scope: mainRef });
+    
+    return () => ctx.revert();
+  }, []);
+
   return (
     <PageWrapper theme="dark">
+      <div ref={mainRef}>
       <PageHeader
-        subtitle="Archive / 01"
         title="Web Projects"
         description="A selection of digital experiences engineered for performance and brand authority."
       />
@@ -89,11 +182,11 @@ export default function WebProjectsArchive() {
                  </div>
               </div>
               
-              <h2 className="font-display text-4xl md:text-6xl mb-8 leading-tight">
+              <h2 className="font-display fade-up text-4xl md:text-6xl mb-8 leading-tight">
                 {project.title}
               </h2>
               
-              <p className="font-sans font-light text-lg text-white/50 mb-10 leading-relaxed max-w-sm">
+              <p className="font-sans font-light fade-up text-lg text-white/50 mb-10 leading-relaxed max-w-sm">
                 {project.description}
               </p>
 
@@ -111,14 +204,16 @@ export default function WebProjectsArchive() {
 
             {/* Visuals */}
             <div className="lg:col-span-8 flex flex-col gap-8 md:gap-16">
-               <div className="relative aspect-[16/10] bg-[var(--color-obsidian)] rounded-xl md:rounded-3xl overflow-hidden shadow-2xl">
-                 <Image
-                   src={project.image}
-                   alt={project.title}
-                   fill
-                   className="object-cover"
-                   sizes="(max-width: 1024px) 100vw, 66vw"
-                 />
+               <div className="relative aspect-[16/10] bg-[var(--color-obsidian)] rounded-xl md:rounded-3xl overflow-hidden shadow-2xl fade-up">
+                 <div className="absolute inset-[-10%] w-[120%] h-[120%] parallax-bg">
+                   <Image
+                     src={project.image}
+                     alt={project.title}
+                     fill
+                     className="object-cover"
+                     sizes="(max-width: 1024px) 100vw, 66vw"
+                   />
+                 </div>
                  <div className="absolute inset-0 bg-black/10 transition-colors duration-700 hover:bg-transparent" />
                </div>
 
@@ -139,15 +234,46 @@ export default function WebProjectsArchive() {
         ))}
       </section>
 
-      {/* CTA */}
-      <section className="container-padding py-40 border-t border-white/5 text-center flex flex-col items-center">
-         <h3 className="font-display text-4xl md:text-7xl mb-12 leading-tight max-w-4xl">
-           Want to build the next <em className="italic text-[var(--color-sage)]">remarkable</em> project?
-         </h3>
-         <Button href="/contact" variant="primary">
-           Work With Us
-         </Button>
+      {/* Immersive CTA */}
+      <section 
+        ref={ctaSectionRef}
+        className="relative flex items-center justify-center h-screen w-full overflow-hidden bg-[var(--color-obsidian)]"
+      >
+         <div 
+           ref={ctaWrapperRef}
+           className="absolute inset-0 w-full h-full will-change-transform"
+         >
+            {/* Background Image */}
+            <div className="absolute inset-0 w-full h-full will-change-transform" ref={ctaImageRef}>
+              <Image 
+                src="/General/aesth_office.png"
+                alt="Build the next remarkable project"
+                fill
+                className="object-cover"
+                sizes="100vw"
+              />
+              {/* Overlay gradient */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
+            </div>
+
+            {/* Text Content */}
+            <div 
+              ref={ctaTextRef}
+              className="absolute inset-0 flex flex-col items-center justify-end text-center p-8 pb-32 md:p-20 md:pb-40 opacity-0 translate-y-12 will-change-transform"
+            >
+               <span className="font-mono text-[10px] md:text-[12px] tracking-[0.4em] uppercase text-[var(--color-sage)] mb-6 md:mb-8 font-semibold">
+                 Let's Talk
+               </span>
+               <h2 className="font-display fade-up text-4xl md:text-7xl lg:text-8xl mb-12 leading-[1.05] tracking-tight max-w-4xl text-white drop-shadow-2xl">
+                 Build <br/><em className="italic font-light">Remarkable.</em>
+               </h2>
+               <Button href="/contact" variant="primary" className="scale-110 md:scale-125 hover:scale-125 transition-transform duration-300">
+                 Work With Us
+               </Button>
+            </div>
+         </div>
       </section>
+    </div>
     </PageWrapper>
   );
 }

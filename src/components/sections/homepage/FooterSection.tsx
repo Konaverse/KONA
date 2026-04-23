@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { gsap, ScrollTrigger } from "@/utils/gsap";
 import { Button } from "@/components/ui/button";
+import TransitionLink from "@/components/layout/TransitionLink";
 
 const ACCENT = "#6B7F62";
 
@@ -19,7 +21,7 @@ const PROJECTS = [
 
 const STUDIO = [
   { label: "About", href: "/about" },
-  { label: "Process", href: "/process" },
+  { label: "Pricing", href: "/pricing" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -29,10 +31,9 @@ const LEGAL = [
 ];
 
 const SOCIALS = [
-  { label: "Instagram", href: "https://instagram.com" },
-  { label: "Vimeo", href: "https://vimeo.com" },
-  { label: "LinkedIn", href: "https://linkedin.com" },
-  { label: "X / Twitter", href: "https://x.com" },
+  { label: "Instagram", href: "https://www.instagram.com/konaverse.cy/" },
+  { label: "Facebook", href: "https://www.facebook.com/konaverse" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/company/konaverse" },
 ];
 
 function FooterCol({
@@ -51,26 +52,32 @@ function FooterCol({
         {heading}
       </h4>
       <ul className="flex flex-col space-y-2 md:space-y-3">
-        {links.map((link) => (
-          <li key={link.label}>
-            <a
-              href={link.href}
-              className="group/link relative inline-block font-sans text-sm font-light text-white/60 transition-colors duration-300"
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = accentHover ? ACCENT : "rgba(255,255,255,0.9)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = "";
-              }}
-            >
-              {link.label}
-              <span
-                className="absolute bottom-[-2px] left-0 h-px w-0 group-hover/link:w-full transition-[width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
-                style={{ background: accentHover ? ACCENT : "rgba(255,255,255,0.2)" }}
-              />
-            </a>
-          </li>
-        ))}
+        {links.map((link) => {
+          const isExternal = link.href.startsWith("http");
+          const LinkComponent = isExternal ? "a" : TransitionLink;
+          
+          return (
+            <li key={link.label}>
+              <LinkComponent
+                href={link.href}
+                className="group/link relative inline-block font-sans text-sm font-light text-white/60 transition-colors duration-300"
+                onMouseEnter={(e: React.MouseEvent) => {
+                  (e.currentTarget as HTMLElement).style.color = accentHover ? ACCENT : "rgba(255,255,255,0.9)";
+                }}
+                onMouseLeave={(e: React.MouseEvent) => {
+                  (e.currentTarget as HTMLElement).style.color = "";
+                }}
+                {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              >
+                {link.label}
+                <span
+                  className="absolute bottom-[-2px] left-0 h-px w-0 group-hover/link:w-full transition-[width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                  style={{ background: accentHover ? ACCENT : "rgba(255,255,255,0.2)" }}
+                />
+              </LinkComponent>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
@@ -79,9 +86,15 @@ function FooterCol({
 export default function FooterSection() {
   const footerRef = useRef<HTMLElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     if (!footerRef.current || !innerRef.current) return;
+
+    // Refresh ScrollTrigger after a short delay to ensure page height is settled
+    const timer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 500);
 
     const ctx = gsap.context(() => {
       const mm = gsap.matchMedia();
@@ -168,8 +181,11 @@ export default function FooterSection() {
       );
     }, footerRef);
 
-    return () => ctx.revert();
-  }, []);
+    return () => {
+      ctx.revert();
+      clearTimeout(timer);
+    };
+  }, [pathname]);
 
   return (
     <footer
@@ -195,9 +211,9 @@ export default function FooterSection() {
 
           {/* Brand */}
           <div className="footer-brand flex flex-col shrink-0 lg:max-w-sm">
-            <div className="relative w-32 md:w-40 h-8 md:h-10 mb-5 md:mb-8">
+            <div className="relative w-32 md:w-40 h-12 md:h-16 mb-5 md:mb-8">
               <Image
-                src="/About/KonaLogoNoBg.png"
+                src="/About/Logo 21.png"
                 alt="Konaverse"
                 fill
                 className="object-contain object-left opacity-90"
@@ -231,7 +247,7 @@ export default function FooterSection() {
         <div className="flex flex-col w-full mt-auto">
           {/* Tagline + Email */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-5 md:mb-10 lg:mb-14 gap-4 md:gap-10">
-            <h2 className="footer-tagline font-display font-light text-[9.5vw] sm:text-[5.5vw] md:text-[3.5vw] uppercase leading-[0.9] tracking-[-0.02em] text-[#f0ede8] opacity-90">
+            <h2 className="footer-tagline font-display font-light text-[6vw] sm:text-[5.5vw] md:text-[3.5vw] uppercase leading-[0.9] tracking-[-0.02em] text-[#f0ede8] opacity-90">
               With Konaverse,<br />
               There is no limitation.
             </h2>

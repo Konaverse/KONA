@@ -3,6 +3,7 @@
 import PageWrapper from "@/components/layout/PageWrapper";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import { useState, useRef, useLayoutEffect } from "react";
 import { gsap } from "@/utils/gsap";
 
@@ -13,14 +14,14 @@ const WEB_PLANS = [
     n: "01",
     name: "Website Development",
     tagline: "Your brand's digital home.",
-    desc: "Custom-built websites engineered for performance and designed for presence. From marketing sites to portfolio platforms — every pixel intentional.",
+    desc: "Custom built websites engineered for performance and designed for presence. From marketing sites to portfolio platforms, every pixel is intentional.",
     includes: [
       "Custom UI & UX Design",
       "Responsive Development (Next.js)",
       "SEO Foundations & Metadata",
       "CMS Integration",
       "Performance Optimization",
-      "30-day post-launch support",
+      "30 days of post launch support",
     ],
     ideal: "Brands entering or refreshing their digital presence",
   },
@@ -28,13 +29,13 @@ const WEB_PLANS = [
     n: "02",
     name: "Web Application",
     tagline: "Complex systems, elegant execution.",
-    desc: "Scalable, secure web applications built for real-world demands. From SaaS platforms to internal tools — we architect systems that grow with your business.",
+    desc: "Scalable, secure web applications built for real world demands. From SaaS platforms to internal tools; we architect systems that grow with your business.",
     includes: [
       "Custom Architecture & System Design",
       "User Authentication & Authorization",
       "Database Design & API Development",
       "Admin Dashboard & Analytics",
-      "Third-party Integrations",
+      "Third party Integrations",
       "Ongoing support available",
     ],
     ideal: "Businesses needing scalable digital infrastructure",
@@ -48,9 +49,9 @@ const VIDEO_PLANS = [
     n: "01",
     name: "Video Production",
     tagline: "One story, perfectly told.",
-    desc: "Full-service production from concept to delivery. Professional filming, cinematic editing, and color grading for a single high-impact video asset.",
+    desc: "Full service production from concept to delivery. Professional filming, cinematic editing, and color grading for a single high impact video asset.",
     includes: [
-      "Pre-production Planning",
+      "Pre production Planning",
       "Professional Filming (Half/Full Day)",
       "Cinematic Color Grading",
       "Sound Design & Mix",
@@ -64,10 +65,10 @@ const VIDEO_PLANS = [
     n: "02",
     name: "Motion Graphics",
     tagline: "Motion that commands attention.",
-    desc: "Custom animated graphics for brands that refuse to blend in. From animated logos to full explainer sequences — motion designed with purpose and precision.",
+    desc: "Custom animated graphics for brands that refuse to blend in. From animated logos to full explainer sequences, motion is designed with purpose and precision.",
     includes: [
       "Custom Motion Design",
-      "Brand-aligned Animation",
+      "Brand aligned Animation",
       "Animated Logo & Transitions",
       "Intro / Outro Sequences",
       "Social Media Format Delivery",
@@ -79,15 +80,15 @@ const VIDEO_PLANS = [
   {
     n: "03",
     name: "Video Bundle",
-    tagline: "3–5 videos. Maximum impact.",
-    desc: "Our best-value production package. A series of premium video assets built with a unified visual language, cohesive narrative arc, and priority turnaround.",
+    tagline: "Three to five videos. Maximum impact.",
+    desc: "Our best value production package. A series of premium video assets built with a unified visual language, cohesive narrative arc, and priority turnaround.",
     includes: [
       "Everything in Video Production",
-      "Series Pre-production Strategy",
+      "Series Pre production Strategy",
       "Dedicated Production Day(s)",
       "Consistent Visual Identity",
       "Priority Editing Turnaround",
-      "Best per-video rate",
+      "Best per video rate",
     ],
     ideal: "Campaigns, content series, brand storytelling",
     featured: true,
@@ -103,11 +104,11 @@ const FAQ = [
   },
   {
     q: "How long does a typical project take?",
-    a: "Website builds typically run 4–8 weeks. Web applications are scoped individually based on complexity. Single video productions are usually delivered within 2–3 weeks of the shoot date.",
+    a: "Website builds typically run four to eight weeks. Web applications are scoped individually based on complexity. Single video productions are usually delivered within two to three weeks of the shoot date.",
   },
   {
     q: "Do you work with international clients?",
-    a: "Yes. Our clients span Europe, the Middle East, and North America. We operate with a global-first mindset — async communication and flexible scheduling across any timezone.",
+    a: "Yes. Our clients span Europe, the Middle East, and North America. We operate with a global first mindset; we utilize async communication and flexible scheduling across any timezone.",
   },
   {
     q: "What's your payment structure?",
@@ -126,6 +127,10 @@ export default function PricingPage() {
   const videoCardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const faqRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
+  const ctaSectionRef = useRef<HTMLDivElement>(null);
+  const ctaWrapperRef = useRef<HTMLDivElement>(null);
+  const ctaImageRef = useRef<HTMLDivElement>(null);
+  const ctaTextRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -152,10 +157,9 @@ export default function PricingPage() {
       staggerIn(webCardRefs.current, webCardRefs.current[0]);
       staggerIn(videoCardRefs.current, videoCardRefs.current[0]);
 
-      [faqRef, ctaRef].forEach((ref) => {
-        if (!ref.current) return;
+      if (faqRef.current) {
         gsap.fromTo(
-          ref.current,
+          faqRef.current,
           { y: 50, opacity: 0 },
           {
             y: 0,
@@ -163,13 +167,49 @@ export default function PricingPage() {
             duration: 1.2,
             ease: "power3.out",
             scrollTrigger: {
-              trigger: ref.current,
+              trigger: faqRef.current,
               start: "top 85%",
               toggleActions: "play none none none",
             },
           }
         );
-      });
+      }
+
+      // 3. Immersive CTA Animation
+      if (ctaSectionRef.current) {
+        const isMobile = window.innerWidth < 768;
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: ctaSectionRef.current,
+            start: "top bottom",
+            end: "bottom bottom",
+            scrub: true,
+          }
+        });
+
+        tl.fromTo(ctaWrapperRef.current,
+          { clipPath: isMobile ? "inset(15% 5% 15% 5% round 2rem)" : "inset(20% 15% 20% 15% round 3rem)" },
+          { clipPath: "inset(0% 0% 0% 0% round 0rem)", ease: "power2.inOut" }
+        );
+
+        tl.fromTo(ctaImageRef.current,
+          { scale: 1.2 },
+          { scale: 1, ease: "power2.inOut" },
+          "<"
+        );
+
+        gsap.to(ctaTextRef.current, {
+           opacity: 1,
+           y: 0,
+           duration: 1,
+           ease: "power3.out",
+           scrollTrigger: {
+             trigger: ctaSectionRef.current,
+             start: "center 70%",
+             toggleActions: "play none none reverse",
+           }
+        });
+      }
     }, containerRef);
     return () => ctx.revert();
   }, []);
@@ -191,7 +231,7 @@ export default function PricingPage() {
           <div className="mb-16 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div>
               <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[var(--color-sage)] mb-4 block font-semibold">
-                01 — Web Development
+                01 / Web Development
               </span>
               <h2 className="font-display text-4xl md:text-6xl leading-tight">Digital Systems.</h2>
             </div>
@@ -257,7 +297,7 @@ export default function PricingPage() {
           <div className="mb-16 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div>
               <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[var(--color-sage)] mb-4 block font-light">
-                02 — Videography
+                02 / Videography
               </span>
               <h2 className="font-display text-4xl md:text-6xl text-[var(--color-off-white)] leading-tight">
                 Visual Storytelling.
@@ -399,17 +439,44 @@ export default function PricingPage() {
           </div>
         </section>
 
-        {/* ── CTA ────────────────────────────────────────────────── */}
-        <section className="container-padding py-40 text-center flex flex-col items-center border-t border-white/5">
-          <div ref={ctaRef} className="flex flex-col items-center">
-            <h2 className="font-display text-4xl md:text-7xl mb-12 leading-tight max-w-3xl">
-              Ready to invest in your{" "}
-              <em className="italic text-[var(--color-sage)]">authority</em>?
-            </h2>
-            <Button href="/contact" variant="primary">
-              Get Started
-            </Button>
-          </div>
+        {/* Immersive CTA */}
+        <section 
+          ref={ctaSectionRef}
+          className="relative flex items-center justify-center h-screen w-full overflow-hidden bg-[var(--color-obsidian)]"
+        >
+           <div 
+             ref={ctaWrapperRef}
+             className="absolute inset-0 w-full h-full will-change-transform"
+           >
+              {/* Background Image */}
+              <div className="absolute inset-0 w-full h-full will-change-transform" ref={ctaImageRef}>
+                <Image 
+                  src="/General/aesth_window.png"
+                  alt="Build your digital presence"
+                  fill
+                  className="object-cover"
+                  sizes="100vw"
+                />
+                {/* Overlay gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
+              </div>
+
+              {/* Text Content */}
+              <div 
+                ref={ctaTextRef}
+                className="absolute inset-0 flex flex-col items-center justify-end text-center p-8 pb-32 md:p-20 md:pb-40 opacity-0 translate-y-12 will-change-transform"
+              >
+                 <span className="font-mono text-[10px] md:text-[12px] tracking-[0.4em] uppercase text-[var(--color-sage)] mb-6 md:mb-8 font-semibold">
+                   Next Steps
+                 </span>
+                 <h2 className="font-display text-4xl md:text-7xl lg:text-8xl mb-12 leading-[1.05] tracking-tight max-w-4xl text-white drop-shadow-2xl">
+                   Engineering <br/><em className="italic font-light">Authority.</em>
+                 </h2>
+                 <Button href="/contact" variant="primary" className="scale-110 md:scale-125 hover:scale-125 transition-transform duration-300">
+                   Request a Quote
+                 </Button>
+              </div>
+           </div>
         </section>
       </div>
     </PageWrapper>

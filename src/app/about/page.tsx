@@ -4,6 +4,7 @@ import PageWrapper from "@/components/layout/PageWrapper";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import TeamMemberCard from "@/components/ui/team-member-card";
 import { useRef, useLayoutEffect } from "react";
 import { gsap, ScrollTrigger } from "@/utils/gsap";
 
@@ -17,10 +18,12 @@ const VALUES = [
 export default function AboutPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
-  const personRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const imageWrappersRef = useRef<(HTMLDivElement | null)[]>([]);
   const valuesRef = useRef<(HTMLDivElement | null)[]>([]);
   const ctaRef = useRef<HTMLDivElement>(null);
+  const ctaSectionRef = useRef<HTMLDivElement>(null);
+  const ctaWrapperRef = useRef<HTMLDivElement>(null);
+  const ctaImageRef = useRef<HTMLDivElement>(null);
+  const ctaTextRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -36,14 +39,41 @@ export default function AboutPage() {
         );
       }
 
-      // 2. People (Parallax & Entrance)
-      personRefs.current.forEach((el, i) => {
-        if (!el) return;
-        gsap.fromTo(el, { y: 80, opacity: 0 }, { y: 0, opacity: 1, duration: 1.2, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none none" } });
-        
-        const imgWrap = imageWrappersRef.current[i];
-        if (imgWrap) {
-          gsap.fromTo(imgWrap, { yPercent: -15 }, { yPercent: 15, ease: "none", scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: true } });
+      // 2. Global Entrance Animations
+      gsap.utils.toArray<HTMLElement>(".fade-up").forEach((el) => {
+        gsap.fromTo(el, 
+          { opacity: 0, y: 40 },
+          { 
+            opacity: 1, 
+            y: 0, 
+            duration: 1, 
+            ease: "power3.out", 
+            scrollTrigger: {
+              trigger: el,
+              start: "top 85%",
+              toggleActions: "play none none reverse"
+            } 
+          }
+        );
+      });
+
+      // Global Parallax Backgrounds
+      gsap.utils.toArray<HTMLElement>(".parallax-bg").forEach((el) => {
+        const parent = el.parentElement;
+        if (parent) {
+          gsap.fromTo(el,
+            { yPercent: -10 },
+            {
+              yPercent: 10,
+              ease: "none",
+              scrollTrigger: {
+                trigger: parent,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: true,
+              }
+            }
+          );
         }
       });
 
@@ -60,16 +90,40 @@ export default function AboutPage() {
         );
       });
 
-      // 4. CTA
-      if (ctaRef.current) {
-        gsap.fromTo(
-          ctaRef.current,
-          { y: 50, opacity: 0 },
-          {
-            y: 0, opacity: 1, duration: 1.2, ease: "power3.out",
-            scrollTrigger: { trigger: ctaRef.current, start: "top 85%", toggleActions: "play none none none" }
+      // 5. Immersive CTA Animation
+      if (ctaSectionRef.current) {
+        const isMobile = window.innerWidth < 768;
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: ctaSectionRef.current,
+            start: "top bottom",
+            end: "bottom bottom",
+            scrub: true,
           }
+        });
+
+        tl.fromTo(ctaWrapperRef.current,
+          { clipPath: isMobile ? "inset(15% 5% 15% 5% round 2rem)" : "inset(20% 15% 20% 15% round 3rem)" },
+          { clipPath: "inset(0% 0% 0% 0% round 0rem)", ease: "power2.inOut" }
         );
+
+        tl.fromTo(ctaImageRef.current,
+          { scale: 1.2 },
+          { scale: 1, ease: "power2.inOut" },
+          "<"
+        );
+
+        gsap.to(ctaTextRef.current, {
+           opacity: 1,
+           y: 0,
+           duration: 1,
+           ease: "power3.out",
+           scrollTrigger: {
+             trigger: ctaSectionRef.current,
+             start: "center 70%",
+             toggleActions: "play none none reverse",
+           }
+        });
       }
     }, containerRef);
     return () => ctx.revert();
@@ -91,54 +145,28 @@ export default function AboutPage() {
            <h2 className="font-display text-4xl md:text-7xl leading-[1.1] max-w-2xl">Two minds. One vision for digital authority.</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20">
-          {/* Konstantinos */}
-          <div className="flex flex-col group" ref={el => { personRefs.current[0] = el; }}>
-            <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl mb-10 bg-[var(--color-pale-warm)]">
-              <div 
-                ref={el => { imageWrappersRef.current[0] = el; }}
-                className="absolute top-[-20%] left-0 w-full h-[140%] will-change-transform"
-              >
-                <Image
-                  src="/About/konstantinos.jpg"
-                  alt="Konstantinos — The Architect"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-              </div>
-              <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500" />
-            </div>
-            <span className="font-mono text-[10px] tracking-widest uppercase text-[var(--color-sage)] mb-4">01 / The Architect</span>
-            <h3 className="font-display text-3xl mb-6">Konstantinos</h3>
-            <p className="font-sans font-light text-lg text-black/60 leading-relaxed max-w-sm">
-              The technical foundation. Konstantinos engineers the systems that bring ideas to life — from core architecture to pixel-perfect execution. He believes the best code is invisible but felt through performance.
-            </p>
-          </div>
+        <div className="flex flex-col">
+          <TeamMemberCard
+            position="left"
+            jobPosition="01 / The Architect"
+            firstName="Konstantinos"
+            lastName=""
+            imageUrl="/About/konstantinos.jpg"
+            description="The technical foundation. Konstantinos engineers the systems that bring ideas to life — from core architecture to pixel-perfect execution. He believes the best code is invisible but felt through performance."
+            extraText="With a deep background in computer science and full-stack architecture, he ensures that the backend matches the aesthetic ambition of the frontend."
+            href="/contact"
+          />
 
-          {/* Nabil */}
-          <div className="flex flex-col group md:pt-40" ref={el => { personRefs.current[1] = el; }}>
-            <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl mb-10 bg-[var(--color-pale-warm)]">
-              <div 
-                ref={el => { imageWrappersRef.current[1] = el; }}
-                className="absolute top-[-20%] left-0 w-full h-[140%] will-change-transform"
-              >
-                <Image
-                  src="/About/nabil.jpg"
-                  alt="Nabil — The Visionary"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-              </div>
-              <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500" />
-            </div>
-            <span className="font-mono text-[10px] tracking-widest uppercase text-[var(--color-sage)] mb-4">02 / The Visionary</span>
-            <h3 className="font-display text-3xl mb-6">Nabil</h3>
-            <p className="font-sans font-light text-lg text-black/60 leading-relaxed max-w-sm">
-              The creative force. Nabil shapes the narratives and aesthetics that define each project — translating abstract brand ambitions into tangible, arresting visual identities and cinematic films.
-            </p>
-          </div>
+          <TeamMemberCard
+            position="right"
+            jobPosition="02 / The Visionary"
+            firstName="Nabil"
+            lastName=""
+            imageUrl="/About/nabil.jpg"
+            description="The creative force. Nabil shapes the narratives and aesthetics that define each project — translating abstract brand ambitions into tangible, arresting visual identities and cinematic films."
+            extraText="An eye honed by years in cinematography and design, his work connects strategy to raw emotional impact, ensuring every project is unforgettable."
+            href="/contact"
+          />
         </div>
       </section>
 
@@ -172,15 +200,43 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="container-padding py-40 text-center flex flex-col items-center border-t border-white/5">
-         <div ref={ctaRef} className="flex flex-col items-center">
-           <h2 className="font-display text-4xl md:text-7xl mb-12 leading-tight max-w-3xl">
-             Ready to build something <em className="italic text-[var(--color-sage)]">remarkable</em>?
-           </h2>
-           <Button href="/contact" variant="primary">
-             Get in Touch
-           </Button>
+      {/* Immersive CTA */}
+      <section 
+        ref={ctaSectionRef}
+        className="relative flex items-center justify-center h-screen w-full overflow-hidden bg-[var(--color-obsidian)]"
+      >
+         <div 
+           ref={ctaWrapperRef}
+           className="absolute inset-0 w-full h-full will-change-transform"
+         >
+            {/* Background Image */}
+            <div className="absolute inset-0 w-full h-full will-change-transform" ref={ctaImageRef}>
+              <Image 
+                src="/General/aesth_wall_strett.png"
+                alt="Build your digital presence"
+                fill
+                className="object-cover"
+                sizes="100vw"
+              />
+              {/* Overlay gradient */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20" />
+            </div>
+
+            {/* Text Content */}
+            <div 
+              ref={ctaTextRef}
+              className="absolute inset-0 flex flex-col items-center justify-end text-center p-8 pb-32 md:p-20 md:pb-40 opacity-0 translate-y-12 will-change-transform"
+            >
+               <span className="font-mono text-[10px] md:text-[12px] tracking-[0.4em] uppercase text-[var(--color-sage)] mb-6 md:mb-8 font-semibold">
+                 Next Steps
+               </span>
+               <h2 className="font-display text-4xl md:text-7xl lg:text-8xl mb-12 leading-[1.05] tracking-tight max-w-4xl text-white drop-shadow-2xl">
+                 Engineering <br/><em className="italic font-light">Authority.</em>
+               </h2>
+               <Button href="/contact" variant="primary" className="scale-110 md:scale-125 hover:scale-125 transition-transform duration-300">
+                 Request a Quote
+               </Button>
+            </div>
          </div>
       </section>
       </div>

@@ -1,10 +1,9 @@
-"use client";
-
-import Link from "next/link";
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
+import TransitionLink from "@/components/layout/TransitionLink";
 
 type ButtonVariant = "primary" | "secondary";
+// ... (rest of the file stays similar but replaces Link with TransitionLink)
 
 type CommonProps = {
   variant?: ButtonVariant;
@@ -63,17 +62,29 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
 
       if ("href" in props && props.href) {
         const external = "external" in props && props.external;
+        if (external) {
+          return (
+            <a
+              ref={ref as React.Ref<HTMLAnchorElement>}
+              href={props.href}
+              data-cursor="hover"
+              className={cn(primaryBase, className)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {content}
+            </a>
+          );
+        }
         return (
-          <Link
+          <TransitionLink
             ref={ref as React.Ref<HTMLAnchorElement>}
             href={props.href}
             data-cursor="hover"
             className={cn(primaryBase, className)}
-            target={external ? "_blank" : undefined}
-            rel={external ? "noopener noreferrer" : undefined}
           >
             {content}
-          </Link>
+          </TransitionLink>
         );
       }
 
@@ -112,17 +123,29 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, Props>(
 
     if ("href" in props && props.href) {
       const external = "external" in props && props.external;
+      if (external) {
+        return (
+          <a
+            ref={ref as React.Ref<HTMLAnchorElement>}
+            href={props.href}
+            data-cursor="hover"
+            className={cn(secondaryBase, className)}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {content}
+          </a>
+        );
+      }
       return (
-        <Link
+        <TransitionLink
           ref={ref as React.Ref<HTMLAnchorElement>}
           href={props.href}
           data-cursor="hover"
           className={cn(secondaryBase, className)}
-          target={external ? "_blank" : undefined}
-          rel={external ? "noopener noreferrer" : undefined}
         >
           {content}
-        </Link>
+        </TransitionLink>
       );
     }
 
