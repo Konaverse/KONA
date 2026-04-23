@@ -82,6 +82,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://kona-verse.com',
   },
+  other: {
+    'theme-color': '#0a0a0a',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
