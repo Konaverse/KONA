@@ -322,12 +322,17 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Z-4 — Headline + qualifying statement (bottom-left) */}
+        {/* Z-4 — Headline + cards mobile wrapper (md:contents = invisible on desktop) */}
+        <div
+          className="max-md:absolute max-md:bottom-[28%] max-md:left-4 max-md:right-4 max-md:flex max-md:flex-col md:contents"
+          style={{ zIndex: 4 }}
+        >
+
+        {/* Headline + qualifying statement (bottom-left) */}
         <div
           ref={headlineRef}
-          className="gpu absolute flex flex-col max-md:bottom-[30%] max-md:left-6 max-md:right-6 md:bottom-[80px] md:left-[48px]"
+          className="gpu max-md:relative md:absolute flex flex-col max-md:left-2 max-md:right-2 md:bottom-[80px] md:left-[48px]"
           style={{
-            zIndex: 4,
             textAlign: 'left',
             willChange: 'transform',
           }}
@@ -382,11 +387,11 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Z-4 — Beat 1: Stat cluster (bottom-right) */}
+        {/* Beat 1: Stat cluster — flows below headline on mobile, bottom-right on desktop */}
         <div
           ref={cardsWrapperRef}
-          className="absolute bottom-8 left-4 right-4 md:bottom-[80px] md:left-auto md:right-12 flex flex-row items-end gap-0 pointer-events-none"
-          style={{ zIndex: 4, willChange: 'transform, opacity' }}
+          className="max-md:relative max-md:mt-6 max-md:left-2 md:absolute md:bottom-[80px] md:left-auto md:right-12 flex flex-row items-end gap-0 pointer-events-none"
+          style={{ willChange: 'transform, opacity' }}
         >
           {/* Stat A — 1 / Mission */}
           <div
@@ -514,6 +519,7 @@ export default function HeroSection() {
             </span>
           </div>
         </div>
+        </div>{/* end mobile wrapper */}
 
         {/* Horizontal line — two halves meeting at center */}
         <div
