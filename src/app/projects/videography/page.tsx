@@ -16,7 +16,7 @@ const FILMS = [
     client: "Studio",
     description: "A cinematic brand narrative showcasing our philosophy and the intersection of architectural precision and digital storytelling.",
     image: "/Solutions/Videography/konaverse_vid_cover.png",
-    video: "/Solutions/Videography/konavers_video.mp4",
+    video: "https://res.cloudinary.com/konaverse/video/upload/v1776969624/konaverse/videos/konavers_video.mp4",
     instagram: "https://www.instagram.com/reel/DU3PWPfDKZk/",
     tags: ["Brand Film", "Studio Reel", "Cinematography"]
   },
@@ -27,7 +27,7 @@ const FILMS = [
     client: "LosSantos Barbershop",
     description: "Capturing the premium grooming experience in Limassol. A study in texture, lighting, and the rhythmic motion of traditional craftsmanship.",
     image: "/Solutions/Videography/los_santos_barbershop_cover.png",
-    video: "/Solutions/Videography/barbershop_video.mp4",
+    video: "https://res.cloudinary.com/konaverse/video/upload/v1776969632/konaverse/videos/barbershop_video.mp4",
     instagram: "https://www.instagram.com/reel/DW1m3ZwihuR/",
     tags: ["Documentary", "Craftsmanship", "Lifestyle"]
   },
@@ -38,7 +38,7 @@ const FILMS = [
     client: "Alterlife Gym",
     description: "A high-intensity visual study of the Alterlife experience. Capturing the energy, discipline, and communal drive of the modern fitness ritual.",
     image: "/Solutions/Videography/alterlife_gym_video.png",
-    video: "/Solutions/Videography/alterlife_gym.MP4",
+    video: "https://res.cloudinary.com/konaverse/video/upload/v1776970009/konaverse/videos/alterlife_gym.mp4",
     instagram: "https://www.instagram.com/reel/DXT3uDaivuo/",
     tags: ["Fitness", "High Energy", "Brand Showcase"]
   },
@@ -49,7 +49,7 @@ const FILMS = [
     client: "Personal Project",
     description: "An experimental study in human motion and atmospheric perspective. Capturing the raw intensity and rhythmic pace of the track.",
     image: "/Solutions/Videography/race_track_cover.png",
-    video: "/Solutions/Videography/race_track_vid.mp4",
+    video: "https://res.cloudinary.com/konaverse/video/upload/v1776969625/konaverse/videos/race_track_vid.mp4",
     instagram: "https://www.instagram.com/reel/DW9jjj_CtjG/",
     tags: ["Experimental", "Athletics", "High Frame Rate"]
   }

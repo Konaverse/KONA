@@ -345,12 +345,14 @@ function MobileNavItem({
   label, 
   dropdown, 
   itemVariants,
-  href 
+  href,
+  onClose
 }: { 
   label: string; 
   dropdown?: (DropItem & { href: string })[]; 
   itemVariants?: any;
   href?: string;
+  onClose?: () => void;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -385,6 +387,7 @@ function MobileNavItem({
       ) : (
         <TransitionLink 
           href={href || "#"}
+          onClick={onClose}
           className="flex items-center justify-between w-full text-left outline-none group no-underline"
         >
           <span 
@@ -410,7 +413,12 @@ function MobileNavItem({
           >
             <div className="flex flex-col gap-5 pt-5">
               {dropdown.map((item: any, i) => (
-                <TransitionLink key={item.label} href={item.href} className="flex flex-col gap-1 opacity-80 hover:opacity-100 transition-opacity no-underline">
+                <TransitionLink 
+                  key={item.label} 
+                  href={item.href} 
+                  onClick={onClose}
+                  className="flex flex-col gap-1 opacity-80 hover:opacity-100 transition-opacity no-underline"
+                >
                   <span className="text-base font-medium text-[#f0ede8]" style={{ fontFamily: "var(--font-jakarta), sans-serif" }}>{item.label}</span>
                   <span className="text-sm text-white/40" style={{ fontFamily: "var(--font-jakarta), sans-serif" }}>{item.desc}</span>
                 </TransitionLink>
@@ -619,10 +627,10 @@ export default function Navbar() {
               className="flex flex-col gap-6 overflow-y-auto mt-4 relative z-10" 
               style={{ msOverflowStyle: "none", scrollbarWidth: "none" }}
             >
-              <MobileNavItem label="Services" dropdown={SERVICES} href="/services" itemVariants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } }, exit: { opacity: 0, y: 10 } }} />
-              <MobileNavItem label="Projects" dropdown={PROJECTS} href="/projects" itemVariants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } }, exit: { opacity: 0, y: 10 } }} />
-              <MobileNavItem label="About" href="/about" itemVariants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } }, exit: { opacity: 0, y: 10 } }} />
-              <MobileNavItem label="Pricing" href="/pricing" itemVariants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } }, exit: { opacity: 0, y: 10 } }} />
+              <MobileNavItem label="Services" dropdown={SERVICES} href="/services" onClose={() => setMobileOpen(false)} itemVariants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } }, exit: { opacity: 0, y: 10 } }} />
+              <MobileNavItem label="Projects" dropdown={PROJECTS} href="/projects" onClose={() => setMobileOpen(false)} itemVariants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } }, exit: { opacity: 0, y: 10 } }} />
+              <MobileNavItem label="About" href="/about" onClose={() => setMobileOpen(false)} itemVariants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } }, exit: { opacity: 0, y: 10 } }} />
+              <MobileNavItem label="Pricing" href="/pricing" onClose={() => setMobileOpen(false)} itemVariants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } }, exit: { opacity: 0, y: 10 } }} />
             </motion.div>
 
             <motion.div 
@@ -634,6 +642,7 @@ export default function Navbar() {
             >
                <TransitionLink
                   href="/contact"
+                  onClick={() => setMobileOpen(false)}
                   className="inline-flex items-center justify-center w-full gap-2 text-sm font-semibold tracking-widest uppercase rounded-[40px] py-[18px] transition-all active:scale-95 no-underline"
                   style={{ fontFamily: "var(--font-jakarta), sans-serif", background: ACCENT, color: "#fff", boxShadow: "0 8px 30px -10px rgba(107,127,98,0.5)" }}
                 >
