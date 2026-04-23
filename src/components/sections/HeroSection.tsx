@@ -324,7 +324,7 @@ export default function HeroSection() {
 
         {/* Z-4 — Headline + cards mobile wrapper (md:contents = invisible on desktop) */}
         <div
-          className="max-md:absolute max-md:bottom-[28%] max-md:left-4 max-md:right-4 max-md:flex max-md:flex-col md:contents"
+          className="max-md:absolute max-md:bottom-[20%] max-md:left-4 max-md:right-4 max-md:flex max-md:flex-col md:contents"
           style={{ zIndex: 4 }}
         >
 
