@@ -4,45 +4,54 @@ import PageWrapper from "@/components/layout/PageWrapper";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { useRef, useLayoutEffect } from "react";
+import { useRef, useLayoutEffect, useState } from "react";
 import { gsap, ScrollTrigger } from "@/utils/gsap";
+import { motion, AnimatePresence } from "framer-motion";
 
 const FILMS = [
   {
-    id: "curator",
-    title: "The Curator",
+    id: "konaverse",
+    title: "The Konaverse",
     year: "2024",
-    client: "Bespoke Artisans",
-    description: "A deep-dive brand narrative focusing on the obsessive detail of handmade furniture. We utilized macro-cinematography and a rhythmic edit to translate craftsmanship into cinematic form.",
-    image: "/Solutions/videography.jpg",
-    tags: ["Brand Film", "Macro", "4K Production"]
+    client: "Studio",
+    description: "A cinematic brand narrative showcasing our philosophy and the intersection of architectural precision and digital storytelling.",
+    image: "/Solutions/Videography/konaverse_vid_cover.png",
+    video: "/Solutions/Videography/konavers_video.mp4",
+    instagram: "https://www.instagram.com/reel/DU3PWPfDKZk/",
+    tags: ["Brand Film", "Studio Reel", "Cinematography"]
   },
   {
-    id: "precision",
-    title: "Precision",
+    id: "barbershop",
+    title: "Los Santos",
     year: "2024",
-    client: "GL Metal",
-    description: "A high-end industrial showcase that dramatizes the heavy machinery and technical exactness of metal fabrication. High-contrast lighting and sound design create a feeling of raw power.",
-    image: "/General/videography_aesthetic..png",
-    tags: ["Product Showcase", "Industrial", "Sound Design"]
+    client: "LosSantos Barbershop",
+    description: "Capturing the premium grooming experience in Limassol. A study in texture, lighting, and the rhythmic motion of traditional craftsmanship.",
+    image: "/Solutions/Videography/los_santos_barbershop_cover.png",
+    video: "/Solutions/Videography/barbershop_video.mp4",
+    instagram: "https://www.instagram.com/reel/DW1m3ZwihuR/",
+    tags: ["Documentary", "Craftsmanship", "Lifestyle"]
   },
   {
-    id: "coastal",
-    title: "Coastal Living",
-    year: "2023",
-    client: "Sivory Properties",
-    description: "An atmospheric lifestyle piece for a luxury development. We focused on the interaction of natural light and architectural materials to evoke a sense of calm authority.",
-    image: "/a_pro_camera.png",
-    tags: ["Lifestyle", "Aerial", "Color Grading"]
+    id: "alterlife",
+    title: "The Ritual",
+    year: "2024",
+    client: "Alterlife Gym",
+    description: "A high-intensity visual study of the Alterlife experience. Capturing the energy, discipline, and communal drive of the modern fitness ritual.",
+    image: "/Solutions/Videography/alterlife_gym_video.png",
+    video: "/Solutions/Videography/alterlife_gym.MP4",
+    instagram: "https://www.instagram.com/reel/DXT3uDaivuo/",
+    tags: ["Fitness", "High Energy", "Brand Showcase"]
   },
   {
-    id: "process",
-    title: "The Process",
+    id: "velocity",
+    title: "Velocity",
     year: "2023",
-    client: "Konaverse Labs",
-    description: "An experimental short film exploring the intersection of digital design and physical space. A study in light, shadow, and the creative friction behind our studio's work.",
-    image: "/Solutions/layer1-lens flares.png",
-    tags: ["Experimental", "Behind the Scenes", "VFX"]
+    client: "Personal Project",
+    description: "An experimental study in human motion and atmospheric perspective. Capturing the raw intensity and rhythmic pace of the track.",
+    image: "/Solutions/Videography/race_track_cover.png",
+    video: "/Solutions/Videography/race_track_vid.mp4",
+    instagram: "https://www.instagram.com/reel/DW9jjj_CtjG/",
+    tags: ["Experimental", "Athletics", "High Frame Rate"]
   }
 ];
 
@@ -52,6 +61,8 @@ export default function VideographyProjectsArchive() {
   const ctaWrapperRef = useRef<HTMLDivElement>(null);
   const ctaImageRef = useRef<HTMLDivElement>(null);
   const ctaTextRef = useRef<HTMLDivElement>(null);
+
+  const [activeVideo, setActiveVideo] = useState<typeof FILMS[0] | null>(null);
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -150,7 +161,10 @@ export default function VideographyProjectsArchive() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-24 md:gap-y-40">
           {FILMS.map((film, index) => (
             <div key={film.id} className={`flex flex-col ${index % 2 !== 0 ? "md:pt-40" : ""}`}>
-              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl group cursor-pointer mb-8">
+              <div 
+                className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl group cursor-pointer mb-8"
+                onClick={() => setActiveVideo(film)}
+              >
                  <Image
                    src={film.image}
                    alt={film.title}
@@ -162,7 +176,7 @@ export default function VideographyProjectsArchive() {
                  
                  {/* Play Hint */}
                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center scale-90 group-hover:scale-100 transition-transform duration-500">
                        <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
                           <path d="M7 6v12l10-6z" />
                        </svg>
@@ -195,6 +209,66 @@ export default function VideographyProjectsArchive() {
           ))}
         </div>
       </section>
+
+      {/* Video Modal */}
+      <AnimatePresence>
+        {activeVideo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/95 backdrop-blur-sm p-4 md:p-12"
+            onClick={() => setActiveVideo(null)}
+          >
+             <motion.div 
+               initial={{ scale: 0.95, opacity: 0 }}
+               animate={{ scale: 1, opacity: 1 }}
+               exit={{ scale: 0.95, opacity: 0 }}
+               transition={{ type: "spring", damping: 30, stiffness: 300 }}
+               className="relative w-full max-w-6xl aspect-video bg-[#0a0a0a] rounded-2xl overflow-hidden shadow-2xl"
+               onClick={(e) => e.stopPropagation()}
+             >
+                {/* Close Button */}
+                <button 
+                  className="absolute top-6 right-6 z-10 w-12 h-12 rounded-full bg-black/50 border border-white/10 flex items-center justify-center text-white hover:bg-white hover:text-black transition-colors duration-300"
+                  onClick={() => setActiveVideo(null)}
+                >
+                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                   </svg>
+                </button>
+
+                <video 
+                  src={activeVideo.video}
+                  className="w-full h-full object-contain"
+                  controls
+                  autoPlay
+                  playsInline
+                />
+
+                {/* Info Bar */}
+                <div className="absolute bottom-0 left-0 right-0 p-8 pt-20 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none">
+                   <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                      <div>
+                         <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[var(--color-sage)] mb-2 block">{activeVideo.client}</span>
+                         <h3 className="font-display text-2xl md:text-4xl text-white">{activeVideo.title}</h3>
+                      </div>
+                      <a 
+                        href={activeVideo.instagram} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="pointer-events-auto flex items-center gap-3 text-[10px] font-mono tracking-widest uppercase text-white/60 hover:text-[var(--color-sage)] transition-colors duration-300"
+                      >
+                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                         View on Instagram
+                      </a>
+                   </div>
+                </div>
+             </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Philosophy Callout */}
       <section className="bg-[var(--color-soft-white)] text-[var(--color-obsidian)] section-padding container-padding">

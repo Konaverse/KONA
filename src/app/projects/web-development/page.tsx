@@ -15,8 +15,9 @@ const PROJECTS = [
     services: ["Web Design", "Development", "Performance"],
     description: "A premium digital presence for a high-end architectural and hospitality brand. Focusing on minimalist aesthetics and seamless transitions that reflect the physical space.",
     image: "/Projects/sivory_macbook.png",
-    mobileImage: "/Projects/sivory_iphone.png",
-    tech: ["Next.js", "GSAP", "Tailwind"]
+    mobileImage: "/Projects/sivory_mobile.jpeg",
+    tech: ["Next.js", "GSAP", "Tailwind"],
+    href: "https://sivorydesigns.com"
   },
   {
     id: "tdk",
@@ -26,7 +27,8 @@ const PROJECTS = [
     description: "A sophisticated platform for an international corporate group. Engineering authority through clean typography and a performant, scalable architecture.",
     image: "/Projects/tdk_macbook.png",
     mobileImage: "/Projects/tdk_iphone.png",
-    tech: ["React", "Node.js", "Framer"]
+    tech: ["React", "Node.js", "Framer"],
+    href: "https://tdkdb.com"
   },
   {
     id: "glmetal",
@@ -35,16 +37,20 @@ const PROJECTS = [
     services: ["Industrial Presence", "Web Development"],
     description: "Translating industrial precision into a digital format. We focused on high-contrast visuals and direct, authoritative communication for this specialized sector.",
     image: "/Projects/glmetalworks.png",
-    tech: ["Next.js", "TypeScript"]
+    mobileImage: "/Projects/gl_metal_mobile.jpeg",
+    tech: ["Next.js", "TypeScript"],
+    href: "https://glmetalworks.com"
   },
   {
-    id: "leanthia",
-    title: "Leanthia Bakery",
+    id: "lossantos",
+    title: "Los Santos Barbers",
     year: "2024",
-    services: ["E-commerce", "Brand Storytelling"],
-    description: "An artisanal e-commerce experience. We brought the tactile feeling of a local bakery to the digital world through warm tones and cinematic product photography.",
-    image: "/Projects/LeanthiaBakery.png",
-    tech: ["Shopify", "Custom Theme"]
+    services: ["Web Design", "Development", "Booking System"],
+    description: "A premium digital presence for a high-end barbershop. We focused on conversion-driven booking flows and atmospheric visuals that capture the shop's unique vibe.",
+    image: "/Projects/lossantosbarbers.png",
+    mobileImage: "/Projects/los_santos_mobile.jpeg",
+    tech: ["Next.js", "GSAP"],
+    href: "https://lossantosbarbers.com"
   },
   {
     id: "velricon",
@@ -53,7 +59,9 @@ const PROJECTS = [
     services: ["Corporate Site", "Performance"],
     description: "A modern corporate presence focusing on conversion and clarity. We optimized every interaction for business growth and market impact.",
     image: "/Projects/velricon.png",
-    tech: ["Tailwind", "Next.js"]
+    mobileImage: "/Projects/velricon_mobile.jpeg",
+    tech: ["Tailwind", "Next.js"],
+    href: "https://velricon.com"
   },
   {
     id: "apt-showcase",
@@ -63,7 +71,8 @@ const PROJECTS = [
     description: "A high-fidelity real estate showcase for luxury apartments. Featuring interactive unit browsers and cinematic floorplan reveals.",
     image: "/Projects/apt_macbook.png",
     mobileImage: "/Projects/apt_iphone.png",
-    tech: ["React", "GSAP"]
+    tech: ["React", "GSAP"],
+    href: "https://aptmetalconstruction.com"
   }
 ];
 
@@ -190,14 +199,33 @@ export default function WebProjectsArchive() {
                 {project.description}
               </p>
 
-              <div className="flex flex-col gap-4">
-                <span className="font-mono text-[9px] tracking-[0.2em] uppercase opacity-30">Disciplines</span>
-                <div className="flex flex-wrap gap-4">
-                  {project.services.map(s => (
-                    <span key={s} className="px-3 py-1.5 border border-white/10 rounded-full font-mono text-[9px] tracking-widest uppercase opacity-60">
-                      {s}
-                    </span>
-                  ))}
+              <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-4">
+                  <span className="font-mono text-[9px] tracking-[0.2em] uppercase opacity-30">Disciplines</span>
+                  <div className="flex flex-wrap gap-4">
+                    {project.services.map(s => (
+                      <span key={s} className="px-3 py-1.5 border border-white/10 rounded-full font-mono text-[9px] tracking-widest uppercase opacity-60">
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="pt-4">
+                   <Button 
+                     href={project.href} 
+                     variant="outline" 
+                     className="group/btn"
+                     target="_blank"
+                     rel="noopener noreferrer"
+                   >
+                      <span className="flex items-center gap-3">
+                        Visit Website
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="transition-transform duration-300 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1">
+                          <path d="M2.5 9.5L9.5 2.5M9.5 2.5H4M9.5 2.5V8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </span>
+                   </Button>
                 </div>
               </div>
             </div>
