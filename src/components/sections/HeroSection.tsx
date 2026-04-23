@@ -325,7 +325,7 @@ export default function HeroSection() {
         {/* Z-4 — Headline + qualifying statement (bottom-left) */}
         <div
           ref={headlineRef}
-          className="gpu absolute flex flex-col max-md:bottom-[108px] max-md:left-6 max-md:right-6 md:bottom-[80px] md:left-[48px]"
+          className="gpu absolute flex flex-col max-md:bottom-[30%] max-md:left-6 max-md:right-6 md:bottom-[80px] md:left-[48px]"
           style={{
             zIndex: 4,
             textAlign: 'left',
