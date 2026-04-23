@@ -1,4 +1,4 @@
-# About Konaverse
+# About Page Konaverse
 
 **URL**: https://kona-verse.com/about
 
