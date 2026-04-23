@@ -136,8 +136,20 @@ export default function ContactPage() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus("loading");
+    const data = new FormData(formRef.current!);
     try {
-      await new Promise((r) => setTimeout(r, 1500));
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.get("name"),
+          email: data.get("email"),
+          message: data.get("message"),
+          service,
+          budget,
+        }),
+      });
+      if (!res.ok) throw new Error();
       setStatus("success");
       formRef.current?.reset();
       setService("");
