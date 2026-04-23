@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     await resend.emails.send({
-      from: "Konaverse Contact <onboarding@resend.dev>",
+      from: "Konaverse <noreply@kona-verse.com>",
       to: "info@kona-verse.com",
       replyTo: email,
       subject: `New inquiry — ${name} · ${service || "General"}`,

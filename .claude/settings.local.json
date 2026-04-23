@@ -83,7 +83,10 @@
       "Bash(gunzip)",
       "Bash(tar -tf /tmp/design_bundle.tar)",
       "Bash(tar -xf /tmp/design_bundle.tar -C /tmp/)",
-      "Read(//tmp/konaverse/project/**)"
+      "Read(//tmp/konaverse/project/**)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
     ]
   }
 }
