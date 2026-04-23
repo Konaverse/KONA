@@ -212,9 +212,9 @@ export default function WebProjectsArchive() {
                 </div>
 
                 <div className="pt-4">
-                   <Button 
-                     href={project.href} 
-                     variant="outline" 
+                   <Button
+                     href={project.href}
+                     variant="secondary"
                      className="group/btn"
                      target="_blank"
                      rel="noopener noreferrer"
