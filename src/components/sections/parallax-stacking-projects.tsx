@@ -26,13 +26,49 @@ export interface StackProject {
 
 interface ParallaxStackingProjectsProps {
   projects: StackProject[];
+  theme?: "dark" | "light";
 }
+
+/* ── Theme tokens ── */
+
+const THEMES = {
+  dark: {
+    pageBg: "#000",
+    frame: "#000",
+    textPrimary: "#fff",
+    textMuted: "rgba(255,255,255,0.4)",
+    watermark: "rgba(255,255,255,0.03)",
+    tagBorder: "rgba(255,255,255,0.12)",
+    imageOpacity: 0.4,
+    titleShadow: "0 2px 12px rgba(0,0,0,0.8)",
+    vignetteDesktop:
+      "linear-gradient(to right, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.25) 55%, rgba(0,0,0,0.08) 100%)",
+    vignetteMobile:
+      "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.1) 100%)",
+  },
+  light: {
+    pageBg: "#f4f3ee",
+    frame: "#f4f3ee",
+    textPrimary: "#161616",
+    textMuted: "rgba(22,22,22,0.5)",
+    watermark: "rgba(22,22,22,0.05)",
+    tagBorder: "rgba(22,22,22,0.18)",
+    imageOpacity: 0.95,
+    titleShadow: "0 2px 14px rgba(244,243,238,0.7)",
+    vignetteDesktop:
+      "linear-gradient(to right, rgba(244,243,238,0.94) 0%, rgba(244,243,238,0.55) 48%, rgba(244,243,238,0.05) 100%)",
+    vignetteMobile:
+      "linear-gradient(to top, rgba(244,243,238,0.95) 0%, rgba(244,243,238,0.45) 42%, rgba(244,243,238,0.05) 100%)",
+  },
+} as const;
 
 /* ── Component ── */
 
 export default function ParallaxStackingProjects({
   projects,
+  theme = "dark",
 }: ParallaxStackingProjectsProps) {
+  const t = THEMES[theme];
   const rootRef = useRef<HTMLDivElement>(null);
   const canvasRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [isMobile, setIsMobile] = useState(false);
@@ -119,7 +155,7 @@ export default function ParallaxStackingProjects({
         position: "relative",
         width: "100%",
         display: "block",
-        backgroundColor: "#000",
+        backgroundColor: t.pageBg,
         paddingLeft: isMobile ? "1rem" : "clamp(1rem, 4vw, 5rem)",
         paddingRight: isMobile ? "1rem" : "clamp(1rem, 4vw, 5rem)",
         paddingTop: 0,
@@ -135,7 +171,7 @@ export default function ParallaxStackingProjects({
           display: "block",
           margin: "0 auto",
           borderRadius: isMobile ? "0.75rem" : "1.5rem",
-          boxShadow: `0 0 0 ${isMobile ? "0.75rem" : "1.5rem"} #000`,
+          boxShadow: `0 0 0 ${isMobile ? "0.75rem" : "1.5rem"} ${t.frame}`,
         }}
       >
         {projects.map((project, index) => (
@@ -208,7 +244,7 @@ export default function ParallaxStackingProjects({
                         fontWeight: 800,
                         fontSize: 100,
                         lineHeight: 1,
-                        color: "rgba(255,255,255,0.04)",
+                        color: t.watermark,
                         userSelect: "none",
                         pointerEvents: "none",
                       }}
@@ -261,7 +297,7 @@ export default function ParallaxStackingProjects({
                           fontSize: 10,
                           letterSpacing: "0.25em",
                           textTransform: "uppercase",
-                          color: "rgba(255,255,255,0.4)",
+                          color: t.textMuted,
                         }}
                       >
                         {project.year}
@@ -271,11 +307,11 @@ export default function ParallaxStackingProjects({
                           fontFamily: "var(--font-monument), sans-serif",
                           fontWeight: 800,
                           fontSize: 18,
-                          color: "#fff",
+                          color: t.textPrimary,
                           textAlign: "center",
                           margin: 0,
                           padding: "0 16px",
-                          textShadow: "0 2px 12px rgba(0,0,0,0.8)",
+                          textShadow: t.titleShadow,
                         }}
                       >
                         {project.title}
@@ -315,7 +351,7 @@ export default function ParallaxStackingProjects({
                           fontWeight: 800,
                           fontSize: "clamp(150px, 18vw, 260px)",
                           lineHeight: 1,
-                          color: "rgba(255,255,255,0.03)",
+                          color: t.watermark,
                           userSelect: "none",
                           pointerEvents: "none",
                         }}
@@ -329,7 +365,7 @@ export default function ParallaxStackingProjects({
                           fontSize: 11,
                           letterSpacing: "0.3em",
                           textTransform: "uppercase",
-                          color: "rgba(255,255,255,0.4)",
+                          color: t.textMuted,
                         }}
                       >
                         {project.year}
@@ -342,7 +378,7 @@ export default function ParallaxStackingProjects({
                           fontSize: "clamp(2rem, 5vw, 5rem)",
                           lineHeight: 0.9,
                           textTransform: "uppercase",
-                          color: "#fff",
+                          color: t.textPrimary,
                           margin: 0,
                         }}
                       >
@@ -358,9 +394,9 @@ export default function ParallaxStackingProjects({
                             marginTop: 4,
                           }}
                         >
-                          {project.tags.map((t) => (
+                          {project.tags.map((tag) => (
                             <span
-                              key={t}
+                              key={tag}
                               style={{
                                 fontFamily:
                                   "var(--font-geist-mono), monospace",
@@ -369,11 +405,11 @@ export default function ParallaxStackingProjects({
                                 textTransform: "uppercase",
                                 padding: "4px 12px",
                                 borderRadius: 999,
-                                border: "1px solid rgba(255,255,255,0.12)",
-                                color: "rgba(255,255,255,0.4)",
+                                border: `1px solid ${t.tagBorder}`,
+                                color: t.textMuted,
                               }}
                             >
-                              {t}
+                              {tag}
                             </span>
                           ))}
                         </div>
@@ -414,7 +450,7 @@ export default function ParallaxStackingProjects({
               style={{
                 position: "absolute",
                 inset: 0,
-                opacity: 0.4,
+                opacity: t.imageOpacity,
                 willChange: "transform",
               }}
             >
@@ -446,9 +482,7 @@ export default function ParallaxStackingProjects({
                 style={{
                   position: "absolute",
                   inset: 0,
-                  background: isMobile
-                    ? "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.1) 100%)"
-                    : "linear-gradient(to right, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.25) 55%, rgba(0,0,0,0.08) 100%)",
+                  background: isMobile ? t.vignetteMobile : t.vignetteDesktop,
                 }}
               />
             </div>

@@ -1,25 +1,29 @@
-import HeroSection from '@/components/sections/HeroSection'
-import ServicesSection from '@/components/sections/ServicesSection'
-import DualitySection from '@/components/sections/homepage/DualitySection'
+import HeroV2 from '@/components/sections/homepage/HeroV2'
+import AboutSection from '@/components/sections/homepage/AboutSection'
+import ServicesVault from '@/components/sections/homepage/ServicesVault'
 import ManifestoSection from '@/components/sections/homepage/ManifestoSection'
-import ProcessSection from '@/components/sections/homepage/ProcessSection'
-import ProjectsSection from '@/components/sections/ProjectsSection'
-import StudioSection from '@/components/sections/StudioSection'
-import HomeCTA from '@/components/sections/homepage/HomeCTA'
-
+import ProjectsSection from '@/components/sections/homepage/ProjectsSection'
+import InterludeSection from '@/components/sections/homepage/InterludeSection'
 
 export default function Home() {
   return (
     <div className="grain">
-      <HeroSection />
-      <ServicesSection />
-      <DualitySection />
-      <ManifestoSection />
-      <ProcessSection />
+      {/* Hero stays pinned; About scrolls over it (higher z-index) */}
+      <div className="hero-pin">
+        <HeroV2 />
+      </div>
+      {/* About pins its last frame → Services irises over it (vault door) →
+          Services stays pinned while the Manifesto scrolls over it (tilt). */}
+      <div style={{ position: 'relative' }}>
+        <AboutSection />
+        <ServicesVault>
+          <ManifestoSection />
+        </ServicesVault>
+      </div>
+      {/* Projects — plain scroll after the manifesto (no special transition) */}
       <ProjectsSection />
-      <StudioSection />
-      <HomeCTA />
-
+      {/* Interlude — tilts in over Projects (same transition as Hero → About) */}
+      <InterludeSection />
     </div>
   )
 }

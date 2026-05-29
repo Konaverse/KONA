@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import ParallaxStackingProjects from "@/components/sections/parallax-stacking-projects";
 
 const projects = [
@@ -38,8 +39,31 @@ const projects = [
 ];
 
 export default function ProjectsSection() {
+  const ref = useRef<HTMLElement>(null);
+
+  // Pin the section's LAST 100vh (negative-top sticky) so the Interlude can
+  // tilt and scroll over the held final project frame — same mechanic as About.
+  const [stickyTop, setStickyTop] = useState(0);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const measure = () =>
+      setStickyTop(Math.min(0, window.innerHeight - el.offsetHeight));
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    window.addEventListener("resize", measure);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
+
   return (
-    <section style={{ background: "#000" }}>
+    <section
+      ref={ref}
+      style={{ position: "sticky", top: stickyTop, zIndex: 40, background: "#f4f3ee" }}
+    >
       {/* Editorial title */}
       <div
         style={{
@@ -53,18 +77,18 @@ export default function ProjectsSection() {
             fontSize: "clamp(3rem, 10vw, 10rem)",
             lineHeight: 0.9,
             letterSpacing: "-0.02em",
-            color: "#ffffff",
+            color: "#161616",
             textTransform: "uppercase",
             margin: 0,
           }}
         >
           Selected
           <br />
-          <span style={{ color: "rgba(255,255,255,0.15)" }}>Work</span>
+          <span style={{ color: "rgba(22,22,22,0.18)" }}>Work</span>
         </h2>
       </div>
 
-      <ParallaxStackingProjects projects={projects} />
+      <ParallaxStackingProjects projects={projects} theme="light" />
     </section>
   );
 }

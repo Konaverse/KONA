@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Cormorant_Garamond, DM_Sans, Geist_Mono } from 'next/font/google'
+import { Cormorant_Garamond, DM_Sans, Geist_Mono, Inter } from 'next/font/google'
 import Navbar from '@/components/layout/Navbar'
 import SmoothScroll from '@/components/SmoothScroll'
 import CustomCursor from '@/components/ui/CustomCursor'
@@ -14,6 +14,13 @@ const cormorant = Cormorant_Garamond({
   weight: ['300', '400', '600'],
   style: ['normal', 'italic'],
   variable: '--font-cormorant',
+  display: 'swap',
+})
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-inter',
   display: 'swap',
 })
 
@@ -93,7 +100,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${cormorant.variable} ${dmSans.variable} ${geistMono.variable}`}
+      className={`${cormorant.variable} ${inter.variable} ${dmSans.variable} ${geistMono.variable}`}
     >
       <body className="antialiased">
         <JsonLd data={{

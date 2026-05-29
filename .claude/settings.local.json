@@ -88,7 +88,24 @@
       "Bash(git commit -m ' *)",
       "Bash(git push *)",
       "Bash(git stash *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(python .claude/skills/ui-ux-pro-max/scripts/search.py \"web development studio agency futuristic technological minimal dark gradient\" --design-system -p \"KONA\" -f markdown)",
+      "Bash(python \"C:\\\\Users\\\\konst\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"web development studio agency futuristic technological minimal dark gradient\" --design-system -p \"KONA\" -f markdown)",
+      "Bash(python \"C:\\\\Users\\\\konst\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"dark futuristic glassmorphism glow gradient technological\" --domain style -n 4)",
+      "Bash(python \"C:\\\\Users\\\\konst\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"futuristic modern geometric tech display headline lightweight\" --domain typography -n 5)",
+      "Bash(python \"C:\\\\Users\\\\konst\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"dark tech cyan teal futuristic saas\" --domain color -n 5)",
+      "Bash(python \"C:\\\\Users\\\\konst\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"hero studio agency portfolio social-proof\" --domain landing -n 4)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 40)",
+      "PowerShell(Out-Null *)",
+      "PowerShell(Receive-Job *)",
+      "PowerShell(try { $r=Invoke-WebRequest -UseBasicParsing -Uri 'http://localhost:3055/' -TimeoutSec 8; Write-Output \\(\"STATUS \" + $r.StatusCode\\); $c=$r.Content; Write-Output \\(\"KONAVERSE letters: \" + \\($c -match '>K<'\\)\\); Write-Output \\(\"headline: \" + \\($c -match 'engineered'\\)\\); Write-Output \\(\"image: \" + \\($c -match 'Tech-Noir'\\)\\) } catch { Write-Output \\(\"ERR: \" + $_.Exception.Message\\) })",
+      "PowerShell(Get-Job *)",
+      "PowerShell(npx next dev -p 3056)",
+      "PowerShell($ok=$false; for\\($i=0;$i -lt 40;$i++\\){ try { $r=Invoke-WebRequest -UseBasicParsing -Uri 'http://localhost:3056/' -TimeoutSec 4; if\\($r.StatusCode -eq 200\\){ $ok=$true; break } } catch {} ; Start-Sleep -Milliseconds 2000 }; if\\($ok\\){ $c=$r.Content; Write-Output \"HTTP 200 OK\"; Write-Output \\(\"wordmark K: \" + \\($c -match '>K<'\\)\\); Write-Output \\(\"headline: \" + \\($c -match 'engineered'\\)\\); Write-Output \\(\"image: \" + \\($c -match 'Tech-Noir'\\)\\) } else { Write-Output \"NO 200 within timeout\" })",
+      "PowerShell(Get-NetTCPConnection *)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 20; Write-Output \"---tsc done---\")",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 25; Write-Output \"---tsc done---\")",
+      "PowerShell(npx tsc --noEmit)"
     ]
   }
 }

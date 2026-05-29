@@ -1,203 +1,246 @@
-# Konaverse — Homepage Design Specification
-**Version 2.0 | Claude Code build reference**
+# KONA — Website Design Specification
+**Version 3.1 | Futuristic Tech Minimalism + Cinematic Scroll | Claude Code build reference**
+
+> **What this document is:** the single source of truth for how the KONA (Konaverse) site looks, feels, and *moves*. Read section **00** before building anything — the wow factor is the product. Everything else serves it.
+
+> **Direction shift from v2.0:** The editorial/newspaper aesthetic (Cormorant Garamond serif, sage/sand earthy palette, dual web-dev + videography positioning) is **retired**. v3.x is futuristic, minimal, mysterious, and *kinetic*: dark-dominant with deliberate light interludes, lightweight Inter typography, an earthy-green (`#6B7F62`) accent, and **extreme section-to-section transitions** as the signature. Web development is the *only* service. The previous spec is preserved in git history.
+
+---
+
+## 00. The Experience Thesis — *the wow factor*
+
+KONA is a web development studio. The site itself is the portfolio. A visitor should finish the homepage thinking **"how did they do that?"** — and want to hire the people who can.
+
+Three non-negotiables drive every decision:
+
+1. **Every section boundary is an EVENT.** We do not stack sections that simply scroll past one another. Each transition is choreographed — a section pins while the next one *takes over the screen* with intent (tilts in, irises open, drops down, flies through). If a boundary is "just scrolling," it's not finished.
+2. **Motion is the brand.** Scroll-driven reveals, parallax depth, perspective tilts, clip-path wipes, hover micro-interactions. Restrained and slow, never frantic — but always alive. Static = wrong.
+3. **Whitespace is luxury.** Oversized type used as graphic. Huge breathing room. Few elements, each placed deliberately. Emptiness signals confidence; clutter signals a template.
+
+The emotional register: **a forward-looking technology lab, not a magazine.** Mysterious, cinematic, premium. Quiet authority expressed through darkness, depth, glow, and impeccable motion — never through hype or density.
+
+**Contrast is a tool.** The site is dark-dominant, but light sections (About, Manifesto) are dropped in as *interludes* — and the transitions weaponize that dark↔light flip for drama. A glowing-green iris opening from a held dark frame onto… no; onto a held frame and revealing a bright panel sliding in — that jolt is the point.
+
+When in doubt: **bigger type, more space, slower motion, bolder transition.**
+
+---
 
 ## 01. Project Identity
-- **Studio name:** Konaverse
-- **Tagline:** Creative Studio, Limitless Possibilities
-- **Positioning:** Premium two-person digital agency. Web development and videography. Calm authority — not agency hype.
-- **Target clients:** High-ticket service businesses, real estate, hospitality, startups, e-commerce across Cyprus, Greece, and Europe.
-- **Emotional register:** The feeling of walking into a high-end architecture firm. Quiet confidence. Everything is considered. Nothing is accidental.
+- **Studio name:** KONA (Konaverse)
+- **Positioning:** Web development studio. Single discipline. **Videography is removed entirely** — no dual-discipline framing, no "Duality" section, no videography projects or references anywhere.
+- **Target clients:** High-ticket service businesses, startups, and brands that want a modern, technological web presence across Cyprus, Greece, and Europe.
+- **One-liner:** "A web development studio building fast, refined, future-facing products for brands that refuse the ordinary."
+- **Mood references:** NUORBIT (dark, glowing ring portal, silhouette mystery), NeoVision (clean light tech-product clarity), Kinetic Studio (oversized type-as-graphic, motion-blur imagery, staggered cards). See **§12**.
+
+---
 
 ## 02. Brand Tokens
 
-### Typography
+### Typography — *no serifs, ever; lightweight always*
 | Role | Font | Weight | Notes |
 |------|------|--------|-------|
-| Display / Hero | Cormorant Garamond | 300 Light | Mixed case. Large scale. Negative tracking (-0.02em). Desktop hero: `clamp(56px, 7vw, 100px)`. Mobile hero: `clamp(22px, 6.5vw, 28px)`. |
-| Section Headlines | Cormorant Garamond | 300–400 | Refined, editorial. Never uppercase forced unless in a cinematic section (e.g. Process). |
-| Emphasis Display | Cormorant Garamond | 600 | Used sparingly: italic emphasis in CTA headlines (`Engineering *Authority.*`). |
-| Body / Paragraphs | DM Sans | 300–400 | Generous line-height (1.7). Never dense. Body color on dark: `rgba(250,247,242,0.6–0.7)`. |
-| UI Labels / Micro-copy | Geist Mono | 400 | Uppercase, letter-spacing: 0.15–0.18em. Small scale only (9–11px). |
-| Navigation | DM Sans | 400–500 | Clean, no weight gimmicks. Nav links: `0.72rem`, uppercase, `tracking-[0.08em]`. |
-| Buttons | DM Sans | 700 (Bold) | `text-xs`, `tracking-widest`, uppercase. |
+| Display / Hero wordmark | **Inter** | 400–500 | Oversized as a graphic element (the NUORBIT/kinétic treatment). Negative tracking (−0.02 to −0.03em). Hero wordmark sized in pure `vw` so it bleeds off the viewport edges. |
+| Section Headlines | **Inter** | 300–400 | Clean, light, neutral. Sentence case or sparing uppercase. Large. |
+| Gradient Emphasis | **Inter** | 500 | Key headline word(s) only, filled with the earthy-green accent gradient (`background-clip: text`). Used sparingly. |
+| Body / Paragraphs | **DM Sans** | 300–400 | Light. Generous line-height (1.6–1.7). |
+| UI Labels / Micro-copy / Tags | **Geist Mono** | 400 | Uppercase, letter-spacing `0.14–0.2em`, small scale (9–12px). The HUD/tech texture. |
+| Buttons | **DM Sans** | 600–700 | `text-xs`, `tracking-widest`, uppercase. |
 
-**Font loading (via `next/font/google`):**
-- Cormorant Garamond: weights `300, 400, 600`, styles `normal, italic`, CSS var `--font-cormorant`
-- DM Sans: weights `300, 400, 500`, CSS var `--font-dm-sans`
-- Geist Mono: weight `400`, CSS var `--font-geist-mono`
+**Font loading (`next/font/google`):** Inter `--font-inter` (300–700) · DM Sans `--font-dm-sans` (300–500) · Geist Mono `--font-geist-mono` (400). Cormorant is still loaded only because the legacy `FooterSection` references it; do **not** use it in new work.
 
-**Critical typography rules:**
-- No eyebrow labels above section titles. Ever.
-- No double-dash (—) decorative dividers used as a design pattern.
-- No hero + subheadline + primary button stacked layout (the generic AI pattern).
-- Font sizes should feel editorial, not form-driven. Hero text should feel physically large.
+**Typography rules:**
+- **No serif fonts.** Display is lightweight Inter — favor 300–500. Airy, never heavy.
+- Oversized headline type is a *design element*, not just text. Let it bleed, overlap, or dominate.
+- Gradient fill is reserved for emphasis words only; never gradient a whole paragraph.
+- No eyebrow labels above *section titles* (small in-card tags/labels are fine — see Services/About cards).
 - Whitespace is a typographic decision — use it with intention.
 
-### Color System
+### Color System — dark-dominant with light interludes
+**Earthy green `#6B7F62` is the brand main color.** It is the *only* accent — used for gradient emphasis, glows, rings, hover states, arrows, and active states. No teal, blue, or purple.
 
-#### Primary Palette
+#### Dark palette (default surface)
 | Token | Hex | Role |
 |-------|-----|------|
-| `--color-obsidian` | `#111111` | Primary dark background (Projects section, cards) |
-| `--color-near-black` | `#0a0a0a` | Deepest dark — Hero, Services, html/body default |
-| `--color-sage` | `#6b7f62` | Brand green accent — lines, hover states, scrollbar, buttons |
-| `--color-warm-sand` | `#b6a492` | Secondary accent, light section warmth |
-| `--color-pale-warm` | `#c8b4a0` | Light section supporting tone |
-| `--color-soft-white` | `#faf7f2` | Primary light text on dark. Also Manifesto section bg |
-| `--color-off-white` | `#ededea` | Body text on dark backgrounds, button default fill |
+| `--color-bg` | `#0B0B10` | Deep space black — primary dark surface |
+| `--color-bg-deep` | `#050510` | Deepest dark — footer, page-transition stripes |
+| `--color-surface` | `#0E0E12` / `#111119` | Card / elevated dark surface |
+| `--color-ink` / `--color-text` | `#F8FAFC` | Primary text on dark |
+| `--color-muted` | `#94A3B8` | Secondary text on dark |
+| `--color-line` / `--color-border` | `#1E293B` | Dividers, hairlines |
+| `--color-accent-from` | `#8BA27C` | Lighter sage — gradient start |
+| `--color-accent-to` | `#6B7F62` | Earthy green — gradient end, glow (**brand main**) |
 
-#### Extended Dark Palette (In Use)
-| Hex | Where Used |
-|-----|------------|
-| `#050505` | Duality section, Process section, Footer bg |
-| `#08080a` | Navbar glass bg, mobile nav backdrop, page transition stripes |
-| `#f0ede8` | Display text on dark (stat numbers, footer tagline, nav hover). Slightly warmer than `--off-white` |
-| `#2a2622` | Body text on light backgrounds (Studio paragraph) |
+**Accent gradient:** `linear-gradient(120deg, #8BA27C 0%, #6B7F62 100%)`. Glow via `text-shadow` / radial gradients / soft box-shadow — **never** arcade-neon strobe.
 
-#### Extended Light Palette (In Use)
-| Hex | Where Used |
-|-----|------------|
-| `#e6e3da` | Studio section background — calm beige (NOT `--soft-white`) |
-| `#d8d5cc` | Portrait placeholder bg |
-| `#4A5443` | Darkened sage for light backgrounds (nickname labels in Studio) |
-| `#5C5449` | Darkened warm sand for light backgrounds (role labels in Studio) |
+#### Light interlude palette (used in About, Manifesto)
+| Hex | Role |
+|-----|------|
+| `#F4F3EE` | About panel background — warm near-white |
+| `#FAF7F2` | Manifesto panel background |
+| `#E7E5DF` | Light card background |
+| `#161616` | Primary text on light |
+| `#BDBCB6` / `#9A9A94` | Muted/secondary text on light |
 
-#### Opacity Conventions
-| Pattern | Use |
-|---------|-----|
-| `rgba(250,247,242,0.6)` | Body text on dark — secondary |
-| `rgba(250,247,242,0.35)` | Service number labels (e.g. `01 — Web Development`) |
-| `rgba(255,255,255,0.4)` | Mono micro-copy on dark |
-| `rgba(255,255,255,0.08)` | Divider borders on dark |
-| `rgba(255,255,255,0.06)` | Glass fill |
-| `rgba(255,255,255,0.07–0.10)` | Glass border |
-| `rgba(107,127,98,0.3)` | Scrollbar thumb, selection bg |
+Light sections are **deliberate, occasional interludes** — a breath and a contrast spike, not a default. Most of the site is dark. The dark↔light flip is exploited by the transitions (§04).
+
+#### Opacity conventions (on dark)
+`rgba(248,250,252,0.6)` secondary text · `rgba(255,255,255,0.08)` dividers · `rgba(255,255,255,0.05)` glass fill · `rgba(255,255,255,0.08–0.12)` glass border · `rgba(107,127,98,0.3)` accent glow / scrollbar / selection.
 
 ### Grain & Texture
-Every dark section carries a subtle film grain overlay (SVG `feTurbulence` fractalNoise, `baseFrequency: 0.9`, `numOctaves: 4`). Applied globally via the `.grain::after` pseudo-element on the page wrapper. Fixed position, full viewport, `z-index: 9999`, `opacity: 0.035`. This is what separates the surface from feeling plastic. Do not skip this.
+Every dark surface carries a subtle film-grain overlay (SVG `feTurbulence` fractalNoise, `baseFrequency 0.9`, `numOctaves 4`) via the global `.grain::after` pseudo-element — fixed, full viewport, `z-index: 9999`, `opacity 0.035`. It separates the surface from feeling plastic. Do not skip it.
+
+### Atmospheric Imagery
+Blurred, atmospheric, mysterious — motion blur, glowing halos/rings, silhouettes, depth-of-field, green/teal tones with warm core glows. Technological and cinematic, never documentary/editorial. Treat images as **ambient light sources behind type**, or as framed "work" cards. Imagery lives in `public/Hero/` (atmospheric) and `public/Projects/` (real work screenshots).
 
 ### Glassmorphism
-Glassmorphism is used in exactly two contexts:
+Used sparingly: the navbar/dropdowns (`backdrop-filter: blur(40–50px)`, dark translucent fill, `border 1px rgba(255,255,255,0.08)`, large radius that tightens on scroll) and small glass tags/buttons over imagery. Never on every card.
 
-1. **Navbar** (desktop + dropdowns): `backdrop-filter: blur(40px)`, `background: rgba(8,8,10,0.82)` when scrolled / `rgba(8,8,10,0.12)` at top, `border: 1px solid rgba(255,255,255,0.08)`, `border-radius: 28–34px` (animates tighter on scroll). Dropdowns: `backdrop-filter: blur(50px)`, `background: rgba(10,10,14,0.88)`, `border-radius: 20px`.
-2. **Decorative sheens**: Navbar and dropdown panels both carry a subtle top-left gradient sheen (`linear-gradient(160deg, rgba(255,255,255,0.06) 0%, transparent 50%)`).
+---
 
 ## 03. Button System
 
-### Primary — Editorial Pill
-- Shape: `rounded-full`, padding `px-8 py-4`
-- Default state: `bg-[--color-off-white]` (#ededea) text `--color-obsidian` (#111)
-- Hover: Sage green (`--color-sage`) sweeps up from bottom via `translate-y` transform. Text turns white. Subtle shimmer sweep follows. Shadow: `0 10px 40px -10px rgba(107,127,98,0.55)`
-- Arrow icon: NE-pointing arrow, 12×12, stroked
-- Font: DM Sans, bold, xs, tracking-widest, uppercase
-- Easing: `cubic-bezier(0.22, 1, 0.36, 1)`, 500ms
+### Primary — Glow Pill (`.hero-cta`)
+- `rounded-full`, default `bg-[--color-ink]` with dark text.
+- Hover: earthy-green gradient sweeps **up** from the bottom (`::before` `translateY 100%→0`), text stays dark, soft green glow `0 10px 40px -10px rgba(107,127,98,0.55)`.
+- Trailing NE arrow that nudges on hover. DM Sans 600–700, xs, tracking-widest, uppercase. Easing `cubic-bezier(0.22,1,0.36,1)`, 500ms.
 
 ### Secondary — Text Link
-- Inline flex, no background
-- Color: `--color-off-white`, hover → white
-- Underline: `--color-sage` scaleX reveal on hover, `origin-left`
-- Arrow icon: same as primary, slides right on hover
+Inline, no background. Earthy-green gradient underline reveals via `scaleX` from `origin-left` on hover; arrow slides right.
 
-## 04. Section Rhythm — Dark / Light Map
-| # | Section | Component | Theme | Notes |
-|---|---------|-----------|-------|-------|
-| 1 | Hero | `HeroSection` | Dark (`#0a0a0a`) | Scrollytelling: 3 beats (entrance → expansion → statement). Pinned `+250%` scroll track. |
-| 2 | Services | `ServicesSection` | Dark (`#0a0a0a`) | Two-discipline editorial layout with parallax images |
-| 3 | Duality | `DualitySection` | Dark (`#050505`) | Full-viewport split: Web Dev left / Videography right. Convergent parallax. Sage divider line. |
-| 4 | Manifesto | `ManifestoSection` | Light (`#faf7f2`) | Word-by-word opacity reveal on scroll. `300vh` scroll track. Page exhales here. |
-| 5 | Process | `ProcessSection` | Dark (`#050505`) | 3-act crossfade (Strategy → Creation → Delivery) with parallax BG images and progress dots. `300vh` scroll track. |
-| 6 | Projects | `ProjectsSection` | Dark (`#111111`) | Stacking parallax cards — giats.me mechanic. Canvas slides reveal next card. |
-| 7 | Studio | `StudioSection` | Light (`#e6e3da`) | Calm beige. Two-person portraits with grayscale → color hover, bio reveal. |
-| 8 | CTA | `HomeCTA` | Dark (`#111111`) | Clip-path expansion reveal. "Engineering *Authority.*" Button CTA. |
-| — | Footer | `FooterSection` | Dark (`#050505`) | Full-viewport sticky reveal via parallax. Ambient sage glows. Architectural grid lines. |
+### Circular Icon Button
+Solid earthy-green disc with dark stroked arrow + green glow (e.g. the active Services row). 34–44px.
 
-**Transition rules:**
-- Dark → Dark transitions (Services → Duality, Process → Projects) must be seamless — no visible section break. Use `marginTop: -1px` where needed.
-- Light sections (Manifesto, Studio) should feel like a sudden breath of air after the dark intensity.
-- CTA → Footer is handled by the footer's parallax reveal mechanic (footer slides up from behind the CTA).
+---
 
-## 05. Scroll & Animation System
+## 04. Motion & Transition System — *the signature*
 
-### Smooth Scroll
-Lenis via `@studio-freight/lenis` with `smoothWheel: true`, `lerp: 0.1`. Synced to GSAP ScrollTrigger via `lenis.on('scroll', ScrollTrigger.update)`. Disabled entirely when `prefers-reduced-motion: reduce`.
+This is the heart of v3.x. Section transitions are not afterthoughts; they are designed, named, reusable mechanics. **Build new sections to plug into this system.**
 
-### Animation Libraries
-- **GSAP** (with ScrollTrigger) — All scroll-driven animations, parallax, pinned sequences, entrance reveals
-- **Framer Motion** — Navbar animations (state transitions, dropdowns, mobile menu), page transitions
+### Foundations (the plumbing)
+- **Smooth scroll:** Lenis (`@studio-freight/lenis`, `smoothWheel`, `lerp 0.1`) drives **native window scroll** (no transform wrapper — so `position: sticky` and `useScroll` both work). Synced to GSAP via `lenis.on('scroll', ScrollTrigger.update)`. Disabled under `prefers-reduced-motion`.
+- **Libraries:** **Framer Motion** (`useScroll` / `useTransform` / `useMotionTemplate`) for per-section scroll choreography; **GSAP + ScrollTrigger** for scrub timelines & split-text; **Three.js / R3F + postprocessing** for atmospheric hero elements, used judiciously.
+- **The sticky stack:** sections that get covered are pinned with `position: sticky` and **stay pinned**; the next section scrolls *over* them. Stack them inside a shared `position: relative` scene so each pin has its scroll runway.
+- **The z-index ladder:** each successive section sits one rung higher so it paints over the pinned one beneath. Current ladder: Hero `0` → About `10` → Services `20` → Manifesto `30` → (next `40`, …). **Increment by 10 per section.**
+- **Always gate motion** behind `prefers-reduced-motion`: tilts, irises, and pins collapse to a plain stacked/opaque fallback.
 
-### Global Animation Principles
-- **Entrance animations:** Everything that enters uses either masked line reveals (text, via `.mask-parent` / `.mask-child`) or opacity + translateY (images/blocks). Nothing pops in — everything slides or unmasks.
-- **Easing:** `power3.out` for entrances. `none` (linear) for scrubbed scroll animations. `power2.inOut` for hover transitions. Framer Motion equivalent: `[0.22, 1, 0.36, 1]`.
-- **Duration:** Text reveals: `0.9–1.1s`. Block reveals: `0.7–0.9s`. Hover: `0.3s`. Never faster than `0.25s`.
-- **Stagger:** `60–120ms` between sequential elements. Never more than `200ms` — it starts feeling slow.
-- **Reduced motion:** All scroll-driven animations disabled, entrance animations reduced to simple opacity fade when `prefers-reduced-motion: reduce`.
+### The choreography patterns (as built — reuse these)
 
-### Page Transitions
-10-stripe vertical shutter pattern (`#08080a`) that retracts via `scaleY: 1 → 0` with staggered delays (`0.02s` per stripe). Page content fades in underneath with `opacity: 0 → 1` + `y: 15 → 0`, `0.8s`, `delay: 0.2s`. Grain overlay included on the transition layer.
+**A. Pinned scroll-over + perspective tilt** — *Hero → About, Services → Manifesto*
+The previous section is pinned; the incoming section rises over it on a 3D tilt that straightens as it closes in. The "amaze" default for most boundaries.
+- Incoming panel: opaque background, rounded top corners (`28px`), soft top shadow.
+- `transformPerspective: 1400`, `transformOrigin: 50% 0%`, `rotateX: 12 → 0`, `scale: 0.96 → 1`.
+- Driven by `useScroll({ target, offset: ["start end", "start start"] })` — tilted when entering at viewport bottom, flat when its top reaches viewport top.
 
-### What Is Never Animated
-- Layout properties (`width`, `height`, `margin`, `padding`, `top`, `left`)
-- Font size (use `scale` instead)
-- Background color directly (use opacity overlays instead)
-- Border width
+**B. Pinned last-frame (bottom-pin a tall section)** — *About*
+For sections taller than the viewport that must hold their **final** screen before the next transition. Use top-anchored sticky with a **negative** top offset = `min(0, viewportHeight − sectionHeight)`, measured in JS (`ResizeObserver` + resize) since height is content-driven. The section scrolls through naturally, then its last 100vh locks for the following reveal. (Plain `sticky; bottom: 0` does **not** do this on scroll-down — don't use it.)
+
+**C. Vault-door iris** — *About → Services*
+The incoming section is revealed through an expanding circle over the *held* previous frame, with a glowing green ring on the edge.
+- Incoming section in a pinned stage (`sticky; top:0; height:100svh; overflow:hidden`), clipped by `useMotionTemplate\`circle(${radius} at 50% 50%)\`` with `radius: 0vmax → 75vmax`.
+- A runway spacer (~`130vh`) gives the iris its solo scroll *before* the next section rises; the iris completes (~26% of the track) then holds open.
+- Glowing ring: a centered round div, `width/height: 0vmax → 150vmax`, green border + glow, opacity fades out as the iris finishes.
+- Reveals the pinned previous section behind it (outside the circle is transparent). Magic factor: very high; cost: low.
+
+### The transition catalog (palette to pull from)
+Beyond what's built, these are sanctioned "crazy" boundaries. Don't repeat the same one twice in a row.
+- **Vault-door iris** *(built)* — expanding clip-path circle + glowing ring.
+- **Curtain drop** — next section starts `translateY(-100%)` and falls to cover, overshooting ~6% and settling with a spring; outgoing section darkens/recedes beneath. (Your "comes from above" idea.)
+- **Depth tunnel (R3F)** — sections on different Z-planes; scrolling flies the camera forward, current section blurs past (DoF/bloom) as the next resolves from a point. The showstopper — reserve for a hero moment.
+- **Stacking parallax cards** — giats.me mechanic for Projects: cards stack and slide, each revealing the next.
+- **Word-by-word scrub reveal** *(built, Manifesto)* — split-text words scatter in from random Z/opacity on scroll scrub.
+
+### Entrance & easing baseline
+- Nothing pops in. Elements enter via masked line reveals (`.mask-parent`/`.mask-child`) or opacity + `translateY` + slight blur.
+- Easing: entrances `power3.out` / Framer `[0.16,1,0.3,1]` or `[0.22,1,0.36,1]`; scrubbed scroll = linear; hover `power2.inOut`.
+- Durations: text reveals `0.9–1.4s`; blocks `0.7–0.9s`; hover `0.3–0.5s`; never faster than `0.25s`. Stagger `60–120ms`, never > `200ms`.
+- Glow pulses: slow `2–4s`, low amplitude.
+
+### Never animate
+Layout props (`width/height/margin/padding/top/left`), `font-size` (use `scale`), border width. Use `transform`/`opacity`/`clip-path` only.
+
+### Page transitions
+10-stripe vertical shutter (`#050510`) retracting via `scaleY 1→0` (staggered `0.02s`/stripe); content fades up underneath (`opacity 0→1`, `y 15→0`, `0.8s`, `delay 0.2s`). Grain on the transition layer.
 
 ### Performance
-- `will-change: transform` on every element that will animate (set in CSS, also via `.gpu` utility class)
-- `transform: translateZ(0)` to force GPU layer (`.gpu` utility class)
-- All images lazy-loaded except hero (and first Process act image)
-- Parallax intensity halved on touch/mobile devices
-- `contain: paint` on stacking card containers to enable clip-based reveal
+`will-change: transform` + `.gpu` on animating elements; lazy-load all images except the hero; halve parallax on touch; `contain: paint` on stacking containers; cap R3F/bloom on mobile and fall back to a static glow image.
 
-### Custom Cursor
-A custom cursor replaces the default on desktop. Implemented via `CustomCursor` component.
+### Custom cursor
+A custom cursor replaces the default on desktop (`CustomCursor`); interactive elements carry `data-cursor` hints (`link`, `card`).
 
-## 06. Responsive Breakpoints
+---
+
+## 05. Section Rhythm — As-Built + Planned
+
+Theme column shows the surface; Transition shows how the section *arrives*. Dark/light alternation is intentional drama.
+
+| # | Section | Component(s) | Theme | Arrival transition |
+|---|---------|--------------|-------|--------------------|
+| 1 | **Hero** | `HeroV2` | Dark, full-bleed image | Pinned (sticky) base layer. Oversized `KONAVERSE` wordmark bleeds off all edges; headline top-left with green gradient word; glow-pill CTA; minimal HUD. |
+| 2 | **About** | `AboutSection` | **Light** `#F4F3EE` | **Pattern A** — tilts in over the pinned Hero, straightens. Then **Pattern B** — pins its own last frame. Kinetic-style: sparkle eyebrow, big dark/muted headline with inline image "pills", caption, 4 vertically-staggered cards (dark / image / image / light) with tag + sparkle + title. |
+| 3 | **Services** | `ServicesSection` in `ServicesVault` | Dark `#0A0A0A` | **Pattern C** — vault-door iris opens over About's held frame, green ring on the edge; then **stays pinned**. Left: "services that we provide" + slow-spinning circular badge. Right: 01–04 accordion (active = white, underlined, tag pills, green arrow; rest large muted-gray). |
+| 4 | **Manifesto** | `ManifestoSection` | **Light** `#FAF7F2` | **Pattern A** — tilts in over the pinned Services. Word-by-word scrub reveal (split-text scatter-in). |
+| 5 | **Projects** | *(planned)* | Dark | Stacking parallax cards (giats.me mechanic). Real web work from `public/Projects/`. |
+| 6 | **Social Proof** | *(planned)* | Dark | Restrained — logos or one strong statement. No testimonial carousel. |
+| 7 | **CTA** | *(planned)* | Dark | Clip-path expansion reveal; gradient-emphasis headline; glow-pill CTA. |
+| — | **Footer** | `FooterSection` *(legacy — restyle pending)* | Dark `#050510` | Parallax reveal; ambient earthy-green glows. |
+
+**Choreography rule of thumb:** alternate dark↔light where it heightens a transition; never run the same arrival mechanic on two consecutive boundaries.
+
+---
+
+## 06. Hover & Micro-interactions
+Interactivity must feel *alive but stable* — never janky layout shifts.
+- **Cards:** lift on hover (`translateY(-6px)`) + deepen shadow; image cards may brighten slightly. Stable — no scale that reflows neighbors.
+- **Accordion (Services):** hover/tap activates a row — color animates muted-gray → white, underline + tag pills + green arrow reveal (`AnimatePresence`, height/opacity).
+- **Links/buttons:** color/gradient/underline transitions (150–500ms), never instant, never > 500ms.
+- **Cursor:** custom cursor reacts to `data-cursor` targets.
+- Respect `prefers-reduced-motion` — keep hover *states* (color) but drop motion.
+
+## 07. Whitespace & Layout Principles
+- Oversized type as graphic; let it bleed off edges (the Hero wordmark) or run full-bleed.
+- Generous negative space; offset compositions (headline blocks pushed right, content at the edges, center left to breathe — see Hero & About).
+- Staggered / asymmetric arrangements over rigid grids (the About card wave).
+- `.container-padding` for horizontal rhythm; sections are commonly `100svh` stages or tall scroll tracks.
+
+---
+
+## 08. Responsive
 | Breakpoint | Width | Notes |
 |------------|-------|-------|
-| Extra Small | `< 480px` | Custom breakpoint `--breakpoint-xs: 480px` |
-| Mobile | `< 768px` | Single column, reduced parallax, stacked portraits |
-| Tablet | `768–1024px` | Hybrid — some two-column, reduced scale |
+| XS | `< 480px` | `--breakpoint-xs` |
+| Mobile | `< 768px` | Single column; reduced/disabled parallax; side card-stacks hidden |
+| Tablet | `768–1024px` | Hybrid |
 | Desktop | `> 1024px` | Full experience |
-| Wide | `> 1440px` | Max-width containers, type scales up via `clamp()` |
+| Wide | `> 1440px` | Max-width containers; type scales via `clamp()` |
 
-**Mobile-specific rules:**
-- Navigation: hamburger only, no persistent links. Full-screen overlay with ambient sage glows.
-- Hero headline: `clamp(22px, 6.5vw, 28px)` (mobile) / `clamp(56px, 7vw, 100px)` (desktop)
-- Services: text + image stack vertically
-- Duality: panels stack vertically (top/bottom split)
-- Process: identical crossfade mechanic, slightly reduced overlays
-- Projects: cards at `50svh` (mobile) vs `100svh` (desktop), images at `83%` width centered
-- Studio: portraits stacked full-width, stagger offset removed
-- All touch targets minimum `44px`
+> **Mobile is close to final and was tuned against the prior build.** Scope desktop-only visual/transition changes via `md:` / `lg:` (or JS width checks) where the two diverge, and re-verify mobile before committing. Heavy scroll choreography (tilts, iris) is desktop-first; on mobile, degrade gracefully.
 
-## 07. Spacing Utilities
-| Class | Effect |
-|-------|--------|
-| `.section-padding` | `py-24 md:py-32 lg:py-40` — vertical rhythm between sections |
-| `.container-padding` | `px-6 md:px-12 lg:px-24` — horizontal grid alignment |
-| `.mask-parent` | `overflow: hidden` — clip container for text reveal |
-| `.mask-child` | `display: block; transform: translateY(100%)` — GSAP start state |
-| `.gpu` | `will-change: transform; transform: translateZ(0)` — GPU acceleration |
+## 09. Spacing Utilities
+`.section-padding` (`py-24 md:py-32 lg:py-40`) · `.container-padding` (`px-6 md:px-12 lg:px-24`) · `.mask-parent` (`overflow:hidden`) · `.mask-child` (`translateY(100%)` GSAP start) · `.gpu` (`will-change:transform; translateZ(0)`). Transition-specific helpers: `.hero-pin`, `.about-pin`, `.hero-cta`.
 
-## 08. What This Site Is Not
-*Read this list before generating any component. If output resembles any of these, regenerate.*
+---
 
-- ❌ Generic card components with drop shadows and rounded corners (8px+)
-- ❌ Eyebrow labels (small colored text above section titles)
-- ❌ Double-dash (—) as a decorative UI pattern
-- ❌ Hero section with headline + subheadline + primary button + secondary button
-- ❌ Section titles that are centered with a colored underline accent
-- ❌ Testimonial carousels
-- ❌ Stats row with large numbers ("10+ years", "200+ projects")
-- ❌ Gradient purple/blue color schemes
-- ❌ Inter, Roboto, or system font stacks
-- ❌ Glassmorphism on every card or section
-- ❌ Animations that trigger on every mouse move
-- ❌ Sections that all look the same (uniform spacing, uniform type scale)
-- ❌ Generic process timelines with icon circles and connector lines
+## 10. What This Site Is Not
+*Read before generating any component. If output resembles any of these, regenerate.*
 
-## 09. Reference Sites (Mood & Mechanic Inspiration)
-**giats.me** — Stacking project card mechanic. Typographic restraint. Trust in whitespace.
-- **Emotional register target:** Architecture firm meets editorial magazine. Cold precision, warm materials.
-- **What to take:** The stacking mechanic, the typographic scale, the restraint.
-- **What not to take:** The personal/portfolio warmth — Konaverse is a studio, not a person.
+- ❌ A static page where sections merely scroll past each other — **every boundary must be a designed transition.**
+- ❌ Any serif font; heavy/bold display weights; default system font stacks. (Display = lightweight Inter 300–500.)
+- ❌ Editorial / newspaper / magazine layouts.
+- ❌ Any videography service, project, or reference.
+- ❌ Teal / blue / purple / rainbow accents (accent is earthy green `#6B7F62` only).
+- ❌ Arcade-neon cyberpunk strobe (glow is subtle and slow).
+- ❌ Generic drop-shadow cards; eyebrow labels above section titles; centered titles with underline accents.
+- ❌ Testimonial carousels; "10+ years / 200+ projects" stat rows.
+- ❌ Glassmorphism on every card/section; animations on every mouse-move.
+- ❌ Cramped, template-y density — when unsure, add whitespace and scale up the type.
+- ❌ Light backgrounds used as the *default* — light is an occasional interlude, dark dominates.
+
+## 11. References (mood & mechanic)
+- **`image*.png` / NUORBIT** — dark, glowing ring portal, silhouette mystery, oversized display type → the **Hero**.
+- **NeoVision** — clean light tech-product clarity, type confidence and spacing → light-interlude discipline.
+- **Kinetic Studio (`image.png`)** — oversized type-as-graphic, motion-blur imagery, minimal nav → the Hero wordmark feel.
+- **`about.png` (Kinetic about)** — sparkle eyebrow, dark/muted headline with inline image pills, vertically-staggered card wave → the **About** section (rebuilt, green accent, KONA copy).
+- **`services.png`** — left label + circular "since" badge, right numbered accordion with active highlight, tags, circular arrow → the **Services** section (rebuilt, green accent, web-dev services).
+- **giats.me** — stacking project-card mechanic → planned **Projects**.
+
+*Take the mechanics and composition; never the orange accent, the SMM/agency copy, or any clutter. Repurpose everything to KONA: dark + earthy-green, web development, lightweight Inter, and a bigger transition.*
