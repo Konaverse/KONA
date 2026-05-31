@@ -105,7 +105,14 @@
       "PowerShell(Get-NetTCPConnection *)",
       "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 20; Write-Output \"---tsc done---\")",
       "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 25; Write-Output \"---tsc done---\")",
-      "PowerShell(npx tsc --noEmit)"
+      "PowerShell(npx tsc --noEmit)",
+      "PowerShell(Get-Command *)",
+      "PowerShell($v = \"C:\\\\Users\\\\konst\\\\Projects\\\\KONA\\\\public\\\\About\\\\droplet video.mp4\"; ffprobe -v error -select_streams v:0 -show_entries stream=width,height,r_frame_rate,nb_frames,duration -of default=noprint_wrappers=1 \"$v\")",
+      "PowerShell(New-Item *)",
+      "PowerShell(\"=== project .claude ===\"; Get-ChildItem \"C:\\\\Users\\\\konst\\\\Projects\\\\KONA\\\\.claude\" -Force -ErrorAction SilentlyContinue | Select-Object Name; \"=== project skills ===\"; Get-ChildItem \"C:\\\\Users\\\\konst\\\\Projects\\\\KONA\\\\.claude\\\\skills\" -Force -ErrorAction SilentlyContinue | Select-Object Name; \"=== user skills ===\"; Get-ChildItem \"C:\\\\Users\\\\konst\\\\.claude\\\\skills\" -Force -ErrorAction SilentlyContinue | Select-Object Name)",
+      "Bash(cd \"C:/Users/konst/Projects/giats-portfolio\")",
+      "Bash(head -20 package.json)",
+      "Bash(xxd \"C:/Users/konst/Projects/giats-portfolio/src/styles/global.scss\")"
     ]
   }
 }

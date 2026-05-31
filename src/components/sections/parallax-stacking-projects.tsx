@@ -29,6 +29,12 @@ interface ParallaxStackingProjectsProps {
   theme?: "dark" | "light";
 }
 
+/* giats.me projects treatment — a dark surface the dimmed image sits on. On
+   giats the dark behind the 0.4-opacity image is a site-wide WebGL fluid shader;
+   we substitute a solid dark fill so the white card copy reads at rest and the
+   image brightens on hover. */
+const GIATS_BG = "#0a0a0a";
+
 /* ── Theme tokens ── */
 
 const THEMES = {
@@ -159,7 +165,7 @@ export default function ParallaxStackingProjects({
         paddingLeft: isMobile ? "1rem" : "clamp(1rem, 4vw, 5rem)",
         paddingRight: isMobile ? "1rem" : "clamp(1rem, 4vw, 5rem)",
         paddingTop: 0,
-        paddingBottom: 0,
+        paddingBottom: isMobile ? "2rem" : "clamp(48px, 8vh, 120px)",
         contain: "paint",
       }}
     >
@@ -181,6 +187,7 @@ export default function ParallaxStackingProjects({
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`View ${project.title}`}
+            className="proj-card"
             style={{
               display: "block",
               position: "relative",
@@ -189,6 +196,9 @@ export default function ParallaxStackingProjects({
               padding: 0,
               cursor: "pointer",
               contain: "paint", // CRUCIAL — clips both canvas AND sticky content
+              // Dark surface the 0.4-opacity image sits on (giats has its fluid
+              // shader here). Mobile keeps its own dimmed look over the frame.
+              backgroundColor: isMobile ? undefined : GIATS_BG,
               borderRadius: isMobile ? "0.75rem" : 0,
               marginBottom:
                 isMobile && index !== projects.length - 1 ? "1rem" : 0,
@@ -333,6 +343,7 @@ export default function ParallaxStackingProjects({
                   >
                     {/* Left: title & meta */}
                     <div
+                      className="proj-text-group"
                       style={{
                         position: "relative",
                         display: "flex",
@@ -351,7 +362,9 @@ export default function ParallaxStackingProjects({
                           fontWeight: 800,
                           fontSize: "clamp(150px, 18vw, 260px)",
                           lineHeight: 1,
-                          color: t.watermark,
+                          /* white tones so the `difference` blend (below) stays
+                             legible on any background — theme colour ignored here */
+                          color: "rgba(255,255,255,0.07)",
                           userSelect: "none",
                           pointerEvents: "none",
                         }}
@@ -365,7 +378,7 @@ export default function ParallaxStackingProjects({
                           fontSize: 11,
                           letterSpacing: "0.3em",
                           textTransform: "uppercase",
-                          color: t.textMuted,
+                          color: "rgba(255,255,255,0.7)",
                         }}
                       >
                         {project.year}
@@ -378,7 +391,7 @@ export default function ParallaxStackingProjects({
                           fontSize: "clamp(2rem, 5vw, 5rem)",
                           lineHeight: 0.9,
                           textTransform: "uppercase",
-                          color: t.textPrimary,
+                          color: "#ffffff",
                           margin: 0,
                         }}
                       >
@@ -405,8 +418,8 @@ export default function ParallaxStackingProjects({
                                 textTransform: "uppercase",
                                 padding: "4px 12px",
                                 borderRadius: 999,
-                                border: `1px solid ${t.tagBorder}`,
-                                color: t.textMuted,
+                                border: "1px solid rgba(255,255,255,0.3)",
+                                color: "rgba(255,255,255,0.85)",
                               }}
                             >
                               {tag}
@@ -447,10 +460,11 @@ export default function ParallaxStackingProjects({
               ref={(el) => {
                 canvasRefs.current[index] = el;
               }}
+              className={!isMobile ? "proj-canvas" : ""}
               style={{
                 position: "absolute",
                 inset: 0,
-                opacity: t.imageOpacity,
+                ...(isMobile && { opacity: t.imageOpacity }),
                 willChange: "transform",
               }}
             >
@@ -477,14 +491,16 @@ export default function ParallaxStackingProjects({
                 sizes="100vw"
                 priority={index < 2}
               />
-              {/* Readability vignette */}
-              <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  background: isMobile ? t.vignetteMobile : t.vignetteDesktop,
-                }}
-              />
+              {isMobile ? (
+                /* Readability vignette (mobile only) */
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    background: t.vignetteMobile,
+                  }}
+                />
+              ) : null}
             </div>
           </Link>
         ))}

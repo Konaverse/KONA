@@ -12,7 +12,7 @@ export default function Home() {
       <div className="hero-pin">
         <HeroV2 />
       </div>
-      {/* About pins its last frame → Services irises over it (vault door) →
+      {/* About pins its last frame → Services tilts over it (same as Hero → About) →
           Services stays pinned while the Manifesto scrolls over it (tilt). */}
       <div style={{ position: 'relative' }}>
         <AboutSection />

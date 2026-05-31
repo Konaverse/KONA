@@ -225,16 +225,21 @@ html.lenis body { height: auto; }
 /* About — cinematic scene: the "cinema screen" container */
 .cinema-screen {
   position: absolute;
-  left: 8.5%;
-  right: 8.5%;
-  top: 5%;
-  bottom: 15%;
+  left: 6%;
+  right: 4%;
+  top: 0%;
+  bottom: 14%;
   display: flex;
   padding: clamp(1.5rem, 3.5vw, 3.5rem);
   border-radius: 6px;
-  border: 1px solid rgba(139, 162, 124, 0.35);
+  border: 1px solid rgba(139, 162, 124, 0.45);
   box-shadow:
-    0 0 90px -10px rgba(107, 127, 98, 0.5),
+    /* Heavy earthy green back lighting shadows representing volumetric ambient lighting */
+    0 0 35px rgba(107, 127, 98, 0.65),
+    0 0 80px rgba(74, 87, 68, 0.8),
+    0 0 170px rgba(52, 62, 48, 0.95),
+    0 0 320px 10px rgba(139, 162, 124, 0.5),
+    /* Deep inner shadow to anchor the screen's visual depth */
     inset 0 0 80px rgba(0, 0, 0, 0.45);
   overflow: hidden;
   isolation: isolate;
@@ -407,6 +412,53 @@ html.lenis body { height: auto; }
 /* No cursor follow on touch devices */
 @media (hover: none) {
   .services-follower { display: none; }
+}
+
+/* ─── Projects — original giats-portfolio hover effect ──────────── */
+.proj-canvas {
+  will-change: transform;
+  transition: opacity 0.6s cubic-bezier(0.4, 0, 0.1, 1);
+  opacity: 0.4;
+}
+
+.proj-text-group span,
+.proj-text-group h3 {
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.1, 1);
+  text-shadow: none;
+}
+
+.proj-card:hover .proj-canvas {
+  opacity: 0.85;
+}
+
+.proj-card:hover .proj-text-group span,
+.proj-card:hover .proj-text-group h3 {
+  color: #161616 !important;
+  text-shadow: 2px 2px 2px #f4f3ee;
+}
+
+
+/* Services — orbiting service cards (Stage B of ServicesVault) */
+.orbit-card .orbit-card-img {
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.orbit-card:hover .orbit-card-img {
+  transform: scale(1.06);
+  opacity: 0.62 !important;
+}
+.orbit-card:hover {
+  box-shadow: 0 44px 95px -28px rgba(0, 0, 0, 0.82),
+    0 0 0 1px rgba(139, 162, 124, 0.4) !important;
+}
+.orbit-card .orbit-card-arrow {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+.orbit-card:hover .orbit-card-arrow {
+  opacity: 1;
+  transform: none;
 }
 
 /* ─── Interlude section ──────────────────────────────────── */

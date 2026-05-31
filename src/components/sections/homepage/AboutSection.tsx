@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState, useEffect } from "react";
+import { useRef } from "react";
 import {
   motion,
   useScroll,
@@ -167,25 +167,6 @@ export default function AboutSection() {
   const reduce = useReducedMotion();
   const ref = useRef<HTMLElement>(null);
 
-  // Negative sticky offset = (viewportHeight − aboutHeight). This pins the
-  // section's LAST 100vh once its bottom meets the viewport bottom, so the
-  // Services vault can iris over the held frame. Measured because the height
-  // is content-driven (taller than the viewport).
-  const [stickyTop, setStickyTop] = useState(0);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const measure = () => setStickyTop(Math.min(0, window.innerHeight - el.offsetHeight));
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(el);
-    window.addEventListener("resize", measure);
-    return () => {
-      ro.disconnect();
-      window.removeEventListener("resize", measure);
-    };
-  }, []);
-
   // Progress 0 → 1 as the section rises from the bottom of the viewport to the top.
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -197,7 +178,7 @@ export default function AboutSection() {
   const scale = useTransform(scrollYProgress, [0, 1], reduce ? [1, 1] : [0.96, 1]);
 
   return (
-    <section ref={ref} className="about-pin" style={{ top: stickyTop }}>
+    <section ref={ref} style={{ position: "relative", zIndex: 10 }}>
       <motion.div
         style={{
           rotateX,
@@ -317,10 +298,11 @@ export default function AboutSection() {
             />
           </div>
         </div>
-
-        {/* Cinematic scene — full-bleed, held as the section's last frame */}
-        <CinemaScene />
       </motion.div>
+
+      {/* Cinema scrub — pinned frame sequence. Kept OUTSIDE the tilted wrapper
+          so its `position: sticky` isn't trapped by the parent transform. */}
+      <CinemaScene />
     </section>
   );
 }
