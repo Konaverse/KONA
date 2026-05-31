@@ -13,6 +13,7 @@ const PROJECTS = [
     desc: 'Industrial metalwork fabrication studio',
     tag: 'WEB DEVELOPMENT · 2024',
     year: '2024',
+    href: 'https://glmetalworks.com',
   },
   {
     num: '02',
@@ -21,6 +22,7 @@ const PROJECTS = [
     desc: 'Premium grooming experience, Limassol',
     tag: 'WEB DEVELOPMENT · 2024',
     year: '2024',
+    href: 'https://lossantosbarbers.com',
   },
   {
     num: '03',
@@ -29,6 +31,7 @@ const PROJECTS = [
     desc: 'Luxury interior design studio',
     tag: 'WEB DEVELOPMENT · 2024',
     year: '2024',
+    href: 'https://sivorydesigns.com',
   },
   {
     num: '04',
@@ -37,6 +40,7 @@ const PROJECTS = [
     desc: 'Engineering & construction solutions',
     tag: 'WEB DEVELOPMENT · 2025',
     year: '2025',
+    href: 'https://velricon.com',
   },
 ]
 
@@ -251,7 +255,9 @@ export default function ProjectsSection() {
 
                     {/* View Project link */}
                     <a
-                      href="#"
+                      href={project.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       style={{
                         fontFamily: 'var(--font-mono)',
                         fontWeight: 400,
@@ -309,7 +315,7 @@ export default function ProjectsSection() {
                     }}
                   >
                     {mounted && isMobile ? (
-                      <a href="#" className="w-full block" style={{ textDecoration: 'none' }}>
+                      <a href={project.href} target="_blank" rel="noopener noreferrer" className="w-full block" style={{ textDecoration: 'none' }}>
                         <div
                           style={{
                             position: 'relative',
