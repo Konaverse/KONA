@@ -212,7 +212,7 @@ export default function AboutPage() {
             {/* Background Image */}
             <div className="absolute inset-0 w-full h-full will-change-transform" ref={ctaImageRef}>
               <Image 
-                src="/General/aesth_wall_strett.png"
+                src="/homepage/cta_background.jpeg"
                 alt="Build your digital presence"
                 fill
                 className="object-cover"

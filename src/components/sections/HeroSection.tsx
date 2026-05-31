@@ -157,6 +157,7 @@ export default function HeroSection() {
   const heroBgOverlayRef = useRef<HTMLDivElement>(null)
   const qualifyRef = useRef<HTMLParagraphElement>(null)
   const cardsWrapperRef = useRef<HTMLDivElement>(null)
+  const cardsInnerRef = useRef<HTMLDivElement>(null)
 
   /* ── Beat 2 refs ─────────────────────────────────────────── */
   const coordLeftRef = useRef<HTMLSpanElement>(null)
@@ -214,8 +215,8 @@ export default function HeroSection() {
       }, 0.5)
 
       // Contact form — same timing as headline
-      gsap.set(cardsWrapperRef.current, { opacity: 0, y: 20 })
-      entranceTl.to(cardsWrapperRef.current, {
+      gsap.set(cardsInnerRef.current, { opacity: 0, y: 20 })
+      entranceTl.to(cardsInnerRef.current, {
         opacity: 1,
         y: 0,
         duration: 1,
@@ -276,7 +277,7 @@ export default function HeroSection() {
       master.to(cardsWrapperRef.current, {
         opacity: 0,
         scale: 1.08,
-        transformOrigin: 'bottom right',
+        transformOrigin: isMobile ? 'center center' : 'bottom right',
         ease: 'none',
         duration: 0.25,
       }, 0)
@@ -381,7 +382,7 @@ export default function HeroSection() {
           style={{ zIndex: 0, willChange: 'transform' }}
         >
           <Image
-            src="/hero_image.png"
+            src="/Hero/A_cinematic_portrait_of_the_robot(hero).jpeg"
             alt=""
             fill
             className="object-cover object-center"
@@ -523,7 +524,9 @@ export default function HeroSection() {
           className="max-md:relative max-md:mt-6 max-md:left-2 md:absolute md:bottom-[80px] md:left-auto md:right-12 flex flex-col max-md:items-start md:items-end gap-0 z-10"
           style={{ willChange: 'transform, opacity' }}
         >
-          <HeroContactForm />
+          <div ref={cardsInnerRef} style={{ willChange: 'opacity, transform' }}>
+            <HeroContactForm />
+          </div>
         </div>
         </div>{/* end mobile wrapper */}
 

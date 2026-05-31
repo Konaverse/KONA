@@ -11,22 +11,22 @@ const CAPABILITIES = [
   {
     title: "Headless e-Commerce",
     description: "Lightning-fast shopping experiences built on modern frameworks like Next.js and Shopify Hydrogen. We decouple the frontend from the backend for total creative freedom and conversion-focused performance.",
-    image: "/Solutions/Web Dev/aesth_e-commerce.png"
+    image: "/Solutions/A_single_geometric_crystal_prism(first_parallax).jpeg"
   },
   {
     title: "Bespoke Web Applications",
     description: "Custom software built to solve specific business problems. From internal dashboards to customer-facing portals, we prioritize security, scalability, and user-centric design.",
-    image: "/Solutions/Web Dev/aesth_web_apps.png"
+    image: "/Solutions/A_single_translucent_geometric_hourglass(second_parallax).jpeg"
   },
   {
     title: "Dynamic Brand Experiences",
     description: "Immersive websites that tell your brand's story through high-end typography, motion, and interaction. We bridge the gap between editorial design and technical precision.",
-    image: "/Solutions/Web Dev/aesth_brand_experiences.png"
+    image: "/Solutions/A_single_translucent_water_droplet(third_parallax).jpeg"
   },
   {
     title: "Performance Engineering",
     description: "We don't just build websites; we optimize them. Every project starts with a performance budget, ensuring your site is fast on every device and optimized for search ranking.",
-    image: "/Solutions/Web Dev/aesth_engineering.png"
+    image: "/Solutions/A_single_translucent_glass_microchip(fourth_parallax)).jpeg"
   }
 ];
 
@@ -330,7 +330,7 @@ export default function WebDevelopmentService() {
             {/* Background Image */}
             <div className="absolute inset-0 w-full h-full will-change-transform" ref={ctaImageRef}>
               <Image 
-                src="/General/aesth_skyscrapers.png"
+                src="/homepage/cta_background.jpeg"
                 alt="Build your digital presence"
                 fill
                 className="object-cover"

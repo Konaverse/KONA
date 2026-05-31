@@ -66,7 +66,7 @@ export default function HomeCTA() {
           {/* Background Image */}
           <div className="absolute inset-0 w-full h-full will-change-transform" ref={ctaImageRef}>
             <Image 
-              src="/General/aesth_cta_section.png"
+              src="/homepage/cta_background.jpeg"
               alt="Build your digital presence"
               fill
               className="object-cover"

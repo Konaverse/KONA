@@ -168,7 +168,7 @@ export default function ServicesSection() {
             }}
           >
             <Image
-              src="/Solutions/Web Dev/aesth_brand_experiences.png"
+              src="/homepage/A_futuristic_workspace_featuring_holographic(web_dev).jpeg"
               fill
               alt="Web development"
               className="object-cover"

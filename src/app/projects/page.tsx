@@ -273,7 +273,7 @@ export default function WebProjectsArchive() {
             {/* Background Image */}
             <div className="absolute inset-0 w-full h-full will-change-transform" ref={ctaImageRef}>
               <Image 
-                src="/General/aesth_office.png"
+                src="/homepage/cta_background.jpeg"
                 alt="Build the next remarkable project"
                 fill
                 className="object-cover"

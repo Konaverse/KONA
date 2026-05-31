@@ -476,8 +476,6 @@ export default function Navbar() {
           width: "calc(100vw - 40px)",
           paddingTop: 11,
           paddingBottom: 11,
-          backdropFilter: "blur(40px)",
-          WebkitBackdropFilter: "blur(40px)",
           border: "1px solid rgba(255,255,255,0.08)",
           display: "flex",
           alignItems: "center",
@@ -488,6 +486,20 @@ export default function Navbar() {
           zIndex: 50,
         }}
       >
+        {/* Blur Backdrop (moved here to fix iOS Safari hit-testing bug) */}
+        <div
+          aria-hidden
+          style={{
+            position: "absolute",
+            inset: 0,
+            borderRadius: "inherit",
+            backdropFilter: "blur(40px)",
+            WebkitBackdropFilter: "blur(40px)",
+            pointerEvents: "none",
+            zIndex: -2,
+          }}
+        />
+
         {/* Top sheen */}
         <div
           aria-hidden

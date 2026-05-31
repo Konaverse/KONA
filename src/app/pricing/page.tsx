@@ -294,7 +294,7 @@ export default function PricingPage() {
               {/* Background Image */}
               <div className="absolute inset-0 w-full h-full will-change-transform" ref={ctaImageRef}>
                 <Image 
-                  src="/General/aesth_window.png"
+                  src="/homepage/cta_background.jpeg"
                   alt="Build your digital presence"
                   fill
                   className="object-cover"
