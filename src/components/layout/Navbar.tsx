@@ -10,16 +10,6 @@ const ACCENT = "#6B7F62";
 
 type DropItem = { label: string; desc: string; href?: string };
 
-const SERVICES: (DropItem & { href: string })[] = [
-  { label: "Web Development", desc: "Scalable, secure platforms", href: "/services/web-development" },
-  { label: "Videography", desc: "Cinematic brand narratives", href: "/services/videography" },
-];
-
-const PROJECTS: (DropItem & { href: string })[] = [
-  { label: "Web Development Projects", desc: "Digital Architecture Archive", href: "/projects/web-development" },
-  { label: "Videography Projects", desc: "Visual Storytelling Portfolio", href: "/projects/videography" },
-];
-
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const NAV_TRANSITION = { duration: 0.9, ease: EASE };
 
@@ -542,19 +532,10 @@ export default function Navbar() {
         >
           <NavItem
             label="Services"
-            dropdown={SERVICES}
-            dropdownCols={1}
-            dropdownHeader="Our Services"
-            dropdownFooter="View All Services"
-            dropdownFooterHref="/services"
             href="/services"
           />
           <NavItem
             label="Projects"
-            dropdown={PROJECTS}
-            dropdownHeader="Selected Work"
-            dropdownFooter="View All Projects"
-            dropdownFooterHref="/projects"
             href="/projects"
           />
           <NavItem label="About" href="/about" />
@@ -627,8 +608,8 @@ export default function Navbar() {
               className="flex flex-col gap-6 overflow-y-auto mt-4 relative z-10" 
               style={{ msOverflowStyle: "none", scrollbarWidth: "none" }}
             >
-              <MobileNavItem label="Services" dropdown={SERVICES} href="/services" onClose={() => setMobileOpen(false)} itemVariants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } }, exit: { opacity: 0, y: 10 } }} />
-              <MobileNavItem label="Projects" dropdown={PROJECTS} href="/projects" onClose={() => setMobileOpen(false)} itemVariants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } }, exit: { opacity: 0, y: 10 } }} />
+              <MobileNavItem label="Services" href="/services" onClose={() => setMobileOpen(false)} itemVariants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } }, exit: { opacity: 0, y: 10 } }} />
+              <MobileNavItem label="Projects" href="/projects" onClose={() => setMobileOpen(false)} itemVariants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } }, exit: { opacity: 0, y: 10 } }} />
               <MobileNavItem label="About" href="/about" onClose={() => setMobileOpen(false)} itemVariants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } }, exit: { opacity: 0, y: 10 } }} />
               <MobileNavItem label="Pricing" href="/pricing" onClose={() => setMobileOpen(false)} itemVariants={{ initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } }, exit: { opacity: 0, y: 10 } }} />
             </motion.div>

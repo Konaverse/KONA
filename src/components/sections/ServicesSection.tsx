@@ -7,7 +7,6 @@ import { gsap } from '@/utils/gsap'
 export default function ServicesSection() {
   const containerRef = useRef<HTMLElement>(null)
   const img1Ref = useRef<HTMLDivElement>(null)
-  const img2Ref = useRef<HTMLDivElement>(null)
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -29,22 +28,7 @@ export default function ServicesSection() {
         )
       }
 
-      if (img2Ref.current && img2Ref.current.parentElement) {
-        gsap.fromTo(
-          img2Ref.current,
-          { yPercent: -15 },
-          {
-            yPercent: 15,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: img2Ref.current.parentElement,
-              start: 'top bottom',
-              end: 'bottom top',
-              scrub: true,
-            },
-          }
-        )
-      }
+
 
       // 2. Text entrance reveals
       // We select elements that have the 'reveal-target' class.
@@ -101,7 +85,7 @@ export default function ServicesSection() {
             willChange: 'transform, opacity',
           }}
         >
-          Core Disciplines
+          Core Expertise
         </h2>
         <p
           className="reveal-target"
@@ -115,10 +99,9 @@ export default function ServicesSection() {
             willChange: 'transform, opacity',
           }}
         >
-          We don’t do everything. We specialize in two core disciplines, combining
-          technical precision with visual storytelling to build brands that command
-          attention. No agency bloat. Just direct partnership and uncompromising
-          quality.
+          We engineer high-end digital experiences using modern, scalable architectures 
+          that load instantly and interact seamlessly. No agency bloat. Just direct 
+          partnership and uncompromising quality.
         </p>
       </div>
 
@@ -134,21 +117,7 @@ export default function ServicesSection() {
       >
         {/* Text Column (Left on Desktop, Top on Mobile) */}
         <div style={{ flex: 1 }} className="order-2 md:order-1">
-          <p
-            className="reveal-target"
-            style={{
-              fontFamily: 'var(--font-dm-sans), sans-serif',
-              fontWeight: 500,
-              fontSize: '11px',
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              color: 'rgba(250,247,242,0.35)',
-              marginBottom: 20,
-              willChange: 'transform, opacity',
-            }}
-          >
-            01 — Web Development
-          </p>
+
           <h3
             className="reveal-target"
             style={{
@@ -209,91 +178,7 @@ export default function ServicesSection() {
         </div>
       </div>
 
-      {/* ── Service 02: Videography ──────────────────────────── */}
-      <div
-        className="flex flex-col md:flex-row md:items-center max-md:gap-10"
-        style={{
-          gap: 'clamp(40px, 8vw, 120px)',
-          marginLeft: 'clamp(24px, 5vw, 80px)',
-          marginRight: 'clamp(24px, 5vw, 80px)',
-        }}
-      >
-        {/* Image Column (Left on Desktop) */}
-        <div
-          className="md:flex-1 relative w-full h-[300px] md:h-[clamp(400px,60vh,800px)] overflow-hidden max-md:order-1"
-        >
-          {/* Inner Parallax Wrap */}
-          <div
-            ref={img2Ref}
-            style={{
-              position: 'absolute',
-              top: '-20%',
-              left: 0,
-              width: '100%',
-              height: '140%',
-              willChange: 'transform',
-            }}
-          >
-            <Image
-              src="/Solutions/Videography/aesth_product_showcase.png"
-              fill
-              alt="Videography"
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 50vw"
-            />
-          </div>
-        </div>
 
-        {/* Text Column (Right on Desktop) */}
-        <div style={{ flex: 1 }} className="max-md:order-2">
-          <p
-            className="reveal-target"
-            style={{
-              fontFamily: 'var(--font-dm-sans), sans-serif',
-              fontWeight: 500,
-              fontSize: '11px',
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              color: 'rgba(250,247,242,0.35)',
-              marginBottom: 20,
-              willChange: 'transform, opacity',
-            }}
-          >
-            02 — Videography
-          </p>
-          <h3
-            className="reveal-target"
-            style={{
-              fontFamily: 'var(--font-cormorant), serif',
-              fontWeight: 300,
-              fontSize: 'clamp(32px, 5vw, 64px)',
-              letterSpacing: '-0.02em',
-              lineHeight: 1.1,
-              marginBottom: 32,
-              willChange: 'transform, opacity',
-            }}
-          >
-            Videography
-          </h3>
-          <p
-            className="reveal-target"
-            style={{
-              fontFamily: 'var(--font-dm-sans), sans-serif',
-              fontWeight: 300,
-              fontSize: 'clamp(15px, 1.2vw, 18px)',
-              color: 'rgba(250,247,242,0.6)',
-              lineHeight: 1.7,
-              maxWidth: 500,
-              willChange: 'transform, opacity',
-            }}
-          >
-            Cinematic storytelling that elevates your brand. We craft visual
-            narratives with a documentary eye and high-end production polish. Not
-            just moving pictures, but strategic assets designed to build undeniable
-            authority in your market.
-          </p>
-        </div>
-      </div>
     </section>
   )
 }

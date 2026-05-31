@@ -38,10 +38,10 @@ export const metadata: Metadata = {
     template: '%s | Konaverse',
   },
   description:
-    'Konaverse is a premium digital agency crafting web experiences, films, and brand presence that refuses to be ignored.',
+    'Konaverse is a premium digital agency crafting web experiences and brand presence that refuses to be ignored.',
   keywords: [
-    'digital agency', 'web development', 'videography', 'brand identity',
-    'Next.js agency', 'cinematic production', 'web design', 'premium agency',
+    'digital agency', 'web development', 'web applications', 'brand identity',
+    'Next.js agency', 'web engineering', 'web design', 'premium agency',
   ],
   authors: [{ name: 'Konaverse', url: 'https://kona-verse.com' }],
   creator: 'Konaverse',
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Konaverse — Premium Digital Agency',
     description:
-      'Web development, web applications, videography, and brand presence — built with intent.',
+      'Web development, web applications, and brand presence — built with intent.',
     type: 'website',
     url: 'https://kona-verse.com',
     siteName: 'Konaverse',
@@ -78,7 +78,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Konaverse — Premium Digital Agency',
     description:
-      'Web development, videography, and digital brand presence — built with intent.',
+      'Web development, web applications, and digital brand presence — built with intent.',
     images: ['/og-image.png'],
   },
   alternates: {
@@ -103,7 +103,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           name: 'Konaverse',
           url: 'https://kona-verse.com',
           logo: { '@type': 'ImageObject', url: 'https://kona-verse.com/About/Logo%2021.png' },
-          description: 'Premium digital agency specializing in high-end web development and cinematic videography.',
+          description: 'Premium digital agency specializing in high-end web development and digital experiences.',
           email: 'info@kona-verse.com',
           areaServed: ['Europe', 'Middle East', 'North America'],
           member: [

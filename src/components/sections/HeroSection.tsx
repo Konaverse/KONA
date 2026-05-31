@@ -1,8 +1,143 @@
-'use client'
+"use client";
 
-import { useRef, useLayoutEffect } from 'react'
+import { useRef, useLayoutEffect, useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { gsap, ScrollTrigger } from '@/utils/gsap'
+
+function HeroContactForm() {
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const formRef = useRef<HTMLFormElement>(null);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setStatus("loading");
+    const data = new FormData(formRef.current!);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.get("name"),
+          email: data.get("email"),
+          message: data.get("message"),
+        }),
+      });
+      if (!res.ok) throw new Error();
+      setStatus("success");
+      formRef.current?.reset();
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  if (status === "success") {
+    return (
+      <>
+        <div className="hidden md:flex flex-col justify-center h-full p-6 bg-black/40 border border-white/[0.08] backdrop-blur-md rounded-2xl w-[320px] pointer-events-auto">
+          <div className="w-10 h-10 rounded-full border border-[var(--color-sage)] flex items-center justify-center mb-4">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-sage)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h3 className="font-display text-3xl font-light text-[var(--color-off-white)] mb-2">Received.</h3>
+          <p className="font-sans font-light text-sm text-white/50 mb-6">We'll be in touch shortly.</p>
+          <button onClick={() => setStatus("idle")} className="font-mono text-[9px] tracking-[0.3em] uppercase text-[var(--color-sage)] text-left hover:text-white transition-colors">
+            Send Another →
+          </button>
+        </div>
+        <div className="md:hidden flex pointer-events-auto">
+          <Link 
+            href="/contact"
+            className="bg-black/40 border border-white/[0.08] backdrop-blur-md rounded-full px-6 py-3 flex items-center gap-3 text-white shadow-xl"
+          >
+            <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-[var(--color-sage)]">Start a project</span>
+            <span className="font-display text-lg font-light text-[var(--color-off-white)]">Let's talk →</span>
+          </Link>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <form
+        ref={formRef}
+        onSubmit={handleSubmit}
+        className="hidden md:flex flex-col gap-4 p-6 bg-black/40 border border-white/[0.08] backdrop-blur-md rounded-2xl w-[320px] pointer-events-auto"
+      >
+      <div className="mb-2">
+        <span className="font-mono text-[9px] tracking-[0.3em] uppercase text-[var(--color-sage)] mb-2 block">
+          Start a project
+        </span>
+        <h3 className="font-display text-2xl font-light text-[var(--color-off-white)] leading-tight">
+          Let's talk.
+        </h3>
+      </div>
+      <div className="flex flex-col gap-2">
+        <label className="font-mono text-[9px] tracking-[0.28em] uppercase text-white/50">Name</label>
+        <div className="relative group">
+          <input 
+            name="name" 
+            required 
+            className="peer w-full bg-transparent py-2 text-base font-display font-light text-[var(--color-off-white)] placeholder:text-white/30 outline-none transition-colors"
+            placeholder="Your name"
+          />
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-white/20 group-focus-within:bg-white/30" />
+          <div className="absolute bottom-0 left-0 h-px w-0 peer-focus:w-full bg-[var(--color-sage)] transition-all duration-300" />
+        </div>
+      </div>
+      <div className="flex flex-col gap-2">
+        <label className="font-mono text-[9px] tracking-[0.28em] uppercase text-white/50">Email</label>
+        <div className="relative group">
+          <input 
+            type="email"
+            name="email" 
+            required 
+            className="peer w-full bg-transparent py-2 text-base font-display font-light text-[var(--color-off-white)] placeholder:text-white/30 outline-none transition-colors"
+            placeholder="your@email.com"
+          />
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-white/20 group-focus-within:bg-white/30" />
+          <div className="absolute bottom-0 left-0 h-px w-0 peer-focus:w-full bg-[var(--color-sage)] transition-all duration-300" />
+        </div>
+      </div>
+      <div className="flex flex-col gap-2">
+        <label className="font-mono text-[9px] tracking-[0.28em] uppercase text-white/50">Message</label>
+        <div className="relative group">
+          <textarea 
+            name="message" 
+            required 
+            rows={2}
+            className="peer w-full bg-transparent py-2 text-base font-display font-light text-[var(--color-off-white)] placeholder:text-white/30 outline-none resize-none transition-colors"
+            placeholder="Tell us about your vision..."
+          />
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-white/20 group-focus-within:bg-white/30" />
+          <div className="absolute bottom-0 left-0 h-px w-0 peer-focus:w-full bg-[var(--color-sage)] transition-all duration-300" />
+        </div>
+      </div>
+      <div className="mt-2 flex items-center justify-between">
+        <button 
+          type="submit" 
+          disabled={status === "loading"}
+          className="text-white text-[10px] font-mono tracking-[0.25em] uppercase hover:text-[var(--color-sage)] transition-colors disabled:opacity-50"
+        >
+          {status === "loading" ? "Transmitting..." : "Send Message →"}
+        </button>
+      </div>
+      {status === "error" && <p className="text-red-400/80 text-[10px] font-mono tracking-widest uppercase mt-1">Error.</p>}
+      </form>
+      <div className="md:hidden flex pointer-events-auto">
+        <Link 
+          href="/contact"
+          className="bg-black/40 border border-white/[0.08] backdrop-blur-md rounded-full px-6 py-3 flex items-center gap-3 text-white shadow-xl hover:bg-black/60 transition-colors"
+        >
+          <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-[var(--color-sage)]">Start a project</span>
+          <span className="font-display text-lg font-light text-[var(--color-off-white)]">Let's talk →</span>
+        </Link>
+      </div>
+    </>
+  );
+}
 
 export default function HeroSection() {
   /* ── Outer / sticky refs ─────────────────────────────────── */
@@ -21,9 +156,6 @@ export default function HeroSection() {
   const heroBgRef = useRef<HTMLDivElement>(null)
   const heroBgOverlayRef = useRef<HTMLDivElement>(null)
   const qualifyRef = useRef<HTMLParagraphElement>(null)
-  const cardARef = useRef<HTMLDivElement>(null)
-  const cardBRef = useRef<HTMLDivElement>(null)
-  const cardCRef = useRef<HTMLDivElement>(null)
   const cardsWrapperRef = useRef<HTMLDivElement>(null)
 
   /* ── Beat 2 refs ─────────────────────────────────────────── */
@@ -81,15 +213,13 @@ export default function HeroSection() {
         ease: 'power3.out',
       }, 0.5)
 
-      // Info cards — same timing as headline
-      const cards = [cardARef.current, cardBRef.current, cardCRef.current]
-      gsap.set(cards, { opacity: 0, y: 20 })
-      entranceTl.to(cards, {
+      // Contact form — same timing as headline
+      gsap.set(cardsWrapperRef.current, { opacity: 0, y: 20 })
+      entranceTl.to(cardsWrapperRef.current, {
         opacity: 1,
         y: 0,
         duration: 1,
         ease: 'power3.out',
-        stagger: 0.1,
       }, 0.8)
 
       // Breathing gradient
@@ -387,137 +517,13 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Beat 1: Stat cluster — flows below headline on mobile, bottom-right on desktop */}
+        {/* Beat 1: Contact Form — flows below headline on mobile, bottom-right on desktop */}
         <div
           ref={cardsWrapperRef}
-          className="max-md:relative max-md:mt-6 max-md:left-2 md:absolute md:bottom-[80px] md:left-auto md:right-12 flex flex-row items-end gap-0 pointer-events-none"
+          className="max-md:relative max-md:mt-6 max-md:left-2 md:absolute md:bottom-[80px] md:left-auto md:right-12 flex flex-col max-md:items-start md:items-end gap-0 z-10"
           style={{ willChange: 'transform, opacity' }}
         >
-          {/* Stat A — 1 / Mission */}
-          <div
-            ref={cardARef}
-            className="flex flex-col flex-1 md:flex-none md:w-28 gap-1.5"
-            style={{ willChange: 'transform, opacity' }}
-          >
-            <span
-              className="block w-5 h-px mb-0.5"
-              style={{ background: '#6B7F62', opacity: 0.65 }}
-            />
-            <span style={{
-              fontFamily: 'var(--font-cormorant), serif',
-              fontWeight: 300,
-              fontSize: 'clamp(30px, 3.5vw, 46px)',
-              color: '#f0ede8',
-              lineHeight: 1,
-              letterSpacing: '-0.02em',
-            }}>
-              1
-            </span>
-            <span style={{
-              fontFamily: 'var(--font-geist-mono), monospace',
-              fontSize: 9,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.4)',
-              marginTop: 2,
-            }}>
-              Mission
-            </span>
-            <span className="hidden md:block" style={{
-              fontFamily: 'var(--font-geist-mono), monospace',
-              fontSize: 9,
-              color: 'rgba(255,255,255,0.22)',
-              letterSpacing: '0.05em',
-            }}>
-              Clients first
-            </span>
-          </div>
-
-          {/* Divider */}
-          <div className="hidden md:block w-px self-stretch mx-6 md:mx-8" style={{ background: 'rgba(255,255,255,0.08)' }} />
-
-          {/* Stat B — 2 / Makers */}
-          <div
-            ref={cardBRef}
-            className="flex flex-col flex-1 md:flex-none md:w-28 gap-1.5"
-            style={{ willChange: 'transform, opacity' }}
-          >
-            <span
-              className="block w-5 h-px mb-0.5"
-              style={{ background: '#6B7F62', opacity: 0.65 }}
-            />
-            <span style={{
-              fontFamily: 'var(--font-cormorant), serif',
-              fontWeight: 300,
-              fontSize: 'clamp(30px, 3.5vw, 46px)',
-              color: '#f0ede8',
-              lineHeight: 1,
-              letterSpacing: '-0.02em',
-            }}>
-              2
-            </span>
-            <span style={{
-              fontFamily: 'var(--font-geist-mono), monospace',
-              fontSize: 9,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.4)',
-              marginTop: 2,
-            }}>
-              Makers
-            </span>
-            <span className="hidden md:block" style={{
-              fontFamily: 'var(--font-geist-mono), monospace',
-              fontSize: 9,
-              color: 'rgba(255,255,255,0.22)',
-              letterSpacing: '0.05em',
-            }}>
-              In the studio
-            </span>
-          </div>
-
-          {/* Divider */}
-          <div className="hidden md:block w-px self-stretch mx-6 md:mx-8" style={{ background: 'rgba(255,255,255,0.08)' }} />
-
-          {/* Stat C — 3 / Years */}
-          <div
-            ref={cardCRef}
-            className="flex flex-col flex-1 md:flex-none md:w-28 gap-1.5"
-            style={{ willChange: 'transform, opacity' }}
-          >
-            <span
-              className="block w-5 h-px mb-0.5"
-              style={{ background: '#6B7F62', opacity: 0.65 }}
-            />
-            <span style={{
-              fontFamily: 'var(--font-cormorant), serif',
-              fontWeight: 300,
-              fontSize: 'clamp(30px, 3.5vw, 46px)',
-              color: '#f0ede8',
-              lineHeight: 1,
-              letterSpacing: '-0.02em',
-            }}>
-              3
-            </span>
-            <span style={{
-              fontFamily: 'var(--font-geist-mono), monospace',
-              fontSize: 9,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.4)',
-              marginTop: 2,
-            }}>
-              Years
-            </span>
-            <span className="hidden md:block" style={{
-              fontFamily: 'var(--font-geist-mono), monospace',
-              fontSize: 9,
-              color: 'rgba(255,255,255,0.22)',
-              letterSpacing: '0.05em',
-            }}>
-              Est. 2023
-            </span>
-          </div>
+          <HeroContactForm />
         </div>
         </div>{/* end mobile wrapper */}
 

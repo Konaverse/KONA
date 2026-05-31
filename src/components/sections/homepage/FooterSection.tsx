@@ -10,13 +10,11 @@ import TransitionLink from "@/components/layout/TransitionLink";
 const ACCENT = "#6B7F62";
 
 const SERVICES = [
-  { label: "Web Development", href: "/services/web-development" },
-  { label: "Videography", href: "/services/videography" },
+  { label: "Overview", href: "/services" },
 ];
 
 const PROJECTS = [
-  { label: "Web Development Projects", href: "/projects/web-development" },
-  { label: "Videography Projects", href: "/projects/videography" },
+  { label: "Our Work", href: "/projects" },
 ];
 
 const STUDIO = [
@@ -222,7 +220,7 @@ export default function FooterSection() {
             </div>
 
             <p className="font-sans text-sm text-white/45 leading-relaxed font-light mb-5 md:mb-10 max-w-xs lg:max-w-none">
-              We are a creative studio based in Cyprus, specializing in bringing ambitious ideas to the digital space through structural code and cinematic visuals.
+              We are a creative studio based in Cyprus, specializing in bringing ambitious ideas to the digital space through structural code and compelling digital experiences.
             </p>
 
             <div>
