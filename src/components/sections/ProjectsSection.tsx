@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useLayoutEffect } from 'react'
+import { useRef, useLayoutEffect, useState, useEffect } from 'react'
 import Image from 'next/image'
 import { gsap, ScrollTrigger } from '@/utils/gsap'
 
@@ -43,6 +43,17 @@ const PROJECTS = [
 export default function ProjectsSection() {
   const rootRef = useRef<HTMLDivElement>(null)
   const canvasRefs = useRef<(HTMLDivElement | null)[]>([])
+  
+  const [mounted, setMounted] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+    const checkMobile = () => setIsMobile(window.innerWidth < 768)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -176,15 +187,16 @@ export default function ProjectsSection() {
                   }}
                 >
                   {/* ── Left half: text + View Project (hidden on mobile) ── */}
-                  <div
-                    className="w-full md:w-1/2 max-md:hidden"
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      pointerEvents: 'auto',
-                    }}
-                  >
+                  {(!mounted || !isMobile) && (
+                    <div
+                      className="w-full md:w-1/2 max-md:hidden"
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        pointerEvents: 'auto',
+                      }}
+                    >
                     <span
                       style={{
                         display: 'block',
@@ -279,7 +291,8 @@ export default function ProjectsSection() {
                         }}
                       />
                     </a>
-                  </div>
+                    </div>
+                  )}
 
                   {/*
                    * ── Right half: mockup card ────────────────────────────
@@ -295,22 +308,43 @@ export default function ProjectsSection() {
                       pointerEvents: 'auto',
                     }}
                   >
-                    <div
-                      style={{
-                        position: 'relative',
-                        width: '100%',
-                        aspectRatio: '1920 / 1080',
-                        boxShadow: '0 30px 80px rgba(0,0,0,0.5)',
-                      }}
-                    >
-                      <Image
-                        src={project.img}
-                        alt={project.client}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 83vw, 50vw"
-                      />
-                    </div>
+                    {mounted && isMobile ? (
+                      <a href="#" className="w-full block" style={{ textDecoration: 'none' }}>
+                        <div
+                          style={{
+                            position: 'relative',
+                            width: '100%',
+                            aspectRatio: '1920 / 1080',
+                            boxShadow: '0 30px 80px rgba(0,0,0,0.5)',
+                          }}
+                        >
+                          <Image
+                            src={project.img}
+                            alt={project.client}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 83vw, 50vw"
+                          />
+                        </div>
+                      </a>
+                    ) : (
+                      <div
+                        style={{
+                          position: 'relative',
+                          width: '100%',
+                          aspectRatio: '1920 / 1080',
+                          boxShadow: '0 30px 80px rgba(0,0,0,0.5)',
+                        }}
+                      >
+                        <Image
+                          src={project.img}
+                          alt={project.client}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 83vw, 50vw"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
