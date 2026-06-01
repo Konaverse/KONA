@@ -18,7 +18,7 @@ const TEAM = [
     image: '/About/nabil.jpg',
     firstName: 'Nabil',
     nickname: 'THE VISIONARY',
-    role: 'Videographer',
+    role: 'Designer',
     bio: 'Directing cinematic brand narratives with an uncompromising eye for detail.'
   },
 ] as const

@@ -163,8 +163,8 @@ export default function AboutPage() {
             firstName="Nabil"
             lastName=""
             imageUrl="/About/nabil.jpg"
-            description="The creative force. Nabil shapes the narratives and aesthetics that define each project — translating abstract brand ambitions into tangible, arresting visual identities and cinematic films."
-            extraText="An eye honed by years in cinematography and design, his work connects strategy to raw emotional impact, ensuring every project is unforgettable."
+            description="The creative force. Nabil shapes the visual language that defines each project — translating abstract brand ambitions into tangible, arresting interfaces and design systems that feel as good as they look."
+            extraText="An eye honed by years in design and visual identity, his work connects strategy to craft, ensuring every layout, type choice, and interaction is intentional and unforgettable."
             href="/contact"
           />
         </div>
