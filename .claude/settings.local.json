@@ -112,7 +112,12 @@
       "PowerShell(\"=== project .claude ===\"; Get-ChildItem \"C:\\\\Users\\\\konst\\\\Projects\\\\KONA\\\\.claude\" -Force -ErrorAction SilentlyContinue | Select-Object Name; \"=== project skills ===\"; Get-ChildItem \"C:\\\\Users\\\\konst\\\\Projects\\\\KONA\\\\.claude\\\\skills\" -Force -ErrorAction SilentlyContinue | Select-Object Name; \"=== user skills ===\"; Get-ChildItem \"C:\\\\Users\\\\konst\\\\.claude\\\\skills\" -Force -ErrorAction SilentlyContinue | Select-Object Name)",
       "Bash(cd \"C:/Users/konst/Projects/giats-portfolio\")",
       "Bash(head -20 package.json)",
-      "Bash(xxd \"C:/Users/konst/Projects/giats-portfolio/src/styles/global.scss\")"
+      "Bash(xxd \"C:/Users/konst/Projects/giats-portfolio/src/styles/global.scss\")",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 20)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 15)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 25)",
+      "PowerShell(npx next lint --file src/components/sections/homepage/FooterSection.tsx 2>&1 | Select-Object -First 30)",
+      "PowerShell(npx eslint src/components/sections/homepage/FooterSection.tsx 2>&1 | Select-Object -First 30)"
     ]
   }
 }

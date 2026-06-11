@@ -4,6 +4,7 @@ import ServicesVault from '@/components/sections/homepage/ServicesVault'
 import ManifestoSection from '@/components/sections/homepage/ManifestoSection'
 import ProjectsSection from '@/components/sections/homepage/ProjectsSection'
 import InterludeSection from '@/components/sections/homepage/InterludeSection'
+import CTASection from '@/components/sections/homepage/CTASection'
 
 export default function Home() {
   return (
@@ -22,8 +23,10 @@ export default function Home() {
       </div>
       {/* Projects — plain scroll after the manifesto (no special transition) */}
       <ProjectsSection />
-      {/* Interlude — tilts in over Projects (same transition as Hero → About) */}
-      <InterludeSection />
+      {/* Interlude — tilts in over Projects, then pins its last frame */}
+      {/* <InterludeSection /> */}
+      {/* CTA / Contact — tilts in over the pinned Interlude (same transition) */}
+      <CTASection />
     </div>
   )
 }

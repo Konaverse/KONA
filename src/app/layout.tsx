@@ -4,6 +4,7 @@ import Navbar from '@/components/layout/Navbar'
 import SmoothScroll from '@/components/SmoothScroll'
 import CustomCursor from '@/components/ui/CustomCursor'
 import FooterSection from '@/components/sections/homepage/FooterSection'
+import StickyPageWrapper from '@/components/layout/StickyPageWrapper'
 import JsonLd from '@/components/JsonLd'
 import CookieConsent from '@/components/layout/CookieConsent'
 import GoogleAnalytics from '@/components/layout/GoogleAnalytics'
@@ -129,7 +130,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Navbar />
         <SmoothScroll>
           <CustomCursor />
-          {children}
+          <StickyPageWrapper>
+            {children}
+          </StickyPageWrapper>
           <FooterSection />
         </SmoothScroll>
         <GoogleAnalytics GA_MEASUREMENT_ID="G-2PEZX44FP9" />

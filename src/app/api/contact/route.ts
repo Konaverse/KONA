@@ -3,7 +3,7 @@ import { Resend } from "resend";
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, service, budget, message } = await req.json();
+    const { name, email, phone, service, budget, message } = await req.json();
 
     if (!name || !email || !message) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -22,8 +22,9 @@ export async function POST(req: NextRequest) {
           <table style="width: 100%; border-collapse: collapse; margin-top: 24px;">
             <tr><td style="padding: 10px 0; color: #555; width: 120px;">Name</td><td style="padding: 10px 0; font-weight: 600;">${name}</td></tr>
             <tr><td style="padding: 10px 0; color: #555;">Email</td><td style="padding: 10px 0;"><a href="mailto:${email}" style="color: #6B7F62;">${email}</a></td></tr>
+            <tr><td style="padding: 10px 0; color: #555;">Phone</td><td style="padding: 10px 0;">${phone || "Not provided"}</td></tr>
             <tr><td style="padding: 10px 0; color: #555;">Service</td><td style="padding: 10px 0;">${service || "Not specified"}</td></tr>
-            <tr><td style="padding: 10px 0; color: #555;">Budget</td><td style="padding: 10px 0;">${budget || "Not specified"}</td></tr>
+            ${budget ? `<tr><td style="padding: 10px 0; color: #555;">Budget</td><td style="padding: 10px 0;">${budget}</td></tr>` : ""}
           </table>
           <div style="margin-top: 24px; padding: 20px; background: #f5f2ed; border-radius: 8px;">
             <p style="margin: 0; color: #555; font-size: 13px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.1em;">Message</p>

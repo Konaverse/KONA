@@ -601,6 +601,346 @@ html.lenis body { height: auto; }
   .interlude-card.active { flex: 1 1 100%; height: clamp(260px, 38vh, 320px); }
 }
 
+/* ─── Footer ─────────────────────────────────────────────────────────────── */
+.footer-root {
+  background: #07070b;
+  margin-top: -1px;
+}
+
+/* nav links */
+.footer-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-dm-sans), sans-serif;
+  font-weight: 300;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.55);
+  transition: color 0.3s ease;
+}
+.footer-link-label {
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.footer-link:hover {
+  color: rgba(255, 255, 255, 0.92);
+}
+.footer-link-arrow {
+  opacity: 0;
+  transform: translate(-3px, 3px);
+  transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.footer-link:hover .footer-link-arrow {
+  opacity: 1;
+  transform: translate(0, 0);
+  color: var(--color-sage);
+}
+.footer-link-underline {
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 1px;
+  width: 0;
+  background: rgba(255, 255, 255, 0.3);
+  transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.footer-link-underline.accent {
+  background: var(--color-sage);
+}
+.footer-link:hover .footer-link-underline {
+  width: 100%;
+}
+
+/* prominent email */
+.footer-email {
+  position: relative;
+  display: inline-block;
+  font-family: var(--font-inter), sans-serif;
+  font-weight: 300;
+  font-size: clamp(2rem, 6vw, 5rem);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--color-off-white);
+  padding-bottom: 0.15em;
+}
+.footer-email-label {
+  background-image: linear-gradient(120deg, var(--color-off-white), var(--color-off-white));
+  background-size: 0% 100%;
+  background-repeat: no-repeat;
+  transition: color 0.4s ease;
+}
+.footer-email:hover .footer-email-label {
+  background-image: linear-gradient(120deg, var(--color-accent-from), var(--color-accent-to));
+  -webkit-background-clip: text;
+  background-clip: text;
+  background-size: 100% 100%;
+  color: transparent;
+}
+.footer-email-underline {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left;
+  background: linear-gradient(90deg, var(--color-accent-from), var(--color-accent-to));
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.footer-email:hover .footer-email-underline {
+  transform: scaleX(1);
+}
+
+/* wordmark letter glow on hover of the footer */
+.footer-wordmark-letter {
+  transition: color 0.6s ease, text-shadow 0.6s ease;
+}
+.footer-root:hover .footer-wordmark-letter {
+  text-shadow: 0 8px 70px rgba(107, 127, 98, 0.4);
+}
+
+/* ─── CTA section (Contact) ──────────────────────────────────────────────── */
+.cta-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 100svh;
+  padding-top: clamp(2.5rem, 7vh, 5rem);
+  padding-bottom: clamp(2.5rem, 7vh, 5rem);
+  /* form vertically centered → equal breathing room top and bottom */
+  display: flex;
+  align-items: center;
+}
+
+/* paragraph pinned top-right, respects the container padding */
+.cta-top {
+  position: absolute;
+  top: clamp(2.5rem, 7vh, 5rem);
+  left: 0;
+  right: 0;
+}
+.cta-top-copy {
+  max-width: 34ch;
+  margin: 0 0 0 auto;
+  text-align: right;
+  font-family: var(--font-dm-sans), sans-serif;
+  font-weight: 300;
+  font-size: 0.84rem;
+  line-height: 1.65;
+  color: rgba(237, 237, 234, 0.6);
+}
+
+/* Form — left, vertically centered, larger */
+.cta-form-col {
+  width: 100%;
+}
+
+/* Form layout: vertical progress bar + glass card */
+.cta-form-inner {
+  display: flex;
+  align-items: stretch;
+  gap: 1.1rem;
+  width: 100%;
+  max-width: 560px;
+}
+.cta-progress {
+  flex-shrink: 0;
+  width: 4px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+.cta-progress-fill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.75) 100%);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+  transition: height 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Glassmorphism form card — genuinely see-through */
+.cta-glass {
+  width: 100%;
+  padding: clamp(1.7rem, 2.2vw, 2.7rem);
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(22px) saturate(1.4);
+  -webkit-backdrop-filter: blur(22px) saturate(1.4);
+  box-shadow: 0 40px 90px -35px rgba(0, 0, 0, 0.75),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  position: relative;
+  overflow: hidden;
+}
+/* faint diagonal sheen for realism */
+.cta-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    140deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0) 40%
+  );
+  pointer-events: none;
+}
+
+.cta-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem;
+}
+
+.cta-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-width: 0;
+}
+.cta-label {
+  font-family: var(--font-dm-sans), sans-serif;
+  font-weight: 500;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(237, 237, 234, 0.65);
+}
+.cta-optional {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  color: rgba(237, 237, 234, 0.35);
+}
+
+/* Distinct boxed inputs */
+.cta-box {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 13px;
+  padding: 0.85rem 1.05rem;
+  font-family: var(--font-dm-sans), sans-serif;
+  font-weight: 300;
+  font-size: 0.95rem;
+  color: var(--color-off-white);
+  outline: none;
+  transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+.cta-box::placeholder {
+  color: rgba(237, 237, 234, 0.34);
+}
+.cta-box:hover {
+  border-color: rgba(255, 255, 255, 0.26);
+}
+.cta-box:focus {
+  border-color: var(--color-sage);
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: 0 0 0 3px rgba(107, 127, 98, 0.18);
+}
+.cta-textarea {
+  resize: none;
+  line-height: 1.5;
+}
+
+/* Custom glass dropdown */
+.cta-select-wrap {
+  position: relative;
+}
+.cta-select-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  text-align: left;
+  cursor: pointer;
+}
+.cta-select-placeholder {
+  color: rgba(237, 237, 234, 0.34);
+}
+.cta-select-chevron {
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+.cta-select-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  margin: 0;
+  padding: 0.35rem;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-radius: 12px;
+  background: rgba(18, 18, 24, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(22px) saturate(1.4);
+  -webkit-backdrop-filter: blur(22px) saturate(1.4);
+  box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.8);
+}
+.cta-option {
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  font-family: var(--font-dm-sans), sans-serif;
+  font-weight: 300;
+  font-size: 0.9rem;
+  color: rgba(237, 237, 234, 0.78);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.cta-option:hover,
+.cta-option.active {
+  background: rgba(107, 127, 98, 0.16);
+  color: var(--color-off-white);
+}
+
+.cta-send-another {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--color-sage);
+  transition: color 0.3s ease;
+}
+.cta-send-another:hover {
+  color: var(--color-off-white);
+}
+
+@media (max-width: 900px) {
+  .cta-content {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    gap: 2.5rem;
+  }
+  .cta-top {
+    position: static;
+  }
+  .cta-top-copy {
+    margin: 0;
+    text-align: left;
+  }
+  .cta-form-inner {
+    max-width: 100%;
+  }
+  .cta-grid-2 {
+    grid-template-columns: 1fr;
+    gap: 1.1rem;
+  }
+}
+
 /* Stacked work cards — hover lift on the front card */
 .hero-card-front {
   transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),

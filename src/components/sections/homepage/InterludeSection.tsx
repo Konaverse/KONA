@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 
 type Card = { tag: string; title: string; img: string };
@@ -106,8 +106,26 @@ export default function InterludeSection() {
   const rotateX = useTransform(scrollYProgress, [0, 1], reduce ? [0, 0] : [12, 0]);
   const scale = useTransform(scrollYProgress, [0, 1], reduce ? [1, 1] : [0.96, 1]);
 
+  // Pin the section's LAST 100vh (negative-top sticky) so the CTA can tilt and
+  // scroll over the held final frame — same mechanic as Projects → Interlude.
+  const [stickyTop, setStickyTop] = useState(0);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const measure = () =>
+      setStickyTop(Math.min(0, window.innerHeight - el.offsetHeight));
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    window.addEventListener("resize", measure);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
+
   return (
-    <section ref={ref} style={{ position: "relative", zIndex: 50 }}>
+    <section ref={ref} style={{ position: "sticky", top: stickyTop, zIndex: 50 }}>
       <motion.div
         style={{
           rotateX,
