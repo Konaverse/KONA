@@ -1,39 +1,218 @@
-'use client'
+"use client";
 
-import { useRef, useLayoutEffect } from 'react'
+import { useRef, useLayoutEffect, useState } from 'react'
 import Image from 'next/image'
-import { gsap, ScrollTrigger } from '@/utils/gsap'
+import Link from 'next/link'
+import { motion, AnimatePresence } from 'framer-motion'
+import { gsap } from '@/utils/gsap'
+import { Button } from '@/components/ui/button'
+
+const ACCENT = '#6b7f62'
+const OFF = '#ededea'
+
+const HERO_EMPTY = { name: "", email: "", message: "" };
+
+function HeroContactForm() {
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [values, setValues] = useState({ ...HERO_EMPTY });
+
+  const set = (key: keyof typeof HERO_EMPTY, v: string) =>
+    setValues((prev) => ({ ...prev, [key]: v }));
+
+  // Progress / gating — all three fields are required.
+  const required: (keyof typeof HERO_EMPTY)[] = ["name", "email", "message"];
+  const filled = required.filter((k) => values[k].trim() !== "").length;
+  const progress = (filled / required.length) * 100;
+  const allFilled = filled === required.length;
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!allFilled) return;
+    setStatus("loading");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+      if (!res.ok) throw new Error();
+      setStatus("success");
+      setValues({ ...HERO_EMPTY });
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  return (
+    <>
+      {/* Desktop — glass form matching the CTA section (3 fields) */}
+      <div
+        className="cta-form-inner max-md:hidden pointer-events-auto"
+        style={{ width: "min(90vw, 380px)" }}
+      >
+        {/* vertical progress bar — fills as required fields complete */}
+        <div className="cta-progress" aria-hidden>
+          <div className="cta-progress-fill" style={{ height: `${progress}%` }} />
+        </div>
+
+        <div className="cta-glass">
+          <AnimatePresence mode="wait">
+            {status === "success" ? (
+              <motion.div
+                key="success"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -16 }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                style={{ display: "flex", flexDirection: "column", gap: "1.1rem", padding: "1.5rem 0" }}
+              >
+                <div
+                  style={{
+                    width: 46,
+                    height: 46,
+                    borderRadius: 9999,
+                    border: `1px solid ${ACCENT}66`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={ACCENT} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <h3
+                  style={{
+                    fontFamily: "var(--font-inter), sans-serif",
+                    fontWeight: 300,
+                    fontSize: "clamp(1.6rem, 2.4vw, 2.2rem)",
+                    lineHeight: 1.05,
+                    letterSpacing: "-0.02em",
+                    color: OFF,
+                    margin: 0,
+                  }}
+                >
+                  Message received.
+                </h3>
+                <p
+                  style={{
+                    fontFamily: "var(--font-dm-sans), sans-serif",
+                    fontWeight: 300,
+                    fontSize: "0.86rem",
+                    lineHeight: 1.6,
+                    color: "rgba(237,237,234,0.5)",
+                    margin: 0,
+                    maxWidth: "34ch",
+                  }}
+                >
+                  We&rsquo;ll be in touch within 24 hours to begin the conversation.
+                </p>
+                <button onClick={() => setStatus("idle")} className="cta-send-another">
+                  Send another →
+                </button>
+              </motion.div>
+            ) : (
+              <motion.form
+                key="form"
+                onSubmit={handleSubmit}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                style={{ display: "flex", flexDirection: "column", gap: "1.05rem" }}
+              >
+                <div className="cta-field">
+                  <label className="cta-label" htmlFor="hero-name">Full Name</label>
+                  <input
+                    id="hero-name"
+                    className="cta-box"
+                    type="text"
+                    name="name"
+                    placeholder="Your name"
+                    value={values.name}
+                    onChange={(e) => set("name", e.target.value)}
+                  />
+                </div>
+
+                <div className="cta-field">
+                  <label className="cta-label" htmlFor="hero-email">Email</label>
+                  <input
+                    id="hero-email"
+                    className="cta-box"
+                    type="email"
+                    name="email"
+                    placeholder="your@email.com"
+                    value={values.email}
+                    onChange={(e) => set("email", e.target.value)}
+                  />
+                </div>
+
+                <div className="cta-field">
+                  <label className="cta-label" htmlFor="hero-message">Your Message</label>
+                  <textarea
+                    id="hero-message"
+                    className="cta-box cta-textarea"
+                    name="message"
+                    rows={3}
+                    placeholder="Tell us about your project…"
+                    value={values.message}
+                    onChange={(e) => set("message", e.target.value)}
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={!allFilled || status === "loading"}
+                  className="w-full justify-center mt-1"
+                >
+                  {status === "loading" ? "Transmitting…" : "Send Message"}
+                </Button>
+
+                {status === "error" && (
+                  <span
+                    style={{
+                      fontFamily: "var(--font-geist-mono), monospace",
+                      fontSize: "0.58rem",
+                      letterSpacing: "0.2em",
+                      textTransform: "uppercase",
+                      color: "rgba(248,113,113,0.85)",
+                    }}
+                  >
+                    Something went wrong — please try again.
+                  </span>
+                )}
+              </motion.form>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* Mobile — keep the existing compact link (mobile layout is final) */}
+      <div className="md:hidden flex pointer-events-auto">
+        <Link
+          href="/contact"
+          className="bg-black/40 border border-white/[0.08] backdrop-blur-md rounded-full px-6 py-3 flex items-center gap-3 text-white shadow-xl hover:bg-black/60 transition-colors"
+        >
+          <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-[var(--color-sage)]">Start a project</span>
+          <span className="font-display text-lg font-light text-[var(--color-off-white)]">Let's talk →</span>
+        </Link>
+      </div>
+    </>
+  );
+}
 
 export default function HeroSection() {
-  /* ── Outer / sticky refs ─────────────────────────────────── */
+  /* ── Outer ref (gsap.context scope) ──────────────────────── */
   const outerRef = useRef<HTMLDivElement>(null)
-  const stickyRef = useRef<HTMLDivElement>(null)
 
-  /* ── Beat 1 (existing entrance) refs ─────────────────────── */
+  /* ── Beat 1 (entrance) refs ──────────────────────────────── */
   const atmosphereRef = useRef<HTMLDivElement>(null)
   const lineLeftRef = useRef<HTMLDivElement>(null)
   const lineRightRef = useRef<HTMLDivElement>(null)
-  const headlineRef = useRef<HTMLDivElement>(null)
+  const wordmarkRef = useRef<HTMLDivElement>(null)
   const line1Ref = useRef<HTMLSpanElement>(null)
   const line2Ref = useRef<HTMLSpanElement>(null)
-
-  /* ── Beat 1 additions ────────────────────────────────────── */
-  const heroBgRef = useRef<HTMLDivElement>(null)
-  const heroBgOverlayRef = useRef<HTMLDivElement>(null)
   const qualifyRef = useRef<HTMLParagraphElement>(null)
-  const cardARef = useRef<HTMLDivElement>(null)
-  const cardBRef = useRef<HTMLDivElement>(null)
-  const cardCRef = useRef<HTMLDivElement>(null)
-  const cardsWrapperRef = useRef<HTMLDivElement>(null)
-
-  /* ── Beat 2 refs ─────────────────────────────────────────── */
-  const coordLeftRef = useRef<HTMLSpanElement>(null)
-  const coordRightRef = useRef<HTMLSpanElement>(null)
-
-  /* ── Beat 3 refs ─────────────────────────────────────────── */
-  const statementRef = useRef<HTMLDivElement>(null)
-  const stmtLine1Ref = useRef<HTMLSpanElement>(null)
-  const stmtLine2Ref = useRef<HTMLSpanElement>(null)
+  const cardsInnerRef = useRef<HTMLDivElement>(null)
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -47,7 +226,17 @@ export default function HeroSection() {
       gsap.set([line1Ref.current, line2Ref.current], { y: '100%' })
       gsap.set([lineLeftRef.current, lineRightRef.current], { width: 0 })
 
+      gsap.set(wordmarkRef.current, { yPercent: 100, opacity: 0 })
+
       const entranceTl = gsap.timeline()
+
+      // KONAVERSE — wordmark rises up from behind the figure
+      entranceTl.to(wordmarkRef.current, {
+        yPercent: 0,
+        opacity: 1,
+        duration: 1.2,
+        ease: 'power4.out',
+      }, 0.15)
 
       // Line expands from center — now two halves growing outward
       entranceTl.to(lineLeftRef.current, {
@@ -81,15 +270,13 @@ export default function HeroSection() {
         ease: 'power3.out',
       }, 0.5)
 
-      // Info cards — same timing as headline
-      const cards = [cardARef.current, cardBRef.current, cardCRef.current]
-      gsap.set(cards, { opacity: 0, y: 20 })
-      entranceTl.to(cards, {
+      // Contact form — same timing as headline
+      gsap.set(cardsInnerRef.current, { opacity: 0, y: 20 })
+      entranceTl.to(cardsInnerRef.current, {
         opacity: 1,
         y: 0,
         duration: 1,
         ease: 'power3.out',
-        stagger: 0.1,
       }, 0.8)
 
       // Breathing gradient
@@ -101,136 +288,6 @@ export default function HeroSection() {
         yoyo: true,
         delay: 0.5,
       })
-
-      /* ─────────────────────────────────────────────────────────
-         MASTER SCROLL-TRIGGER — single timeline
-         Position values = scroll progress (0.3 = 30% scrolled)
-         ───────────────────────────────────────────────────────── */
-      const maxImgOpacity = isMobile ? 0.25 : 0.35
-      const startScale = isMobile ? 1.06 : 1.1
-
-      // Initial states for scroll-driven elements
-      gsap.set([stmtLine1Ref.current, stmtLine2Ref.current], {
-        y: '100%',
-        opacity: 1,
-      })
-
-      const master = gsap.timeline({
-        scrollTrigger: {
-          trigger: stickyRef.current,
-          pin: true,
-          pinSpacing: true,
-          start: 'top top',
-          end: '+=250%', // Shorter track means animations happen faster per scroll inch
-          scrub: 0.2, // Reduced from 1 (heavy smoothing) to 0.2 (snappy, barely smoothed scrub)
-        },
-      })
-
-      /* ── Beat 1 exit — background image + cards fade out ──── */
-
-      // Hero background image fades out
-      master.to(heroBgRef.current, {
-        opacity: 0,
-        ease: 'none',
-        duration: 0.25,
-      }, 0)
-      master.to(heroBgOverlayRef.current, {
-        opacity: 0,
-        ease: 'none',
-        duration: 0.25,
-      }, 0)
-
-      // The qualifying statement is already inside headlineRef, so it naturally fades and scales with it.
-      
-      // Info cards fade out + scale up exactly like the headline
-      master.to(cardsWrapperRef.current, {
-        opacity: 0,
-        scale: 1.08,
-        transformOrigin: 'bottom right',
-        ease: 'none',
-        duration: 0.25,
-      }, 0)
-
-      /* ── Beat 2 — The Expansion (progress 0 → 0.25) ──────── */
-
-      // Headline scale up + fade out
-      master.to(headlineRef.current, {
-        scale: 1.08,
-        opacity: 0,
-        transformOrigin: 'center center',
-        ease: 'none',
-        duration: 0.25,
-      }, 0)
-
-      // Left line slides left + fades
-      master.to(lineLeftRef.current, {
-        x: '-15vw',
-        opacity: 0,
-        ease: 'none',
-        duration: 0.25,
-      }, 0)
-
-      // Right line slides right + fades
-      master.to(lineRightRef.current, {
-        x: '15vw',
-        opacity: 0,
-        ease: 'none',
-        duration: 0.25,
-      }, 0)
-
-      // Coordinate metadata — fade in (0 → 0.1), then out (0.1 → 0.25)
-      master.fromTo(coordLeftRef.current,
-        { opacity: 0 },
-        { opacity: 0.5, ease: 'none', duration: 0.1 },
-        0,
-      )
-      master.to(coordLeftRef.current, {
-        opacity: 0,
-        ease: 'none',
-        duration: 0.15,
-      }, 0.1)
-
-      master.fromTo(coordRightRef.current,
-        { opacity: 0 },
-        { opacity: 0.5, ease: 'none', duration: 0.1 },
-        0,
-      )
-      master.to(coordRightRef.current, {
-        opacity: 0,
-        ease: 'none',
-        duration: 0.15,
-      }, 0.1)
-
-      /* ── Beat 3 — The Statement (progress 0.3 → 0.65) ─────── */
-
-      // Lines reveal upward from mask (staggered)
-      master.to(stmtLine1Ref.current, {
-        y: '0%',
-        ease: 'none',
-        duration: 0.12,
-      }, 0.3)
-      master.to(stmtLine2Ref.current, {
-        y: '0%',
-        ease: 'none',
-        duration: 0.12,
-      }, 0.34)
-
-      // Lines fade out + drift up (Beat 3 exit)
-      master.to(stmtLine1Ref.current, {
-        opacity: 0,
-        y: '-20px',
-        ease: 'none',
-        duration: 0.1,
-      }, 0.46)
-      master.to(stmtLine2Ref.current, {
-        opacity: 0,
-        y: '-20px',
-        ease: 'none',
-        duration: 0.1,
-      }, 0.46)
-
-      /* ── Refresh after Lenis init ─────────────────────────── */
-      setTimeout(() => ScrollTrigger.refresh(), 100)
     }, outerRef)
 
     return () => ctx.revert()
@@ -238,20 +295,18 @@ export default function HeroSection() {
 
   return (
     <div ref={outerRef}>
-      {/* ── Pinned viewport (ScrollTrigger pins this) ─────── */}
+      {/* ── Viewport (pinned by the .hero-pin sticky wrapper in page.tsx) ─── */}
       <div
-        ref={stickyRef}
         className="relative w-full overflow-hidden bg-[#0a0a0a]"
         style={{ height: '100vh' }}
       >
-        {/* Z-neg — Beat 1: Hero background image */}
+        {/* Z-0 — Background plate (dark atmosphere, no subject) */}
         <div
-          ref={heroBgRef}
           className="absolute inset-0 gpu"
           style={{ zIndex: 0, willChange: 'transform' }}
         >
           <Image
-            src="/hero_image.png"
+            src="/Hero/hero_bg.png"
             alt=""
             fill
             className="object-cover object-center"
@@ -259,82 +314,85 @@ export default function HeroSection() {
             sizes="100vw"
           />
         </div>
-        <div
-          ref={heroBgOverlayRef}
-          className="absolute inset-0"
-          style={{
-            zIndex: 0,
-            background: 'linear-gradient(to bottom, rgba(10,10,10,0.3) 0%, rgba(10,10,10,0.6) 100%)',
-          }}
-        />
 
-        {/* Z-2 — Atmosphere (breathing gradient) */}
+        {/* Z-1 — Atmosphere (breathing gradient) */}
         <div
           ref={atmosphereRef}
           aria-hidden
           className="gpu absolute inset-0 pointer-events-none"
           style={{
-            zIndex: 2,
+            zIndex: 1,
             background:
               'radial-gradient(ellipse 80% 60% at 50% 60%, rgba(107,127,98,0.07) 0%, transparent 70%)',
           }}
         />
 
-        {/* Z-3 — Beat 3: Statement text */}
+        {/* Z-2 — KONAVERSE wordmark image (sits behind the figure, rises in on load) */}
         <div
-          ref={statementRef}
-          className="absolute inset-0 flex items-center justify-center"
-          style={{ zIndex: 3 }}
+          ref={wordmarkRef}
+          aria-hidden
+          className="absolute left-0 right-0 px-2 md:px-4 pointer-events-none select-none top-[120px] md:top-[108px]"
+          style={{
+            zIndex: 2,
+            willChange: 'transform, opacity',
+            // vertical fade: solid to 58%, dissolved by 86% (kept in CSS so it stays adjustable)
+            WebkitMaskImage:
+              'linear-gradient(to bottom, #000 0%, #000 58%, rgba(0,0,0,0) 86%)',
+            maskImage:
+              'linear-gradient(to bottom, #000 0%, #000 58%, rgba(0,0,0,0) 86%)',
+          }}
         >
-          <div className="text-center">
-            <div className="mask-parent">
-              <span
-                ref={stmtLine1Ref}
-                className="mask-child gpu"
-                style={{
-                  fontFamily: 'var(--font-cormorant), serif',
-                  fontWeight: 300,
-                  fontSize: 'clamp(28px, 5vw, 72px)',
-                  color: '#faf7f2',
-                  lineHeight: 1.1,
-                  letterSpacing: '-0.02em',
-                }}
-              >
-                We don&rsquo;t make websites.
-              </span>
-            </div>
-            <div className="mask-parent">
-              <span
-                ref={stmtLine2Ref}
-                className="mask-child gpu"
-                style={{
-                  fontFamily: 'var(--font-cormorant), serif',
-                  fontWeight: 300,
-                  fontSize: 'clamp(28px, 5vw, 72px)',
-                  color: '#faf7f2',
-                  lineHeight: 1.1,
-                  letterSpacing: '-0.02em',
-                }}
-              >
-                We build presence.
-              </span>
-            </div>
-          </div>
+          <Image
+            src="/Hero/big_KONAVERSE_2.png"
+            alt=""
+            width={6000}
+            height={1660}
+            className="w-full h-auto"
+            priority
+            sizes="100vw"
+          />
         </div>
+
+        {/* Z-3 — Figure (transparent PNG, occludes the centre of the wordmark) */}
+        <div
+          className="absolute inset-0 gpu pointer-events-none"
+          style={{ zIndex: 3, willChange: 'transform' }}
+        >
+          <Image
+            src="/Hero/portrait_of_a_robot_no_background.png"
+            alt="Konaverse — cybernetic figure"
+            fill
+            className="object-cover object-center"
+            priority
+            sizes="100vw"
+          />
+        </div>
+
+        {/* Z-4 — Bottom legibility gradient */}
+        <div
+          aria-hidden
+          className="absolute inset-x-0 bottom-0 pointer-events-none"
+          style={{
+            zIndex: 4,
+            height: '55%',
+            background:
+              'linear-gradient(to bottom, rgba(10,10,10,0) 0%, rgba(10,10,10,0.55) 68%, rgba(10,10,10,0.82) 100%)',
+          }}
+        />
 
         {/* Z-4 — Headline + cards mobile wrapper (md:contents = invisible on desktop) */}
         <div
           className="max-md:absolute max-md:bottom-[20%] max-md:left-4 max-md:right-4 max-md:flex max-md:flex-col md:contents"
-          style={{ zIndex: 4 }}
+          style={{ zIndex: 5 }}
         >
 
         {/* Headline + qualifying statement (bottom-left) */}
         <div
-          ref={headlineRef}
           className="gpu max-md:relative md:absolute flex flex-col max-md:left-2 max-md:right-2 md:bottom-[80px] md:left-[48px]"
           style={{
             textAlign: 'left',
             willChange: 'transform',
+            zIndex: 5,
           }}
         >
           {/* Qualifying statement */}
@@ -359,7 +417,7 @@ export default function HeroSection() {
               ref={line1Ref}
               className="mask-child gpu max-md:text-[clamp(22px,6.5vw,28px)] md:text-[clamp(56px,7vw,100px)]"
               style={{
-                fontFamily: 'var(--font-cormorant), serif',
+                fontFamily: 'var(--font-display-serif), serif',
                 fontWeight: 300,
                 letterSpacing: '-0.02em',
                 lineHeight: 1,
@@ -375,7 +433,7 @@ export default function HeroSection() {
               ref={line2Ref}
               className="mask-child gpu max-md:text-[clamp(22px,6.5vw,28px)] md:text-[clamp(56px,7vw,100px)]"
               style={{
-                fontFamily: 'var(--font-cormorant), serif',
+                fontFamily: 'var(--font-display-serif), serif',
                 fontWeight: 300,
                 letterSpacing: '-0.02em',
                 lineHeight: 1,
@@ -387,136 +445,12 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Beat 1: Stat cluster — flows below headline on mobile, bottom-right on desktop */}
+        {/* Contact Form — flows below headline on mobile, bottom-right on desktop */}
         <div
-          ref={cardsWrapperRef}
-          className="max-md:relative max-md:mt-6 max-md:left-2 md:absolute md:bottom-[80px] md:left-auto md:right-12 flex flex-row items-end gap-0 pointer-events-none"
-          style={{ willChange: 'transform, opacity' }}
+          className="max-md:relative max-md:mt-6 max-md:left-2 md:absolute md:bottom-[80px] md:left-auto md:right-12 flex flex-col max-md:items-start md:items-end gap-0 z-10"
         >
-          {/* Stat A — 1 / Mission */}
-          <div
-            ref={cardARef}
-            className="flex flex-col flex-1 md:flex-none md:w-28 gap-1.5"
-            style={{ willChange: 'transform, opacity' }}
-          >
-            <span
-              className="block w-5 h-px mb-0.5"
-              style={{ background: '#6B7F62', opacity: 0.65 }}
-            />
-            <span style={{
-              fontFamily: 'var(--font-cormorant), serif',
-              fontWeight: 300,
-              fontSize: 'clamp(30px, 3.5vw, 46px)',
-              color: '#f0ede8',
-              lineHeight: 1,
-              letterSpacing: '-0.02em',
-            }}>
-              1
-            </span>
-            <span style={{
-              fontFamily: 'var(--font-geist-mono), monospace',
-              fontSize: 9,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.4)',
-              marginTop: 2,
-            }}>
-              Mission
-            </span>
-            <span className="hidden md:block" style={{
-              fontFamily: 'var(--font-geist-mono), monospace',
-              fontSize: 9,
-              color: 'rgba(255,255,255,0.22)',
-              letterSpacing: '0.05em',
-            }}>
-              Clients first
-            </span>
-          </div>
-
-          {/* Divider */}
-          <div className="hidden md:block w-px self-stretch mx-6 md:mx-8" style={{ background: 'rgba(255,255,255,0.08)' }} />
-
-          {/* Stat B — 2 / Makers */}
-          <div
-            ref={cardBRef}
-            className="flex flex-col flex-1 md:flex-none md:w-28 gap-1.5"
-            style={{ willChange: 'transform, opacity' }}
-          >
-            <span
-              className="block w-5 h-px mb-0.5"
-              style={{ background: '#6B7F62', opacity: 0.65 }}
-            />
-            <span style={{
-              fontFamily: 'var(--font-cormorant), serif',
-              fontWeight: 300,
-              fontSize: 'clamp(30px, 3.5vw, 46px)',
-              color: '#f0ede8',
-              lineHeight: 1,
-              letterSpacing: '-0.02em',
-            }}>
-              2
-            </span>
-            <span style={{
-              fontFamily: 'var(--font-geist-mono), monospace',
-              fontSize: 9,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.4)',
-              marginTop: 2,
-            }}>
-              Makers
-            </span>
-            <span className="hidden md:block" style={{
-              fontFamily: 'var(--font-geist-mono), monospace',
-              fontSize: 9,
-              color: 'rgba(255,255,255,0.22)',
-              letterSpacing: '0.05em',
-            }}>
-              In the studio
-            </span>
-          </div>
-
-          {/* Divider */}
-          <div className="hidden md:block w-px self-stretch mx-6 md:mx-8" style={{ background: 'rgba(255,255,255,0.08)' }} />
-
-          {/* Stat C — 3 / Years */}
-          <div
-            ref={cardCRef}
-            className="flex flex-col flex-1 md:flex-none md:w-28 gap-1.5"
-            style={{ willChange: 'transform, opacity' }}
-          >
-            <span
-              className="block w-5 h-px mb-0.5"
-              style={{ background: '#6B7F62', opacity: 0.65 }}
-            />
-            <span style={{
-              fontFamily: 'var(--font-cormorant), serif',
-              fontWeight: 300,
-              fontSize: 'clamp(30px, 3.5vw, 46px)',
-              color: '#f0ede8',
-              lineHeight: 1,
-              letterSpacing: '-0.02em',
-            }}>
-              3
-            </span>
-            <span style={{
-              fontFamily: 'var(--font-geist-mono), monospace',
-              fontSize: 9,
-              letterSpacing: '0.18em',
-              textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.4)',
-              marginTop: 2,
-            }}>
-              Years
-            </span>
-            <span className="hidden md:block" style={{
-              fontFamily: 'var(--font-geist-mono), monospace',
-              fontSize: 9,
-              color: 'rgba(255,255,255,0.22)',
-              letterSpacing: '0.05em',
-            }}>
-              Est. 2023
-            </span>
+          <div ref={cardsInnerRef} style={{ willChange: 'opacity, transform' }}>
+            <HeroContactForm />
           </div>
         </div>
         </div>{/* end mobile wrapper */}
@@ -528,7 +462,7 @@ export default function HeroSection() {
             top: '38%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            zIndex: 4,
+            zIndex: 5,
             width: 0,
             height: 0,
           }}
@@ -559,42 +493,6 @@ export default function HeroSection() {
             }}
           />
         </div>
-
-        {/* Z-5 — Coordinate metadata (Beat 2) */}
-        <span
-          ref={coordLeftRef}
-          className="absolute hidden md:block gpu"
-          style={{
-            left: 48,
-            bottom: 48,
-            zIndex: 5,
-            opacity: 0,
-            fontFamily: 'var(--font-geist-mono), monospace',
-            fontSize: 11,
-            letterSpacing: '0.15em',
-            color: '#ededea',
-            textTransform: 'uppercase',
-          }}
-        >
-          Cyprus · Greece · Europe
-        </span>
-        <span
-          ref={coordRightRef}
-          className="absolute hidden md:block gpu"
-          style={{
-            right: 48,
-            bottom: 48,
-            zIndex: 5,
-            opacity: 0,
-            fontFamily: 'var(--font-geist-mono), monospace',
-            fontSize: 11,
-            letterSpacing: '0.15em',
-            color: '#ededea',
-            textTransform: 'uppercase',
-          }}
-        >
-          Est. 2023
-        </span>
       </div>
     </div>
   )

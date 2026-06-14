@@ -41,7 +41,7 @@ export default function TermsPage() {
 
           <Section title="1. Services">
             <p>
-              Konaverse provides creative and technical services including, but not limited to, web development, web application engineering, videography, motion graphics, brand identity, and digital strategy. The exact scope, deliverables, and timeline for each project are defined in a separate written agreement or proposal accepted by both parties.
+              Konaverse provides creative and technical services including, but not limited to, web development, web application engineering, brand identity, and digital strategy. The exact scope, deliverables, and timeline for each project are defined in a separate written agreement or proposal accepted by both parties.
             </p>
           </Section>
 
@@ -90,15 +90,15 @@ export default function TermsPage() {
 
           <Section title="7. Intellectual Property">
             <p>
-              Upon receipt of full payment, Konaverse assigns to the client full ownership of the final deliverables created specifically for their project (websites, custom code, edited video assets, final design files).
+              Upon receipt of full payment, Konaverse assigns to the client full ownership of the final deliverables created specifically for their project (websites, custom code, final design files).
             </p>
             <p className="mt-4">
               The following are explicitly <strong className="text-white/80 font-normal">not</strong> included in the transfer:
             </p>
             <ul className="mt-4 space-y-2 list-none">
               <Li>Proprietary tools, frameworks, libraries, or codebases developed independently by Konaverse</Li>
-              <Li>Third-party assets licensed for use in the project (stock footage, fonts, plugins) — the client must obtain their own licences where required</Li>
-              <Li>Raw footage, project files, and source materials not explicitly agreed as deliverables</Li>
+              <Li>Third-party assets licensed for use in the project (fonts, plugins, etc.) — the client must obtain their own licences where required</Li>
+              <Li>Project files and source materials not explicitly agreed as deliverables</Li>
             </ul>
             <p className="mt-4">
               Konaverse retains the right to display completed work in our portfolio and marketing materials unless the client requests confidentiality in writing prior to project commencement.

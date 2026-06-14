@@ -4,12 +4,12 @@ import JsonLd from '@/components/JsonLd'
 export const metadata: Metadata = {
   title: 'Pricing & Investment',
   description:
-    'Transparent service tiers for web development and videography. Custom-scoped projects for brands serious about their digital presence. No hidden fees.',
+    'Transparent service tiers for web development. Custom-scoped projects for brands serious about their digital presence. No hidden fees.',
   alternates: { canonical: 'https://kona-verse.com/pricing' },
   openGraph: {
     title: 'Pricing & Investment | Konaverse',
     description:
-      'Web development and videography pricing. Custom scoped, no hidden fees.',
+      'Web development pricing. Custom scoped, no hidden fees.',
     url: 'https://kona-verse.com/pricing',
   },
 }
@@ -34,7 +34,7 @@ export default function PricingLayout({ children }: { children: React.ReactNode 
             name: 'How long does a typical project take?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'Website builds typically run four to eight weeks. Web applications are scoped individually based on complexity. Single video productions are usually delivered within two to three weeks of the shoot date.',
+              text: 'Website builds typically run four to eight weeks. Web applications are scoped individually based on complexity.',
             },
           },
           {

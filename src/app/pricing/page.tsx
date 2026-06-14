@@ -42,58 +42,7 @@ const WEB_PLANS = [
   },
 ];
 
-// ── Videography ───────────────────────────────────────────────────────────────
 
-const VIDEO_PLANS = [
-  {
-    n: "01",
-    name: "Video Production",
-    tagline: "One story, perfectly told.",
-    desc: "Full service production from concept to delivery. Professional filming, cinematic editing, and color grading for a single high impact video asset.",
-    includes: [
-      "Pre production Planning",
-      "Professional Filming (Half/Full Day)",
-      "Cinematic Color Grading",
-      "Sound Design & Mix",
-      "Titles & Lower Thirds",
-      "2 Rounds of Revisions",
-    ],
-    ideal: "Brand films, product launches, testimonials",
-    featured: false,
-  },
-  {
-    n: "02",
-    name: "Motion Graphics",
-    tagline: "Motion that commands attention.",
-    desc: "Custom animated graphics for brands that refuse to blend in. From animated logos to full explainer sequences, motion is designed with purpose and precision.",
-    includes: [
-      "Custom Motion Design",
-      "Brand aligned Animation",
-      "Animated Logo & Transitions",
-      "Intro / Outro Sequences",
-      "Social Media Format Delivery",
-      "Source Files Included",
-    ],
-    ideal: "Social content, paid ads, brand animations",
-    featured: false,
-  },
-  {
-    n: "03",
-    name: "Video Bundle",
-    tagline: "Three to five videos. Maximum impact.",
-    desc: "Our best value production package. A series of premium video assets built with a unified visual language, cohesive narrative arc, and priority turnaround.",
-    includes: [
-      "Everything in Video Production",
-      "Series Pre production Strategy",
-      "Dedicated Production Day(s)",
-      "Consistent Visual Identity",
-      "Priority Editing Turnaround",
-      "Best per video rate",
-    ],
-    ideal: "Campaigns, content series, brand storytelling",
-    featured: true,
-  },
-];
 
 // ── FAQ ───────────────────────────────────────────────────────────────────────
 
@@ -104,7 +53,7 @@ const FAQ = [
   },
   {
     q: "How long does a typical project take?",
-    a: "Website builds typically run four to eight weeks. Web applications are scoped individually based on complexity. Single video productions are usually delivered within two to three weeks of the shoot date.",
+    a: "Website builds typically run four to eight weeks. Web applications are scoped individually based on complexity.",
   },
   {
     q: "Do you work with international clients?",
@@ -122,9 +71,7 @@ export default function PricingPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const webSectionRef = useRef<HTMLDivElement>(null);
-  const videoSectionRef = useRef<HTMLDivElement>(null);
   const webCardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const videoCardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const faqRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const ctaSectionRef = useRef<HTMLDivElement>(null);
@@ -155,7 +102,6 @@ export default function PricingPage() {
       };
 
       staggerIn(webCardRefs.current, webCardRefs.current[0]);
-      staggerIn(videoCardRefs.current, videoCardRefs.current[0]);
 
       if (faqRef.current) {
         gsap.fromTo(
@@ -289,110 +235,7 @@ export default function PricingPage() {
           </div>
         </section>
 
-        {/* ── Videography ────────────────────────────────────────── */}
-        <section
-          ref={videoSectionRef}
-          className="section-padding container-padding"
-        >
-          <div className="mb-16 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-            <div>
-              <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[var(--color-sage)] mb-4 block font-light">
-                02 / Videography
-              </span>
-              <h2 className="font-display text-4xl md:text-6xl text-[var(--color-off-white)] leading-tight">
-                Visual Storytelling.
-              </h2>
-            </div>
-            <p className="font-sans font-light text-sm text-white/40 max-w-xs leading-relaxed">
-              Priced per video or per project. Bundles offer the best per-unit rate for series work.
-            </p>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-8">
-            {VIDEO_PLANS.map((plan, index) => (
-              <div
-                key={plan.n}
-                ref={(el) => { videoCardRefs.current[index] = el; }}
-                className={`h-full ${plan.featured ? "md:scale-[1.03]" : ""}`}
-                style={{ willChange: "transform, opacity" }}
-              >
-                <div
-                  className={`relative h-full flex flex-col rounded-3xl border transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl ${
-                    plan.featured
-                      ? "p-10 md:p-12 bg-[var(--color-off-white)] text-[var(--color-obsidian)] border-transparent shadow-2xl"
-                      : "p-10 md:p-12 bg-white/[0.04] border-white/10 text-[var(--color-off-white)]"
-                  }`}
-                >
-                  <div className="flex justify-between items-start mb-10">
-                    <span className="font-mono text-[10px] tracking-widest text-[var(--color-sage)] italic">
-                      {plan.n}
-                    </span>
-                    {plan.featured && (
-                      <span className="bg-[var(--color-sage)] text-white text-[8px] font-mono tracking-widest uppercase px-3 py-1 rounded-full">
-                        Best Value
-                      </span>
-                    )}
-                  </div>
-
-                  <h3 className="font-display text-3xl md:text-4xl mb-2">{plan.name}</h3>
-                  <p
-                    className={`font-display italic text-lg mb-8 font-light ${
-                      plan.featured ? "opacity-60" : "opacity-50"
-                    }`}
-                  >
-                    {plan.tagline}
-                  </p>
-
-                  <p
-                    className={`font-sans font-light text-sm leading-relaxed mb-10 border-b pb-10 ${
-                      plan.featured ? "opacity-50 border-black/5" : "opacity-40 border-white/[0.06]"
-                    }`}
-                  >
-                    {plan.desc}
-                  </p>
-
-                  <ul className="space-y-4 mb-12 flex-grow">
-                    {plan.includes.map((item) => (
-                      <li key={item} className="flex gap-3 items-start">
-                        <span className="text-[var(--color-sage)] mt-0.5 shrink-0 text-sm">✓</span>
-                        <span
-                          className={`font-sans font-light text-sm ${
-                            plan.featured ? "opacity-80" : "opacity-60"
-                          }`}
-                        >
-                          {item}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div
-                    className={`pt-10 border-t mt-auto ${
-                      plan.featured ? "border-black/5" : "border-white/[0.06]"
-                    }`}
-                  >
-                    <p
-                      className={`font-mono text-[9px] tracking-widest uppercase mb-6 ${
-                        plan.featured ? "opacity-40" : "opacity-30"
-                      }`}
-                    >
-                      Ideal for: {plan.ideal}
-                    </p>
-                    <Button
-                      href="/contact"
-                      variant="primary"
-                      className={`w-full ${
-                        plan.featured ? "bg-[var(--color-obsidian)] text-white" : ""
-                      }`}
-                    >
-                      Request a Quote
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
 
         {/* ── FAQ ────────────────────────────────────────────────── */}
         <section className="container-padding py-40">

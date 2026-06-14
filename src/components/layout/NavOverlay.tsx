@@ -17,25 +17,8 @@ type NavItem = {
 };
 
 const NAV: NavItem[] = [
-  {
-    label: "Solutions",
-    href: "/solutions",
-    children: [
-      { label: "Web Development", href: "/solutions/web-development" },
-      { label: "Web Applications", href: "/solutions/web-applications" },
-      { label: "Videography", href: "/solutions/videography" },
-      { label: "Digital Advertising", href: "/solutions/digital-advertising" },
-      { label: "Social Media", href: "/solutions/social-media" },
-    ],
-  },
-  {
-    label: "Projects",
-    href: "/projects",
-    children: [
-      { label: "Website Projects", href: "/projects/website-projects" },
-      { label: "Videography Projects", href: "/projects/videography" },
-    ],
-  },
+  { label: "Services", href: "/services" },
+  { label: "Projects", href: "/projects" },
   { label: "About", href: "/about" },
   { label: "Pricing", href: "/pricing" },
   { label: "Contact", href: "/contact" },

@@ -117,7 +117,15 @@
       "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 15)",
       "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 25)",
       "PowerShell(npx next lint --file src/components/sections/homepage/FooterSection.tsx 2>&1 | Select-Object -First 30)",
-      "PowerShell(npx eslint src/components/sections/homepage/FooterSection.tsx 2>&1 | Select-Object -First 30)"
+      "PowerShell(npx eslint src/components/sections/homepage/FooterSection.tsx 2>&1 | Select-Object -First 30)",
+      "Bash(git show *)",
+      "Read(//tmp/**)",
+      "Bash(git ls-tree *)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 30; \"exit: $LASTEXITCODE\")",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 20; \"exit: $LASTEXITCODE\")",
+      "Bash(kill 5143)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 20; \"tsc exit: $LASTEXITCODE\")",
+      "mcp__ide__getDiagnostics"
     ]
   }
 }

@@ -11,7 +11,6 @@ const ACCENT = "#6B7F62";
 
 const SERVICES = [
   "Web Development",
-  "Videography",
   "Full Brand Identity",
   "E-commerce Solution",
   "Retainer Partnership",

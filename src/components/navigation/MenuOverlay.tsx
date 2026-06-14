@@ -12,26 +12,8 @@ interface NavItem  { label: string; href: string; subItems?: SubItem[] }
 
 const NAV_LINKS: NavItem[] = [
   { label: 'Home', href: '/' },
-  {
-    label: 'Solutions',
-    href: '/solutions',
-    subItems: [
-      { label: 'Web Development',       href: '/solutions/web-development' },
-      { label: 'Web Applications',      href: '/solutions/web-applications' },
-      { label: 'Videography',           href: '/solutions/videography' },
-      { label: 'Digital Advertising',   href: '/solutions/digital-advertising' },
-      { label: 'Social Media Management', href: '/solutions/social-media' },
-    ],
-  },
-  {
-    label: 'Projects',
-    href: '/projects',
-    subItems: [
-      { label: 'All Projects',      href: '/projects' },
-      { label: 'Web Development',   href: '/projects/web-development' },
-      { label: 'Videography',       href: '/projects/videography' },
-    ],
-  },
+  { label: 'Services', href: '/services' },
+  { label: 'Projects', href: '/projects' },
   { label: 'About',   href: '/about' },
   { label: 'Pricing', href: '/pricing' },
   { label: 'Contact', href: '/contact' },

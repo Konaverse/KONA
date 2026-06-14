@@ -7,121 +7,183 @@ import Image from "next/image";
 import { useRef, useLayoutEffect } from "react";
 import { gsap, ScrollTrigger } from "@/utils/gsap";
 
-const SERVICES = [
+const CAPABILITIES = [
   {
-    id: "web-development",
-    number: "01",
-    title: "Web Development",
-    description: "Digital systems built for performance, not just decoration. We engineer high-end digital experiences using modern, scalable architectures that load instantly and interact seamlessly. From headless commerce to bespoke marketing platforms, every line of code is intentional.",
-    image: "/Solutions/Web Dev/aesth_brand_experiences.png",
-    href: "/services/web-development",
-    features: ["Bespoke Architecture", "Performance Engineering", "E-commerce Solutions", "Interactive Experiences"]
+    title: "Headless e-Commerce",
+    description: "Lightning-fast shopping experiences built on modern frameworks like Next.js and Shopify Hydrogen. We decouple the frontend from the backend for total creative freedom and conversion-focused performance.",
+    image: "/Solutions/Web Dev/aesth_e-commerce.png"
   },
   {
-    id: "videography",
-    number: "02",
-    title: "Videography",
-    description: "Cinematic visual assets that command attention and build undeniable authority. We craft visual narratives with a documentary eye and high-end production polish. Not just moving pictures, but strategic storytelling designed for the digital age.",
-    image: "/Solutions/Videography/aesth_product_showcase.png",
-    href: "/services/videography",
-    features: ["Brand Storytelling", "Cinematic Production", "Social Content", "Documentary Style"]
+    title: "Bespoke Web Applications",
+    description: "Custom software built to solve specific business problems. From internal dashboards to customer-facing portals, we prioritize security, scalability, and user-centric design.",
+    image: "/Solutions/Web Dev/aesth_web_apps.png"
+  },
+  {
+    title: "Dynamic Brand Experiences",
+    description: "Immersive websites that tell your brand's story through high-end typography, motion, and interaction. We bridge the gap between editorial design and technical precision.",
+    image: "/Solutions/Web Dev/aesth_brand_experiences.png"
+  },
+  {
+    title: "Performance Engineering",
+    description: "We don't just build websites; we optimize them. Every project starts with a performance budget, ensuring your site is fast on every device and optimized for search ranking.",
+    image: "/Solutions/Web Dev/aesth_engineering.png"
   }
 ];
 
-export default function ServicesPage() {
+export default function WebDevelopmentService() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const serviceRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const imageWrappersRef = useRef<(HTMLDivElement | null)[]>([]);
-  const philosophyRef = useRef<HTMLDivElement>(null);
-  const ctaSectionRef = useRef<HTMLDivElement>(null);
+  const desktopImagesRef = useRef<(HTMLDivElement | null)[]>([]);
+  const textRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const mobileImagesRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  // CTA Refs
+  const mainRef = useRef<HTMLDivElement>(null);
+  const ctaSectionRef = useRef<HTMLElement>(null);
   const ctaWrapperRef = useRef<HTMLDivElement>(null);
   const ctaImageRef = useRef<HTMLDivElement>(null);
   const ctaTextRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
-      // 1. Service Cards — text entrance only; image is always visible
-      serviceRefs.current.forEach((el, i) => {
-        if (!el) return;
+      let currentImageIndex = -1;
 
-        gsap.fromTo(
-          el,
-          { y: 60, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 1.2,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 85%",
-              toggleActions: "play none none none",
-            },
+      // Desktop Sticky Images Logic
+      textRefs.current.forEach((textEl, i) => {
+        if (!textEl || !desktopImagesRef.current[i]) return;
+
+        ScrollTrigger.create({
+          trigger: textEl,
+          start: "top center",
+          end: "bottom center",
+          onEnter: () => {
+            if (currentImageIndex !== i) {
+              gsap.to(desktopImagesRef.current[i], { opacity: 1, zIndex: 1, duration: 0.6, ease: "power2.out" });
+              if (currentImageIndex >= 0 && desktopImagesRef.current[currentImageIndex]) {
+                 gsap.to(desktopImagesRef.current[currentImageIndex], { opacity: 0, zIndex: 0, duration: 0.6, ease: "power2.out" });
+              }
+              currentImageIndex = i;
+            }
+          },
+          onEnterBack: () => {
+            if (currentImageIndex !== i) {
+              gsap.to(desktopImagesRef.current[i], { opacity: 1, zIndex: 1, duration: 0.6, ease: "power2.out" });
+              if (currentImageIndex >= 0 && desktopImagesRef.current[currentImageIndex]) {
+                 gsap.to(desktopImagesRef.current[currentImageIndex], { opacity: 0, zIndex: 0, duration: 0.6, ease: "power2.out" });
+              }
+              currentImageIndex = i;
+            }
           }
-        );
+        });
+      });
 
-        // Image Parallax (image container stays visible; only the inner wrapper moves)
-        const imgWrapper = imageWrappersRef.current[i];
-        if (imgWrapper) {
-          gsap.fromTo(
-            imgWrapper,
+      // Desktop Parallax for active image
+      desktopImagesRef.current.forEach((imgEl) => {
+         if (!imgEl) return;
+         const innerImage = imgEl.querySelector('.parallax-img');
+         if (innerImage) {
+            gsap.fromTo(innerImage, 
+              { yPercent: -10 },
+              { 
+                yPercent: 10,
+                ease: "none",
+                scrollTrigger: {
+                   trigger: containerRef.current,
+                   start: "top bottom",
+                   end: "bottom top",
+                   scrub: true,
+                }
+              }
+            );
+         }
+      });
+
+      // Mobile Parallax
+      mobileImagesRef.current.forEach((imgEl) => {
+        if (!imgEl) return;
+        const innerImage = imgEl.querySelector('.parallax-img');
+        if (innerImage) {
+          gsap.fromTo(innerImage,
             { yPercent: -15 },
             {
               yPercent: 15,
               ease: "none",
               scrollTrigger: {
-                trigger: imgWrapper.closest(".service-block") ?? el,
+                trigger: imgEl,
                 start: "top bottom",
                 end: "bottom top",
                 scrub: true,
-              },
+              }
             }
           );
         }
       });
 
-      // 2. Philosophy Section Entrance
-      if (philosophyRef.current) {
-        gsap.fromTo(
-          philosophyRef.current,
-          { y: 50, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 1.2,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: philosophyRef.current,
-              start: "top 80%",
-              toggleActions: "play none none none",
-            },
-          }
-        );
-      }
-
-      // 3. Immersive CTA Animation
-      if (ctaSectionRef.current) {
+      // CTA Animation
+      if (ctaSectionRef.current && ctaWrapperRef.current && ctaImageRef.current && ctaTextRef.current) {
         const isMobile = window.innerWidth < 768;
+
+        // Global Entrance Animations
+        gsap.utils.toArray<HTMLElement>(".fade-up").forEach((el) => {
+          gsap.fromTo(el, 
+            { opacity: 0, y: 40 },
+            { 
+              opacity: 1, 
+              y: 0, 
+              duration: 1, 
+              ease: "power3.out", 
+              scrollTrigger: {
+                trigger: el,
+                start: "top 85%",
+                toggleActions: "play none none reverse"
+              } 
+            }
+          );
+        });
+
+        // Global Parallax Backgrounds
+        gsap.utils.toArray<HTMLElement>(".parallax-bg").forEach((el) => {
+          const parent = el.parentElement;
+          if (parent) {
+            gsap.fromTo(el,
+              { yPercent: -10 },
+              {
+                yPercent: 10,
+                ease: "none",
+                scrollTrigger: {
+                  trigger: parent,
+                  start: "top bottom",
+                  end: "bottom top",
+                  scrub: true,
+                }
+              }
+            );
+          }
+        });
+
+        
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: ctaSectionRef.current,
-            start: "top bottom",
-            end: "bottom bottom",
+            start: "top bottom", 
+            end: "center center", 
             scrub: true,
           }
         });
 
+        // Expand clip-path
         tl.fromTo(ctaWrapperRef.current,
           { clipPath: isMobile ? "inset(15% 5% 15% 5% round 2rem)" : "inset(20% 15% 20% 15% round 3rem)" },
           { clipPath: "inset(0% 0% 0% 0% round 0rem)", ease: "power2.inOut" }
         );
 
+        // Zoom out image
         tl.fromTo(ctaImageRef.current,
           { scale: 1.2 },
           { scale: 1, ease: "power2.inOut" },
           "<"
         );
 
+        // Reveal Text
         gsap.to(ctaTextRef.current, {
            opacity: 1,
            y: 0,
@@ -134,100 +196,125 @@ export default function ServicesPage() {
            }
         });
       }
-    }, containerRef);
+
+    }, { scope: mainRef });
     return () => ctx.revert();
   }, []);
 
   return (
     <PageWrapper theme="dark">
-      <div ref={containerRef}>
+      <div ref={mainRef}>
       <PageHeader
-        subtitle="Services"
-        title="Our Disciplines"
-        description="We don't do everything. We specialize in two core disciplines, combining technical precision with visual storytelling to build brands that refuse to be ignored."
+        title="Web Development"
+        description="We build digital systems that prioritize performance over decoration. Engineering excellence meets editorial aesthetics."
       />
 
-      <section className="container-padding pb-56">
-        <div className="grid grid-cols-1 gap-32 md:gap-56">
-          {SERVICES.map((service, index) => (
-            <div
-              key={service.id}
-              className={`service-block flex flex-col ${index % 2 === 0 ? "md:flex-row-reverse" : "md:flex-row"} gap-16 md:gap-32 items-center`}
-            >
-              {/* Text Container — first in DOM so it sits on top in mobile flex-col */}
-              <div
-                ref={el => { serviceRefs.current[index] = el; }}
-                className="flex-1 flex flex-col items-start max-w-xl"
-              >
-                <h2 className="font-display text-4xl md:text-7xl mb-10 leading-[1.1] tracking-tight">
-                  {service.title}
-                </h2>
-                <p className="font-sans font-light text-xl text-white/50 mb-12 leading-relaxed">
-                  {service.description}
-                </p>
-
-                <div className="grid grid-cols-2 gap-x-8 gap-y-6 mb-16 w-full">
-                  {service.features.map(feature => (
-                    <div key={feature} className="flex items-center gap-3">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-sage)]/40" />
-                      <span className="font-mono text-[10px] tracking-widest uppercase opacity-60 italic">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <Button href={service.href} variant="primary">
-                  Explore Discipline
-                </Button>
-              </div>
-
-              {/* Image Container — always visible (no opacity animation) */}
-              <div className="flex-1 w-full aspect-[4/5] md:aspect-square relative overflow-hidden group rounded-2xl bg-[#050505]">
-                <div
-                  ref={el => { imageWrappersRef.current[index] = el; }}
-                  className="absolute top-[-20%] left-0 w-full h-[140%] will-change-transform"
-                >
-                  <Image
-                    src={service.image}
-                    alt={service.title}
-                    fill
-                    className="object-cover transition-transform duration-1000 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
-                </div>
-                <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors duration-500" />
-                <span className="absolute top-8 left-8 font-display text-7xl md:text-9xl opacity-10 pointer-events-none select-none">
-                  {service.number}
-                </span>
-              </div>
-            </div>
-          ))}
+      {/* Main Image Section */}
+      <section className="container-padding pb-40">
+        <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl md:rounded-3xl">
+          <Image
+            src="/General/web_dev_aesthetic..png"
+            alt="Engineering Excellence"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-black/30" />
         </div>
       </section>
 
       {/* Philosophy Section */}
-      <section className="bg-[var(--color-soft-white)] text-[var(--color-obsidian)] section-padding container-padding">
-        <div className="max-w-4xl mx-auto" ref={philosophyRef}>
-           <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[var(--color-sage)] mb-10 block font-semibold text-center md:text-left">
-            The Philosophy
+      <section className="container-padding pb-40 grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
+        <div>
+           <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[var(--color-sage)] mb-8 block">
+            Philosophy
           </span>
-          <h2 className="font-display text-4xl md:text-7xl mb-24 leading-[1.05] tracking-tight text-center md:text-left">
-            We operate with the <em className="italic">precision</em> of architecture and the <em className="italic font-normal">soul</em> of cinema.
+          <h2 className="font-display fade-up text-4xl md:text-6xl mb-12 leading-[1.1]">
+            Code should be <em className="italic">invisible</em>.
           </h2>
+        </div>
+        <div className="space-y-8 font-sans font-light text-lg text-white/60 leading-relaxed">
+          <p>
+            We believe that technical complexity should never be the user's problem. Our goal is to create interfaces that feel effortless, despite the sophisticated engineering happening beneath the surface.
+          </p>
+          <p>
+            By utilizing headless architectures and modern tech stacks (React, Next.js, GSAP, Tailwind), we ensure your digital presence is not just beautiful today, but resilient for tomorrow.
+          </p>
+        </div>
+      </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24">
-            <div className="space-y-6">
-              <h3 className="font-sans font-bold text-sm uppercase tracking-[0.2em] mb-4">Intentional Output</h3>
-              <p className="font-sans font-light text-xl text-black/70 leading-relaxed">
-                Everything we build is motivated by intent. We don't follow trends for the sake of novelty; we implement systems that serve your brand's specific narrative and performance goals.
-              </p>
-            </div>
-            <div className="space-y-6">
-               <h3 className="font-sans font-bold text-sm uppercase tracking-[0.2em] mb-4">High-Agency Partnership</h3>
-              <p className="font-sans font-light text-xl text-black/70 leading-relaxed">
-                You work directly with the experts doing the work. No account managers, no layers of bureaucracy. Just a direct line to performance and creative excellence.
-              </p>
-            </div>
+      {/* Capabilities Section - Image Parallax */}
+      <section className="bg-[var(--color-soft-white)] text-[var(--color-obsidian)] py-20 md:py-40">
+        <div className="container-padding">
+          <div className="mb-20">
+             <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[var(--color-sage)] mb-8 block font-semibold">
+              Capabilities
+            </span>
+            <h2 className="font-display fade-up text-4xl md:text-6xl tracking-tight">Technical Proficiency</h2>
           </div>
+        </div>
+
+        <div className="container-padding">
+           <div className="flex flex-col lg:flex-row gap-12 lg:gap-24 relative" ref={containerRef}>
+              
+              {/* Desktop Sticky Images Container */}
+              <div className="hidden lg:block w-1/2 sticky top-40 h-[60vh] rounded-3xl overflow-hidden shadow-2xl">
+                 {CAPABILITIES.map((cap, i) => (
+                    <div 
+                      key={`desktop-img-${i}`}
+                      ref={el => { desktopImagesRef.current[i] = el; }}
+                      className="absolute inset-0 opacity-0 will-change-transform"
+                      style={{ zIndex: i === 0 ? 1 : 0, opacity: i === 0 ? 1 : 0 }}
+                    >
+                      <div className="parallax-img absolute inset-[-10%] w-[120%] h-[120%]">
+                        <Image
+                           src={cap.image}
+                           alt={cap.title}
+                           fill
+                           className="object-cover"
+                           sizes="50vw"
+                        />
+                      </div>
+                      <div className="absolute inset-0 bg-black/10" />
+                    </div>
+                 ))}
+              </div>
+
+              {/* Text Content */}
+              <div className="w-full lg:w-1/2 flex flex-col">
+                 {CAPABILITIES.map((cap, i) => (
+                   <div 
+                     key={`text-${i}`}
+                     ref={el => { textRefs.current[i] = el; }}
+                     className="flex flex-col justify-center min-h-[50vh] lg:min-h-[70vh] py-16 lg:py-0 border-b border-black/10 last:border-0"
+                   >
+                     {/* Mobile Image (Visible only on mobile) */}
+                     <div 
+                        ref={el => { mobileImagesRef.current[i] = el; }}
+                        className="block lg:hidden w-full aspect-[4/5] relative rounded-2xl overflow-hidden mb-12 shadow-xl"
+                     >
+                        <div className="parallax-img absolute inset-[-15%] w-[130%] h-[130%]">
+                          <Image
+                             src={cap.image}
+                             alt={cap.title}
+                             fill
+                             className="object-cover"
+                             sizes="100vw"
+                          />
+                        </div>
+                        <div className="absolute inset-0 bg-black/10" />
+                     </div>
+
+                     <span className="font-mono text-[10px] tracking-widest uppercase text-[var(--color-sage)] mb-6">{`0${i + 1}`}</span>
+                     <h3 className="font-display fade-up text-3xl md:text-5xl mb-6 tracking-tight">{cap.title}</h3>
+                     <p className="font-sans font-light fade-up text-lg md:text-xl text-black/70 leading-relaxed max-w-lg">
+                       {cap.description}
+                     </p>
+                   </div>
+                 ))}
+              </div>
+
+           </div>
         </div>
       </section>
 
@@ -243,7 +330,7 @@ export default function ServicesPage() {
             {/* Background Image */}
             <div className="absolute inset-0 w-full h-full will-change-transform" ref={ctaImageRef}>
               <Image 
-                src="/General/aesth_corner_office.png"
+                src="/General/aesth_skyscrapers.png"
                 alt="Build your digital presence"
                 fill
                 className="object-cover"
@@ -261,7 +348,7 @@ export default function ServicesPage() {
                <span className="font-mono text-[10px] md:text-[12px] tracking-[0.4em] uppercase text-[var(--color-sage)] mb-6 md:mb-8 font-semibold">
                  Next Steps
                </span>
-               <h2 className="font-display text-4xl md:text-7xl lg:text-8xl mb-12 leading-[1.05] tracking-tight max-w-4xl text-white drop-shadow-2xl">
+               <h2 className="font-display fade-up text-4xl md:text-7xl lg:text-8xl mb-12 leading-[1.05] tracking-tight max-w-4xl text-white drop-shadow-2xl">
                  Engineering <br/><em className="italic font-light">Authority.</em>
                </h2>
                <Button href="/contact" variant="primary" className="scale-110 md:scale-125 hover:scale-125 transition-transform duration-300">
@@ -270,8 +357,7 @@ export default function ServicesPage() {
             </div>
          </div>
       </section>
-      </div>
+    </div>
     </PageWrapper>
   );
 }
-

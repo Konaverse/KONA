@@ -1,4 +1,5 @@
 import HeroV2 from '@/components/sections/homepage/HeroV2'
+import HeroSection from '@/components/sections/HeroSection'
 import AboutSection from '@/components/sections/homepage/AboutSection'
 import ServicesVault from '@/components/sections/homepage/ServicesVault'
 import ManifestoSection from '@/components/sections/homepage/ManifestoSection'
@@ -11,7 +12,7 @@ export default function Home() {
     <div className="grain">
       {/* Hero stays pinned; About scrolls over it (higher z-index) */}
       <div className="hero-pin">
-        <HeroV2 />
+        <HeroSection />
       </div>
       {/* About pins its last frame → Services tilts over it (same as Hero → About) →
           Services stays pinned while the Manifesto scrolls over it (tilt). */}
