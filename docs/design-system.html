@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
---white:#FFFFFF;--mist:#F4F6F7;--silver:#DDE3E7;--graphite:#6E767C;--ink:#15171A;
+--white:#FFFFFF;--mist:#F4F6F7;--silver:#DDE3E7;--graphite:#687076;--ink:#15171A;
 --ice:#7FA8C9;--ice-soft:#DCE8F1;--ice-deep:#2E5F8A;
 --font-sans:"Manrope",system-ui,sans-serif;
 --t-display:clamp(3.25rem,8.5vw,8rem);--t-h1:clamp(2.25rem,5.2vw,4.25rem);
@@ -22,13 +22,13 @@
 --e-arc:cubic-bezier(.83,0,.17,1);--e-settle:cubic-bezier(.16,1,.3,1);
 --r-sm:4px;--r-md:10px;--r-full:999px;--hair:1px;
 --lift-3:0 24px 60px -20px rgba(21,23,26,.14);
---grain-opacity:.42;
+--grain-opacity:.14;
 }
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;background:var(--white);color:var(--ink);font-family:var(--font-sans);
   font-size:var(--t-body);line-height:1.65;-webkit-font-smoothing:antialiased}
 .grain{position:fixed;inset:0;z-index:40;pointer-events:none;opacity:var(--grain-opacity);
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
   background-size:180px 180px}
 .page{max-width:1120px;margin:0 auto;padding:0 clamp(1.25rem,4vw,3.5rem)}
 section{padding:clamp(4rem,8vw,7rem) 0;border-top:var(--hair) solid var(--mist)}
@@ -59,7 +59,9 @@ p{max-width:68ch;color:#3F4549;margin:0 0 var(--s-4)}
 .d-h3{font-size:var(--t-h3);font-weight:500;line-height:1.32;letter-spacing:-.015em}
 .d-body{font-size:var(--t-body);line-height:1.65}
 .d-small{font-size:var(--t-small);color:var(--graphite)}
-.d-display em,.d-h1 em{font-style:normal;font-weight:600}
+/* .d-h2 was missing here, so the section-header demo rendered its emphasis in
+   italic — against the system's own thesis that weight does the work. */
+.d-display em,.d-h1 em,.d-h2 em,.d-h3 em{font-style:normal;font-weight:600}
 
 /* space */
 .spaces{display:grid;gap:var(--s-3)}
@@ -96,10 +98,24 @@ p{max-width:68ch;color:#3F4549;margin:0 0 var(--s-4)}
 .tile .img{height:132px;background:radial-gradient(circle at 38% 32%,#FFF 0%,#F2F6F9 44%,#DFE9F1 74%,#C8D9E6 100%)}
 .tile .cap{padding:var(--s-4) var(--s-5) var(--s-5)}
 .tile h5{margin:var(--s-2) 0 var(--s-1);font-size:15px;font-weight:500}
-.navdemo{display:flex;align-items:center;gap:var(--s-6);font-size:13.5px}
-.navdemo a{color:var(--graphite);text-decoration:none;transition:color var(--d-instant)}
-.navdemo a:hover{color:var(--ink)}
+/* Nav · LOCKED as burger + persistent Contact. There is no horizontal nav in
+   this system: someone who wants to hire you never opens a menu to find out how. */
+.navdemo{display:flex;align-items:center;gap:var(--s-5);font-size:13.5px}
 .navdemo b{font-weight:600;letter-spacing:-.02em;margin-right:auto}
+.navdemo a{color:var(--graphite);text-decoration:none;transition:color var(--d-instant) var(--e-settle)}
+.navdemo a:hover{color:var(--ink)}
+/* the burger. Two rules, not three — three reads generic, two reads drawn. */
+.burger{display:flex;flex-direction:column;justify-content:center;gap:5px;
+  width:44px;height:44px;padding:0 11px;border:1px solid var(--silver);
+  border-radius:var(--r-full);background:none;cursor:pointer;
+  transition:border-color var(--d-base) var(--e-settle),background var(--d-base) var(--e-settle)}
+.burger i{display:block;height:1px;background:var(--ink);transform-origin:right center;
+  transition:transform var(--d-base) var(--e-settle),opacity var(--d-base) var(--e-settle)}
+.burger i:last-child{width:60%;margin-left:auto;opacity:.55}
+/* hover: the short rule extends to meet the long one. The aperture is implied
+   before it opens — the button tells you it is about to become something. */
+.burger:hover{border-color:var(--ice);background:var(--ice-soft)}
+.burger:hover i:last-child{transform:scaleX(1.667);opacity:1}
 .revealbox{border:1px solid var(--silver);border-radius:var(--r-md);padding:var(--s-6);background:var(--white)}
 .rev{opacity:0;filter:blur(14px);transform:translateY(18px);
   transition:opacity var(--d-slow) var(--e-glass),filter var(--d-slow) var(--e-glass),transform var(--d-slow) var(--e-glass)}
@@ -138,7 +154,7 @@ th{font-size:13px;color:var(--graphite);font-weight:500;width:160px}
     <div class="sw"><div class="chip" style="background:#FFFFFF"></div><p><b>white</b><code>#FFFFFF</code><br>surface</p></div>
     <div class="sw"><div class="chip" style="background:#F4F6F7"></div><p><b>mist</b><code>#F4F6F7</code><br>surface-raised</p></div>
     <div class="sw"><div class="chip" style="background:#DDE3E7"></div><p><b>silver</b><code>#DDE3E7</code><br>hairline</p></div>
-    <div class="sw"><div class="chip" style="background:#6E767C"></div><p><b>graphite</b><code>#6E767C</code><br>text-muted · 4.6:1</p></div>
+    <div class="sw"><div class="chip" style="background:#687076"></div><p><b>graphite</b><code>#687076</code><br>text-muted · 5.04:1 white, 4.65:1 mist</p></div>
     <div class="sw"><div class="chip" style="background:#15171A"></div><p><b>ink</b><code>#15171A</code><br>text · 16.5:1</p></div>
     <div class="sw"><div class="chip" style="background:#7FA8C9"></div><p><b>ice</b><code>#7FA8C9</code><br>accent · light and rim only</p></div>
     <div class="sw"><div class="chip" style="background:#DCE8F1"></div><p><b>ice-soft</b><code>#DCE8F1</code><br>accent-wash · large fills</p></div>
@@ -146,6 +162,7 @@ th{font-size:13px;color:var(--graphite);font-weight:500;width:160px}
   </div>
   <hr class="hair">
   <p class="muted"><b style="color:var(--ink);font-weight:500">Two rules that keep this from going wrong.</b> Ice at #7FA8C9 fails contrast on white at 2.4:1, so it can never carry text or a small icon. It is light, rim and object tint only. When the accent has to be readable, that is ice-deep. And the accent appears at most four or five times on any page. If it starts showing up on every hover state it stops being a signal.</p>
+  <p class="muted" style="margin-top:var(--s-4)"><b style="color:var(--ink);font-weight:500">Why graphite is #687076 and not #6E767C.</b> The original cleared AA on white at 4.62:1, but only reached 4.26:1 on <code>mist</code> — and since <code>surface-raised</code> <em style="font-style:normal;font-weight:600">is</em> mist, muted copy was failing on every alternating section. This is the smallest darkening that clears 4.5 on both surfaces, and the two are indistinguishable side by side.</p>
 </section>
 
 <section>
@@ -257,8 +274,12 @@ th{font-size:13px;color:var(--graphite);font-weight:500;width:160px}
       <a href="#" class="btn btn-ghost" style="margin-left:var(--s-3)">See the work</a>
     </div>
     <div class="demo">
-      <p class="label">Nav</p>
-      <div class="navdemo"><b>Konaverse</b><a href="#">Work</a><a href="#">Studio</a><a href="#">Contact</a></div>
+      <p class="label">Nav · burger, Contact always out</p>
+      <div class="navdemo">
+        <b>Konaverse</b>
+        <a href="#">Contact</a>
+        <button class="burger" aria-label="Open menu" aria-expanded="false"><i></i><i></i></button>
+      </div>
     </div>
     <div class="demo">
       <p class="label">Project tile</p>
@@ -272,7 +293,9 @@ th{font-size:13px;color:var(--graphite);font-weight:500;width:160px}
   </div>
   <hr class="hair">
   <table>
-    <tr><th>Full list</th><td>Nav · button (primary, ghost) · arrow link · project tile · section header · hairline rule · footer · cursor lens · form input · list row. That is the whole library. Anything that appears once is not a component, it is a one-off.</td></tr>
+    <tr><th>Full list</th><td>Burger nav + aperture menu overlay · button (primary, ghost) · arrow link · project tile · section header · hairline rule · footer · cursor lens · form input · list row. That is the whole library. Anything that appears once is not a component, it is a one-off.</td></tr>
+    <tr><th>Nav · locked</th><td>Burger only, with <b style="font-weight:500">Contact always visible outside it</b>. No horizontal nav anywhere in this system. The menu opens as an <b style="font-weight:500">aperture</b>: one clip-path circle grown from the button's own centre, measured at click time, with the panel's contents rising while the circle is still travelling. Close reverses the same timeline faster, so the menu is swallowed back into the button it came from.</td></tr>
+    <tr><th>Still to design</th><td>The demos above are the <em style="font-style:normal;font-weight:500">system's</em> defaults, not the finished components. Button, card, burger, arrow link, list row and form input each still need their own hover behaviour — calm but fascinating, the same register as the aperture. Nothing here is signed off as final.</td></tr>
   </table>
 </section>
 

@@ -39,7 +39,11 @@ These apply everywhere and are decided once.
 
 **Progress indicator.** A miniature of the 3D object, near the burger, rotating in proportion to scroll position. Where you are in the page is expressed as where the object has turned to. This carries the wayfinding that the removed labels used to provide, so it is functional rather than ornamental.
 
-**Nav.** Burger, with contact remaining visible outside it. Someone who wants to hire you should never have to open a menu to find out how.
+**Nav. LOCKED.** Burger, with contact remaining visible outside it. Someone who wants to hire you should never have to open a menu to find out how. There is no horizontal nav in this system — the design system's earlier `Work · Studio · Contact` bar is removed. The menu opens as an **aperture**: one clip-path circle grown from the button's own centre, measured at click time, panel contents rising while the circle is still travelling, close reversing the same timeline faster so the menu is swallowed back into the button.
+
+**Outbound links. LOCKED — architecture §8 wins.** The homepage links **down to three places only**: the services hub, the work hub, and contact. Not to twenty. The footer carries the full map and is the only place every URL appears. This is deliberate authority flow, not tidiness: `/services` is what fans out to the individual service pages, so the homepage must not bypass it.
+
+The consequence, applied section by section below: **section 3 states problems as text and links nowhere**, and **section 4 lists services as text with one link to the hub.** Both sections still do their SEO job — plainly-stated problems in real DOM text are exactly what language models cite, and that works whether or not the words are wrapped in an anchor.
 
 **Page transitions.** The exoape arc. Outgoing view tilts away on a circular path while the next rises from beneath, and passes through a lens on the overlap so it distorts as it leaves. `--d-cinema` on `--e-arc`.
 
@@ -95,7 +99,9 @@ Content: what Konaverse does and who for. This is where "we build a story throug
 
 **On screen.** Three or four problem statements, stacked vertically, each one line of `h2` with two lines of `body` beneath. Written as the client would say it, not as you would categorise it. "Your site looks like everyone else's." "Visitors leave before they understand what you do."
 
-Each links to the matching post in the problem cluster. **This is the section that feeds AI search**, because it states questions plainly and answers them plainly.
+~~Each links to the matching post in the problem cluster.~~ **Superseded — no links here.** Seven problem posts linked from the homepage was the actual "twenty places" that architecture §8 rules out, and it leaked authority straight past the services hub. The problems are stated as **plain text only**.
+
+**This is still the section that feeds AI search**, because it states questions plainly and answers them plainly — and that works on the strength of the DOM text, not on the anchors. The problem cluster is reached from the footer map and from the service pages, which is where §8 wants that traffic routed.
 
 **Entrance.** Staggered, 80ms apart, top to bottom. Each item reveals as it crosses the trigger point rather than all together, so the section builds as you move through it.
 
@@ -109,13 +115,17 @@ Each links to the matching post in the problem cluster. **This is the section th
 
 **Job.** The service cluster. Route commercial intent into the service pages.
 
-**On screen.** Four to six services as a list, not a card grid. Each row: service name at `h3`, one line of `body`, an arrow link. Hairline between rows.
+**On screen.** Four to six services as a list, not a card grid. Each row: service name at `h3`, one line of `body`. Hairline between rows. **One arrow link at the end of the list, to `/services`** — the rows themselves are not individually linked.
+
+~~Each row: an arrow link.~~ **Superseded.** Per-row links would send the homepage to six service pages and bypass the hub, which is exactly the flow architecture §8 forbids. The hub is what fans out. The rows still name every service in real DOM text, so nothing is lost for search — only the anchors move.
 
 A list beats cards here for two reasons. Cards are the most template-like pattern in existence, and a list holds more services without the page getting taller.
 
+**Design consequence, and it is a real one.** A list of services where the rows are not clickable will read as broken unless the single hub link is unmistakable. Whatever the rows do on hover, they must not imply navigation they do not provide — no arrow chip per row, no row-wide cursor change. The hub link at the foot of the list carries the whole affordance and should be weighted accordingly.
+
 **Entrance.** Rows reveal in sequence, 60ms apart, faster than section 3 because there are more of them and a slow stagger would feel like waiting.
 
-**Hover.** The row lifts slightly on `--e-settle`, and the hairline beneath it brightens toward ice. This is one of the few places the accent appears.
+**Hover.** ~~The row lifts slightly and the hairline brightens toward ice.~~ **Reassigned to the hub link.** A lift-and-brighten on a row that cannot be clicked is a promise the page does not keep. The rows get no hover state at all; the accent moment moves to the single `/services` link, where the hairline beneath it draws toward ice on `--e-settle`. That is still one of the four or five places the accent appears on the page.
 
 **Handoff.** The last hairline extends full bleed to both edges of the viewport, which visually opens the page out just before the work section.
 
@@ -127,7 +137,11 @@ A list beats cards here for two reasons. Cards are the most template-like patter
 
 **Job.** Proof. This is the section that actually sells.
 
-**On screen.** Three projects, generously spaced, one per viewport or two side by side with a large offset. Each: image, project name at `h3`, one line describing the work. No categories, no filters, no tags.
+**On screen.** Three projects, generously spaced, one per viewport or two side by side with a large offset. Each: image, project name at `h3`, one line describing the work. No categories, no filters, no tags. **One link, to `/projects`.**
+
+> **Flagged — this is the weakest consequence of the §8 rule, and the one place I would argue for an exception.** Three image tiles that cannot be clicked fight every instinct a visitor has; an image with a project name under it reads as a link whether or not it is one. Service rows survive being unlinked because they are text. Tiles probably do not.
+>
+> Two ways out, both defensible: link the three tiles to their case studies and accept five destinations instead of three (the case studies link back to service pages per §8, so authority still circulates), or keep the tiles unlinked and make the `/projects` link genuinely prominent rather than a footnote. **Currently written the strict way. Worth one decision before this section gets built.**
 
 **Client work supplies the only colour on this page.** That is why the palette has no real accent, and it is a genuine argument in a portfolio rather than a limitation.
 
@@ -177,7 +191,11 @@ A list beats cards here for two reasons. Cards are the most template-like patter
 
 **Job.** Answer the question before it is asked, and qualify the wrong leads out.
 
-**On screen.** Three tiers as ranges, not a feature comparison table. Name, starting figure, one line on what it suits. Link to `/pricing` for the full picture.
+**On screen.** Three tiers as ranges, not a feature comparison table. Name, starting figure, one line on what it suits. ~~Link to `/pricing` for the full picture.~~
+
+> **Flagged — `/pricing` is a fourth destination and §8 allows three.** The tiers are stated as text either way, so the section still answers the question and still qualifies leads out, which is its actual job. But pricing is one of the two things people already ask on WhatsApp (architecture §5), so sending them to the footer for it is a real cost.
+>
+> My read: this is a better exception than the project tiles, because the link is a single deliberate line rather than an affordance problem. **Currently written the strict way — no link — pending your call.**
 
 **Do not build a three-column table with ticks and crosses.** That is SaaS furniture. It will look wrong in Whiteout and cheap for the tier you are selling. Three lines of text with generous space between them will read as more confident and more expensive.
 
@@ -207,9 +225,22 @@ Full site map, quiet, at `small`. Every URL appears here and only here. Legal li
 
 ---
 
-## Open questions
+## Decided
 
-1. **What is the object.** Everything in sections 1 and 6 depends on it and it is still undecided. It should bend light, and it should not be recognisable as anything from daily life.
-2. **Two projects side by side or one per viewport** in section 5. Depends on how strong the project images are.
-3. **Whether sections 3 and 4 are separate.** They could merge into one "problems and services" section if the page runs long. My view is keep them separate: they catch different search intent.
-4. **Does the pinned section come before or after the work.** Currently after, so proof precedes demonstration. The reverse is defensible if you want to lead with capability.
+- **Nav is a burger** with Contact always outside it, opening as an aperture. No horizontal nav. See *Global behaviour*.
+- **Outbound links follow architecture §8** — services hub, work hub, contact. Sections 3, 4, 5 and 8 rewritten above; two exceptions flagged inline for a decision.
+- **Sections 3 and 4 stay separate.** They catch different search intent, and merging them would put two ideas in one viewport.
+
+## Deferred
+
+- **Everything 3D — the object, sections 1 and 6, the frame pipeline.** Blocked on a prior question that has not been answered yet: *how Blender output actually reaches a browser.* Baked frame sequence, glTF with real-time lighting, or a rendered video are three different production pipelines with three different budgets, and the choice reaches back into the modelling and lighting setup — so it cannot be decided from the design side alone.
+
+  Until that conversation happens, **sections 1 and 6 are not designable**, and the numbers in §6 (120 frames, 4–8MB, 250–300vh) are placeholders, not commitments. See `REDESIGN.md` §6 for the frame-count evidence carried over from the v3.1 build, which is relevant input to that conversation.
+
+  Everything else on this page — sections 2, 3, 4, 5, 7, 8, 9 and the footer — is fully designable now and does not touch 3D.
+
+## Still open
+
+1. **Two projects side by side or one per viewport** in section 5. Depends on how strong the project images are.
+2. **Does the pinned demonstration come before or after the work.** Currently after, so proof precedes demonstration. The reverse is defensible if you want to lead with capability. *(Downstream of the 3D conversation — section 6 is the pinned one.)*
+3. **The two link exceptions** flagged in sections 5 and 8: clickable project tiles, and a `/pricing` link.

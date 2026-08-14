@@ -33,22 +33,45 @@ object appears in exactly two of nine sections, which is what makes it read as d
 
 ---
 
-## 2. Open questions from the specs
+## 2. Decisions
 
-Carried forward from the documents, still undecided:
+### Locked
 
-1. **What is the object** (`choreography` §open-1) — everything in sections 1 and 6 depends
-   on it. Should bend light, should not be recognisable as anything from daily life.
-2. **Two projects side by side, or one per viewport** in section 5.
-3. **Whether sections 3 and 4 stay separate.** The spec's view is keep them — they catch
-   different search intent. Agreed.
-4. **Does the pinned demonstration come before or after the work.**
-5. **Nav pattern — genuine conflict between two locked documents.** The choreography says
-   burger with contact visible outside it; the design system's component demo shows a
-   horizontal `Konaverse · Work · Studio · Contact` bar. These cannot both be right.
-6. **Homepage outbound links.** Architecture §8 says the homepage links *down* to three
-   places, "not to twenty". The choreography's homepage links to problem posts (§3),
-   service pages (§4), projects (§5), pricing (§8) and contact (§9). Reconcile.
+- **Nav is a burger**, with Contact always visible outside it, opening as an **aperture** —
+  one clip-path circle grown from the button's own centre. No horizontal nav anywhere in
+  this system. The design system's `Work · Studio · Contact` bar has been removed and
+  replaced with the burger + persistent Contact. Reference implementation in §10.
+- **Outbound links follow architecture §8** — services hub, work hub, contact, and nothing
+  else. The choreography has been rewritten to comply: section 3 states problems as text
+  and links nowhere (seven blog links *was* the "twenty places" problem), section 4 lists
+  services as text with one link to `/services`, section 4's row hover moves to that hub
+  link. Two exceptions are flagged inline for a decision — see below.
+- **Sections 3 and 4 stay separate.** Different search intent, and merging puts two ideas
+  in one viewport.
+
+### Deferred — everything 3D
+
+**The object, sections 1 and 6, and the frame pipeline are all on hold**, blocked on a
+prior question: *how Blender output actually reaches a browser.* Baked frame sequence vs.
+glTF with real-time lighting vs. rendered video are three different production pipelines
+with three different budgets, and the choice reaches back into modelling and lighting — so
+it can't be settled from the design side. The numbers in choreography §6 (120 frames,
+4–8MB, 250–300vh) are placeholders, not commitments.
+
+**Sections 2, 3, 4, 5, 7, 8, 9 and the footer are fully designable now** and touch no 3D.
+
+### Two link exceptions needing a call
+
+1. **Project tiles in section 5.** Strict §8 means three image tiles that can't be clicked.
+   An image with a project name under it reads as a link whether or not it is one — service
+   rows survive being unlinked because they're text; tiles probably don't. Either link them
+   to their case studies and accept five destinations (case studies link back to service
+   pages, so authority still circulates), or make the `/projects` link genuinely prominent.
+   **Written the strict way for now.**
+2. **`/pricing` in section 8.** A fourth destination. Pricing is one of the two things people
+   already ask on WhatsApp, so routing them to the footer for it has a real cost. A single
+   deliberate line is a cleaner exception than the tile affordance problem.
+   **Written the strict way for now.**
 
 ---
 
