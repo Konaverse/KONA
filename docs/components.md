@@ -113,8 +113,8 @@ than carrying a copy of it — so the reference cannot drift from the code.
 | **Button · primary** | **built** | The fill **irises open from the centre** — the same circle that grows the menu out of the burger. The aperture becomes the system's one *this opens* gesture rather than being invented twice. Disc sized off the button's own width so wide and narrow buttons feel identical. |
 | **Button · ghost** | **built** | Same iris, opening in `--accent-wash` instead of `--ice-deep`. |
 | **Arrow link** | **built** | The arrow leaves through its own crop while its replacement enters from the left, and the rule draws underneath as though the arrow drew it. Cause and effect, one gesture. **The label also shifts to `--text-accent`** — testing showed the ice rule alone (2.52:1) is not a perceivable hover state, and the arrow wrap ends in the same picture it began with, so neither could carry it. |
-| **Project tile** | **built** | Lift + `--lift-3`, border warming toward ice, image easing up inside its own crop — the same gesture seen from outside and in. Still blocked on the tile-link decision (`REDESIGN.md` §2). |
-| **List row** | **built** | Rows are **not** links per §8, so no arrow chip and no row-wide cursor. The hairline warms toward ice, reading as *part of a set* rather than *click me*; the whole affordance sits on the single hub link below. |
+| **Project tile** | **built** | Lift + `--lift-3`, border warming toward ice, image easing up inside its own crop — the same gesture seen from outside and in. **Unblocked: tiles are links** to their case studies, so the hover is a real affordance rather than decoration. |
+| **List row** | **built** | Rows are **not** links, so no arrow chip, no row-wide cursor, and **no hover state at all** — that's the design, not an omission. Anything answering the cursor implies it can be clicked. The whole affordance sits on the single arrow link below the list. |
 | **Section header** | done | Heading + body, no eyebrow. The restraint *is* the design. |
 | **Hairline rule** | **built** | `.k-rule`, plus `.k-rule-draw` which scales from the left on `--d-slow` — a break that arrives rather than sits there. |
 | **Aperture menu** | mechanics locked, unbuilt | §2. Next up. |
@@ -129,9 +129,26 @@ are what Figma mirrors and that contract is unchanged. The prefix is what makes 
 file safe to import globally — the names it shipped with (`.grid`, `.section`, `.card`,
 `.page`, `.btn`, `.grain`) collided with 27 existing usages across 13 files.
 
-**Accent budget.** Four or five appearances per page, total, across every component. Current
-claims on it: the services hub link, the burger hover, the cursor lens fringe. That is
-already three — every further use has to displace one of them.
+### Accent budget — four, and it is full
+
+The design system's rule: *"the accent appears at most four or five times on any page. If it
+starts showing up on every hover state it stops being a signal."*
+
+Building the set nearly broke that. Ice ended up in the hover state of the button, ghost
+button, card, list row, burger **and** arrow link — literally every interactive component,
+which is the exact failure the rule names. Two were cut:
+
+- **Card border warming** — the tile already lifts and eases its image. A third move on one
+  component, spending accent the tile hasn't earned when the image is the loudest thing on
+  the page anyway.
+- **List row hairline warming** — removed entirely, since the rows aren't links (above).
+
+**The four that remain, each earning it:** the arrow link's drawn rule (the primary
+navigation affordance, carrying every destination) · the button's iris in `--ice-deep` (the
+primary CTA) · the burger's hover (it is the entire nav) · the cursor lens fringe (the
+signature, always present).
+
+**The budget is now full.** Any new accent use has to displace one of these four, not join them.
 
 ---
 

@@ -423,9 +423,11 @@ body {
               transform  var(--d-base) var(--e-settle),
               border-color var(--d-base) var(--e-settle);
 }
+/* Lift and image-ease only. An earlier version also warmed the border toward
+   ice, which made three moves on one component and spent accent the tile has
+   not earned — the image is the loudest thing on the page already. */
 .k-card:hover, .k-card:focus-visible {
   box-shadow: var(--lift-3); transform: translateY(-2px);
-  border-color: color-mix(in srgb, var(--accent) 45%, var(--hairline));
 }
 .k-card__media { display: block; overflow: hidden; }
 .k-card__media > * {
@@ -445,11 +447,14 @@ body {
   align-items: baseline; gap: var(--s-5);
   padding-block: var(--s-5);
   border-top: var(--hair) solid var(--hairline);
-  transition: border-color var(--d-base) var(--e-settle);
 }
 .k-row:last-child { border-bottom: var(--hair) solid var(--hairline); }
-.k-row:hover { border-top-color: var(--accent); }
-.k-row:hover + .k-row { border-top-color: var(--accent); }
+/* No hover state at all — and that is the design, not an omission.
+   These rows are not links. An earlier version warmed the hairline toward ice
+   on hover, which contradicted the same reasoning that moved section 4's
+   lift-and-brighten onto the hub link: anything that answers the cursor
+   implies it can be clicked. Silence is the honest answer. The whole
+   affordance sits on the one arrow link below the list. */
 
 /* ---------- burger ----------
    Two rules, not three — three reads generic, two reads drawn. On

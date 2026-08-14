@@ -60,18 +60,20 @@ it can't be settled from the design side. The numbers in choreography §6 (120 f
 
 **Sections 2, 3, 4, 5, 7, 8, 9 and the footer are fully designable now** and touch no 3D.
 
-### Two link exceptions needing a call
+### Both link exceptions — decided, §8 amended
 
-1. **Project tiles in section 5.** Strict §8 means three image tiles that can't be clicked.
-   An image with a project name under it reads as a link whether or not it is one — service
-   rows survive being unlinked because they're text; tiles probably don't. Either link them
-   to their case studies and accept five destinations (case studies link back to service
-   pages, so authority still circulates), or make the `/projects` link genuinely prominent.
-   **Written the strict way for now.**
-2. **`/pricing` in section 8.** A fourth destination. Pricing is one of the two things people
-   already ask on WhatsApp, so routing them to the footer for it has a real cost. A single
-   deliberate line is a cleaner exception than the tile affordance problem.
-   **Written the strict way for now.**
+**Project tiles are links** to their own case studies, and **section 8 links to `/pricing`.**
+Architecture §8 has been amended in place (with the original wording preserved in a note) so
+the two documents can't contradict each other again.
+
+The homepage now links down to **seven URLs**: services hub, work hub, three featured case
+studies, pricing, contact. What stays excluded matters more than the count — individual
+service pages (the hub fans those out) and blog posts (reached from the service pages). The
+rule was never about the number; it's about not skipping a hub that exists to do the fanning.
+
+Tiles are links and section 4's service rows are not, which is deliberate rather than
+inconsistent: a tile is an image and self-evidently clickable, while the rows are text in a
+list that ends with a single hub link.
 
 ---
 

@@ -41,9 +41,11 @@ These apply everywhere and are decided once.
 
 **Nav. LOCKED.** Burger, with contact remaining visible outside it. Someone who wants to hire you should never have to open a menu to find out how. There is no horizontal nav in this system — the design system's earlier `Work · Studio · Contact` bar is removed. The menu opens as an **aperture**: one clip-path circle grown from the button's own centre, measured at click time, panel contents rising while the circle is still travelling, close reversing the same timeline faster so the menu is swallowed back into the button.
 
-**Outbound links. LOCKED — architecture §8 wins.** The homepage links **down to three places only**: the services hub, the work hub, and contact. Not to twenty. The footer carries the full map and is the only place every URL appears. This is deliberate authority flow, not tidiness: `/services` is what fans out to the individual service pages, so the homepage must not bypass it.
+**Outbound links. LOCKED.** The homepage links down to **seven URLs and no others**: the services hub, the work hub, the three featured case studies, pricing, and contact. The footer carries the full map and is the only place every URL appears.
 
-The consequence, applied section by section below: **section 3 states problems as text and links nowhere**, and **section 4 lists services as text with one link to the hub.** Both sections still do their SEO job — plainly-stated problems in real DOM text are exactly what language models cite, and that works whether or not the words are wrapped in an anchor.
+**What stays excluded, and why it matters more than the count.** Individual service pages — `/services` is what fans out to those six, and bypassing the hub would spray the homepage across the whole cluster. Blog posts — seven problem-cluster links was the original excess, and those are reached from the service pages instead. The discipline was never about the number; it is about not skipping a hub that exists to do the fanning.
+
+The consequences, section by section below: **section 3 states problems as text and links nowhere**, **section 4 lists services as text with one link to the hub**, **section 5's tiles each link to their case study**, and **section 8 links to pricing**. Sections 3 and 4 still do their SEO job either way — plainly-stated problems in real DOM text are what language models cite, and that works whether or not the words sit inside an anchor.
 
 **Page transitions.** The exoape arc. Outgoing view tilts away on a circular path while the next rises from beneath, and passes through a lens on the overlap so it distorts as it leaves. `--d-cinema` on `--e-arc`.
 
@@ -137,11 +139,13 @@ A list beats cards here for two reasons. Cards are the most template-like patter
 
 **Job.** Proof. This is the section that actually sells.
 
-**On screen.** Three projects, generously spaced, one per viewport or two side by side with a large offset. Each: image, project name at `h3`, one line describing the work. No categories, no filters, no tags. **One link, to `/projects`.**
+**On screen.** Three projects, generously spaced, one per viewport or two side by side with a large offset. Each: image, project name at `h3`, one line describing the work. No categories, no filters, no tags.
 
-> **Flagged — this is the weakest consequence of the §8 rule, and the one place I would argue for an exception.** Three image tiles that cannot be clicked fight every instinct a visitor has; an image with a project name under it reads as a link whether or not it is one. Service rows survive being unlinked because they are text. Tiles probably do not.
->
-> Two ways out, both defensible: link the three tiles to their case studies and accept five destinations instead of three (the case studies link back to service pages per §8, so authority still circulates), or keep the tiles unlinked and make the `/projects` link genuinely prominent rather than a footnote. **Currently written the strict way. Worth one decision before this section gets built.**
+**Links — DECIDED. Each tile is a link to its own case study**, plus one link to `/projects`. Four links out of this section.
+
+An image with a project name under it reads as a link whether or not it is one, so unlinked tiles would have been a promise the page breaks — and this is the section that actually sells. Architecture §8 is amended to allow it (see that document), and the flow still closes: each case study links back to the service page that produced it, so authority circulates rather than leaking. It also fixes something §3 of the architecture complains about directly — the case studies are the strongest asset already owned and are *currently doing nothing*. A homepage link is the cheapest way to change that.
+
+**Why the tiles are links and the service rows are not.** Not an inconsistency. Tiles are images, and an image is self-evidently clickable. Section 4's rows are text in a list that ends with a single hub link, and the hub is what fans out to six service pages — bypassing it would spray the homepage across the whole service cluster. Different mechanics, different answer.
 
 **Client work supplies the only colour on this page.** That is why the palette has no real accent, and it is a genuine argument in a portfolio rather than a limitation.
 
@@ -191,11 +195,9 @@ A list beats cards here for two reasons. Cards are the most template-like patter
 
 **Job.** Answer the question before it is asked, and qualify the wrong leads out.
 
-**On screen.** Three tiers as ranges, not a feature comparison table. Name, starting figure, one line on what it suits. ~~Link to `/pricing` for the full picture.~~
+**On screen.** Three tiers as ranges, not a feature comparison table. Name, starting figure, one line on what it suits. **One link to `/pricing` — DECIDED**, for the full picture.
 
-> **Flagged — `/pricing` is a fourth destination and §8 allows three.** The tiers are stated as text either way, so the section still answers the question and still qualifies leads out, which is its actual job. But pricing is one of the two things people already ask on WhatsApp (architecture §5), so sending them to the footer for it is a real cost.
->
-> My read: this is a better exception than the project tiles, because the link is a single deliberate line rather than an affordance problem. **Currently written the strict way — no link — pending your call.**
+Pricing is one of the two things people already ask on WhatsApp (architecture §5), so routing them to the footer for it was a real cost for no real gain. One deliberate line, using the arrow link.
 
 **Do not build a three-column table with ticks and crosses.** That is SaaS furniture. It will look wrong in Whiteout and cheap for the tier you are selling. Three lines of text with generous space between them will read as more confident and more expensive.
 

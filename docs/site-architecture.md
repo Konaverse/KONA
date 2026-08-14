@@ -196,7 +196,7 @@ Recommendation: English only. Revisit if local business becomes the main revenue
 
 The rules, which matter more than the diagram:
 
-- Homepage links **down** to the services hub, work hub, and contact. Not to twenty places.
+- Homepage links **down** to the services hub, work hub, **the three featured case studies**, **pricing**, and contact. Seven URLs, and nothing else. *(Amended 2026-08-14 — this rule originally read "the services hub, work hub, and contact. Not to twenty places." The case studies were added because unlinked image tiles are a promise the page breaks, and because §3 below notes the case studies are the strongest asset already owned and currently doing nothing; a homepage link is the cheapest fix. Pricing was added because it is one of the two questions already arriving by WhatsApp, per §5. The point of the rule is not the number — it is not skipping a hub that exists to fan out, which is why individual service pages and blog posts remain excluded.)*
 - Services hub links **down** to each service page, and each service page links **back up**.
 - Every service page links to **at least one case study** that proves it.
 - Every case study links to **the service page** that produced it.
