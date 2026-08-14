@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { EffectComposer } from '@react-three/postprocessing'
 import Fluid from './fluid/Fluid'
+import { ICE_PALETTE, type FluidPalette } from './fluid/FluidEffect'
 
 /**
  * FLUID CURSOR — the ice trail.
@@ -27,10 +28,13 @@ import Fluid from './fluid/Fluid'
  * will not use it.
  */
 export default function FluidCursor({
-  color = '#7FA8C9',
+  palette = ICE_PALETTE,
+  /** Density-to-colour gain. Raise to make the trail read stronger. */
+  intensity = 12,
   zIndex = 55,
 }: {
-  color?: string
+  palette?: FluidPalette
+  intensity?: number
   zIndex?: number
 }) {
   const [on, setOn] = useState(false)
@@ -62,7 +66,7 @@ export default function FluidCursor({
       aria-hidden="true"
     >
       <EffectComposer>
-        <Fluid color={color} />
+        <Fluid palette={palette} intensity={intensity} />
       </EffectComposer>
     </Canvas>
   )

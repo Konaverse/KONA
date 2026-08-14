@@ -2,30 +2,49 @@ import { Effect } from 'postprocessing'
 import { Color, Texture, Uniform, Vector3 } from 'three'
 import { POST_FRAG } from './shaders'
 
-const hexToRgb = (hex: string) => {
+const rgb = (hex: string) => {
   const c = new Color(hex)
   return new Vector3(c.r, c.g, c.b)
 }
 
+export type FluidPalette = {
+  /** Thin trailing edges. --ice */
+  ice: string
+  /** Fast-moving parts — the one neutral, read as smoke. --graphite */
+  graphite: string
+  /** The dense core. --ice-deep */
+  iceDeep: string
+}
+
+export const ICE_PALETTE: FluidPalette = {
+  ice: '#7FA8C9',
+  graphite: '#687076',
+  iceDeep: '#2E5F8A',
+}
+
 /**
- * The post pass that paints the simulated density as ice.
+ * The post pass that paints simulated density as ice.
  *
- * Only two uniforms matter: the fluid texture and the accent. The background
- * colour the original carried is gone — under `multiply` compositing the
- * "background" is always white by definition, so it was a knob that could only
- * ever be set wrong.
+ * Three colours rather than one: density ramps white → ice → ice-deep for
+ * depth, and speed mixes graphite through it for smoke. A single-colour ramp
+ * looked synthetic — the neutral is what stops it reading as a gradient.
+ *
+ * There is no background uniform. Under `multiply` compositing the background
+ * is white by definition, so it was a knob that could only ever be set wrong.
  */
 export default class FluidEffect extends Effect {
   constructor({
     tFluid = new Texture(),
     intensity = 1.0,
-    fluidColor = '#7FA8C9',
-  }: { tFluid?: Texture; intensity?: number; fluidColor?: string } = {}) {
+    palette = ICE_PALETTE,
+  }: { tFluid?: Texture; intensity?: number; palette?: FluidPalette } = {}) {
     super('FluidEffect', POST_FRAG, {
       uniforms: new Map<string, Uniform<unknown>>([
         ['tFluid', new Uniform(tFluid)],
         ['uIntensity', new Uniform(intensity)],
-        ['uColor', new Uniform(hexToRgb(fluidColor))],
+        ['uIce', new Uniform(rgb(palette.ice))],
+        ['uGraphite', new Uniform(rgb(palette.graphite))],
+        ['uIceDeep', new Uniform(rgb(palette.iceDeep))],
       ]),
     })
   }
@@ -40,8 +59,9 @@ export default class FluidEffect extends Effect {
     if (u) u.value = v
   }
 
-  setColor(hex: string) {
-    const u = this.uniforms.get('uColor')
-    if (u) u.value = hexToRgb(hex)
+  setPalette(p: FluidPalette) {
+    this.uniforms.get('uIce')!.value = rgb(p.ice)
+    this.uniforms.get('uGraphite')!.value = rgb(p.graphite)
+    this.uniforms.get('uIceDeep')!.value = rgb(p.iceDeep)
   }
 }

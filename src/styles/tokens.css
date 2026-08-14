@@ -735,39 +735,7 @@ html.lenis, html.lenis body { height: auto; }
   .k-aperture__title { white-space: normal; }
 }
 
-/* ---------- cursor lens ----------
-   A disc of glass that genuinely refracts the page beneath it: an SVG
-   displacement map fed to backdrop-filter, so real pixels bend. The
-   native cursor is never hidden — this augments it.
-
-   left/top stay at 0 and JS writes only `transform`, so following the
-   pointer never triggers layout. */
-.k-lens {
-  position: fixed; left: 0; top: 0; z-index: 60; pointer-events: none;
-  width: var(--lens-size); height: var(--lens-size);
-  border-radius: var(--r-full);
-  opacity: 0;
-  transition: opacity var(--d-quick) var(--e-settle);
-  will-change: transform;
-  /* the glass everyone gets — a whisper of lift, not a frosted panel */
-  backdrop-filter: brightness(1.02) saturate(1.06);
-}
-.k-lens.is-on { opacity: 1; }
-/* the real thing, where the engine runs SVG filters on a backdrop.
-   Chrome does; Safari does not, and falls through to the glass above. */
-.k-lens.is-refracting { backdrop-filter: url(#k-lens-filter) brightness(1.02) saturate(1.06); }
-
-/* the rim. Single cool tone — route B means one fringe, not two. */
-.k-lens::after {
-  content: ""; position: absolute; inset: 0; border-radius: var(--r-full);
-  background: radial-gradient(circle at 50% 50%,
-    rgba(255,255,255,0) 62%,
-    color-mix(in srgb, var(--lens-fringe) 100%, transparent) 100%);
-  opacity: var(--lens-fringe-a);
-}
-
-/* Absent where it is dead weight or an obstacle. Touch has no pointer to
-   follow, and under reduced motion it is a moving object you cannot escape. */
-@media (hover: none), (prefers-reduced-motion: reduce) {
-  .k-lens { display: none; }
-}
+/* The cursor lens was removed — the fluid trail replaces it outright, and
+   two pointer-followers was one too many. The component and its CSS are in
+   git history if it is ever wanted back. The --lens-* tokens above stay:
+   they name a magnification and a fringe, which the fluid can still use. */

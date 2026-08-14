@@ -17,7 +17,7 @@ import {
   Vector2,
   Vector3,
 } from 'three'
-import FluidEffect from './FluidEffect'
+import FluidEffect, { ICE_PALETTE, type FluidPalette } from './FluidEffect'
 import {
   ADVECTION_FRAG,
   BASE_VERT,
@@ -42,7 +42,6 @@ import {
 type Splat = { mouseX: number; mouseY: number; velocityX: number; velocityY: number }
 
 const OPTS = {
-  intensity: 5,
   force: 1,
   curl: 1,
   swirl: 3,
@@ -71,7 +70,10 @@ function useDoubleFBO(w: number, h: number, options: Record<string, unknown>) {
   return fbo
 }
 
-export default function Fluid({ color = '#7FA8C9' }: { color?: string }) {
+export default function Fluid({
+  palette = ICE_PALETTE,
+  intensity = 12,
+}: { palette?: FluidPalette; intensity?: number }) {
   const size = useThree((s) => s.size)
   const gl = useThree((s) => s.gl)
 
@@ -169,7 +171,10 @@ export default function Fluid({ color = '#7FA8C9' }: { color?: string }) {
   }, [size, O.force])
 
   /* ----------------------------------------------------------------- effect */
-  const effect = useMemo(() => new FluidEffect({ intensity: O.intensity * 0.0001, fluidColor: color }), [O.intensity, color])
+  const effect = useMemo(
+    () => new FluidEffect({ intensity: intensity * 0.0001, palette }),
+    [intensity, palette],
+  )
   useEffect(() => () => effect.dispose(), [effect])
 
   /* ------------------------------------------------------------------- loop */

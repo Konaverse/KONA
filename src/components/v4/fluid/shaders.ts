@@ -200,12 +200,35 @@ void main() { gl_FragColor = uClearValue * texture2D(uTexture, vUv); }
  */
 export const POST_FRAG = /* glsl */ `
 uniform sampler2D tFluid;
-uniform vec3 uColor;
+uniform vec3 uIce;      // --ice       #7FA8C9  the thin edges
+uniform vec3 uGraphite; // --graphite  #687076  the fast, smoky parts
+uniform vec3 uIceDeep;  // --ice-deep  #2E5F8A  the dense core
 uniform float uIntensity;
 
 void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {
   vec3 fluid = texture2D(tFluid, uv).rgb;
-  float d = clamp(length(fluid) * uIntensity, 0.0, 1.0);
-  outputColor = vec4(mix(vec3(1.0), uColor, d), 1.0);
+
+  // The splat writes (velocityX, velocityY, 10.0), accumulated and dissipated
+  // each frame — so .b carries how MUCH dye is here and .rg how FAST it was
+  // moving when it was laid down. Two independent quantities, so the colour
+  // can be driven by both instead of by density alone.
+  float amount = abs(fluid.b);
+  float speed  = length(fluid.rg);
+  float d      = clamp(length(fluid) * uIntensity, 0.0, 1.0);
+
+  // DEPTH — density ramps white -> ice -> ice-deep. Thin trailing edges stay
+  // pale and airy, the core goes deep. Monotonically darkening, which is what
+  // keeps it reading as one substance rather than a gradient sticker.
+  vec3 c = mix(vec3(1.0), uIce, smoothstep(0.0, 0.42, d));
+  c = mix(c, uIceDeep, smoothstep(0.45, 1.0, d));
+
+  // SPEED — graphite mixes into the quick-moving parts. It is the one neutral
+  // in the palette, so it reads as smoke pulled through the blue rather than
+  // as a third colour competing with it. Without this the whole thing is a
+  // single blue ramp and looks synthetic.
+  float smoke = clamp(speed / (amount + 0.001) * 0.6, 0.0, 1.0);
+  c = mix(c, uGraphite, smoke * d * 0.55);
+
+  outputColor = vec4(c, 1.0);
 }
 `

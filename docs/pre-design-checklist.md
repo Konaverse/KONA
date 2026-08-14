@@ -60,28 +60,26 @@ becomes north-east; label shifts to `--text-accent`.
 `src/components/v4/CursorLens.tsx`. It genuinely refracts: a generated SVG displacement map
 is fed to `backdrop-filter`, so real pixels bend rather than a highlight being faked.
 
-**3.1 Scope — superseded.** The fluid trail is no longer "later": it has been ported from
-`giats-portfolio` (`src/components/v4/fluid/` + `FluidCursor.tsx`), a full Navier-Stokes
-solver in GLSL. **Both it and the lens are currently mounted, which is one pointer-follower
-too many — see 3.9.**
-**3.2 Hint API — done.** `data-lens="strong" | "weak" | "off"`, resolved via
-`elementFromPoint` and **lerped**, so crossing a boundary dissolves rather than steps.
-Strong over the hero and tiles, weak over body copy, per the choreography.
-**3.3 Native cursor — decided: never hidden.** The lens augments it. Hiding the system
+**3.1 Scope — decided: the fluid, and only the fluid.** Ported from `giats-portfolio`
+(`src/components/v4/fluid/` + `FluidCursor.tsx`), a full Navier-Stokes solver in GLSL.
+**The refracting lens has been removed** — component and CSS both, recoverable from git
+history. Two pointer-followers was one too many, and the lens turned out to be actively
+harmful: its `backdrop-filter` layer sat at `z-60`, directly above the fluid at `z-55`, and
+re-rasterised the backdrop over it. Removing it is what made the fluid visible at all.
+**3.2 Native cursor — decided: never hidden.** The fluid augments it. Hiding the system
 cursor costs text-selection affordance and is a real accessibility regression for a purely
 decorative gain.
-**3.4 Touch + reduced motion — done.** `display: none` under `(hover: none)` and
-`prefers-reduced-motion`, and the JS bails before attaching listeners.
+**3.3 Touch + reduced motion — done.** The component bails before creating a WebGL context.
+**3.4 Palette — done.** Three brand colours, not one. Density ramps white → `--ice` →
+`--ice-deep` for depth; speed mixes `--graphite` through it for smoke. The neutral is what
+stops a single blue ramp reading as a gradient sticker.
 
 | # | Still open | Why it matters | Done when |
 |---|---|---|---|
-| 3.5 | **Frame budget, unmeasured** | `backdrop-filter` with an SVG displacement map re-rasterises the backdrop under a 230px disc every frame. This is the most expensive thing on the page by some distance, and it has **never been measured** — every test ran in a throttled background tab at 0fps. | Watched at speed in a foreground tab, on the work section with three cards playing, and either kept, retuned, or dropped to the glass fallback. |
-| 3.6 | **Safari has no refraction** | Safari does not support `url()` in `backdrop-filter`. It is feature-detected and falls back to a plain glass blur — correct, but visibly less. | Confirmed on real Safari; decided whether the fallback is good enough or Safari gets something else. |
-| 3.7 | **Lens vs proximity buttons** (was 1.5) | Both track the pointer. Two things answering the same movement can read as noise. | Judged side by side in a foreground tab. |
-| 3.8 | **Strength tuning** | `strong 0.052 / base 0.03 / weak 0.012` were picked by eye from one static frame, not in motion. The probe at 0.06 visibly mangled body copy. | Tuned while actually moving the pointer. |
-| 3.9 | **Lens *and* fluid are both mounted** | Two pointer-followers plus the proximity buttons is three things answering one movement. Almost certainly one too many, but it cannot be judged without seeing them. | One chosen — or a deliberate decision that they layer. Removing either is a one-line change in the page. |
-| 3.10 | **Fluid: never actually seen render** | The port compiles, holds a WebGL2 context, and its wrapper composites correctly (`fixed / multiply / white / z-55`), but R3F's ResizeObserver does not fire in a throttled tab so the canvas stayed at its default 300×150. Verified as wiring, unverified as a picture. | Watched in a foreground tab. |
-| 3.11 | **Fluid: colour and tuning** | `#7FA8C9` straight from `--ice`, and the solver constants are the source project's untouched. Those were tuned against a dark page. | Tuned on white. |
+| 3.5 | **Frame budget, unmeasured** | A fluid sim ping-ponging float framebuffers every frame, plus a full-viewport `multiply` composite. Never measured — every test ran in a throttled background tab at 0fps. | Watched at speed in a foreground tab, on the work section with three cards playing. |
+| 3.6 | **Intensity and solver tuning** | `intensity` is now a prop (default 12, was an effective 5). The solver constants — dissipation, curl, radius, pressure — are the source project's untouched, and were tuned against a **dark** page. | Tuned on white, in motion. |
+| 3.7 | **Fluid vs proximity buttons** (was 1.5) | Both answer the same pointer movement. | Judged in a foreground tab. |
+| 3.8 | **WebGL context cost on every page** | One context per page load, plus float framebuffers. Fine on a desktop; worth knowing on low-end hardware. | Checked, and a kill-switch decided if needed. |
 
 ---
 

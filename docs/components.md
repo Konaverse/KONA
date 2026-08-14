@@ -118,7 +118,7 @@ than carrying a copy of it — so the reference cannot drift from the code.
 | **Section header** | done | Heading + body, no eyebrow. The restraint *is* the design. |
 | **Hairline rule** | **built** | `.k-rule`, plus `.k-rule-draw` which scales from the left on `--d-slow` — a break that arrives rather than sits there. |
 | **Aperture menu** | **built** | §2. `src/components/v4/ApertureMenu.tsx`. Circle born in the burger, measured at click time; one reversible timeline, close at 1.6×. |
-| **Cursor lens** | **built** | It genuinely **refracts** — a generated SVG displacement map fed to `backdrop-filter`, so real pixels bend. Single cool fringe at 42%. Strength lerps between `strong / base / weak` via `data-lens`. Native cursor never hidden. Frame cost unmeasured — see checklist §3.5. |
+| **Fluid cursor** | **built** | A Navier-Stokes fluid sim in GLSL, ported from `giats-portfolio`. Density ramps white → `--ice` → `--ice-deep`; speed mixes `--graphite` through as smoke. Composites with `multiply` over white — the source blends with `difference` over black, which inverts to muddy orange on a light page. Native cursor never hidden. Frame cost unmeasured — checklist §3.5. **The refracting lens was removed in its favour.** |
 | **Form input** | not designed | `/contact` only — no form on the homepage. |
 | **Footer** | not designed | Carries the full map; the only place every URL appears. |
 
