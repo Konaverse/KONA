@@ -102,20 +102,32 @@ copy-paste.
 
 Ten, per the design system. Status is honest — most of these have a *default*, not a design.
 
+All built components live in `src/styles/tokens.css` under the `k-` namespace and are
+demonstrated in `docs/design-system.html`, which now **links the real token file** rather
+than carrying a copy of it — so the reference cannot drift from the code.
+
 | Component | Status | The one move |
 |---|---|---|
-| **Burger** | drafted | Two rules, not three — three reads generic. On hover the short rule extends to meet the long one: the aperture implied before it opens. |
-| **Aperture menu** | mechanics locked, styling open | §2 |
-| **Button · primary** | default only | Currently ink fill → ice-deep fill. Functional, not yet interesting. |
-| **Button · ghost** | default only | Currently wash fill + ice border. |
-| **Arrow link** | not designed | The workhorse — it carries the three homepage destinations, so it has to be unmistakable. Highest priority after the menu. |
-| **Project tile** | default only | Lift + `--lift-3`, cursor lens strengthens. Blocked on the tile-link decision (`REDESIGN.md` §2). |
+| **Reveal** | **built** | §1. `.k-reveal` everywhere, `.k-mask > .k-reveal` for single-line display type. `.k-stagger` with `--i` per child, four steps max. |
+| **Burger** | **built** | Two rules, not three — three reads generic. On hover the short rule extends to meet the long one: the aperture implied before it opens. |
+| **Button · primary** | **built** | The fill **irises open from the centre** — the same circle that grows the menu out of the burger. The aperture becomes the system's one *this opens* gesture rather than being invented twice. Disc sized off the button's own width so wide and narrow buttons feel identical. |
+| **Button · ghost** | **built** | Same iris, opening in `--accent-wash` instead of `--ice-deep`. |
+| **Arrow link** | **built** | The arrow leaves through its own crop while its replacement enters from the left, and the rule draws underneath as though the arrow drew it. Cause and effect, one gesture. **The label also shifts to `--text-accent`** — testing showed the ice rule alone (2.52:1) is not a perceivable hover state, and the arrow wrap ends in the same picture it began with, so neither could carry it. |
+| **Project tile** | **built** | Lift + `--lift-3`, border warming toward ice, image easing up inside its own crop — the same gesture seen from outside and in. Still blocked on the tile-link decision (`REDESIGN.md` §2). |
+| **List row** | **built** | Rows are **not** links per §8, so no arrow chip and no row-wide cursor. The hairline warms toward ice, reading as *part of a set* rather than *click me*; the whole affordance sits on the single hub link below. |
 | **Section header** | done | Heading + body, no eyebrow. The restraint *is* the design. |
-| **Hairline rule** | done | Draws L→R on `--d-slow`. Carries every section break, since nothing else does. |
-| **List row** | not designed | Constrained by the §8 decision: on the homepage services list the rows are **not** links, so they must not imply navigation — no per-row arrow chip, no row-wide cursor change. |
+| **Hairline rule** | **built** | `.k-rule`, plus `.k-rule-draw` which scales from the left on `--d-slow` — a break that arrives rather than sits there. |
+| **Aperture menu** | mechanics locked, unbuilt | §2. Next up. |
 | **Cursor lens** | spec'd, unbuilt | 1.06, single cool fringe at 42%. Strengthens over hero and tiles, weakens over body copy. |
 | **Form input** | not designed | `/contact` only — no form on the homepage. |
 | **Footer** | not designed | Carries the full map; the only place every URL appears. |
+
+### The namespace
+
+Component and layout classes are prefixed `k-`; **the CSS variables are not**, because those
+are what Figma mirrors and that contract is unchanged. The prefix is what makes the token
+file safe to import globally — the names it shipped with (`.grid`, `.section`, `.card`,
+`.page`, `.btn`, `.grain`) collided with 27 existing usages across 13 files.
 
 **Accent budget.** Four or five appearances per page, total, across every component. Current
 claims on it: the services hub link, the burger hover, the cursor lens fringe. That is

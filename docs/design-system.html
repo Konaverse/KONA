@@ -7,29 +7,17 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+
+<!-- THE token file. Not a copy of it. Every value, every component and every
+     easing on this page comes from ../src/styles/tokens.css, so this document
+     cannot drift from the codebase — if a token changes there, this page
+     changes with it. The <style> below holds ONLY the furniture that exists to
+     document the system (swatch grids, scale rows, curve players) and never
+     ships. Nothing in it may redefine a token. -->
+<link rel="stylesheet" href="../src/styles/tokens.css">
+
 <style>
-:root{
---white:#FFFFFF;--mist:#F4F6F7;--silver:#DDE3E7;--graphite:#687076;--ink:#15171A;
---ice:#7FA8C9;--ice-soft:#DCE8F1;--ice-deep:#2E5F8A;
---font-sans:"Manrope",system-ui,sans-serif;
---t-display:clamp(3.25rem,8.5vw,8rem);--t-h1:clamp(2.25rem,5.2vw,4.25rem);
---t-h2:clamp(1.625rem,2.9vw,2.625rem);--t-h3:clamp(1.125rem,1.5vw,1.375rem);
---t-body:clamp(1rem,1.05vw,1.0625rem);--t-small:.875rem;
---s-1:.25rem;--s-2:.5rem;--s-3:.75rem;--s-4:1rem;--s-5:1.5rem;--s-6:2rem;--s-7:3rem;
---s-8:4rem;--s-9:6rem;--s-10:8rem;--s-11:12rem;
---d-instant:120ms;--d-quick:240ms;--d-base:420ms;--d-slow:900ms;--d-cinema:1400ms;
---e-glass:cubic-bezier(.22,1,.36,1);--e-drift:cubic-bezier(.65,0,.35,1);
---e-arc:cubic-bezier(.83,0,.17,1);--e-settle:cubic-bezier(.16,1,.3,1);
---r-sm:4px;--r-md:10px;--r-full:999px;--hair:1px;
---lift-3:0 24px 60px -20px rgba(21,23,26,.14);
---grain-opacity:.14;
-}
 *,*::before,*::after{box-sizing:border-box}
-body{margin:0;background:var(--white);color:var(--ink);font-family:var(--font-sans);
-  font-size:var(--t-body);line-height:1.65;-webkit-font-smoothing:antialiased}
-.grain{position:fixed;inset:0;z-index:40;pointer-events:none;opacity:var(--grain-opacity);
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
-  background-size:180px 180px}
 .page{max-width:1120px;margin:0 auto;padding:0 clamp(1.25rem,4vw,3.5rem)}
 section{padding:clamp(4rem,8vw,7rem) 0;border-top:var(--hair) solid var(--mist)}
 section:first-of-type{border-top:none}
@@ -85,41 +73,17 @@ p{max-width:68ch;color:#3F4549;margin:0 0 var(--s-4)}
 .comps{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s-5)}
 .demo{border:1px solid var(--silver);border-radius:var(--r-md);padding:var(--s-6);background:var(--white)}
 .demo > .label{margin-bottom:var(--s-5)}
-.btn{display:inline-flex;align-items:center;gap:var(--s-3);padding:var(--s-3) var(--s-5);
-  border:1px solid var(--ink);border-radius:var(--r-full);background:var(--ink);color:var(--white);
-  font-size:var(--t-small);font-weight:500;text-decoration:none;cursor:pointer;
-  transition:background var(--d-instant) var(--e-settle),border-color var(--d-instant) var(--e-settle)}
-.btn:hover{background:var(--ice-deep);border-color:var(--ice-deep)}
-.btn-ghost{background:transparent;color:var(--ink);border-color:var(--silver)}
-.btn-ghost:hover{background:var(--ice-soft);border-color:var(--ice);color:var(--ice-deep)}
-.tile{border:1px solid var(--silver);border-radius:var(--r-md);overflow:hidden;
-  transition:box-shadow var(--d-base) var(--e-settle),transform var(--d-base) var(--e-settle)}
-.tile:hover{box-shadow:var(--lift-3);transform:translateY(-2px)}
-.tile .img{height:132px;background:radial-gradient(circle at 38% 32%,#FFF 0%,#F2F6F9 44%,#DFE9F1 74%,#C8D9E6 100%)}
-.tile .cap{padding:var(--s-4) var(--s-5) var(--s-5)}
-.tile h5{margin:var(--s-2) 0 var(--s-1);font-size:15px;font-weight:500}
-/* Nav · LOCKED as burger + persistent Contact. There is no horizontal nav in
-   this system: someone who wants to hire you never opens a menu to find out how. */
+/* Every component below is .k-* straight out of tokens.css. The only rules
+   here are the demo furniture around them. */
 .navdemo{display:flex;align-items:center;gap:var(--s-5);font-size:13.5px}
 .navdemo b{font-weight:600;letter-spacing:-.02em;margin-right:auto}
 .navdemo a{color:var(--graphite);text-decoration:none;transition:color var(--d-instant) var(--e-settle)}
 .navdemo a:hover{color:var(--ink)}
-/* the burger. Two rules, not three — three reads generic, two reads drawn. */
-.burger{display:flex;flex-direction:column;justify-content:center;gap:5px;
-  width:44px;height:44px;padding:0 11px;border:1px solid var(--silver);
-  border-radius:var(--r-full);background:none;cursor:pointer;
-  transition:border-color var(--d-base) var(--e-settle),background var(--d-base) var(--e-settle)}
-.burger i{display:block;height:1px;background:var(--ink);transform-origin:right center;
-  transition:transform var(--d-base) var(--e-settle),opacity var(--d-base) var(--e-settle)}
-.burger i:last-child{width:60%;margin-left:auto;opacity:.55}
-/* hover: the short rule extends to meet the long one. The aperture is implied
-   before it opens — the button tells you it is about to become something. */
-.burger:hover{border-color:var(--ice);background:var(--ice-soft)}
-.burger:hover i:last-child{transform:scaleX(1.667);opacity:1}
+.demo-img{height:132px;background:radial-gradient(circle at 38% 32%,#FFF 0%,#F2F6F9 44%,#DFE9F1 74%,#C8D9E6 100%)}
+.demo-cap{padding:var(--s-4) var(--s-5) var(--s-5)}
+.demo-cap h5{margin:0 0 var(--s-1);font-size:15px;font-weight:500}
 .revealbox{border:1px solid var(--silver);border-radius:var(--r-md);padding:var(--s-6);background:var(--white)}
-.rev{opacity:0;filter:blur(14px);transform:translateY(18px);
-  transition:opacity var(--d-slow) var(--e-glass),filter var(--d-slow) var(--e-glass),transform var(--d-slow) var(--e-glass)}
-.rev.in{opacity:1;filter:blur(0);transform:none}
+.stage{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s-5)}
 
 table{width:100%;border-collapse:collapse;font-size:14px}
 th,td{text-align:left;padding:14px 16px 14px 0;vertical-align:top;border-top:1px solid var(--mist);line-height:1.5}
@@ -136,7 +100,7 @@ th{font-size:13px;color:var(--graphite);font-weight:500;width:160px}
 </style>
 </head>
 <body>
-<div class="grain"></div>
+<div class="k-grain"></div>
 <div class="page">
 
 <section>
@@ -246,13 +210,21 @@ th{font-size:13px;color:var(--graphite);font-weight:500;width:160px}
   <p class="label">05 · The signature</p>
   <h2>Refraction,<br>not <em>fade</em></h2>
   <p>The one rule the whole identity rests on. Type does not fade up, it resolves from a displaced blurred state, as though coming into focus through moving glass. Press the button to replay it.</p>
-  <div class="revealbox">
-    <div class="rev" id="revTarget">
-      <p class="label" style="margin-bottom:var(--s-3)">Reveal · d-slow · e-glass</p>
-      <div class="d-h2">Built as one continuous story</div>
+  <div class="revealbox" id="revTarget">
+    <p class="label" style="margin-bottom:var(--s-5)">A · masked rise · display type only</p>
+    <div class="k-mask"><div class="k-reveal d-h2">Built as one continuous story</div></div>
+
+    <hr class="hair">
+
+    <p class="label" style="margin-bottom:var(--s-5)">B · pure refraction · everything else</p>
+    <div class="k-stagger">
+      <p class="k-reveal d-body" style="--i:0;margin:0 0 var(--s-4)">Konaverse is a studio for brands that need to arrive somewhere ahead of their market. Every site is built as one continuous story rather than a stack of sections.</p>
+      <p class="k-reveal d-small" style="--i:1;margin:0">Based in Cyprus, working globally. Projects begin at 2,000 euro.</p>
     </div>
-    <button class="btn btn-ghost" id="replay" style="margin-top:var(--s-6)">Replay reveal</button>
+
+    <button class="k-btn k-btn-ghost" id="replay" style="margin-top:var(--s-6)">Replay both</button>
   </div>
+  <p class="muted" style="margin-top:var(--s-5)"><b style="color:var(--ink);font-weight:500">One signature, not two.</b> A is the aperture's mask rise <em style="font-style:normal;font-weight:600">and</em> the refraction blur running together — the crop turns the blur into <em style="font-style:normal;font-weight:600">coming into focus as it clears the edge</em>, which is sharper than a blur alone. B is the same refraction with no crop, because no real edge exists around a paragraph. The rule that keeps it honest: only ever mask where an edge already exists. Never wrap a box in <code>overflow:hidden</code> just to get the effect.</p>
   <hr class="hair">
   <table>
     <tr><th>Section breaks</th><td>No labels anywhere. A break is --section-y of space plus one hairline. With nothing announcing a section, the vertical rhythm has to be genuinely even and the hairline has to be exact.</td></tr>
@@ -269,21 +241,61 @@ th{font-size:13px;color:var(--graphite);font-weight:500;width:160px}
   <h2>Ten, and no <em>more</em></h2>
   <div class="comps">
     <div class="demo">
-      <p class="label">Button · primary and ghost</p>
-      <a href="#" class="btn">Start a project</a>
-      <a href="#" class="btn btn-ghost" style="margin-left:var(--s-3)">See the work</a>
+      <p class="label">Button · the fill irises from the centre</p>
+      <div class="stage">
+        <a href="#" class="k-btn">Start a project</a>
+        <a href="#" class="k-btn k-btn-ghost">See the work</a>
+      </div>
+      <p style="font-size:13px;color:var(--graphite);margin:var(--s-5) 0 0">The same circle that grows the menu out of the burger fills a button. The aperture is the system's one <em style="font-style:normal;font-weight:600">this opens</em> gesture, so it is reused rather than invented twice. Disc is sized off the button's own width, so a wide and a narrow button feel identical.</p>
+    </div>
+    <div class="demo">
+      <p class="label">Arrow link · the arrow draws the rule</p>
+      <div class="stage" style="gap:var(--s-7)">
+        <a href="#" class="k-arrow-link">See all services
+          <span class="k-arrow-link__ico" aria-hidden="true">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 8h11M9 3.5 13.5 8 9 12.5"/></svg>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 8h11M9 3.5 13.5 8 9 12.5"/></svg>
+          </span>
+        </a>
+        <a href="#" class="k-arrow-link">Selected work
+          <span class="k-arrow-link__ico" aria-hidden="true">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 8h11M9 3.5 13.5 8 9 12.5"/></svg>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 8h11M9 3.5 13.5 8 9 12.5"/></svg>
+          </span>
+        </a>
+      </div>
+      <p style="font-size:13px;color:var(--graphite);margin:var(--s-5) 0 0">The workhorse — it carries all three destinations the homepage is allowed. The arrow leaves through its own crop while its replacement enters from the left, and the rule draws underneath as though the arrow drew it. Cause and effect, read as one gesture. This rule is one of the four or five places the accent appears.</p>
     </div>
     <div class="demo">
       <p class="label">Nav · burger, Contact always out</p>
       <div class="navdemo">
         <b>Konaverse</b>
         <a href="#">Contact</a>
-        <button class="burger" aria-label="Open menu" aria-expanded="false"><i></i><i></i></button>
+        <button class="k-burger" aria-label="Open menu" aria-expanded="false"><i></i><i></i></button>
       </div>
     </div>
     <div class="demo">
       <p class="label">Project tile</p>
-      <div class="tile"><div class="img"></div><div class="cap"><h5>Titan Sable</h5><span class="d-small">Scroll-driven product story</span></div></div>
+      <a href="#" class="k-card">
+        <span class="k-card__media"><span class="demo-img"></span></span>
+        <span class="demo-cap"><h5>Titan Sable</h5><span class="d-small">Scroll-driven product story</span></span>
+      </a>
+      <p style="font-size:13px;color:var(--graphite);margin:var(--s-5) 0 0">Quiet on purpose — client work supplies the only colour on the page, so the frame stays out of its way. The lift and the image easing up inside its own crop are the same gesture seen from outside and in.</p>
+    </div>
+    <div class="demo">
+      <p class="label">List row · services, deliberately not links</p>
+      <div class="k-row"><span class="d-h3">3D &amp; immersive websites</span><span class="d-small">From 4,000</span></div>
+      <div class="k-row"><span class="d-h3">Web design</span><span class="d-small">From 2,000</span></div>
+      <div class="k-row"><span class="d-h3">One-page websites</span><span class="d-small">From 1,000</span></div>
+      <div style="margin-top:var(--s-6)">
+        <a href="#" class="k-arrow-link">See all services
+          <span class="k-arrow-link__ico" aria-hidden="true">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 8h11M9 3.5 13.5 8 9 12.5"/></svg>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 8h11M9 3.5 13.5 8 9 12.5"/></svg>
+          </span>
+        </a>
+      </div>
+      <p style="font-size:13px;color:var(--graphite);margin:var(--s-5) 0 0">Architecture §8 means these rows are <em style="font-style:normal;font-weight:600">not</em> links, so they must never imply navigation they do not provide — no arrow chip per row, no row-wide cursor. Hovering warms the hairline toward ice, which reads as <em style="font-style:normal;font-weight:600">part of a set</em> rather than <em style="font-style:normal;font-weight:600">click me</em>. The whole affordance sits on the one link below.</p>
     </div>
     <div class="demo">
       <p class="label">Section header</p>
@@ -327,10 +339,30 @@ document.querySelectorAll('.curve').forEach(function(c){
   }
   c.addEventListener('click',play);
 });
-var rev=document.getElementById('revTarget'),btn=document.getElementById('replay');
-function playRev(){rev.classList.remove('in');void rev.offsetWidth;setTimeout(function(){rev.classList.add('in')},60)}
+var revRoot=document.getElementById('revTarget'),btn=document.getElementById('replay');
+function playRev(){
+  var els=revRoot.querySelectorAll('.k-reveal');
+  els.forEach(function(el){el.classList.remove('is-in','is-done')});
+  void revRoot.offsetWidth;
+  setTimeout(function(){els.forEach(function(el){el.classList.add('is-in')})},60);
+}
 btn.addEventListener('click',playRev);
 setTimeout(playRev,400);
+
+/* On the real site an IntersectionObserver at 15% does this — firing at the
+   edge means the reveal is over before it is properly visible. Blur is the
+   expensive half, so the promotion is dropped once each element lands. */
+var io=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    if(!e.isIntersecting) return;
+    e.target.classList.add('is-in');
+    io.unobserve(e.target);
+    e.target.addEventListener('transitionend',function(){this.classList.add('is-done')},{once:true});
+  });
+},{threshold:0.15});
+document.querySelectorAll('.k-reveal').forEach(function(el){
+  if(!revRoot.contains(el)) io.observe(el);
+});
 </script>
 </body>
 </html>

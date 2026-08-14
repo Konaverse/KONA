@@ -53,9 +53,13 @@
   /* var(--font-manrope) is injected by next/font in app/layout.tsx, which
      self-hosts under a generated family name — so the literal "Manrope"
      alone would silently fall through to system-ui inside the app. The
-     literal is kept after it so this same file still works standalone in
-     docs/design-system.html, which loads Manrope from Google Fonts by name. */
-  --font-sans: var(--font-manrope), "Manrope", system-ui, -apple-system, sans-serif;
+     literal is the var's OWN fallback, not a later item in the stack: an
+     undefined custom property with no fallback is invalid at computed-value
+     time, which would poison --font-sans entirely and drop font-family back
+     to the inherited default — a serif. Written this way the same file works
+     in the app and standalone in docs/design-system.html, which loads Manrope
+     from Google Fonts by name. */
+  --font-sans: var(--font-manrope, "Manrope"), system-ui, -apple-system, sans-serif;
   /* One family only. No mono, no second face. */
 
   /* six sizes, fluid. Do not add a seventh without removing one.
@@ -127,6 +131,10 @@
   --e-drift:  cubic-bezier(0.65, 0.00, 0.35, 1.00);  /* scrubbed and pinned scroll */
   --e-arc:    cubic-bezier(0.83, 0.00, 0.17, 1.00);  /* page transition, exoape arc */
   --e-settle: cubic-bezier(0.16, 1.00, 0.30, 1.00);  /* hover, cursor, settling */
+
+  /* Stagger between siblings in one reveal. Never more than four steps —
+     past that the last element arrives after the reader has moved on. */
+  --stagger:   80ms;
 
   /* ---------- 8. SIGNATURE · refraction ----------
      The one property the whole identity rests on. */
@@ -206,11 +214,26 @@ body {
 /* emphasis inside a light headline. The only place 600 appears at display size. */
 .t-display em, .t-h1 em, .t-h2 em { font-style: normal; font-weight: var(--w-semi); }
 
+/* ============================================================
+   CLASS NAMESPACE — everything below is prefixed `k-`.
+   ------------------------------------------------------------
+   The variables above are deliberately NOT prefixed: those are
+   what Figma mirrors, and that contract is unchanged.
+
+   Classes are, because the unprefixed names this file shipped
+   with (.grid, .section, .card, .page, .btn, .grain) collide
+   with 27 existing usages across 13 files — including Tailwind's
+   own `grid` utility, and a className="grain" layout wrapper in
+   app/page.tsx that .grain would have turned into
+   position:fixed. Prefixing is what makes this file safe to
+   import globally. Type utilities keep their existing `t-`.
+   ============================================================ */
+
 /* ---------- layout ---------- */
-.page    { max-width: var(--page-max); margin-inline: auto; padding-inline: var(--page-pad); }
-.content { max-width: var(--content-max); margin-inline: auto; }
-.section { padding-block: var(--section-y); }
-.grid {
+.k-page    { max-width: var(--page-max); margin-inline: auto; padding-inline: var(--page-pad); }
+.k-content { max-width: var(--content-max); margin-inline: auto; }
+.k-section { padding-block: var(--section-y); }
+.k-grid {
   display: grid;
   grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
   gap: var(--grid-gutter);
@@ -228,70 +251,237 @@ body {
    measured chroma to exactly 0: neutral luminance grain, nothing else
    changed. If you ever want the colour fringing back, drop that one
    node — but it fights the palette. */
-.grain {
+.k-grain {
   position: fixed; inset: 0; z-index: 40; pointer-events: none;
   opacity: var(--grain-opacity);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
   background-size: var(--grain-tile) var(--grain-tile);
 }
 
-/* ---------- components ---------- */
+/* ============================================================
+   THE REVEAL — the signature. Refraction, never a fade.
+   ------------------------------------------------------------
+   Two expressions of ONE idea, not two signatures. The crop edge
+   is the variable; the refraction never is.
 
-/* button · primary */
-.btn {
-  display: inline-flex; align-items: center; gap: var(--s-3);
-  padding: var(--s-3) var(--s-5);
-  border: var(--hair) solid var(--ink); border-radius: var(--r-full);
-  background: var(--ink); color: var(--white);
-  font-family: var(--font-sans); font-size: var(--t-small); font-weight: var(--w-medium);
-  text-decoration: none; cursor: pointer;
-  transition: background var(--d-instant) var(--e-settle),
-              color var(--d-instant) var(--e-settle),
-              transform var(--d-base) var(--e-settle);
-}
-.btn:hover { background: var(--ice-deep); border-color: var(--ice-deep); }
+   .k-reveal          everything: paragraphs, images, tiles, blocks.
+                      Displaced 18px and blurred 14px, resolving on
+                      --e-glass over --d-slow.
+   .k-mask > .k-reveal  single-line display type only. The child is
+                      pushed fully below a real crop edge and rises
+                      out of it WHILE resolving from the same blur,
+                      so it reads as coming into focus as it clears
+                      the edge.
 
-/* button · ghost */
-.btn-ghost {
-  background: transparent; color: var(--ink); border-color: var(--hairline);
-}
-.btn-ghost:hover { background: var(--accent-wash); border-color: var(--accent); color: var(--ice-deep); }
-
-/* hairline divider. With no section labels this and --section-y are
-   the only things marking a break, so they carry real weight. */
-.rule { height: var(--hair); background: var(--hairline); border: 0; margin: 0; }
-
-/* section header. Heading and body only, no eyebrow above it. */
-.section-head { display: flex; flex-direction: column; gap: var(--s-4); margin-bottom: var(--s-8); }
-
-/* card · project tile */
-.card {
-  border: var(--hair) solid var(--hairline); border-radius: var(--r-md);
-  background: var(--surface); overflow: hidden;
-  transition: box-shadow var(--d-base) var(--e-settle),
-              transform var(--d-base) var(--e-settle);
-}
-.card:hover { box-shadow: var(--lift-3); transform: translateY(-2px); }
-
-/* scroll reveal · refractive, never a fade */
-.reveal {
+   The rule that keeps this honest: only ever mask where a real
+   edge already exists. Never wrap a box in overflow:hidden just
+   to get the effect — that is how a signature turns into a tic.
+   ============================================================ */
+.k-reveal {
   opacity: 0;
   filter: blur(var(--reveal-blur));
   transform: translateY(var(--reveal-shift));
   transition: opacity var(--d-slow) var(--e-glass),
-              filter var(--d-slow) var(--e-glass),
+              filter  var(--d-slow) var(--e-glass),
               transform var(--d-slow) var(--e-glass);
+  /* blur is the expensive half — promote only while it is animating */
+  will-change: opacity, filter, transform;
 }
-.reveal.is-in { opacity: 1; filter: blur(0); transform: none; }
+.k-reveal.is-in { opacity: 1; filter: blur(0); transform: none; }
+/* drop the promotion once it has landed */
+.k-reveal.is-in.is-done { will-change: auto; }
 
-/* cursor lens */
-.lens {
+/* the masked variant. Display type only. */
+.k-mask { display: block; overflow: hidden; }
+.k-mask > .k-reveal          { transform: translateY(110%); }
+.k-mask > .k-reveal.is-in    { transform: none; }
+
+/* Stagger. Set --i per child (0,1,2,3). Four steps is the ceiling —
+   the choreography's rule, and past it the last item lands after the
+   reader has already moved on. */
+.k-stagger > * { transition-delay: calc(var(--i, 0) * var(--stagger)); }
+
+/* ============================================================
+   COMPONENTS
+   ------------------------------------------------------------
+   Register: calm at rest, one legible move on touch. If a hover
+   does more than one thing, cut until it does one. No bounce or
+   back curves anywhere — they break the register.
+   ============================================================ */
+
+/* ---------- button ----------
+   The fill irises open from the centre, echoing the menu. That is
+   deliberate: the aperture is the system's universal "this opens"
+   gesture, so the same circle that grows the menu out of the burger
+   also fills a button. One move, and it ties the set together.
+   Sizing the disc off the button's own width keeps a wide button
+   and a narrow one identical in feel. */
+.k-btn {
+  position: relative; isolation: isolate; overflow: hidden;
+  display: inline-flex; align-items: center; gap: var(--s-3);
+  padding: var(--s-3) var(--s-5);
+  border: var(--hair) solid var(--ink); border-radius: var(--r-full);
+  background: var(--ink); color: var(--white);
+  font-family: var(--font-sans); font-size: var(--t-small);
+  font-weight: var(--w-medium); line-height: 1;
+  text-decoration: none; cursor: pointer;
+  transition: border-color var(--d-base) var(--e-settle),
+              color var(--d-instant) var(--e-settle);
+}
+.k-btn::before {
+  content: ""; position: absolute; z-index: -1;
+  left: 50%; top: 50%; width: 130%; aspect-ratio: 1; border-radius: 50%;
+  background: var(--ice-deep);
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform var(--d-base) var(--e-glass);
+}
+.k-btn:hover, .k-btn:focus-visible { border-color: var(--ice-deep); }
+.k-btn:hover::before, .k-btn:focus-visible::before { transform: translate(-50%, -50%) scale(1); }
+/* pressed: the iris is already open, so the button just takes the press */
+.k-btn:active { transform: scale(0.985); }
+
+/* button · ghost. Same iris, opening in wash instead of ice-deep. */
+.k-btn-ghost {
+  background: transparent; color: var(--ink); border-color: var(--hairline);
+}
+.k-btn-ghost::before { background: var(--accent-wash); }
+.k-btn-ghost:hover, .k-btn-ghost:focus-visible { border-color: var(--accent); color: var(--ice-deep); }
+
+/* ---------- arrow link ----------
+   The workhorse: it carries all three of the homepage's permitted
+   destinations, so it has to be unmistakable without shouting.
+
+   One gesture, two parts that read as cause and effect — the arrow
+   leaves through its own crop and its replacement enters from the
+   left, and the rule draws underneath as though the arrow drew it.
+   The rule is one of the four or five places the accent appears. */
+.k-arrow-link {
+  position: relative;
+  display: inline-flex; align-items: center; gap: var(--s-3);
+  padding-bottom: var(--s-2);
+  color: var(--text); text-decoration: none;
+  font-size: var(--t-body); font-weight: var(--w-medium);
+  transition: color var(--d-instant) var(--e-settle);
+}
+.k-arrow-link::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0;
+  height: var(--hair); background: var(--accent);
+  transform: scaleX(0); transform-origin: left center;
+  transition: transform var(--d-base) var(--e-settle);
+}
+.k-arrow-link:hover::after,
+.k-arrow-link:focus-visible::after { transform: scaleX(1); }
+/* The label carries the state, the rule only reinforces it. Ice is 2.52:1 on
+   white, so a hairline alone is not a perceivable hover indicator — and the
+   arrow wrap ends in the same picture it started from, so it cannot carry the
+   state either. Ink to ice-deep is an unmissable shift, and colour is the one
+   thing the system lets move fast (--d-instant). */
+.k-arrow-link:hover,
+.k-arrow-link:focus-visible { color: var(--text-accent); }
+
+/* the crop the arrow travels through */
+.k-arrow-link__ico {
+  position: relative; display: block; overflow: hidden;
+  width: 1em; height: 1em; flex: none;
+}
+.k-arrow-link__ico svg {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  transition: transform var(--d-base) var(--e-settle);
+}
+/* the incoming one waits off to the left */
+.k-arrow-link__ico svg + svg { transform: translateX(-135%); }
+.k-arrow-link:hover .k-arrow-link__ico svg,
+.k-arrow-link:focus-visible .k-arrow-link__ico svg { transform: translateX(135%); }
+.k-arrow-link:hover .k-arrow-link__ico svg + svg,
+.k-arrow-link:focus-visible .k-arrow-link__ico svg + svg { transform: translateX(0); }
+
+/* ---------- hairline divider ----------
+   With no section labels, this and --section-y are the only things
+   marking a break, so they carry real weight. */
+.k-rule { height: var(--hair); background: var(--hairline); border: 0; margin: 0; }
+/* the drawn variant — a break that arrives rather than sits there */
+.k-rule-draw {
+  transform: scaleX(0); transform-origin: left center;
+  transition: transform var(--d-slow) var(--e-glass);
+}
+.k-rule-draw.is-in { transform: scaleX(1); }
+
+/* section header. Heading and body only, no eyebrow above it. */
+.k-section-head { display: flex; flex-direction: column; gap: var(--s-4); margin-bottom: var(--s-8); }
+
+/* ---------- card · project tile ----------
+   Restrained on purpose: client work supplies the only colour on the
+   page, so the frame around it stays quiet and lets the image carry.
+   The lift is the whole move; the image easing up inside its own crop
+   is the same gesture seen from inside. */
+.k-card {
+  position: relative; display: block;
+  border: var(--hair) solid var(--hairline); border-radius: var(--r-md);
+  background: var(--surface); overflow: hidden;
+  color: inherit; text-decoration: none;
+  transition: box-shadow var(--d-base) var(--e-settle),
+              transform  var(--d-base) var(--e-settle),
+              border-color var(--d-base) var(--e-settle);
+}
+.k-card:hover, .k-card:focus-visible {
+  box-shadow: var(--lift-3); transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--hairline));
+}
+.k-card__media { display: block; overflow: hidden; }
+.k-card__media > * {
+  display: block; width: 100%;
+  transition: transform var(--d-slow) var(--e-glass);
+}
+.k-card:hover .k-card__media > * { transform: scale(1.03); }
+
+/* ---------- list row ----------
+   Constrained by architecture 8: on the homepage services list the
+   rows are NOT links, so they must never imply navigation they do
+   not provide — no arrow chip, no row-wide cursor change. What they
+   get is the hairline warming toward ice, which reads as "this is
+   part of a set" rather than "click me". */
+.k-row {
+  display: grid; grid-template-columns: 1fr auto;
+  align-items: baseline; gap: var(--s-5);
+  padding-block: var(--s-5);
+  border-top: var(--hair) solid var(--hairline);
+  transition: border-color var(--d-base) var(--e-settle);
+}
+.k-row:last-child { border-bottom: var(--hair) solid var(--hairline); }
+.k-row:hover { border-top-color: var(--accent); }
+.k-row:hover + .k-row { border-top-color: var(--accent); }
+
+/* ---------- burger ----------
+   Two rules, not three — three reads generic, two reads drawn. On
+   hover the short rule extends to meet the long one: the aperture
+   implied before it opens. */
+.k-burger {
+  display: flex; flex-direction: column; justify-content: center; gap: 5px;
+  width: 44px; height: 44px; padding: 0 11px;
+  border: var(--hair) solid var(--hairline); border-radius: var(--r-full);
+  background: none; cursor: pointer;
+  transition: border-color var(--d-base) var(--e-settle),
+              background var(--d-base) var(--e-settle);
+}
+.k-burger i {
+  display: block; height: var(--hair); background: var(--ink);
+  transform-origin: right center;
+  transition: transform var(--d-base) var(--e-settle),
+              opacity var(--d-base) var(--e-settle);
+}
+.k-burger i:last-child { width: 60%; margin-left: auto; opacity: 0.55; }
+.k-burger:hover, .k-burger:focus-visible { border-color: var(--accent); background: var(--accent-wash); }
+.k-burger:hover i:last-child,
+.k-burger:focus-visible i:last-child { transform: scaleX(1.667); opacity: 1; }
+
+/* ---------- cursor lens ---------- */
+.k-lens {
   position: fixed; z-index: 60; pointer-events: none;
   width: var(--lens-size); height: var(--lens-size);
   border-radius: var(--r-full);
   transition: opacity var(--d-quick) var(--e-settle);
 }
-.lens::after {
+.k-lens::after {
   content: ""; position: absolute; inset: 0; border-radius: var(--r-full);
   background: radial-gradient(circle at 50% 50%,
     rgba(255,255,255,0) 62%,
