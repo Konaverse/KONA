@@ -110,10 +110,10 @@ than carrying a copy of it — so the reference cannot drift from the code.
 |---|---|---|
 | **Reveal** | **built** | §1. `.k-reveal` everywhere, `.k-mask > .k-reveal` for single-line display type. `.k-stagger` with `--i` per child, four steps max. |
 | **Burger** | **built** | Two rules, not three — three reads generic. On hover the short rule extends to meet the long one: the aperture implied before it opens. |
-| **Button · primary** | **built** | The fill **irises open from the centre** — the same circle that grows the menu out of the burger. The aperture becomes the system's one *this opens* gesture rather than being invented twice. Disc sized off the button's own width so wide and narrow buttons feel identical. |
-| **Button · ghost** | **built** | Same iris, opening in `--accent-wash` instead of `--ice-deep`. |
-| **Arrow link** | **built** | The arrow leaves through its own crop while its replacement enters from the left, and the rule draws underneath as though the arrow drew it. Cause and effect, one gesture. **The label also shifts to `--text-accent`** — testing showed the ice rule alone (2.52:1) is not a perceivable hover state, and the arrow wrap ends in the same picture it began with, so neither could carry it. |
-| **Project tile** | **built** | Lift + `--lift-3`, border warming toward ice, image easing up inside its own crop — the same gesture seen from outside and in. **Unblocked: tiles are links** to their case studies, so the hover is a real affordance rather than decoration. |
+| **Button · primary** | **rebuilt** | Rest is still (see below). Hover: the fill grows up from the bottom rule while the label **rolls letter by letter** and a second label rolls up behind it — same direction, same curve, one motion. Approach: **proximity lean**. |
+| **Button · ghost** | **rebuilt** | Same mechanics, filling in `--accent-wash`. |
+| **Arrow link** | **rebuilt** | The arrow is **drawn, not swapped**. Shaft and head are separate paths on one SVG; on hover both swing to a new axis so an east arrow becomes a north-east one — a real change of shape from transforms and a dash offset, no morphing library, never leaves the compositor. The label shifts to `--text-accent` because a 2.52:1 hairline can't carry a hover state alone. |
+| **Project tile** | **rebuilt** | **No frame, no rounded box, no shadow** — the media *is* the card, type sits under it on the page. Hover plays a screen recording; entrance is the stretch-and-recover (below). |
 | **List row** | **built** | Rows are **not** links, so no arrow chip, no row-wide cursor, and **no hover state at all** — that's the design, not an omission. Anything answering the cursor implies it can be clicked. The whole affordance sits on the single arrow link below the list. |
 | **Section header** | done | Heading + body, no eyebrow. The restraint *is* the design. |
 | **Hairline rule** | **built** | `.k-rule`, plus `.k-rule-draw` which scales from the left on `--d-slow` — a break that arrives rather than sits there. |
@@ -128,6 +128,38 @@ Component and layout classes are prefixed `k-`; **the CSS variables are not**, b
 are what Figma mirrors and that contract is unchanged. The prefix is what makes the token
 file safe to import globally — the names it shipped with (`.grid`, `.section`, `.card`,
 `.page`, `.btn`, `.grain`) collided with 27 existing usages across 13 files.
+
+### Why the buttons have no perpetual animation
+
+You asked whether a forever-running border line was oversaturated. **Yes — and it also
+breaks two rules already locked.**
+
+1. *"Nothing moves on its own."* It's why the aperture's marquee was switched off. A button
+   that animates while nobody is looking at it contradicts the same rule.
+2. **The accent budget.** A continuously animated accent border spends the budget
+   permanently, and the system's own words are that if the accent "starts showing up on
+   every hover state it stops being a signal." Always-on is worse than every-hover.
+3. It is, bluntly, the most over-used device on the web right now — the animated gradient
+   outline is *the* AI-startup landing-page tell. Reaching for it undercuts a studio whose
+   pitch is that it doesn't build templates.
+
+**What replaces it: proximity.** The button leans a few pixels toward an approaching cursor
+before it is ever hovered — capped at 6px, eased toward the target so leaving glides rather
+than cuts. It is alive *only when a human is near it*, which is exactly the calm-but-
+fascinating register, and it is far rarer than an animated border. Disabled under
+`prefers-reduced-motion` and on touch (`hover: none`), where it would be dead code.
+
+### The card entrance: stretch without bounce
+
+The brief was slime — pulled from a corner so it stretches, then folding back into a strong
+rectangle. **The literal reading conflicts with a locked rule**: an elastic settle is a back
+or bounce curve, and the token file bans those outright ("they break the register").
+
+Resolved by moving the deformation rather than dropping it. The card arrives skewed and
+squashed (`scaleX 0.82 / scaleY 1.16`, `skewY 4°`) and *recovers* through a second
+overshoot-shaped tween that is itself eased with `--e-settle`. Squash-and-stretch **during
+travel**, resolving without an elastic curve. The deformation was always the part doing the
+work; the bounce at the end was never what made it read as fluid.
 
 ### Accent budget — four, and it is full
 

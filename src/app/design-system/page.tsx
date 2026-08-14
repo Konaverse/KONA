@@ -1,6 +1,10 @@
 import type { Metadata } from 'next'
 import ApertureMenu from '@/components/v4/ApertureMenu'
 import Reveal from '@/components/v4/Reveal'
+import Button from '@/components/v4/Button'
+import ArrowLink from '@/components/v4/ArrowLink'
+import ProjectCard from '@/components/v4/ProjectCard'
+import SmoothScroll from '@/components/v4/SmoothScroll'
 import '@/styles/tokens.css'
 import './design-system.css'
 
@@ -50,19 +54,6 @@ const TILES = [
   ['Los Santos Barbers', 'One-page, booking led'],
 ]
 
-function Arrow() {
-  return (
-    <span className="k-arrow-link__ico" aria-hidden="true">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-        <path d="M2 8h11M9 3.5 13.5 8 9 12.5" />
-      </svg>
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-        <path d="M2 8h11M9 3.5 13.5 8 9 12.5" />
-      </svg>
-    </span>
-  )
-}
-
 function Section({ n, title, lede, children }: { n: string; title: React.ReactNode; lede?: string; children: React.ReactNode }) {
   return (
     <section className="ds-section">
@@ -94,6 +85,7 @@ export default function DesignSystemPage() {
       </noscript>
       <div className="k-grain" />
       <ApertureMenu />
+      <SmoothScroll>{null}</SmoothScroll>
 
       <div className="k-page">
         {/* ---------------------------------------------------------- hero */}
@@ -179,33 +171,21 @@ export default function DesignSystemPage() {
         >
           <div className="ds-two">
             <div className="ds-demo">
-              <p className="ds-label">Button · the fill irises from the centre</p>
+              <p className="ds-label">Button · still at rest, alive on approach</p>
               <div className="ds-stage">
-                <a href="#" className="k-btn">Start a project</a>
-                <a href="#" className="k-btn k-btn-ghost">See the work</a>
+                <Button href="#" hoverLabel="Let&rsquo;s talk">Start a project</Button>
+                <Button href="#" ghost hoverLabel="Case studies">See the work</Button>
               </div>
-              <p className="ds-note">The same circle that grows the menu out of the burger fills a button — the aperture is the system&rsquo;s one <em>this opens</em> gesture, reused rather than invented twice. The disc is sized off the button&rsquo;s own width, so wide and narrow feel identical.</p>
+              <p className="ds-note">Move the cursor <em>near</em> one without touching it. No perpetual animation — that would contradict the system&rsquo;s own &ldquo;nothing moves on its own&rdquo; rule and spend the accent budget continuously. Proximity instead: it leans toward an approaching cursor, alive only when a human is near. On hover the fill grows up from the bottom rule while the label rolls letter by letter and the second label rolls up behind it — same direction, same curve, so it lands as one motion.</p>
             </div>
 
             <div className="ds-demo">
-              <p className="ds-label">Arrow link · the arrow draws the rule</p>
+              <p className="ds-label">Arrow link · the arrow redraws its own shape</p>
               <div className="ds-stage" style={{ gap: 'var(--s-7)' }}>
-                <a href="#" className="k-arrow-link">See all services<Arrow /></a>
-                <a href="#" className="k-arrow-link">Pricing<Arrow /></a>
+                <ArrowLink href="#">See all services</ArrowLink>
+                <ArrowLink href="#">Pricing</ArrowLink>
               </div>
-              <p className="ds-note">The workhorse — it carries all three destinations the homepage is allowed. The arrow leaves through its own crop while its replacement enters from the left, and the rule draws underneath as though the arrow drew it. The label also shifts to ice-deep, because a 2.52:1 hairline cannot carry a hover state on its own.</p>
-            </div>
-
-            <div className="ds-demo">
-              <p className="ds-label">Project tile · links to its case study</p>
-              <a href="#" className="k-card">
-                <span className="k-card__media"><span className="ds-img" /></span>
-                <span className="ds-cap">
-                  <b>Titan Sable</b>
-                  <span className="t-small">Scroll-driven product story</span>
-                </span>
-              </a>
-              <p className="ds-note">Quiet on purpose — client work supplies the only colour on the page. The lift and the image easing inside its own crop are the same gesture seen from outside and in.</p>
+              <p className="ds-note">Shaft and head are separate paths on one SVG. On hover both swing to a new axis, so an east arrow becomes a north-east one — a real change of shape from transforms and a dash offset, no morphing library, and it never leaves the compositor. The label shifts to ice-deep because a 2.52:1 hairline cannot carry a hover state alone.</p>
             </div>
 
             <div className="ds-demo">
@@ -217,26 +197,27 @@ export default function DesignSystemPage() {
                 </div>
               ))}
               <div style={{ marginTop: 'var(--s-6)' }}>
-                <a href="#" className="k-arrow-link">See all services<Arrow /></a>
+                <ArrowLink href="#">See all services</ArrowLink>
               </div>
               <p className="ds-note">The hub is what fans out to the six service pages, so the homepage must not bypass it. These rows have <em>no hover state at all</em> — anything that answers the cursor implies it can be clicked. The whole affordance sits on the one link below.</p>
+            </div>
+
+            <div className="ds-demo">
+              <p className="ds-label">Motion budget</p>
+              <p className="ds-note" style={{ marginTop: 0 }}>Four durations do all the work: <em>d-instant 120ms</em> for colour only, <em>d-base 420ms</em> for component moves, <em>d-slow 900ms</em> for reveals, <em>d-cinema 1400ms</em> for the aperture and the card entrance. Nothing structural runs under 400ms, and no curve overshoots — back and bounce easings break the register, which is why the card entrance below achieves its wobble with a second resolving tween instead.</p>
             </div>
           </div>
         </Section>
 
         {/* --------------------------------------------------------- tiles */}
-        <Section n="05 · Work" title={<>Client work is the only <em>colour</em></>}>
+        <Section
+          n="05 · Work"
+          title={<>Client work is the only <em>colour</em></>}
+          lede="No frame, no rounded box, no shadow — the media is the card and the type sits under it on the page. Watch them arrive: pulled from a corner so the shape stretches, then recovering into a solid rectangle. Hovering plays a screen recording of the site; the video is not in the DOM until the first hover, so a visitor who never hovers never pays for it."
+        >
           <div className="ds-tiles">
             {TILES.map(([name, desc], i) => (
-              <Reveal key={name} index={Math.min(i, 3)}>
-                <a href="#" className="k-card">
-                  <span className="k-card__media"><span className="ds-img" /></span>
-                  <span className="ds-cap">
-                    <b>{name}</b>
-                    <span className="t-small">{desc}</span>
-                  </span>
-                </a>
-              </Reveal>
+              <ProjectCard key={name} title={name} meta={desc} href="#" index={i} />
             ))}
           </div>
         </Section>
@@ -245,7 +226,7 @@ export default function DesignSystemPage() {
         <section className="ds-section" style={{ paddingBottom: 'var(--s-11)' }}>
           <Reveal masked as="h2" className="t-h1">Start a <em>project</em></Reveal>
           <div style={{ marginTop: 'var(--s-7)' }}>
-            <a href="/contact" className="k-btn">Start a project</a>
+            <Button href="/contact" hoverLabel="Say hello">Start a project</Button>
           </div>
         </section>
       </div>

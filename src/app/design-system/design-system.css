@@ -78,12 +78,8 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--s-6);
 }
-.ds-img {
-  display: block; height: 190px;
-  background: radial-gradient(circle at 38% 32%, #FFF 0%, #F2F6F9 44%, #DFE9F1 74%, #C8D9E6 100%);
-}
-.ds-cap { display: block; padding: var(--s-4) var(--s-5) var(--s-5); }
-.ds-cap b { display: block; font-size: 15px; font-weight: var(--w-medium); margin-bottom: 2px; }
+/* .ds-img / .ds-cap removed — the project card no longer needs page furniture
+   to stand in for its media and caption; .k-card owns both now. */
 
 @media (max-width: 60rem) {
   .ds-two, .ds-tiles { grid-template-columns: minmax(0, 1fr); }

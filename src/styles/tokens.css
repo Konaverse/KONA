@@ -315,42 +315,76 @@ html { -webkit-text-size-adjust: 100%; }
    ============================================================ */
 
 /* ---------- button ----------
-   The fill irises open from the centre, echoing the menu. That is
-   deliberate: the aperture is the system's universal "this opens"
-   gesture, so the same circle that grows the menu out of the burger
-   also fills a button. One move, and it ties the set together.
-   Sizing the disc off the button's own width keeps a wide button
-   and a narrow one identical in feel. */
+   REST IS STILL. A perpetually animated border was considered and
+   rejected: it contradicts the system's own "nothing moves on its
+   own" rule, it would spend the accent budget continuously, and an
+   animated gradient outline is the single most over-used device on
+   the web right now. What replaces it is PROXIMITY — the button
+   leans a few pixels toward an approaching cursor before it is ever
+   hovered. It is alive only when a human is near it, which is
+   exactly the calm-but-fascinating register.
+
+   HOVER is one gesture read two ways: the bottom hairline grows
+   upward into the fill while the label rolls up letter by letter and
+   a second label rolls up behind it. Same direction, same curve, so
+   it lands as one motion rather than three. The fill replaces the
+   iris — the aperture stays the menu's alone. */
 .k-btn {
   position: relative; isolation: isolate; overflow: hidden;
   display: inline-flex; align-items: center; gap: var(--s-3);
-  padding: var(--s-3) var(--s-5);
+  padding: var(--s-4) var(--s-6);
   border: var(--hair) solid var(--ink); border-radius: var(--r-full);
   background: var(--ink); color: var(--white);
   font-family: var(--font-sans); font-size: var(--t-small);
   font-weight: var(--w-medium); line-height: 1;
   text-decoration: none; cursor: pointer;
   transition: border-color var(--d-base) var(--e-settle),
-              color var(--d-instant) var(--e-settle);
+              transform var(--d-base) var(--e-settle);
 }
-.k-btn::before {
-  content: ""; position: absolute; z-index: -1;
-  left: 50%; top: 50%; width: 130%; aspect-ratio: 1; border-radius: 50%;
+/* the fill — the bottom rule, grown upward */
+.k-btn__bg {
+  position: absolute; inset: 0; z-index: -1;
   background: var(--ice-deep);
-  transform: translate(-50%, -50%) scale(0);
-  transition: transform var(--d-base) var(--e-glass);
+  transform: scaleY(0); transform-origin: 50% 100%;
+  transition: transform var(--d-base) var(--e-settle);
 }
 .k-btn:hover, .k-btn:focus-visible { border-color: var(--ice-deep); }
-.k-btn:hover::before, .k-btn:focus-visible::before { transform: translate(-50%, -50%) scale(1); }
-/* pressed: the iris is already open, so the button just takes the press */
+.k-btn:hover .k-btn__bg,
+.k-btn:focus-visible .k-btn__bg { transform: scaleY(1); }
 .k-btn:active { transform: scale(0.985); }
 
-/* button · ghost. Same iris, opening in wash instead of ice-deep. */
+/* the roll. Both labels are absolutely positioned; an invisible sizer
+   holds the width of whichever is longer so the button never resizes
+   mid-hover. Per-letter stagger is small on purpose — 22ms across a
+   short label is a ripple, 80ms would read as a wave and take too long. */
+.k-btn__roll { position: relative; display: block; overflow: hidden; }
+.k-btn__sizer { display: block; visibility: hidden; white-space: nowrap; }
+.k-btn__line {
+  position: absolute; inset: 0; display: flex; white-space: nowrap;
+}
+.k-btn__line span {
+  display: inline-block;
+  transition: transform var(--d-base) var(--e-settle);
+  transition-delay: calc(var(--i, 0) * 22ms);
+}
+.k-btn__line--b span { transform: translateY(115%); }
+.k-btn:hover .k-btn__line--a span,
+.k-btn:focus-visible .k-btn__line--a span { transform: translateY(-115%); }
+.k-btn:hover .k-btn__line--b span,
+.k-btn:focus-visible .k-btn__line--b span { transform: translateY(0); }
+
+/* button · ghost. Same mechanics, opening in wash instead of ice-deep. */
 .k-btn-ghost {
   background: transparent; color: var(--ink); border-color: var(--hairline);
 }
-.k-btn-ghost::before { background: var(--accent-wash); }
-.k-btn-ghost:hover, .k-btn-ghost:focus-visible { border-color: var(--accent); color: var(--ice-deep); }
+.k-btn-ghost .k-btn__bg { background: var(--accent-wash); }
+.k-btn-ghost:hover, .k-btn-ghost:focus-visible { border-color: var(--accent); }
+.k-btn-ghost .k-btn__line--b { color: var(--ice-deep); }
+
+@media (prefers-reduced-motion: reduce) {
+  .k-btn__line--b span { transform: none; }
+  .k-btn__line--a { opacity: 1; }
+}
 
 /* ---------- arrow link ----------
    The workhorse: it carries all three of the homepage's permitted
@@ -384,21 +418,35 @@ html { -webkit-text-size-adjust: 100%; }
 .k-arrow-link:hover,
 .k-arrow-link:focus-visible { color: var(--text-accent); }
 
-/* the crop the arrow travels through */
+/* The arrow is drawn, not swapped. Shaft and head are separate paths on
+   one SVG: on hover the shaft retracts and redraws along the new axis
+   (stroke-dashoffset) while the head swings to point north-east. East
+   arrow becomes north-east arrow — a real change of shape, done with
+   nothing but transforms and a dash offset, so it stays on the
+   compositor. */
 .k-arrow-link__ico {
-  position: relative; display: block; overflow: hidden;
-  width: 1em; height: 1em; flex: none;
+  display: block; width: 1.05em; height: 1.05em; flex: none; overflow: visible;
 }
-.k-arrow-link__ico svg {
-  position: absolute; inset: 0; width: 100%; height: 100%;
+.k-arrow-link__ico svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.k-arrow-link__shaft {
+  stroke-dasharray: 12;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset var(--d-base) var(--e-settle),
+              transform var(--d-base) var(--e-settle);
+  transform-origin: 2px 8px;
+}
+.k-arrow-link__head {
   transition: transform var(--d-base) var(--e-settle);
+  transform-origin: 8px 8px;
 }
-/* the incoming one waits off to the left */
-.k-arrow-link__ico svg + svg { transform: translateX(-135%); }
-.k-arrow-link:hover .k-arrow-link__ico svg,
-.k-arrow-link:focus-visible .k-arrow-link__ico svg { transform: translateX(135%); }
-.k-arrow-link:hover .k-arrow-link__ico svg + svg,
-.k-arrow-link:focus-visible .k-arrow-link__ico svg + svg { transform: translateX(0); }
+.k-arrow-link:hover .k-arrow-link__shaft,
+.k-arrow-link:focus-visible .k-arrow-link__shaft {
+  transform: rotate(-45deg);
+}
+.k-arrow-link:hover .k-arrow-link__head,
+.k-arrow-link:focus-visible .k-arrow-link__head {
+  transform: rotate(-45deg) translate(2px, 0);
+}
 
 /* ---------- hairline divider ----------
    With no section labels, this and --section-y are the only things
@@ -415,31 +463,83 @@ html { -webkit-text-size-adjust: 100%; }
 .k-section-head { display: flex; flex-direction: column; gap: var(--s-4); margin-bottom: var(--s-8); }
 
 /* ---------- card · project tile ----------
-   Restrained on purpose: client work supplies the only colour on the
-   page, so the frame around it stays quiet and lets the image carry.
-   The lift is the whole move; the image easing up inside its own crop
-   is the same gesture seen from inside. */
+   Redesigned: no frame, no rounded box, no shadow. The media IS the
+   card. A bordered rounded rectangle is the single most template-like
+   pattern there is, and this page's whole argument is that the work
+   carries itself — so the tile is a full-bleed frame of the work with
+   the type sitting underneath it on the page, not inside a container.
+
+   At rest a poster still. On hover the screen recording plays and the
+   still cross-fades out beneath it. That is the one move; the caption
+   only shifts its rule. */
 .k-card {
   position: relative; display: block;
-  border: var(--hair) solid var(--hairline); border-radius: var(--r-md);
-  background: var(--surface); overflow: hidden;
   color: inherit; text-decoration: none;
-  transition: box-shadow var(--d-base) var(--e-settle),
-              transform  var(--d-base) var(--e-settle),
-              border-color var(--d-base) var(--e-settle);
+  transition: transform var(--d-base) var(--e-settle);
 }
-/* Lift and image-ease only. An earlier version also warmed the border toward
-   ice, which made three moves on one component and spent accent the tile has
-   not earned — the image is the loudest thing on the page already. */
-.k-card:hover, .k-card:focus-visible {
-  box-shadow: var(--lift-3); transform: translateY(-2px);
+.k-card__media {
+  position: relative; display: block; overflow: hidden;
+  border-radius: var(--r-sm);
+  background: var(--surface-raised);
+  aspect-ratio: 16 / 10;
 }
-.k-card__media { display: block; overflow: hidden; }
-.k-card__media > * {
-  display: block; width: 100%;
-  transition: transform var(--d-slow) var(--e-glass);
+.k-card__media > img,
+.k-card__media > video,
+.k-card__media > .k-card__poster {
+  position: absolute; inset: 0;
+  display: block; width: 100%; height: 100%;
+  object-fit: cover;
 }
-.k-card:hover .k-card__media > * { transform: scale(1.03); }
+/* the video sits under the poster and is revealed by fading the poster */
+.k-card__video { opacity: 0; transition: opacity var(--d-base) var(--e-settle); }
+.k-card__poster { opacity: 1; transition: opacity var(--d-base) var(--e-settle); }
+.k-card.is-playing .k-card__video { opacity: 1; }
+.k-card.is-playing .k-card__poster { opacity: 0; }
+
+/* a hairline that draws across the media's foot on hover — the only
+   accent the tile is allowed, and it borrows the arrow-link's language */
+.k-card__media::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0;
+  height: 2px; background: var(--accent);
+  transform: scaleX(0); transform-origin: left center;
+  transition: transform var(--d-base) var(--e-settle);
+}
+.k-card:hover .k-card__media::after,
+.k-card:focus-visible .k-card__media::after { transform: scaleX(1); }
+
+.k-card__body {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: var(--s-5); padding-top: var(--s-4);
+}
+.k-card__title {
+  margin: 0; font-size: var(--t-h3); font-weight: var(--w-medium);
+  letter-spacing: var(--ls-h3);
+}
+.k-card__meta { margin: 0; font-size: var(--t-small); color: var(--text-muted); }
+
+.k-card__placeholder {
+  background: radial-gradient(circle at 38% 32%, #FFF 0%, #F2F6F9 44%, #DFE9F1 74%, #C8D9E6 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .k-card__video { display: none; }
+}
+
+/* ---------- utilities ---------- */
+/* Visible to assistive tech only. The button's rolling label is split into
+   per-character spans and hidden with aria-hidden, so the real string has to
+   exist somewhere a screen reader will read as one word. */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+
+/* Lenis owns scrolling; these are its required hooks. */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: clip; }
 
 /* ---------- list row ----------
    Constrained by architecture 8: on the homepage services list the
