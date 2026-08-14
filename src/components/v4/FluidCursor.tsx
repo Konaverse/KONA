@@ -30,7 +30,7 @@ import { ICE_PALETTE, type FluidPalette } from './fluid/FluidEffect'
 export default function FluidCursor({
   palette = ICE_PALETTE,
   /** Density-to-colour gain. Raise to make the trail read stronger. */
-  intensity = 12,
+  intensity = 30,
   zIndex = 55,
 }: {
   palette?: FluidPalette
@@ -51,9 +51,12 @@ export default function FluidCursor({
     <Canvas
       flat
       linear
-      // low dpr on purpose — the simulation runs at 50px resolution and is
-      // upscaled, so pixel density buys nothing here and costs a lot
-      dpr={[0.1, 0.5]}
+      // The source project ran this at [0.1, 0.5] — a tenth of native, upscaled
+      // ten times. On a dark page blended with `difference` that softness reads
+      // as atmosphere; on white through `multiply` it just smears the dye thin
+      // and washes the colour out, which was the single biggest reason the
+      // trail looked faint. Still well under native, so still cheap.
+      dpr={[0.5, 1]}
       gl={{ antialias: false, stencil: false, depth: false }}
       style={{
         position: 'fixed',

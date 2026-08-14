@@ -214,13 +214,17 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor)
   // can be driven by both instead of by density alone.
   float amount = abs(fluid.b);
   float speed  = length(fluid.rg);
-  float d      = clamp(length(fluid) * uIntensity, 0.0, 1.0);
+
+  // pow < 1 lifts the LOW end of the curve. Under multiply a faint trail is
+  // nearly invisible on white, so the thin outer wisps need the gain far more
+  // than the core does — a linear ramp spends all its range on the middle.
+  float d = clamp(pow(length(fluid) * uIntensity, 0.70), 0.0, 1.0);
 
   // DEPTH — density ramps white -> ice -> ice-deep. Thin trailing edges stay
   // pale and airy, the core goes deep. Monotonically darkening, which is what
   // keeps it reading as one substance rather than a gradient sticker.
-  vec3 c = mix(vec3(1.0), uIce, smoothstep(0.0, 0.42, d));
-  c = mix(c, uIceDeep, smoothstep(0.45, 1.0, d));
+  vec3 c = mix(vec3(1.0), uIce, smoothstep(0.0, 0.26, d));
+  c = mix(c, uIceDeep, smoothstep(0.30, 0.92, d));
 
   // SPEED — graphite mixes into the quick-moving parts. It is the one neutral
   // in the palette, so it reads as smoke pulled through the blue rather than

@@ -48,8 +48,12 @@ const OPTS = {
   pressure: 0.0,
   velocityDissipation: 0.93,
 }
-const mobileOpts = { radius: 0.11, densityDissipation: 0.96, dyeRes: 64, simRes: 16 }
-const desktopOpts = { radius: 0.14, densityDissipation: 0.965, dyeRes: 256, simRes: 50 }
+// Raised from the source project's values. Those were tuned for a DARK page
+// blended with `difference`, where even a faint trail shows as lightening. On
+// white through `multiply` the same values read as almost nothing, so the dye
+// is laid down fatter (radius) and kept alive longer (dissipation).
+const mobileOpts = { radius: 0.15, densityDissipation: 0.972, dyeRes: 128, simRes: 24 }
+const desktopOpts = { radius: 0.19, densityDissipation: 0.982, dyeRes: 512, simRes: 64 }
 
 function useDoubleFBO(w: number, h: number, options: Record<string, unknown>) {
   const read = useFBO(w, h, options)
@@ -72,7 +76,7 @@ function useDoubleFBO(w: number, h: number, options: Record<string, unknown>) {
 
 export default function Fluid({
   palette = ICE_PALETTE,
-  intensity = 12,
+  intensity = 30,
 }: { palette?: FluidPalette; intensity?: number }) {
   const size = useThree((s) => s.size)
   const gl = useThree((s) => s.gl)
