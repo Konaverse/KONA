@@ -1,0 +1,92 @@
+/* ============================================================
+   DESIGN SYSTEM PAGE — furniture only.
+   ------------------------------------------------------------
+   Everything here exists to DOCUMENT the system and never ships:
+   swatch grids, scale rows, demo cards, captions. It may not
+   define or redefine a token, and it may not style a k- class.
+   All selectors are ds- prefixed.
+   ============================================================ */
+
+.ds { position: relative; }
+
+.ds-section { padding-block: clamp(var(--s-9), 10vw, var(--s-11)); }
+.ds-section + .ds-section { border-top: var(--hair) solid var(--hairline); }
+.ds-hero { padding-top: clamp(var(--s-11), 26vh, 20rem); border-top: 0; }
+
+.ds-label {
+  margin: 0 0 var(--s-5);
+  font-size: var(--t-small);
+  font-weight: var(--w-medium);
+  color: var(--text-muted);
+}
+
+.ds-note {
+  margin: var(--s-5) 0 0;
+  font-size: var(--t-small);
+  line-height: 1.55;
+  color: var(--text-muted);
+  max-width: 60ch;
+}
+.ds-note em { font-style: normal; font-weight: var(--w-semi); color: var(--text); }
+
+/* two-up demo grid */
+.ds-two {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-6);
+}
+.ds-demo {
+  border: var(--hair) solid var(--hairline);
+  border-radius: var(--r-md);
+  padding: var(--s-6);
+  background: var(--surface);
+}
+.ds-stage { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-5); }
+
+/* colour */
+.ds-swatches {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-5);
+}
+.ds-swatches > * { display: block; }
+.ds-chip {
+  display: block; height: 92px;
+  border-radius: var(--r-sm);
+  border: var(--hair) solid var(--hairline);
+  margin-bottom: var(--s-3);
+}
+.ds-swatches b { display: block; font-size: var(--t-small); font-weight: var(--w-medium); }
+.ds-swatches code,
+.ds-swatches span:not(.ds-chip) {
+  display: block; font-size: 12px; line-height: 1.5; color: var(--text-muted);
+}
+
+/* type scale */
+.ds-scale { display: grid; gap: var(--s-7); }
+.ds-scale-row {
+  display: grid; grid-template-columns: 150px minmax(0, 1fr);
+  gap: var(--s-5); align-items: baseline;
+  padding-bottom: var(--s-6);
+  border-bottom: var(--hair) solid var(--mist);
+}
+.ds-meta { font-size: 12px; line-height: 1.7; color: var(--text-muted); }
+
+/* work tiles */
+.ds-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-6);
+}
+.ds-img {
+  display: block; height: 190px;
+  background: radial-gradient(circle at 38% 32%, #FFF 0%, #F2F6F9 44%, #DFE9F1 74%, #C8D9E6 100%);
+}
+.ds-cap { display: block; padding: var(--s-4) var(--s-5) var(--s-5); }
+.ds-cap b { display: block; font-size: 15px; font-weight: var(--w-medium); margin-bottom: 2px; }
+
+@media (max-width: 60rem) {
+  .ds-two, .ds-tiles { grid-template-columns: minmax(0, 1fr); }
+  .ds-swatches { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ds-scale-row { grid-template-columns: minmax(0, 1fr); gap: var(--s-2); }
+}
