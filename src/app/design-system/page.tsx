@@ -6,6 +6,7 @@ import ArrowLink from '@/components/v4/ArrowLink'
 import ProjectCard from '@/components/v4/ProjectCard'
 import SmoothScroll from '@/components/v4/SmoothScroll'
 import CursorLens from '@/components/v4/CursorLens'
+import FluidCursor from '@/components/v4/FluidCursor'
 import '@/styles/tokens.css'
 import './design-system.css'
 
@@ -90,6 +91,7 @@ export default function DesignSystemPage() {
       <div className="k-grain" />
       <ApertureMenu />
       <SmoothScroll>{null}</SmoothScroll>
+      <FluidCursor />
       <CursorLens />
 
       <div className="k-page">

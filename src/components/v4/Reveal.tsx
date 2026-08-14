@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { createElement, useEffect, useRef } from 'react'
 
 /**
  * The reveal signature, wired to scroll.
@@ -62,16 +62,17 @@ export default function Reveal({
     ref.current = node
   }
 
-  const Component = Tag as React.ElementType
-
-  const inner = (
-    <Component
-      ref={setRef}
-      className={`k-reveal ${className}`}
-      style={{ '--i': index, ...style } as React.CSSProperties}
-    >
-      {children}
-    </Component>
+  // createElement rather than <Tag />: a union of intrinsic tags narrows its
+  // props to the INTERSECTION of every member, which collapses to never and
+  // rejects className, style and ref alike.
+  const inner = createElement(
+    Tag,
+    {
+      ref: setRef,
+      className: `k-reveal ${className}`,
+      style: { '--i': index, ...style } as React.CSSProperties,
+    },
+    children,
   )
 
   return masked ? <span className="k-mask">{inner}</span> : inner

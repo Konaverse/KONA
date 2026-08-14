@@ -60,8 +60,10 @@ becomes north-east; label shifts to `--text-accent`.
 `src/components/v4/CursorLens.tsx`. It genuinely refracts: a generated SVG displacement map
 is fed to `backdrop-filter`, so real pixels bend rather than a highlight being faked.
 
-**3.1 Scope — decided.** Ship the tokenised lens as the baseline; the fluid trailing blob
-stays a later replacement behind the same API, in its own session. Done.
+**3.1 Scope — superseded.** The fluid trail is no longer "later": it has been ported from
+`giats-portfolio` (`src/components/v4/fluid/` + `FluidCursor.tsx`), a full Navier-Stokes
+solver in GLSL. **Both it and the lens are currently mounted, which is one pointer-follower
+too many — see 3.9.**
 **3.2 Hint API — done.** `data-lens="strong" | "weak" | "off"`, resolved via
 `elementFromPoint` and **lerped**, so crossing a boundary dissolves rather than steps.
 Strong over the hero and tiles, weak over body copy, per the choreography.
@@ -77,6 +79,9 @@ decorative gain.
 | 3.6 | **Safari has no refraction** | Safari does not support `url()` in `backdrop-filter`. It is feature-detected and falls back to a plain glass blur — correct, but visibly less. | Confirmed on real Safari; decided whether the fallback is good enough or Safari gets something else. |
 | 3.7 | **Lens vs proximity buttons** (was 1.5) | Both track the pointer. Two things answering the same movement can read as noise. | Judged side by side in a foreground tab. |
 | 3.8 | **Strength tuning** | `strong 0.052 / base 0.03 / weak 0.012` were picked by eye from one static frame, not in motion. The probe at 0.06 visibly mangled body copy. | Tuned while actually moving the pointer. |
+| 3.9 | **Lens *and* fluid are both mounted** | Two pointer-followers plus the proximity buttons is three things answering one movement. Almost certainly one too many, but it cannot be judged without seeing them. | One chosen — or a deliberate decision that they layer. Removing either is a one-line change in the page. |
+| 3.10 | **Fluid: never actually seen render** | The port compiles, holds a WebGL2 context, and its wrapper composites correctly (`fixed / multiply / white / z-55`), but R3F's ResizeObserver does not fire in a throttled tab so the canvas stayed at its default 300×150. Verified as wiring, unverified as a picture. | Watched in a foreground tab. |
+| 3.11 | **Fluid: colour and tuning** | `#7FA8C9` straight from `--ice`, and the solver constants are the source project's untouched. Those were tuned against a dark page. | Tuned on white. |
 
 ---
 
