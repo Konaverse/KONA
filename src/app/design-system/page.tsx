@@ -5,6 +5,7 @@ import Button from '@/components/v4/Button'
 import ArrowLink from '@/components/v4/ArrowLink'
 import ProjectCard from '@/components/v4/ProjectCard'
 import SmoothScroll from '@/components/v4/SmoothScroll'
+import CursorLens from '@/components/v4/CursorLens'
 import '@/styles/tokens.css'
 import './design-system.css'
 
@@ -62,9 +63,12 @@ function Section({ n, title, lede, children }: { n: string; title: React.ReactNo
         {title}
       </Reveal>
       {lede && (
-        <Reveal as="p" index={1} className="t-body" style={{ margin: '0 0 var(--s-8)', color: 'var(--text-muted)' }}>
-          {lede}
-        </Reveal>
+        // weak: refraction over body copy hurts reading, per the choreography
+        <div data-lens="weak">
+          <Reveal as="p" index={1} className="t-body" style={{ margin: '0 0 var(--s-8)', color: 'var(--text-muted)' }}>
+            {lede}
+          </Reveal>
+        </div>
       )}
       {children}
     </section>
@@ -86,19 +90,26 @@ export default function DesignSystemPage() {
       <div className="k-grain" />
       <ApertureMenu />
       <SmoothScroll>{null}</SmoothScroll>
+      <CursorLens />
 
       <div className="k-page">
         {/* ---------------------------------------------------------- hero */}
         <section className="ds-section ds-hero">
           <p className="ds-label">Konaverse · design system</p>
-          <Reveal masked as="h1" className="t-display" style={{ margin: '0 0 var(--s-6)' }}>
-            Whiteout, single <em>ice</em>
-          </Reveal>
-          <Reveal as="p" index={1} className="t-body" style={{ margin: 0, color: 'var(--text-muted)' }}>
-            Six type sizes, eight colours, four easing curves. Every component on this page is
-            the real thing — the same <code>k-</code> classes and the same token file that
-            ship, not a copy. Open the aperture from the burger, top right.
-          </Reveal>
+          {/* strong: the hero is where the glass is supposed to be most alive */}
+          <div data-lens="strong">
+            <Reveal masked as="h1" className="t-display" style={{ margin: '0 0 var(--s-6)' }}>
+              Whiteout, single <em>ice</em>
+            </Reveal>
+          </div>
+          <div data-lens="weak">
+            <Reveal as="p" index={1} className="t-body" style={{ margin: 0, color: 'var(--text-muted)' }}>
+              Six type sizes, eight colours, four easing curves. Every component on this page is
+              the real thing — the same <code>k-</code> classes and the same token file that
+              ship, not a copy. Move the cursor across this headline: the lens genuinely
+              refracts it.
+            </Reveal>
+          </div>
         </section>
 
         {/* -------------------------------------------------------- colour */}
@@ -215,7 +226,8 @@ export default function DesignSystemPage() {
           title={<>Client work is the only <em>colour</em></>}
           lede="No frame, no rounded box, no shadow — the media is the card and the type sits under it on the page. Watch them arrive: pulled from a corner so the shape stretches, then recovering into a solid rectangle. Hovering plays a screen recording of the site; the video is not in the DOM until the first hover, so a visitor who never hovers never pays for it."
         >
-          <div className="ds-tiles">
+          {/* strong: the choreography wants the lens to strengthen over tiles */}
+          <div className="ds-tiles" data-lens="strong">
             {TILES.map(([name, desc], i) => (
               <ProjectCard key={name} title={name} meta={desc} href="#" index={i} />
             ))}

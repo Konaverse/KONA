@@ -55,18 +55,28 @@ becomes north-east; label shifts to `--text-accent`.
 
 ---
 
-## 3. Cursor — not started
+## 3. Cursor — lens BUILT
 
-`--lens-size`, `--lens-scale`, `--lens-fringe`, `--lens-fringe-a` and the `.k-lens` class
-all already exist in `tokens.css`. **Nothing references them.**
+`src/components/v4/CursorLens.tsx`. It genuinely refracts: a generated SVG displacement map
+is fed to `backdrop-filter`, so real pixels bend rather than a highlight being faked.
 
-| # | Item | Why it blocks | Done when |
+**3.1 Scope — decided.** Ship the tokenised lens as the baseline; the fluid trailing blob
+stays a later replacement behind the same API, in its own session. Done.
+**3.2 Hint API — done.** `data-lens="strong" | "weak" | "off"`, resolved via
+`elementFromPoint` and **lerped**, so crossing a boundary dissolves rather than steps.
+Strong over the hero and tiles, weak over body copy, per the choreography.
+**3.3 Native cursor — decided: never hidden.** The lens augments it. Hiding the system
+cursor costs text-selection affordance and is a real accessibility regression for a purely
+decorative gain.
+**3.4 Touch + reduced motion — done.** `display: none` under `(hover: none)` and
+`prefers-reduced-motion`, and the JS bails before attaching listeners.
+
+| # | Still open | Why it matters | Done when |
 |---|---|---|---|
-| 3.1 | **Scope decision: lens vs blob** | The tokenised lens (1.06 magnification, single ice fringe) and the fluid trailing blob are different projects — one is an afternoon, the other wants WebGL and its own session, as you said. Building the blob first would strand the tokens. | Chosen. Recommendation: ship the spec'd lens as the baseline, treat the blob as a later replacement behind the same API. |
-| 3.2 | **`data-cursor` hint API** | The choreography requires it to strengthen over the hero and tiles and weaken over body copy. Without a hint attribute, every section will hand-roll its own. | Attribute contract defined and honoured by the components that need it. |
-| 3.3 | **Native cursor: hidden or augmented** | Hiding the system cursor is a real accessibility cost and breaks text selection affordance. | Decided explicitly, not by default. |
-| 3.4 | **Touch + reduced motion** | A custom cursor on touch is dead weight; under reduced motion it is a moving object that cannot be escaped. | Absent in both cases. |
-| 3.5 | **Frame budget** | It shares `gsap.ticker` with Lenis and the card entrances. | Measured at 60fps on the work section with three cards playing. |
+| 3.5 | **Frame budget, unmeasured** | `backdrop-filter` with an SVG displacement map re-rasterises the backdrop under a 230px disc every frame. This is the most expensive thing on the page by some distance, and it has **never been measured** — every test ran in a throttled background tab at 0fps. | Watched at speed in a foreground tab, on the work section with three cards playing, and either kept, retuned, or dropped to the glass fallback. |
+| 3.6 | **Safari has no refraction** | Safari does not support `url()` in `backdrop-filter`. It is feature-detected and falls back to a plain glass blur — correct, but visibly less. | Confirmed on real Safari; decided whether the fallback is good enough or Safari gets something else. |
+| 3.7 | **Lens vs proximity buttons** (was 1.5) | Both track the pointer. Two things answering the same movement can read as noise. | Judged side by side in a foreground tab. |
+| 3.8 | **Strength tuning** | `strong 0.052 / base 0.03 / weak 0.012` were picked by eye from one static frame, not in motion. The probe at 0.06 visibly mangled body copy. | Tuned while actually moving the pointer. |
 
 ---
 

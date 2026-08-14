@@ -118,7 +118,7 @@ than carrying a copy of it — so the reference cannot drift from the code.
 | **Section header** | done | Heading + body, no eyebrow. The restraint *is* the design. |
 | **Hairline rule** | **built** | `.k-rule`, plus `.k-rule-draw` which scales from the left on `--d-slow` — a break that arrives rather than sits there. |
 | **Aperture menu** | **built** | §2. `src/components/v4/ApertureMenu.tsx`. Circle born in the burger, measured at click time; one reversible timeline, close at 1.6×. |
-| **Cursor lens** | spec'd, unbuilt | 1.06, single cool fringe at 42%. Strengthens over hero and tiles, weakens over body copy. |
+| **Cursor lens** | **built** | It genuinely **refracts** — a generated SVG displacement map fed to `backdrop-filter`, so real pixels bend. Single cool fringe at 42%. Strength lerps between `strong / base / weak` via `data-lens`. Native cursor never hidden. Frame cost unmeasured — see checklist §3.5. |
 | **Form input** | not designed | `/contact` only — no form on the homepage. |
 | **Footer** | not designed | Carries the full map; the only place every URL appears. |
 
