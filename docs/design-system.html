@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Konaverse · Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+--white:#FFFFFF;--mist:#F4F6F7;--silver:#DDE3E7;--graphite:#6E767C;--ink:#15171A;
+--ice:#7FA8C9;--ice-soft:#DCE8F1;--ice-deep:#2E5F8A;
+--font-sans:"Manrope",system-ui,sans-serif;
+--t-display:clamp(3.25rem,8.5vw,8rem);--t-h1:clamp(2.25rem,5.2vw,4.25rem);
+--t-h2:clamp(1.625rem,2.9vw,2.625rem);--t-h3:clamp(1.125rem,1.5vw,1.375rem);
+--t-body:clamp(1rem,1.05vw,1.0625rem);--t-small:.875rem;
+--s-1:.25rem;--s-2:.5rem;--s-3:.75rem;--s-4:1rem;--s-5:1.5rem;--s-6:2rem;--s-7:3rem;
+--s-8:4rem;--s-9:6rem;--s-10:8rem;--s-11:12rem;
+--d-instant:120ms;--d-quick:240ms;--d-base:420ms;--d-slow:900ms;--d-cinema:1400ms;
+--e-glass:cubic-bezier(.22,1,.36,1);--e-drift:cubic-bezier(.65,0,.35,1);
+--e-arc:cubic-bezier(.83,0,.17,1);--e-settle:cubic-bezier(.16,1,.3,1);
+--r-sm:4px;--r-md:10px;--r-full:999px;--hair:1px;
+--lift-3:0 24px 60px -20px rgba(21,23,26,.14);
+--grain-opacity:.42;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--white);color:var(--ink);font-family:var(--font-sans);
+  font-size:var(--t-body);line-height:1.65;-webkit-font-smoothing:antialiased}
+.grain{position:fixed;inset:0;z-index:40;pointer-events:none;opacity:var(--grain-opacity);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+  background-size:180px 180px}
+.page{max-width:1120px;margin:0 auto;padding:0 clamp(1.25rem,4vw,3.5rem)}
+section{padding:clamp(4rem,8vw,7rem) 0;border-top:var(--hair) solid var(--mist)}
+section:first-of-type{border-top:none}
+.label{font-size:13px;font-weight:500;color:var(--graphite);margin:0 0 var(--s-4)}
+h1{font-size:var(--t-h1);font-weight:200;line-height:1.02;letter-spacing:-.04em;margin:var(--s-4) 0 var(--s-5)}
+h2{font-size:var(--t-h2);font-weight:400;line-height:1.08;letter-spacing:-.03em;margin:0 0 var(--s-5)}
+h1 em,h2 em{font-style:normal;font-weight:600}
+p{max-width:68ch;color:#3F4549;margin:0 0 var(--s-4)}
+.muted{color:var(--graphite)}
+.hair{height:1px;background:var(--silver);border:0;margin:var(--s-7) 0}
+
+/* colour */
+.swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-4)}
+.sw .chip{height:96px;border-radius:var(--r-sm);border:1px solid var(--silver)}
+.sw p{margin:var(--s-3) 0 0;font-size:12.5px;line-height:1.5;color:var(--graphite)}
+.sw p b{display:block;color:var(--ink);font-weight:500;font-size:13px}
+.sw p code{font-size:12px;color:var(--graphite)}
+
+/* type scale */
+.scale{display:grid;gap:var(--s-6)}
+.scale .row{display:grid;grid-template-columns:150px 1fr;gap:var(--s-5);align-items:baseline;
+  padding-bottom:var(--s-5);border-bottom:1px solid var(--mist)}
+.scale .meta{font-size:12px;color:var(--graphite);line-height:1.7}
+.d-display{font-size:var(--t-display);font-weight:200;line-height:.95;letter-spacing:-.045em}
+.d-h1{font-size:var(--t-h1);font-weight:200;line-height:1.08;letter-spacing:-.04em}
+.d-h2{font-size:var(--t-h2);font-weight:400;line-height:1.08;letter-spacing:-.03em}
+.d-h3{font-size:var(--t-h3);font-weight:500;line-height:1.32;letter-spacing:-.015em}
+.d-body{font-size:var(--t-body);line-height:1.65}
+.d-small{font-size:var(--t-small);color:var(--graphite)}
+.d-display em,.d-h1 em{font-style:normal;font-weight:600}
+
+/* space */
+.spaces{display:grid;gap:var(--s-3)}
+.spaces .r{display:grid;grid-template-columns:110px 1fr;gap:var(--s-4);align-items:center}
+.spaces .bar{height:14px;background:var(--ice-soft);border-radius:2px;border:1px solid var(--ice)}
+.spaces .n{font-size:12px;color:var(--graphite)}
+
+/* motion */
+.motion{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s-5)}
+.curve{border:1px solid var(--silver);border-radius:var(--r-md);padding:var(--s-5);cursor:pointer;
+  background:none;text-align:left;font:inherit;color:inherit;width:100%}
+.curve:hover{border-color:var(--ice)}
+.curve h4{margin:0 0 var(--s-2);font-size:15px;font-weight:500}
+.curve .n{font-size:12px;color:var(--graphite);display:block;margin-bottom:var(--s-4)}
+.track{height:34px;background:var(--mist);border-radius:var(--r-full);position:relative;overflow:hidden}
+.ball{position:absolute;top:5px;left:5px;width:24px;height:24px;border-radius:50%;
+  background:var(--ice-deep)}
+.curve p{font-size:13px;margin:var(--s-4) 0 0;color:var(--graphite)}
+
+/* components */
+.comps{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s-5)}
+.demo{border:1px solid var(--silver);border-radius:var(--r-md);padding:var(--s-6);background:var(--white)}
+.demo > .label{margin-bottom:var(--s-5)}
+.btn{display:inline-flex;align-items:center;gap:var(--s-3);padding:var(--s-3) var(--s-5);
+  border:1px solid var(--ink);border-radius:var(--r-full);background:var(--ink);color:var(--white);
+  font-size:var(--t-small);font-weight:500;text-decoration:none;cursor:pointer;
+  transition:background var(--d-instant) var(--e-settle),border-color var(--d-instant) var(--e-settle)}
+.btn:hover{background:var(--ice-deep);border-color:var(--ice-deep)}
+.btn-ghost{background:transparent;color:var(--ink);border-color:var(--silver)}
+.btn-ghost:hover{background:var(--ice-soft);border-color:var(--ice);color:var(--ice-deep)}
+.tile{border:1px solid var(--silver);border-radius:var(--r-md);overflow:hidden;
+  transition:box-shadow var(--d-base) var(--e-settle),transform var(--d-base) var(--e-settle)}
+.tile:hover{box-shadow:var(--lift-3);transform:translateY(-2px)}
+.tile .img{height:132px;background:radial-gradient(circle at 38% 32%,#FFF 0%,#F2F6F9 44%,#DFE9F1 74%,#C8D9E6 100%)}
+.tile .cap{padding:var(--s-4) var(--s-5) var(--s-5)}
+.tile h5{margin:var(--s-2) 0 var(--s-1);font-size:15px;font-weight:500}
+.navdemo{display:flex;align-items:center;gap:var(--s-6);font-size:13.5px}
+.navdemo a{color:var(--graphite);text-decoration:none;transition:color var(--d-instant)}
+.navdemo a:hover{color:var(--ink)}
+.navdemo b{font-weight:600;letter-spacing:-.02em;margin-right:auto}
+.revealbox{border:1px solid var(--silver);border-radius:var(--r-md);padding:var(--s-6);background:var(--white)}
+.rev{opacity:0;filter:blur(14px);transform:translateY(18px);
+  transition:opacity var(--d-slow) var(--e-glass),filter var(--d-slow) var(--e-glass),transform var(--d-slow) var(--e-glass)}
+.rev.in{opacity:1;filter:blur(0);transform:none}
+
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:14px 16px 14px 0;vertical-align:top;border-top:1px solid var(--mist);line-height:1.5}
+th{font-size:13px;color:var(--graphite);font-weight:500;width:160px}
+
+@media (max-width:820px){
+  .swatches{grid-template-columns:repeat(2,1fr)}
+  .motion,.comps{grid-template-columns:1fr}
+  .scale .row{grid-template-columns:1fr;gap:var(--s-2)}
+  th{width:auto}
+}
+@media (prefers-reduced-motion:reduce){*{transition-duration:1ms!important}}
+:focus-visible{outline:2px solid var(--ice-deep);outline-offset:3px}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="page">
+
+<section>
+  <p class="label">Konaverse · design system v1</p>
+  <h1>Whiteout,<br>single <em>ice</em></h1>
+  <p>Everything below is thin on purpose. Six type sizes, eight colours, four easing curves, ten components. A 6 to 8 page site does not need more, and every token you add is one more thing that drifts out of sync between Figma and the codebase.</p>
+  <p class="muted">The names here match the CSS file exactly, and they will match the Figma variables exactly. When a value changes it changes in the CSS first, then gets pushed to Figma. One direction, never both.</p>
+</section>
+
+<section>
+  <p class="label">01 · Colour</p>
+  <h2>Eight values,<br>seven roles</h2>
+  <p>Components never reference a raw colour. They reference a role, so the whole site can be retuned by editing three lines.</p>
+  <div class="swatches">
+    <div class="sw"><div class="chip" style="background:#FFFFFF"></div><p><b>white</b><code>#FFFFFF</code><br>surface</p></div>
+    <div class="sw"><div class="chip" style="background:#F4F6F7"></div><p><b>mist</b><code>#F4F6F7</code><br>surface-raised</p></div>
+    <div class="sw"><div class="chip" style="background:#DDE3E7"></div><p><b>silver</b><code>#DDE3E7</code><br>hairline</p></div>
+    <div class="sw"><div class="chip" style="background:#6E767C"></div><p><b>graphite</b><code>#6E767C</code><br>text-muted · 4.6:1</p></div>
+    <div class="sw"><div class="chip" style="background:#15171A"></div><p><b>ink</b><code>#15171A</code><br>text · 16.5:1</p></div>
+    <div class="sw"><div class="chip" style="background:#7FA8C9"></div><p><b>ice</b><code>#7FA8C9</code><br>accent · light and rim only</p></div>
+    <div class="sw"><div class="chip" style="background:#DCE8F1"></div><p><b>ice-soft</b><code>#DCE8F1</code><br>accent-wash · large fills</p></div>
+    <div class="sw"><div class="chip" style="background:#2E5F8A"></div><p><b>ice-deep</b><code>#2E5F8A</code><br>text-accent · 6.1:1</p></div>
+  </div>
+  <hr class="hair">
+  <p class="muted"><b style="color:var(--ink);font-weight:500">Two rules that keep this from going wrong.</b> Ice at #7FA8C9 fails contrast on white at 2.4:1, so it can never carry text or a small icon. It is light, rim and object tint only. When the accent has to be readable, that is ice-deep. And the accent appears at most four or five times on any page. If it starts showing up on every hover state it stops being a signal.</p>
+</section>
+
+<section>
+  <p class="label">02 · Type</p>
+  <h2>Manrope,<br>weight does the <em>work</em></h2>
+  <p>One family across the site, six sizes, nothing else. The whole personality comes from the jump between 200 and 600, which is why the mid weights stay out of headlines. There is deliberately no label or eyebrow style: no small caps above a heading, no section numbers, no captions in a second face. A section break is space and a hairline, nothing more.</p>
+  <div class="scale">
+    <div class="row"><div class="meta">display<br>200 · 0.95<br>-0.045em</div><div class="d-display">Ahead of <em>market</em></div></div>
+    <div class="row"><div class="meta">h1<br>200 · 1.08<br>-0.04em</div><div class="d-h1">We build the web as a <em>place</em></div></div>
+    <div class="row"><div class="meta">h2<br>400 · 1.08<br>-0.03em</div><div class="d-h2">Selected work from the studio</div></div>
+    <div class="row"><div class="meta">h3<br>500 · 1.32<br>-0.015em</div><div class="d-h3">Immersive scrollytelling</div></div>
+    <div class="row"><div class="meta">body<br>400 · 1.65</div><div class="d-body">Konaverse is a studio for brands that need to arrive somewhere ahead of their market. Every site is built as one continuous story rather than a stack of sections, and the three dimensional work is rendered rather than templated.</div></div>
+    <div class="row"><div class="meta">small<br>400 · 1.55</div><div class="d-small">Based in Cyprus, working globally. Projects begin at 2,000 euro.</div></div>
+  </div>
+</section>
+
+<section>
+  <p class="label">03 · Space and grid</p>
+  <h2>Four pixel base,<br>eleven <em>steps</em></h2>
+  <div class="spaces">
+    <div class="r"><span class="n">s-1 · 4</span><div class="bar" style="width:4px"></div></div>
+    <div class="r"><span class="n">s-2 · 8</span><div class="bar" style="width:8px"></div></div>
+    <div class="r"><span class="n">s-3 · 12</span><div class="bar" style="width:12px"></div></div>
+    <div class="r"><span class="n">s-4 · 16</span><div class="bar" style="width:16px"></div></div>
+    <div class="r"><span class="n">s-5 · 24</span><div class="bar" style="width:24px"></div></div>
+    <div class="r"><span class="n">s-6 · 32</span><div class="bar" style="width:32px"></div></div>
+    <div class="r"><span class="n">s-7 · 48</span><div class="bar" style="width:48px"></div></div>
+    <div class="r"><span class="n">s-8 · 64</span><div class="bar" style="width:64px"></div></div>
+    <div class="r"><span class="n">s-9 · 96</span><div class="bar" style="width:96px"></div></div>
+    <div class="r"><span class="n">s-10 · 128</span><div class="bar" style="width:128px"></div></div>
+    <div class="r"><span class="n">s-11 · 192</span><div class="bar" style="width:192px"></div></div>
+  </div>
+  <hr class="hair">
+  <table>
+    <tr><th>Columns</th><td>12 on desktop, 4 below 768px</td></tr>
+    <tr><th>Gutter</th><td>24px desktop, 16px mobile</td></tr>
+    <tr><th>Page max</th><td>1440px outer bound</td></tr>
+    <tr><th>Content max</th><td>1200px reading column</td></tr>
+    <tr><th>Measure</th><td>68ch, hard cap on body copy line length</td></tr>
+    <tr><th>Section rhythm</th><td>clamp(96px, 12vw, 200px) vertical. Generous is the point on white.</td></tr>
+  </table>
+</section>
+
+<section>
+  <p class="label">04 · Motion</p>
+  <h2>Five durations,<br>four <em>curves</em></h2>
+  <p>This is the part most systems skip, and it is the single biggest reason a site feels incoherent. Click each curve to feel it. Note that none of them overshoot: back and bounce easings would break the register completely.</p>
+  <div class="motion">
+    <button class="curve" data-e="cubic-bezier(.22,1,.36,1)" data-d="900">
+      <h4>e-glass</h4><span class="n">cubic-bezier(.22, 1, .36, 1) · d-slow 900ms</span>
+      <div class="track"><div class="ball"></div></div>
+      <p>The default. Every scroll reveal and structural move. Fast departure, long settle.</p>
+    </button>
+    <button class="curve" data-e="cubic-bezier(.65,0,.35,1)" data-d="1400">
+      <h4>e-drift</h4><span class="n">cubic-bezier(.65, 0, .35, 1) · d-cinema 1400ms</span>
+      <div class="track"><div class="ball"></div></div>
+      <p>Pinned and scrubbed sections. Symmetrical, so it never feels like it is being pushed.</p>
+    </button>
+    <button class="curve" data-e="cubic-bezier(.83,0,.17,1)" data-d="1400">
+      <h4>e-arc</h4><span class="n">cubic-bezier(.83, 0, .17, 1) · d-cinema 1400ms</span>
+      <div class="track"><div class="ball"></div></div>
+      <p>Page transitions only. The exoape arc. Slow to commit, fast through the middle, slow to land.</p>
+    </button>
+    <button class="curve" data-e="cubic-bezier(.16,1,.3,1)" data-d="420">
+      <h4>e-settle</h4><span class="n">cubic-bezier(.16, 1, .3, 1) · d-base 420ms</span>
+      <div class="track"><div class="ball"></div></div>
+      <p>Hover, cursor, anything that has to feel responsive rather than cinematic.</p>
+    </button>
+  </div>
+  <hr class="hair">
+  <table>
+    <tr><th>d-instant 120ms</th><td>Colour and opacity on hover. The only thing allowed to be fast.</td></tr>
+    <tr><th>d-quick 240ms</th><td>Cursor, small state changes.</td></tr>
+    <tr><th>d-base 420ms</th><td>Component-level movement.</td></tr>
+    <tr><th>d-slow 900ms</th><td>Section reveals. Structural.</td></tr>
+    <tr><th>d-cinema 1400ms</th><td>Page transitions and hero sequences.</td></tr>
+  </table>
+</section>
+
+<section>
+  <p class="label">05 · The signature</p>
+  <h2>Refraction,<br>not <em>fade</em></h2>
+  <p>The one rule the whole identity rests on. Type does not fade up, it resolves from a displaced blurred state, as though coming into focus through moving glass. Press the button to replay it.</p>
+  <div class="revealbox">
+    <div class="rev" id="revTarget">
+      <p class="label" style="margin-bottom:var(--s-3)">Reveal · d-slow · e-glass</p>
+      <div class="d-h2">Built as one continuous story</div>
+    </div>
+    <button class="btn btn-ghost" id="replay" style="margin-top:var(--s-6)">Replay reveal</button>
+  </div>
+  <hr class="hair">
+  <table>
+    <tr><th>Section breaks</th><td>No labels anywhere. A break is --section-y of space plus one hairline. With nothing announcing a section, the vertical rhythm has to be genuinely even and the hairline has to be exact.</td></tr>
+    <tr><th>lens-scale</th><td>1.06. Subtle by design. Anything above 1.12 turns into a gimmick.</td></tr>
+    <tr><th>lens-fringe</th><td>Single cool tone, ice at 42% opacity. Route B means one fringe, not two.</td></tr>
+    <tr><th>reveal-blur</th><td>14px, resolving to 0 over 900ms.</td></tr>
+    <tr><th>reveal-shift</th><td>18px of displacement. Small enough to read as focus rather than travel.</td></tr>
+    <tr><th>Blender rig</th><td>One key light with a cool rim. No dispersion setup needed under Route B, which keeps the render pipeline simple.</td></tr>
+  </table>
+</section>
+
+<section>
+  <p class="label">06 · Components</p>
+  <h2>Ten, and no <em>more</em></h2>
+  <div class="comps">
+    <div class="demo">
+      <p class="label">Button · primary and ghost</p>
+      <a href="#" class="btn">Start a project</a>
+      <a href="#" class="btn btn-ghost" style="margin-left:var(--s-3)">See the work</a>
+    </div>
+    <div class="demo">
+      <p class="label">Nav</p>
+      <div class="navdemo"><b>Konaverse</b><a href="#">Work</a><a href="#">Studio</a><a href="#">Contact</a></div>
+    </div>
+    <div class="demo">
+      <p class="label">Project tile</p>
+      <div class="tile"><div class="img"></div><div class="cap"><h5>Titan Sable</h5><span class="d-small">Scroll-driven product story</span></div></div>
+    </div>
+    <div class="demo">
+      <p class="label">Section header</p>
+      <hr class="hair" style="margin:0 0 var(--s-5)">
+      <div class="d-h2">Recent <em>builds</em></div>
+    </div>
+  </div>
+  <hr class="hair">
+  <table>
+    <tr><th>Full list</th><td>Nav · button (primary, ghost) · arrow link · project tile · section header · hairline rule · footer · cursor lens · form input · list row. That is the whole library. Anything that appears once is not a component, it is a one-off.</td></tr>
+  </table>
+</section>
+
+<section>
+  <p class="label">Next</p>
+  <h2>What happens now</h2>
+  <table>
+    <tr><th>Figma</th><td>These tokens go in as variables and text styles when the plan quota resets, using the exact same names.</td></tr>
+    <tr><th>Key art</th><td>The hero, drawn three ways inside this system. If the hero does not sing, the direction is wrong and we have lost a day rather than three weeks.</td></tr>
+    <tr><th>Blender</th><td>One test object under the single ice rig, rendered at final quality, before any modelling commitment. The render quality is carrying this direction, so it gets proven early.</td></tr>
+    <tr><th>Code spike</th><td>The refraction reveal and the exoape transition, built rough in GSAP and Lenis. Two hours in code beats two days faking it in a prototype tool.</td></tr>
+  </table>
+</section>
+
+</div>
+<script>
+document.querySelectorAll('.curve').forEach(function(c){
+  var ball=c.querySelector('.ball'),track=c.querySelector('.track');
+  function play(){
+    var d=c.dataset.d,e=c.dataset.e;
+    ball.style.transition='none';ball.style.transform='translateX(0)';
+    void ball.offsetWidth;
+    ball.style.transition='transform '+d+'ms '+e;
+    ball.style.transform='translateX('+(track.offsetWidth-34)+'px)';
+    setTimeout(function(){
+      ball.style.transition='transform '+d+'ms '+e;
+      ball.style.transform='translateX(0)';
+    },parseInt(d)+320);
+  }
+  c.addEventListener('click',play);
+});
+var rev=document.getElementById('revTarget'),btn=document.getElementById('replay');
+function playRev(){rev.classList.remove('in');void rev.offsetWidth;setTimeout(function(){rev.classList.add('in')},60)}
+btn.addEventListener('click',playRev);
+setTimeout(playRev,400);
+</script>
+</body>
+</html>

@@ -1,109 +1,181 @@
 # KONA — Redesign v4 · Working Brief
 
 **Branch:** `redesign/v4` · **Base:** `website-2.0` @ `8c33777`
-**Status:** 🟡 Awaiting design references — codebase prepped, no visual decisions made yet.
+**Status:** 🟢 **Direction locked — Whiteout.** Building against the specs in `docs/`.
 
-Scope agreed: **full site, from scratch, brand-new direction.** DESIGN.md v3.1 (dark
-futuristic tech-minimalism, earthy-green `#6B7F62`, extreme scroll transitions) is
-**retired** — preserved in git history on `website-2.0`. Nothing in v3.1 is a constraint
-on v4 unless you say so.
+Scope: **full site, from scratch.** The v3.1 direction (dark, earthy-green `#6B7F62`,
+extreme scroll transitions) is **retired** — preserved in git history on `website-2.0`.
 
 ---
 
-## 1. What I need from you
+## 1. The locked spec — four documents
 
-Drop references into `references/` (see that folder's README for the specifics). The
-things that actually unblock building, roughly in order of how much they change:
+These are canonical. Nothing gets built that contradicts them; if something needs to
+change, it changes in the document first.
 
-| # | Question | Why it blocks |
-|---|----------|---------------|
-| 1 | **Reference sites / screenshots** | The whole visual direction. Everything below is downstream. |
-| 2 | **Light, dark, or both?** | Decides the token architecture and every component's base styling. v3.1 was dark-dominant; that is not assumed anymore. |
-| 3 | **Accent colour + palette** | Green is gone unless you re-pick it. |
-| 4 | **Typeface direction** | v3.1 banned serifs. That ban is lifted — if you want editorial serif, say so. |
-| 5 | **Motion appetite** | Heavy scroll choreography (pins, iris, canvas scrub) vs. restrained fade/slide. Drives which libraries survive §3. |
-| 6 | **Copy: keep or rewrite?** | Existing headline/body copy across 6 pages. If it's being rewritten, I build to placeholder and swap later. |
-| 7 | **Route list** | Current: `/ /about /services /projects /pricing /contact` + legal. Adding/removing pages changes nav, sitemap, JSON-LD. |
+| Document | Path | Authority over |
+|---|---|---|
+| **Design tokens** | `src/styles/tokens.css` | **The single source of truth for values.** Colour, type, space, grid, motion, the refraction signature, grain, elevation. Figma variables mirror these names exactly, one direction only: CSS first, then pushed to Figma. |
+| **Design system** | `docs/design-system.html` | The rendered reference — swatches, type scale, the four easing curves (clickable), the reveal, the component set. |
+| **Site architecture** | `docs/site-architecture.md` | URL map, service/problem/case-study clusters, internal linking, SEO, build order. |
+| **Homepage choreography** | `docs/homepage-choreography.md` | The nine sections, their job, entrance, handoff, and where 3D is present. |
 
-For each reference, what's most useful is *what specifically* you like about it —
-"the type scale", "how the nav collapses", "that transition at 40% scroll". A URL alone
-leaves me guessing which of the fifty things on the page you meant.
+### The direction in one paragraph
+
+**Whiteout.** White surface, one cool accent (`--ice #7FA8C9`) used four or five times a
+page and never on text. Manrope alone, six sizes, the personality coming from the 200→600
+weight jump. No labels, no eyebrows, no section numbers — a break is space plus a hairline.
+The signature is **refraction, not fade**: type resolves from a displaced blurred state
+(14px blur, 18px shift, 900ms on `--e-glass`), and a cursor lens magnifies at 1.06. A 3D
+object appears in exactly two of nine sections, which is what makes it read as deliberate.
+
+**One idea per viewport.** Four elements on a screen reads as expensive; seven reads as busy.
 
 ---
 
-## 2. Locked — do not break
+## 2. Open questions from the specs
 
-These survive any redesign. They are business logic, compliance, or SEO, not styling.
+Carried forward from the documents, still undecided:
+
+1. **What is the object** (`choreography` §open-1) — everything in sections 1 and 6 depends
+   on it. Should bend light, should not be recognisable as anything from daily life.
+2. **Two projects side by side, or one per viewport** in section 5.
+3. **Whether sections 3 and 4 stay separate.** The spec's view is keep them — they catch
+   different search intent. Agreed.
+4. **Does the pinned demonstration come before or after the work.**
+5. **Nav pattern — genuine conflict between two locked documents.** The choreography says
+   burger with contact visible outside it; the design system's component demo shows a
+   horizontal `Konaverse · Work · Studio · Contact` bar. These cannot both be right.
+6. **Homepage outbound links.** Architecture §8 says the homepage links *down* to three
+   places, "not to twenty". The choreography's homepage links to problem posts (§3),
+   service pages (§4), projects (§5), pricing (§8) and contact (§9). Reconcile.
+
+---
+
+## 3. Changes made to the authored spec
+
+Three, each measured in-browser before changing, each reverted by editing one line.
+Originals are preserved inline in `src/styles/tokens.css`.
+
+**1 · Grain was colour noise, not grain.** `feTurbulence` writes independent R/G/B
+channels, so the filter as authored produced full-spectrum speckle — measured **mean chroma
+36/255, peak 147/255** — over every pixel, on a system whose whole discipline is one cool
+accent used four or five times a page. Added `<feColorMatrix type="saturate" values="0"/>`.
+Measured chroma after: **exactly 0.**
+
+**2 · `--grain-opacity: 0.42` → `0.14`.** At 0.42 the effective coverage is 0.105, so
+`#FFFFFF` composites to **`#F8F8F8`** — a 7.3-level grey cast across every white surface,
+on a direction named Whiteout. Rendered side by side against true white, the page read
+grey. 0.14 keeps the texture and gives the white back. *Surface separation was not the
+problem:* the white-vs-mist gap only moves 9.35 → 8.35 at full strength, so alternating
+sections were never at risk.
+
+**3 · `--graphite: #6E767C` → `#687076`.** The original is 4.62:1 on white (AA, as the file
+claims) but **4.26:1 on `--mist` — below AA for body text.** Since `--surface-raised` *is*
+mist, muted copy on every alternating section was failing. `#687076` is the smallest
+darkening that clears 4.5 on both surfaces (5.04 / 4.65) and is visually indistinguishable.
+
+Also resolved: the token file's header said *"Manrope + JetBrains Mono (utility)"* while §3
+of the same file said *"One family only. No mono, no second face."* Settled on one family,
+matching the design system, which loads only Manrope.
+
+Everything else in all four documents is untouched. The other contrast claims verified
+accurate and slightly conservative (ink 17.96:1 vs 16.5 claimed, ice-deep 6.73:1 vs 6.1).
+
+---
+
+## 4. Known collision — the token component layer is not globally imported yet
+
+`src/styles/tokens.css` defines generic class names — `.grid`, `.section`, `.card`,
+`.page`, `.content`, `.btn`, `.grain`. **27 places across 13 files already use those bare
+names**, mostly Tailwind's own `grid` utility, and `app/page.tsx` uses `className="grain"`
+on a layout wrapper that the token file would turn into `position: fixed; inset: 0`.
+
+So the file is locked in as the source of truth but is **not yet imported globally** — that
+would break the current site on contact. Same reason there's no Tailwind `@theme` bridge
+yet: the legacy `@theme` block already binds `--color-surface` and `--color-ink` to v3.1
+values, so a bridge today would collide rather than help.
+
+**Decision needed when the first v4 markup lands:** either namespace the token classes
+(`k-section`, `k-card`) or treat `tokens.css` as variables-only and build components with
+Tailwind utilities. The variables layer has no collisions and is safe either way.
+
+Manrope **is** wired (`app/layout.tsx`), and `--font-sans` now resolves through
+`var(--font-manrope)` with the bare `"Manrope"` kept as fallback so the same token file
+still works standalone in `docs/design-system.html`.
+
+---
+
+## 5. Locked — do not break
+
+Business logic, compliance and SEO. Survives any redesign.
 
 | Asset | Path | Note |
 |-------|------|------|
-| Contact form API | `src/app/api/contact/route.ts` | Resend → `info@kona-verse.com`. Needs `RESEND_API_KEY`. Email HTML template is styled to v3.1 green — restyle when the palette lands. |
-| SEO metadata | `src/app/layout.tsx` | OG/Twitter cards, canonical, `metadataBase` = `https://kona-verse.com`. |
-| Structured data | `src/components/JsonLd.tsx` + layout | Organization + WebSite schema. Founder names/roles live here. |
-| Sitemap / robots / manifest | `src/app/{sitemap,robots,manifest}.ts` | Update the route list if pages change. |
-| Analytics + consent | `GoogleAnalytics.tsx`, `CookieConsent.tsx` | GA `G-2PEZX44FP9`, GDPR consent gating. Restyle freely, don't remove the consent logic. |
-| Legal pages | `/privacy`, `/terms`, `/cookies` | Content is legal text — restyle, don't rewrite. |
-| Brand facts | — | Domain `kona-verse.com`, contact `info@kona-verse.com`, founders Konstantinos (Technical Architect) & Nabil (Creative Director). |
-
-**Assets:** `public/` is ~248 MB. `public/About/` is 306 files — mostly the ~298-frame
-droplet sequence feeding the v3.1 canvas-scrub scene. If v4 drops that mechanic, that's
-~26 MB of dead weight to prune. Flagging, not touching, until the direction is known.
+| Contact form API | `src/app/api/contact/route.ts` | Resend → `info@kona-verse.com`. Needs `RESEND_API_KEY`. Email template still styled v3.1 green — restyle to Whiteout. |
+| SEO metadata | `src/app/layout.tsx` | OG/Twitter, canonical, `metadataBase` = `https://kona-verse.com`. |
+| Structured data | `src/components/JsonLd.tsx` | Organization + WebSite. Architecture §7 wants Service, BreadcrumbList, Article and FAQPage added. |
+| Sitemap / robots / manifest | `src/app/{sitemap,robots,manifest}.ts` | **Needs rewriting** — architecture §1 adds `/blog`, `/services/*` children and `/projects/[slug]`. |
+| Analytics + consent | `GoogleAnalytics.tsx`, `CookieConsent.tsx` | GA `G-2PEZX44FP9`. Restyle freely, keep the consent gating. |
+| Legal pages | `/privacy`, `/terms`, `/cookies` | Restyle, don't rewrite the text. |
+| Brand facts | — | `kona-verse.com`, `info@kona-verse.com`, Konstantinos (Technical Architect) & Nabil (Creative Director), Cyprus, projects from €2,000. |
 
 ---
 
-## 3. Stack — kept as-is
+## 6. Carried forward from the v3.1 build
 
-Next.js 16 (App Router, Turbopack) · React 19 · TypeScript · Tailwind v4 (`@theme`) ·
-Framer Motion 12 · GSAP + ScrollTrigger · Lenis · Three.js / R3F + postprocessing · Spline · Resend.
+**The frame-sequence lesson.** Choreography §6 specifies **120 frames over 250–300vh** of
+pinned scroll — roughly one frame per 2.5vh. The v3.1 build ran a comparable scene at
+**~298 frames and still needed three separate smoothing layers** to stop it looking
+frame-by-frame: motion-compensated interpolation (`ffmpeg minterpolate mi_mode=mci`), a
+`requestAnimationFrame` lerp easing toward the scroll target, and sub-frame cross-blending
+between adjacent frames. That's documented in the retired spec and it was hard-won.
 
-R3F, postprocessing, Spline and GSAP are only worth their bundle weight if v4 actually
-uses them. Once the motion appetite (§1.5) is known I'll prune whatever's unused.
+At 120 frames this will step visibly on slow scroll. Either raise the count or budget for
+the same three smoothing layers — worth deciding before Blender time gets spent, since it
+changes what gets exported.
 
----
-
-## 4. Done on this branch
-
-**Dead-code sweep — 31 files removed, 0 behaviour change.** Every one was unreferenced;
-the build produced the same 17 routes before and after (`exit 0` both times). All
-recoverable from git history.
-
-- 20 orphaned sections/components — the `Beat*` set, `ServicesBento`, `ServicesCarousel`,
-  `TestimonialsSection`, `DualitySection`, `ProcessSection`, `PhilosophySection`,
-  `KeyElements`, `HomeCTA`, `StudioSection`, `Card`, `SectionNumber`, `SiteHeader`
-- 5 duplicate shadow-copies — bare `ProjectsSection`/`ServicesSection` (the `homepage/`
-  ones are live), `navigation/Navbar` + `MenuOverlay`, `layout/NavOverlay`
-- 6 hooks/utilities orphaned by the above — `useParallax`, `usePinSequence`,
-  `useTextReveal`, `useScrollReveal`, `ArchiveLabel`, `ScrollReveal`
-
-Kept `src/lib/motion.ts` (unreferenced but direction-agnostic easing tokens) and
-`src/utils/gsap.ts`.
-
-### Still standing (the v4 teardown list)
-
-25 component files remain. These render the current site and come down section by section
-as v4 replaces them — *not* before, so `main` stays deployable throughout:
-
-`HeroSection` · `HeroV2` (imported but unused) · `AboutSection` · `CinemaScene` ·
-`ServicesSection` · `ServicesVault` · `ManifestoSection` · `ProjectsSection` ·
-`parallax-stacking-projects` · `InterludeSection` (commented out) · `CTASection` ·
-`FooterSection` · `Navbar` · `CustomCursor` · `SmoothScroll` · `TextOpacity` ·
-`PageWrapper` · `PageHeader` · `StickyPageWrapper` · `TransitionLink` · `button` ·
-`team-member-card` · `JsonLd` · `CookieConsent` · `GoogleAnalytics`
-
-**`src/app/globals.css` is 973 lines and roughly 85% section-specific CSS** bound to the
-components above (`.cinema-*`, `.interlude-*`, `.orbit-*`, `.cta-*`, `.footer-*`,
-`.about-*`, `.services-*`, `.proj-*`, `.hero-*`). It gets rebuilt from a new token set
-rather than edited. The reset, Lenis glue, `.grain`, `.gpu` and the reduced-motion block
-are the only parts likely to carry over.
+Architecture §7 independently flags the matching risk: scrubbed sequences wreck LCP unless
+first paint is a lightweight still and the sequence loads after. Both point the same way.
 
 ---
 
-## 5. Working agreements
+## 7. Done on this branch
 
-- **Uncommitted WIP carried over:** a `Navbar.tsx` change adding explicit `initial={}`
-  values to the scroll-responsive nav (prevents a first-paint flash). Untouched by the sweep.
-- **Mobile:** the old rule was "mobile is close to final, scope changes to desktop via
-  `md:`/`lg:`". A from-scratch rebuild retires that — both breakpoints are in play now.
-- **Verification:** `npm run build` must stay `exit 0` with all 17 routes before any commit.
-- **Deployability:** `main` is untouched. This branch keeps the site rendering at every
-  commit; sections swap one at a time rather than a big-bang breakage.
+- **Dead-code sweep — 31 unreferenced files removed**, build verified identical before and
+  after (17 routes, `exit 0`). Detail in commit `002b090`.
+- **Specs locked in** — moved to `docs/`, tokens to `src/styles/tokens.css`, tracked in git.
+- **Three measured corrections** applied to the token file (§3).
+- **Manrope wired** into `app/layout.tsx` at weights 200/400/500/600.
+
+### Still standing (the teardown list)
+
+25 components render the current site and come down section by section as v4 replaces them,
+so `main` stays deployable throughout. `src/app/globals.css` is 973 lines, ~85% of it bound
+to those components; it gets rebuilt from the token set rather than edited.
+
+---
+
+## 8. Build order
+
+From architecture §9 — do not build everything before launch.
+
+**Launch:** `/`, `/services` + 3D-websites + web-design, `/projects` + two case studies,
+`/about`, `/contact`, three legal pages.
+**Within a month:** remaining service pages and case studies, `/pricing`.
+**Ongoing:** `/blog`, one strong post at a time.
+
+The spec's own next steps: key art (the hero drawn three ways inside the system), one
+Blender test object under the single-ice rig at final quality, and a code spike of the
+refraction reveal + exoape transition in GSAP and Lenis.
+
+---
+
+## 9. Working agreements
+
+- **Verification:** `npm run build` stays `exit 0` with all routes before any commit.
+- **Deployability:** `main` untouched; sections swap one at a time.
+- **Uncommitted WIP:** a `Navbar.tsx` change adding explicit `initial={}` values to the
+  scroll-responsive nav. Legacy component — will not survive v4, harmless meanwhile.
+- **Mobile:** the old "desktop-only, gate with `md:`/`lg:`" rule is retired. Both
+  breakpoints are in play. Architecture sets 12 columns desktop, 4 below 768px.

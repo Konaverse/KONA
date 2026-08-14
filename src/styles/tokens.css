@@ -1,0 +1,300 @@
+/* ============================================================
+   KONAVERSE · DESIGN TOKENS
+   Direction: Whiteout · Accent route B (single ice) · Grain on
+   Type: Manrope 200/400/500/600 — ONE family, no second face.
+   ------------------------------------------------------------
+   This file is the source of truth. Figma variables mirror
+   these names exactly. If a value changes, it changes here
+   first, then gets pushed to Figma.
+
+   CHANGED FROM THE AUTHORED DRAFT — 3 edits, each measured,
+   each revertible in one line. Originals kept inline below.
+     1. --graphite   #6E767C -> #687076   (AA on mist)
+     2. --grain-opacity 0.42 -> 0.14      (white stayed white)
+     3. grain SVG gained feColorMatrix    (neutral, not RGB)
+   Rationale in REDESIGN.md §3. Revert any of them freely.
+
+   Header previously read "Manrope + JetBrains Mono (utility)",
+   which contradicted §3 of this same file ("One family only.
+   No mono, no second face.") and the design system, which
+   loads only Manrope. Resolved in favour of one family.
+   ============================================================ */
+
+:root {
+
+  /* ---------- 1. COLOUR · raw ---------- */
+  --white:        #FFFFFF;
+  --mist:         #F4F6F7;   /* raised surface, alternating sections */
+  --silver:       #DDE3E7;   /* hairlines, borders, dividers */
+  /* was #6E767C: 4.62:1 on white (AA) but only 4.26:1 on --mist,
+     which fails AA for body text. Since --surface-raised IS mist,
+     muted text on any alternating section was failing. #687076 is
+     the smallest darkening that clears 4.5 on both (5.04 / 4.65)
+     and is visually indistinguishable from the original. */
+  --graphite:     #687076;   /* muted text · 5.04:1 white, 4.65:1 mist — AA on both */
+  --ink:          #15171A;   /* primary text · 16.5:1 on white */
+  --ice:          #7FA8C9;   /* THE accent. Light, glow, rim, object tint */
+  --ice-soft:     #DCE8F1;   /* accent tint for large fills only */
+  --ice-deep:     #2E5F8A;   /* accent when it must carry text · 6.1:1 */
+
+  /* ---------- 2. COLOUR · roles ----------
+     Always use the role, never the raw value, in components. */
+  --surface:            var(--white);
+  --surface-raised:     var(--mist);
+  --hairline:           var(--silver);
+  --text:               var(--ink);
+  --text-muted:         var(--graphite);
+  --text-accent:        var(--ice-deep);
+  --accent:             var(--ice);
+  --accent-wash:        var(--ice-soft);
+  --focus-ring:         var(--ice-deep);
+
+  /* ---------- 3. TYPE ---------- */
+  /* var(--font-manrope) is injected by next/font in app/layout.tsx, which
+     self-hosts under a generated family name — so the literal "Manrope"
+     alone would silently fall through to system-ui inside the app. The
+     literal is kept after it so this same file still works standalone in
+     docs/design-system.html, which loads Manrope from Google Fonts by name. */
+  --font-sans: var(--font-manrope), "Manrope", system-ui, -apple-system, sans-serif;
+  /* One family only. No mono, no second face. */
+
+  /* six sizes, fluid. Do not add a seventh without removing one.
+     There is deliberately no label or eyebrow size. Sections are
+     separated by space and a hairline, never by a caption. */
+  --t-display:  clamp(3.25rem, 8.5vw, 8rem);
+  --t-h1:       clamp(2.25rem, 5.2vw, 4.25rem);
+  --t-h2:       clamp(1.625rem, 2.9vw, 2.625rem);
+  --t-h3:       clamp(1.125rem, 1.5vw, 1.375rem);
+  --t-body:     clamp(1rem, 1.05vw, 1.0625rem);
+  --t-small:    0.875rem;
+
+  --w-light:    200;   /* display and h1 only */
+  --w-regular:  400;
+  --w-medium:   500;
+  --w-semi:     600;   /* emphasis inside light headlines */
+
+  --lh-display: 0.95;
+  --lh-tight:   1.08;
+  --lh-snug:    1.32;
+  --lh-body:    1.65;
+
+  --ls-display: -0.045em;
+  --ls-h1:      -0.04em;
+  --ls-h2:      -0.03em;
+  --ls-h3:      -0.015em;
+  --ls-body:    0;
+
+  /* ---------- 4. SPACE · 4px base ---------- */
+  --s-1:   0.25rem;   /*   4 */
+  --s-2:   0.5rem;    /*   8 */
+  --s-3:   0.75rem;   /*  12 */
+  --s-4:   1rem;      /*  16 */
+  --s-5:   1.5rem;    /*  24 */
+  --s-6:   2rem;      /*  32 */
+  --s-7:   3rem;      /*  48 */
+  --s-8:   4rem;      /*  64 */
+  --s-9:   6rem;      /*  96 */
+  --s-10:  8rem;      /* 128 */
+  --s-11: 12rem;      /* 192 */
+
+  /* ---------- 5. GRID ---------- */
+  --grid-cols:      12;
+  --grid-gutter:    1.5rem;
+  --page-max:       90rem;    /* 1440 outer bound */
+  --content-max:    75rem;    /* 1200 content column */
+  --measure:        68ch;     /* max line length for body copy */
+  --page-pad:       clamp(1.25rem, 4vw, 3.5rem);
+  --section-y:      clamp(6rem, 12vw, 12.5rem);
+
+  /* ---------- 6. RADIUS & LINE ---------- */
+  --r-none:  0;
+  --r-sm:    4px;
+  --r-md:    10px;
+  --r-full:  999px;
+  --hair:    1px;
+
+  /* ---------- 7. MOTION ----------
+     Durations. Nothing structural runs under 400ms.  */
+  --d-instant: 120ms;   /* colour and opacity on hover */
+  --d-quick:   240ms;   /* small state changes, cursor */
+  --d-base:    420ms;   /* component-level movement */
+  --d-slow:    900ms;   /* section reveals, structural */
+  --d-cinema: 1400ms;   /* page transitions, hero */
+
+  /* Easings. Four, all named for what they do.
+     No back or bounce curves: they break the register. */
+  --e-glass:  cubic-bezier(0.22, 1.00, 0.36, 1.00);  /* default reveal, expo-out */
+  --e-drift:  cubic-bezier(0.65, 0.00, 0.35, 1.00);  /* scrubbed and pinned scroll */
+  --e-arc:    cubic-bezier(0.83, 0.00, 0.17, 1.00);  /* page transition, exoape arc */
+  --e-settle: cubic-bezier(0.16, 1.00, 0.30, 1.00);  /* hover, cursor, settling */
+
+  /* ---------- 8. SIGNATURE · refraction ----------
+     The one property the whole identity rests on. */
+  --lens-size:       230px;   /* cursor lens diameter */
+  --lens-scale:      1.06;    /* magnification. Subtle. Never above 1.12 */
+  --lens-fringe:     var(--ice);
+  --lens-fringe-a:   0.42;    /* fringe opacity. Single tone, cool only */
+  --reveal-blur:     14px;    /* blur type resolves from on scroll reveal */
+  --reveal-shift:    18px;    /* displacement distance on reveal */
+
+  /* ---------- 9. GRAIN ---------- */
+  /* was 0.42. Measured in-browser: at 0.42 the effective coverage is
+     0.105, so #FFFFFF composites to #F8F8F8 — a 7.3-level grey cast
+     across every white surface, on a direction called Whiteout. The
+     page read grey next to a true-white reference. 0.14 keeps the
+     texture and gives the white back. Surface separation is
+     unaffected either way (white-vs-mist gap 9.35 -> 8.35 at 0.42). */
+  --grain-opacity: 0.14;
+  --grain-tile:    180px;
+
+  /* ---------- 10. ELEVATION ----------
+     On white, shadow is light falling off, never a drop shadow. */
+  --lift-1: 0 1px 2px rgba(21, 23, 26, 0.04);
+  --lift-2: 0 8px 24px -10px rgba(21, 23, 26, 0.10);
+  --lift-3: 0 24px 60px -20px rgba(21, 23, 26, 0.14);
+  --lift-ice: 0 20px 50px -18px rgba(127, 168, 201, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --d-base: 1ms; --d-slow: 1ms; --d-cinema: 1ms; --d-quick: 1ms;
+    --reveal-blur: 0px; --reveal-shift: 0px;
+  }
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--t-body);
+  font-weight: var(--w-regular);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+/* ---------- type utilities ---------- */
+.t-display {
+  font-size: var(--t-display); font-weight: var(--w-light);
+  line-height: var(--lh-display); letter-spacing: var(--ls-display);
+}
+.t-h1 {
+  font-size: var(--t-h1); font-weight: var(--w-light);
+  line-height: var(--lh-tight); letter-spacing: var(--ls-h1);
+}
+.t-h2 {
+  font-size: var(--t-h2); font-weight: var(--w-regular);
+  line-height: var(--lh-tight); letter-spacing: var(--ls-h2);
+}
+.t-h3 {
+  font-size: var(--t-h3); font-weight: var(--w-medium);
+  line-height: var(--lh-snug); letter-spacing: var(--ls-h3);
+}
+.t-body  { font-size: var(--t-body);  line-height: var(--lh-body); max-width: var(--measure); }
+.t-small { font-size: var(--t-small); line-height: 1.55; color: var(--text-muted); }
+/* emphasis inside a light headline. The only place 600 appears at display size. */
+.t-display em, .t-h1 em, .t-h2 em { font-style: normal; font-weight: var(--w-semi); }
+
+/* ---------- layout ---------- */
+.page    { max-width: var(--page-max); margin-inline: auto; padding-inline: var(--page-pad); }
+.content { max-width: var(--content-max); margin-inline: auto; }
+.section { padding-block: var(--section-y); }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+  gap: var(--grid-gutter);
+}
+@media (max-width: 48rem) {
+  :root { --grid-cols: 4; --grid-gutter: 1rem; }
+}
+
+/* ---------- grain ----------
+   feTurbulence writes independent R, G and B channels, so the raw
+   filter is COLOUR noise, not grey noise. Measured on the original:
+   mean chroma 36/255, peak 147/255 — full-spectrum speckle over every
+   pixel, on a system whose whole discipline is one cool accent used
+   four or five times a page. The feColorMatrix saturate 0 below takes
+   measured chroma to exactly 0: neutral luminance grain, nothing else
+   changed. If you ever want the colour fringing back, drop that one
+   node — but it fights the palette. */
+.grain {
+  position: fixed; inset: 0; z-index: 40; pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+  background-size: var(--grain-tile) var(--grain-tile);
+}
+
+/* ---------- components ---------- */
+
+/* button · primary */
+.btn {
+  display: inline-flex; align-items: center; gap: var(--s-3);
+  padding: var(--s-3) var(--s-5);
+  border: var(--hair) solid var(--ink); border-radius: var(--r-full);
+  background: var(--ink); color: var(--white);
+  font-family: var(--font-sans); font-size: var(--t-small); font-weight: var(--w-medium);
+  text-decoration: none; cursor: pointer;
+  transition: background var(--d-instant) var(--e-settle),
+              color var(--d-instant) var(--e-settle),
+              transform var(--d-base) var(--e-settle);
+}
+.btn:hover { background: var(--ice-deep); border-color: var(--ice-deep); }
+
+/* button · ghost */
+.btn-ghost {
+  background: transparent; color: var(--ink); border-color: var(--hairline);
+}
+.btn-ghost:hover { background: var(--accent-wash); border-color: var(--accent); color: var(--ice-deep); }
+
+/* hairline divider. With no section labels this and --section-y are
+   the only things marking a break, so they carry real weight. */
+.rule { height: var(--hair); background: var(--hairline); border: 0; margin: 0; }
+
+/* section header. Heading and body only, no eyebrow above it. */
+.section-head { display: flex; flex-direction: column; gap: var(--s-4); margin-bottom: var(--s-8); }
+
+/* card · project tile */
+.card {
+  border: var(--hair) solid var(--hairline); border-radius: var(--r-md);
+  background: var(--surface); overflow: hidden;
+  transition: box-shadow var(--d-base) var(--e-settle),
+              transform var(--d-base) var(--e-settle);
+}
+.card:hover { box-shadow: var(--lift-3); transform: translateY(-2px); }
+
+/* scroll reveal · refractive, never a fade */
+.reveal {
+  opacity: 0;
+  filter: blur(var(--reveal-blur));
+  transform: translateY(var(--reveal-shift));
+  transition: opacity var(--d-slow) var(--e-glass),
+              filter var(--d-slow) var(--e-glass),
+              transform var(--d-slow) var(--e-glass);
+}
+.reveal.is-in { opacity: 1; filter: blur(0); transform: none; }
+
+/* cursor lens */
+.lens {
+  position: fixed; z-index: 60; pointer-events: none;
+  width: var(--lens-size); height: var(--lens-size);
+  border-radius: var(--r-full);
+  transition: opacity var(--d-quick) var(--e-settle);
+}
+.lens::after {
+  content: ""; position: absolute; inset: 0; border-radius: var(--r-full);
+  background: radial-gradient(circle at 50% 50%,
+    rgba(255,255,255,0) 62%,
+    color-mix(in srgb, var(--lens-fringe) 100%, transparent) 100%);
+  opacity: var(--lens-fringe-a);
+}

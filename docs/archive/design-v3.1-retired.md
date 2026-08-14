@@ -1,3 +1,16 @@
+> # ⚠️ RETIRED — this is not the spec.
+>
+> This documents the **outgoing** site (`website-2.0`, `main`). It was superseded on
+> 2026-08-14 by the **Whiteout** direction. The current spec is `src/styles/tokens.css`
+> plus `docs/design-system.html`, `docs/site-architecture.md` and
+> `docs/homepage-choreography.md`; `REDESIGN.md` is the working brief.
+>
+> Nothing below constrains v4 — not the dark surfaces, not earthy green `#6B7F62`, not the
+> no-serifs rule, not the transition catalogue. Kept for two reasons: it records what is
+> being replaced, and **§04's frame-sequence findings are still hard-won and still true**
+> (see `REDESIGN.md` §6 — ~298 frames plus three smoothing layers were needed to stop a
+> scrubbed sequence looking frame-by-frame).
+
 # KONA — Website Design Specification
 **Version 3.1 | Futuristic Tech Minimalism + Cinematic Scroll | Claude Code build reference**
 

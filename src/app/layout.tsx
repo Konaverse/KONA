@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Anton, Cormorant_Garamond, DM_Sans, Geist_Mono, Inter } from 'next/font/google'
+import { Anton, Cormorant_Garamond, DM_Sans, Geist_Mono, Inter, Manrope } from 'next/font/google'
 import Navbar from '@/components/layout/Navbar'
 import SmoothScroll from '@/components/SmoothScroll'
 import CustomCursor from '@/components/ui/CustomCursor'
@@ -9,6 +9,16 @@ import JsonLd from '@/components/JsonLd'
 import CookieConsent from '@/components/layout/CookieConsent'
 import GoogleAnalytics from '@/components/layout/GoogleAnalytics'
 import './globals.css'
+
+// v4 "Whiteout" — the only family the new system uses. Weights are exactly the
+// four the token file names: 200 display/h1, 400 body/h2, 500 h3/UI, 600 emphasis.
+// The five fonts below it belong to the outgoing v3.1 site and come out with it.
+const manrope = Manrope({
+  subsets: ['latin'],
+  weight: ['200', '400', '500', '600'],
+  variable: '--font-manrope',
+  display: 'swap',
+})
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
@@ -108,7 +118,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${cormorant.variable} ${inter.variable} ${dmSans.variable} ${geistMono.variable} ${anton.variable}`}
+      className={`${manrope.variable} ${cormorant.variable} ${inter.variable} ${dmSans.variable} ${geistMono.variable} ${anton.variable}`}
     >
       <body className="antialiased">
         <JsonLd data={{
