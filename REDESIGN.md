@@ -19,6 +19,8 @@ change, it changes in the document first.
 | **Design system** | `docs/design-system.html` | The rendered reference — swatches, type scale, the four easing curves (clickable), the reveal, the component set. |
 | **Site architecture** | `docs/site-architecture.md` | URL map, service/problem/case-study clusters, internal linking, SEO, build order. |
 | **Homepage choreography** | `docs/homepage-choreography.md` | The nine sections, their job, entrance, handoff, and where 3D is present. |
+| **Components** | `docs/components.md` | Component behaviour, the reveal reconciliation, the accent budget. |
+| **Pre-design checklist** | `docs/pre-design-checklist.md` | **Everything that must land before section design starts.** Two hard blockers, then buttons / arrow links / cursor / cards / page transition, each with a checkable *done when*. |
 
 ### The direction in one paragraph
 
