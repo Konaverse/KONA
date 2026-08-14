@@ -81,7 +81,7 @@ dental clinic, so the content is all wrong and the mechanics are all right.
 |---|---|---|---|
 | 1 | Chips scale in on `back.out(1.6)` | `--e-settle` | **Direct violation of a locked rule** — the token file bans back and bounce curves: *"they break the register."* This is the one place the reference and the system flatly contradict. The overshoot is also the least calm thing in the component. |
 | 2 | Circle on `power2.inOut`, 1.1s | `--e-drift`, `--d-cinema` (1400ms) | `--e-drift` is the system's symmetric curve and is near-identical in feel; `--d-cinema` is what page transitions get, and a full-screen menu is that scale of event. Use `--e-arc` instead if you want it more dramatic — it's the exoape curve, slower to commit and faster through the middle. |
-| 3 | Pale blue-gray gradient surfaces | `--surface` white, `--surface-raised` mist | The circle edge in the original reads as a gradient shift rather than a shadow. On Whiteout the tonal gap between white and mist is only ~9 levels, so **the circle edge will be nearly invisible** — it needs a hairline at the boundary, or the menu surface goes to mist while the page stays white. Needs testing; flagged as the main visual risk of the port. |
+| 3 | Pale blue-gray gradient surfaces | `--surface` white page, `--surface-raised` mist menu | **RESOLVED — tested, no ring needed.** The worry was that a ~9-level white↔mist gap would leave the circle edge invisible. Frozen mid-sweep in the browser, it reads clearly, and the reason is instructive: **the edge is legible because it cuts across content.** Type sliced by the arc makes the boundary unmistakable in a way tonal contrast alone never had to. It is subtle over genuinely empty regions, which is acceptable — and the fix, if a page ever needs it, is a hairline-ring layer, not a heavier surface. |
 | 4 | 2×2 grid of four European offices | One location line, Cyprus | Architecture §7 wants the location line for local SEO. Four fake offices would be a lie and the grid would look empty with one. |
 | 5 | Rows link to four clinic services | The site map | Contact stays outside the burger entirely per the locked nav rule. |
 | 6 | Giant cropped `IVORY` wordmark, marquee drift | `KONAVERSE`, marquee **off** | The drift is ambient motion on a system whose rule is that nothing moves on its own. Keep the crop — it's a strong device — drop the loop. |
@@ -117,7 +117,7 @@ than carrying a copy of it — so the reference cannot drift from the code.
 | **List row** | **built** | Rows are **not** links, so no arrow chip, no row-wide cursor, and **no hover state at all** — that's the design, not an omission. Anything answering the cursor implies it can be clicked. The whole affordance sits on the single arrow link below the list. |
 | **Section header** | done | Heading + body, no eyebrow. The restraint *is* the design. |
 | **Hairline rule** | **built** | `.k-rule`, plus `.k-rule-draw` which scales from the left on `--d-slow` — a break that arrives rather than sits there. |
-| **Aperture menu** | mechanics locked, unbuilt | §2. Next up. |
+| **Aperture menu** | **built** | §2. `src/components/v4/ApertureMenu.tsx`. Circle born in the burger, measured at click time; one reversible timeline, close at 1.6×. |
 | **Cursor lens** | spec'd, unbuilt | 1.06, single cool fringe at 42%. Strengthens over hero and tiles, weakens over body copy. |
 | **Form input** | not designed | `/contact` only — no form on the homepage. |
 | **Footer** | not designed | Carries the full map; the only place every URL appears. |
@@ -152,8 +152,24 @@ signature, always present).
 
 ---
 
-## 4. Open
+## 4. Where the v4 code lives
 
-1. **The reveal reconciliation in §1** — needs a yes before components get built.
-2. **The circle edge on white** (§2 change 3) — the main visual risk in the port.
-3. Everything in `REDESIGN.md` §2.
+- `src/styles/tokens.css` — tokens + every `k-` component.
+- `src/lib/motion-v4.ts` — the four token easings registered as GSAP `CustomEase` curves,
+  plus durations. **This is the one place a token is written twice**: GSAP cannot read a
+  `cubic-bezier()` string and there is no way to read a CSS custom property at module scope.
+  The usual shortcut — reaching for `power3.out` and friends — quietly puts JS-driven motion
+  on a different curve from CSS-driven motion, which is how a site ends up feeling
+  incoherent. If a curve changes in `tokens.css` it must change here too.
+- `src/components/v4/ApertureMenu.tsx` — the nav.
+- `src/app/design-system/page.tsx` — preview route, `noindex`, outside `app/(site)`.
+- `src/app/(site)/layout.tsx` — the legacy chrome, moved out of the root layout so v4 routes
+  render clean. Route groups don't appear in URLs, so every legacy path is unchanged.
+
+## 5. Open
+
+1. Everything in `REDESIGN.md` §2 — chiefly the 3D deferral.
+2. The aperture's **content** is placeholder-ish: `Index` as the title, one location line.
+   Worth a pass once real copy exists.
+3. `.k-root` currently sits on the preview page's wrapper. It moves onto `<body>` when the
+   legacy site goes, and this note can be deleted with it.

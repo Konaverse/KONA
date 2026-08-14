@@ -176,7 +176,12 @@
 
 html { -webkit-text-size-adjust: 100%; }
 
-body {
+/* This was a bare `body` rule. In Next every CSS import is global, so the
+   moment this file was imported anywhere it would have repainted the whole
+   legacy dark site white. Scoped to .k-root instead: put it on the v4 page
+   wrapper today, and on <body> itself once the legacy site is gone — the
+   declarations are unchanged, only the selector moved. */
+.k-root {
   margin: 0;
   background: var(--surface);
   color: var(--text);
@@ -478,6 +483,157 @@ body {
 .k-burger:hover, .k-burger:focus-visible { border-color: var(--accent); background: var(--accent-wash); }
 .k-burger:hover i:last-child,
 .k-burger:focus-visible i:last-child { transform: scaleX(1.667); opacity: 1; }
+
+/* ============================================================
+   APERTURE MENU
+   ------------------------------------------------------------
+   The burger is the aperture. GSAP owns .k-aperture's clip-path
+   exclusively — never give this element a CSS transition, and
+   never animate its clip-path from anywhere else.
+
+   Surface is --surface-raised over the page's --surface. That
+   gap is only ~9 levels, which is the known risk of porting
+   this to Whiteout: the original separated the two states with
+   distinctly different blue-greys. A moving edge is far more
+   perceptible than a static one, so this is tested before any
+   ring is added on top of it.
+   ============================================================ */
+.k-nav-root { position: relative; z-index: 50; }
+
+.k-nav-bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 2;
+  display: flex; align-items: center; gap: var(--s-5);
+  padding: var(--s-5) var(--page-pad);
+}
+.k-nav-brand {
+  margin-right: auto;
+  font-weight: var(--w-semi); font-size: var(--t-small);
+  letter-spacing: -0.02em; color: var(--text); text-decoration: none;
+}
+.k-nav-contact {
+  font-size: var(--t-small); color: var(--text-muted); text-decoration: none;
+  transition: color var(--d-instant) var(--e-settle);
+}
+.k-nav-contact:hover { color: var(--text); }
+
+.k-aperture {
+  position: fixed; inset: 0; z-index: 3;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  background: var(--surface-raised);
+  padding: var(--s-5) var(--page-pad) 0;
+}
+.k-aperture__bar {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0; position: relative; z-index: 1;
+}
+.k-aperture__close {
+  display: flex; align-items: center; gap: var(--s-3);
+  padding: 0; border: 0; background: none; cursor: pointer;
+  font-family: var(--font-sans); font-size: var(--t-small);
+  color: var(--text-muted);
+  transition: color var(--d-instant) var(--e-settle);
+}
+.k-aperture__close:hover { color: var(--text); }
+.k-aperture__x {
+  display: flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px; border-radius: var(--r-full);
+  border: var(--hair) solid var(--hairline); color: var(--text);
+  transition: background var(--d-base) var(--e-settle), color var(--d-base) var(--e-settle);
+}
+.k-aperture__x svg { width: 12px; height: 12px; }
+.k-aperture__close:hover .k-aperture__x { background: var(--text); color: var(--surface); }
+
+.k-aperture__main {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 46%);
+  gap: clamp(var(--s-6), 4vw, var(--s-9));
+  flex: 1; min-height: 0; position: relative; z-index: 1;
+  align-content: start; padding-top: clamp(var(--s-6), 6vh, var(--s-9));
+}
+.k-aperture__left { display: flex; flex-direction: column; min-width: 0; }
+.k-aperture__title {
+  margin: 0; font-size: var(--t-display); font-weight: var(--w-light);
+  line-height: var(--lh-display); letter-spacing: var(--ls-display);
+  white-space: nowrap;
+}
+.k-aperture__loc {
+  margin: clamp(var(--s-5), 4vh, var(--s-7)) 0 0;
+  font-size: var(--t-small); color: var(--text-muted);
+}
+.k-aperture__email { margin: var(--s-4) 0 0; }
+.k-aperture__email a {
+  font-size: var(--t-h2); font-weight: var(--w-light);
+  letter-spacing: var(--ls-h2); color: var(--text); text-decoration: none;
+  transition: color var(--d-instant) var(--e-settle);
+}
+.k-aperture__email a:hover { color: var(--text-accent); }
+
+.k-aperture__nav ul { list-style: none; margin: 0; padding: 0; }
+.k-aperture__nav li { position: relative; }
+.k-aperture__rule {
+  position: absolute; top: 0; left: 0; right: 0; height: var(--hair);
+  background: var(--hairline); will-change: transform;
+}
+.k-aperture__rule--last { top: auto; bottom: 0; }
+.k-aperture__row {
+  display: grid; grid-template-columns: auto 1fr auto;
+  align-items: center; gap: clamp(var(--s-3), 1.6vw, var(--s-5));
+  padding: clamp(var(--s-4), 3vh, var(--s-6)) 2px;
+  color: var(--text-muted); text-decoration: none;
+  transition: color var(--d-base) var(--e-settle);
+}
+.k-aperture__row:hover, .k-aperture__row:focus-visible { color: var(--text); }
+.k-aperture__num { font-size: var(--t-small); color: var(--text-muted); align-self: start; padding-top: 0.4em; }
+.k-aperture__labelmask { min-width: 0; }
+.k-aperture__label {
+  display: block; font-size: var(--t-h2); font-weight: var(--w-regular);
+  letter-spacing: var(--ls-h2); white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis; will-change: transform;
+}
+/* GSAP scales the wrap; every hover transition lives on the inner chip, so the
+   two never write the same element. */
+.k-aperture__chipwrap { display: block; will-change: transform; }
+.k-aperture__chip {
+  display: flex; align-items: center; justify-content: center;
+  width: clamp(42px, 4vw, 54px); aspect-ratio: 1; border-radius: var(--r-full);
+  border: var(--hair) solid var(--hairline); color: var(--text);
+  transition: background var(--d-base) var(--e-settle),
+              border-color var(--d-base) var(--e-settle),
+              color var(--d-base) var(--e-settle);
+}
+.k-aperture__chip svg { width: 16px; height: 16px; transition: transform var(--d-base) var(--e-settle); }
+.k-aperture__row:hover .k-aperture__chip,
+.k-aperture__row:focus-visible .k-aperture__chip {
+  background: var(--text); border-color: var(--text); color: var(--surface);
+}
+.k-aperture__row:hover .k-aperture__chip svg { transform: translateX(3px); }
+
+/* Sunk by a static transform so most of the cap height sits below the crop —
+   only the shoulders of the glyphs show. Three layers on purpose: this wrap
+   owns the static sink, GSAP lifts the inner element. */
+/* Sunk so only the shoulders of the glyphs clear the bottom edge.
+   The sink has to be this deep because --lh-display-tight line-height (0.78)
+   makes the glyphs overflow their own line box upward — the box measures far
+   shorter than the ink, so a modest translate leaves most of the word on
+   screen and it stops reading as a crop and starts reading as clutter. */
+.k-aperture__giantwrap {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 0;
+  pointer-events: none; overflow: hidden;
+  transform: translateY(72%);
+}
+.k-aperture__giant {
+  font-size: clamp(6rem, 22vw, 22rem); line-height: 0.78;
+  font-weight: var(--w-medium); letter-spacing: -0.04em;
+  color: var(--hairline); text-align: center; white-space: nowrap;
+  will-change: transform;
+}
+
+@media (max-width: 57.5rem) {
+  .k-aperture__main { grid-template-columns: minmax(0, 1fr); overflow-y: auto; gap: var(--s-6); }
+  .k-aperture__left { order: 2; }
+  .k-aperture__nav { order: 1; }
+  .k-aperture__title { white-space: normal; }
+}
 
 /* ---------- cursor lens ---------- */
 .k-lens {

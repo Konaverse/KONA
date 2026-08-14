@@ -1,10 +1,5 @@
 import type { Metadata } from 'next'
 import { Anton, Cormorant_Garamond, DM_Sans, Geist_Mono, Inter, Manrope } from 'next/font/google'
-import Navbar from '@/components/layout/Navbar'
-import SmoothScroll from '@/components/SmoothScroll'
-import CustomCursor from '@/components/ui/CustomCursor'
-import FooterSection from '@/components/sections/homepage/FooterSection'
-import StickyPageWrapper from '@/components/layout/StickyPageWrapper'
 import JsonLd from '@/components/JsonLd'
 import CookieConsent from '@/components/layout/CookieConsent'
 import GoogleAnalytics from '@/components/layout/GoogleAnalytics'
@@ -144,14 +139,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           url: 'https://kona-verse.com',
           publisher: { '@id': 'https://kona-verse.com/#organization' },
         }} />
-        <Navbar />
-        <SmoothScroll>
-          <CustomCursor />
-          <StickyPageWrapper>
-            {children}
-          </StickyPageWrapper>
-          <FooterSection />
-        </SmoothScroll>
+        {/* Site chrome (navbar, footer, cursor, smooth scroll) now lives in
+            app/(site)/layout.tsx so v4 routes can render without it. Anything
+            genuinely global — fonts, metadata, structured data, analytics,
+            consent — stays here. */}
+        {children}
         <GoogleAnalytics GA_MEASUREMENT_ID="G-2PEZX44FP9" />
         <CookieConsent />
       </body>
