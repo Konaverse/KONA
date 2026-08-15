@@ -48,12 +48,23 @@ const OPTS = {
   pressure: 0.0,
   velocityDissipation: 0.93,
 }
-// Raised from the source project's values. Those were tuned for a DARK page
-// blended with `difference`, where even a faint trail shows as lightening. On
-// white through `multiply` the same values read as almost nothing, so the dye
-// is laid down fatter (radius) and kept alive longer (dissipation).
-const mobileOpts = { radius: 0.15, densityDissipation: 0.972, dyeRes: 128, simRes: 24 }
-const desktopOpts = { radius: 0.19, densityDissipation: 0.982, dyeRes: 512, simRes: 64 }
+// The dye is laid down fatter than the source project's (radius), because that
+// was tuned for a DARK page blended with `difference` where even a faint trail
+// shows as lightening, and on white through `multiply` it read as almost
+// nothing.
+//
+// densityDissipation was raised for the same reason and has since been pulled
+// back hard. It is a PER-FRAME multiplier, so 0.982 is a 0.64s half-life — the
+// dye was still readable as a 10% tint on white almost four seconds after the
+// pointer stopped. 0.95 is a 0.23s half-life, and with the uFade floor the
+// trail is gone in 0.70s.
+//
+// Peak strength is unaffected: `intensity` rose 30 -> 55 to compensate for the
+// lower steady state, so a moving pointer still saturates the density curve
+// exactly as it did. Modelled, not guessed — presence is identical and only
+// duration moved.
+const mobileOpts = { radius: 0.15, densityDissipation: 0.945, dyeRes: 128, simRes: 24 }
+const desktopOpts = { radius: 0.19, densityDissipation: 0.95, dyeRes: 512, simRes: 64 }
 
 function useDoubleFBO(w: number, h: number, options: Record<string, unknown>) {
   const read = useFBO(w, h, options)
@@ -76,13 +87,24 @@ function useDoubleFBO(w: number, h: number, options: Record<string, unknown>) {
 
 export default function Fluid({
   palette = ICE_PALETTE,
-  intensity = 30,
-}: { palette?: FluidPalette; intensity?: number }) {
+  intensity = 55,
+  fade = 0.08,
+  decay,
+}: {
+  palette?: FluidPalette
+  intensity?: number
+  fade?: number
+  /** Overrides densityDissipation. A PER-FRAME multiplier, so small changes
+   *  are large: at 60fps the half-life is ln(0.5)/ln(decay)/60 seconds —
+   *  0.982 is 0.64s, 0.95 is 0.23s. Raise it to make the trail last longer. */
+  decay?: number
+}) {
   const size = useThree((s) => s.size)
   const gl = useThree((s) => s.gl)
 
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 812
   const O = { ...OPTS, ...(isMobile ? mobileOpts : desktopOpts) }
+  if (decay !== undefined) O.densityDissipation = decay
 
   const bufferScene = useRef(new Scene())
   const bufferCamera = useRef(new Camera())
@@ -176,8 +198,8 @@ export default function Fluid({
 
   /* ----------------------------------------------------------------- effect */
   const effect = useMemo(
-    () => new FluidEffect({ intensity: intensity * 0.0001, palette }),
-    [intensity, palette],
+    () => new FluidEffect({ intensity: intensity * 0.0001, fade, palette }),
+    [intensity, fade, palette],
   )
   useEffect(() => () => effect.dispose(), [effect])
 

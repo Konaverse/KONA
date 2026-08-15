@@ -204,6 +204,7 @@ uniform vec3 uIce;      // --ice       #7FA8C9  the thin edges
 uniform vec3 uGraphite; // --graphite  #687076  the fast, smoky parts
 uniform vec3 uIceDeep;  // --ice-deep  #2E5F8A  the dense core
 uniform float uIntensity;
+uniform float uFade;    // density below this paints nothing at all
 
 void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {
   vec3 fluid = texture2D(tFluid, uv).rgb;
@@ -215,10 +216,24 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor)
   float amount = abs(fluid.b);
   float speed  = length(fluid.rg);
 
-  // pow < 1 lifts the LOW end of the curve. Under multiply a faint trail is
-  // nearly invisible on white, so the thin outer wisps need the gain far more
-  // than the core does — a linear ramp spends all its range on the middle.
-  float d = clamp(pow(length(fluid) * uIntensity, 0.70), 0.0, 1.0);
+  // THE TRAIL HAS TO END. Dye decays geometrically, so without a floor it
+  // never reaches zero — and the pow(0.70) below, which exists to lift thin
+  // wisps, lifts that dying remnant just as hard. The two together kept a
+  // clearly readable trail on screen for about three seconds after the pointer
+  // had stopped, which is what read as "lingering".
+  //
+  // uFade cuts the bottom off, so the tail has a defined end instead of an
+  // asymptote. It also DECOUPLES presence from persistence: the gain can now be
+  // raised for a stronger trail without that trail also lasting longer, which
+  // is exactly the trade that was stuck before.
+  float raw = length(fluid) * uIntensity;
+  float a = smoothstep(uFade, 1.0, raw);
+
+  // pow < 1 still lifts the LOW end of what survives the floor. Under multiply
+  // a faint trail is nearly invisible on white, so the thin outer wisps need
+  // the gain far more than the core does — a linear ramp spends all its range
+  // on the middle.
+  float d = clamp(pow(a, 0.70), 0.0, 1.0);
 
   // DEPTH — density ramps white -> ice -> ice-deep. Thin trailing edges stay
   // pale and airy, the core goes deep. Monotonically darkening, which is what

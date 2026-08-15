@@ -319,48 +319,95 @@ html { -webkit-text-size-adjust: 100%; }
    rejected: it contradicts the system's own "nothing moves on its
    own" rule, it would spend the accent budget continuously, and an
    animated gradient outline is the single most over-used device on
-   the web right now. What replaces it is PROXIMITY — the button
-   leans a few pixels toward an approaching cursor before it is ever
-   hovered. It is alive only when a human is near it, which is
-   exactly the calm-but-fascinating register.
+   the web right now. The proximity lean that replaced it has since
+   been cut too — it moved because a cursor was near, which the
+   person moving the cursor already knew, and it competed with the
+   fluid for the same pointer movement.
 
-   HOVER is one gesture read two ways: the bottom hairline grows
-   upward into the fill while the label rolls up letter by letter and
-   a second label rolls up behind it. Same direction, same curve, so
-   it lands as one motion rather than three. The fill replaces the
-   iris — the aperture stays the menu's alone. */
+   PRIMARY AT REST is an ice-deep fill inside a white border. On a
+   white page that border reads as page, so what you see is a plain
+   ice-deep pill — which is the point. The border is not decoration,
+   it is the GAP.
+
+   HOVER is the drawn edge. Two heads leave the exact point where the
+   pointer crossed, travel the perimeter in opposite directions and
+   meet at the far side. The line is drawn OUTSIDE the border box, so
+   the white band stays clear underneath and both stay readable — the
+   line comes out of the border rather than replacing it. The fill
+   does not change. Geometry and dash maths are in v4/Button.tsx.
+
+   Duration is CONSTANT SPEED, derived from the perimeter, so a wide
+   CTA's line does not travel faster than a narrow one's. It lives in
+   Button.tsx (SPEED, ~710ms on a typical ~440px perimeter) and no
+   longer crosses into CSS — the roll is on --d-base and lands first,
+   so the two do not need to share a number.
+
+   The line is --ice-deep: 6.1:1 on the page, where --ice would be
+   2.52:1. With the fill no longer changing it is the only hover
+   feedback besides the roll, so it has to carry the state alone. */
 .k-btn {
-  position: relative; isolation: isolate; overflow: hidden;
+  --k-btn-bw: 3px;   /* the white band the line is held off by */
+  position: relative;
   display: inline-flex; align-items: center; gap: var(--s-3);
   padding: var(--s-4) var(--s-6);
-  border: var(--hair) solid var(--ink); border-radius: var(--r-full);
-  background: var(--ink); color: var(--white);
+  border: var(--k-btn-bw) solid var(--white);
+  border-radius: var(--r-full);
+  background: var(--ice-deep); color: var(--white);
   font-family: var(--font-sans); font-size: var(--t-small);
   font-weight: var(--w-medium); line-height: 1;
   text-decoration: none; cursor: pointer;
-  transition: border-color var(--d-base) var(--e-settle),
-              transform var(--d-base) var(--e-settle);
+  /* clears the drawn line, whose outer edge is 2px past the border box */
+  outline-offset: 6px;
+  transition: transform var(--d-instant) var(--e-settle);
 }
-/* the fill — the bottom rule, grown upward */
-.k-btn__bg {
-  position: absolute; inset: 0; z-index: -1;
-  background: var(--ice-deep);
-  transform: scaleY(0); transform-origin: 50% 100%;
-  transition: transform var(--d-base) var(--e-settle);
-}
-.k-btn:hover, .k-btn:focus-visible { border-color: var(--ice-deep); }
-.k-btn:hover .k-btn__bg,
-.k-btn:focus-visible .k-btn__bg { transform: scaleY(1); }
 .k-btn:active { transform: scale(0.985); }
+
+/* the drawn edge. The SVG is LARGER than the button and hangs outside
+   it — 8px on every side — because the line is drawn beyond the border
+   box.
+
+   CENTRED, not pinned. The obvious way to place it is a negative top/
+   left paying back the border width and the pad; that was the first
+   version and it put the whole of any measurement error at the BOTTOM,
+   so the white band read thinner there than at the top. Centring makes
+   it symmetric by construction: it does not need to know the border
+   width, the pad, or whether the height came out fractional, and any
+   residual error splits evenly between the two sides. Borders here are
+   equal on all four edges, so the padding-box centre IS the border-box
+   centre. */
+.k-btn__edge {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none; overflow: visible;
+}
+.k-btn__edge path {
+  fill: none; stroke: var(--ice-deep); stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  transition: opacity var(--d-instant) var(--e-settle);
+}
 
 /* the roll. Both labels are absolutely positioned; an invisible sizer
    holds the width of whichever is longer so the button never resizes
-   mid-hover. Per-letter stagger is small on purpose — 22ms across a
-   short label is a ripple, 80ms would read as a wave and take too long. */
+   mid-hover. The fill no longer changes, so both lines are simply the
+   button's own colour and this is a label swap again — nothing depends
+   on it for legibility any more. Per-letter stagger is 22ms: a ripple
+   across a short label, where 80ms would read as a wave.
+
+   CENTRED. The sizer is the LONGER of the two labels, so a flex-start
+   line leaves the shorter one hanging off to the left — which is what
+   made the hover label look misaligned while the rest label, usually
+   the longer one, looked fine.
+
+   The roll stays on --d-base rather than tracking the draw. The line is
+   now slow enough that a label rolling for the same 700ms would read as
+   sluggish; the label lands first and the line closing after it is what
+   seals the state. */
 .k-btn__roll { position: relative; display: block; overflow: hidden; }
 .k-btn__sizer { display: block; visibility: hidden; white-space: nowrap; }
 .k-btn__line {
-  position: absolute; inset: 0; display: flex; white-space: nowrap;
+  position: absolute; inset: 0;
+  display: flex; justify-content: center; white-space: nowrap;
 }
 .k-btn__line span {
   display: inline-block;
@@ -368,32 +415,47 @@ html { -webkit-text-size-adjust: 100%; }
   transition-delay: calc(var(--i, 0) * 22ms);
 }
 .k-btn__line--b span { transform: translateY(115%); }
-.k-btn:hover .k-btn__line--a span,
-.k-btn:focus-visible .k-btn__line--a span { transform: translateY(-115%); }
-.k-btn:hover .k-btn__line--b span,
-.k-btn:focus-visible .k-btn__line--b span { transform: translateY(0); }
 
-/* button · ghost. Same mechanics, opening in wash instead of ice-deep. */
+/* button · ghost. No dark fill to hold the line off, so it keeps a
+   hairline border and takes the same drawn edge just outside it. */
 .k-btn-ghost {
+  --k-btn-bw: var(--hair);
   background: transparent; color: var(--ink); border-color: var(--hairline);
 }
-.k-btn-ghost .k-btn__bg { background: var(--accent-wash); }
-.k-btn-ghost:hover, .k-btn-ghost:focus-visible { border-color: var(--accent); }
-.k-btn-ghost .k-btn__line--b { color: var(--ice-deep); }
 
+/* THE ROLL, written twice on purpose. :hover has to sit inside
+   @media (hover: hover) or it sticks after a tap on touch — the button
+   keeps showing the second label until something else is tapped.
+   :focus-visible has to stay outside that query, or keyboard users on
+   a touch device lose the state entirely. */
+@media (hover: hover) {
+  .k-btn:hover .k-btn__line--a span { transform: translateY(-115%); }
+  .k-btn:hover .k-btn__line--b span { transform: translateY(0); }
+}
+.k-btn:focus-visible .k-btn__line--a span { transform: translateY(-115%); }
+.k-btn:focus-visible .k-btn__line--b span { transform: translateY(0); }
+
+/* reduced motion: no roll, and the line appears rather than draws. JS
+   bails before touching the dasharray in this mode, so the inline
+   `0 99999` from the markup would otherwise leave it permanently
+   invisible — the !important overrides that inline style, not a rule. */
 @media (prefers-reduced-motion: reduce) {
-  .k-btn__line--b span { transform: none; }
-  .k-btn__line--a { opacity: 1; }
+  .k-btn__line--b { display: none; }
+  .k-btn__edge path { stroke-dasharray: none !important; opacity: 0; }
+  .k-btn:focus-visible .k-btn__edge path { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) and (hover: hover) {
+  .k-btn:hover .k-btn__edge path { opacity: 1; }
 }
 
 /* ---------- arrow link ----------
    The workhorse: it carries all three of the homepage's permitted
    destinations, so it has to be unmistakable without shouting.
 
-   One gesture, two parts that read as cause and effect — the arrow
-   leaves through its own crop and its replacement enters from the
-   left, and the rule draws underneath as though the arrow drew it.
-   The rule is one of the four or five places the accent appears. */
+   One gesture, two parts that read as cause and effect — the line
+   resolves into an arrow, and the rule draws underneath as though the
+   arrow drew it. The rule is one of the four or five places the accent
+   appears. */
 .k-arrow-link {
   position: relative;
   display: inline-flex; align-items: center; gap: var(--s-3);
@@ -410,42 +472,77 @@ html { -webkit-text-size-adjust: 100%; }
 }
 .k-arrow-link:hover::after,
 .k-arrow-link:focus-visible::after { transform: scaleX(1); }
-/* The label carries the state, the rule only reinforces it. Ice is 2.52:1 on
-   white, so a hairline alone is not a perceivable hover indicator — and the
-   arrow wrap ends in the same picture it started from, so it cannot carry the
-   state either. Ink to ice-deep is an unmissable shift, and colour is the one
-   thing the system lets move fast (--d-instant). */
+/* The label reinforces the state; ice is 2.52:1 on white, so the hairline
+   alone is not a perceivable hover indicator. The icon CAN now carry it on
+   its own — line to arrow is a genuinely different picture, where the old
+   east-to-north-east wrap ended in the same one — but shape plus colour
+   beats shape alone at 16px, and colour is the one thing the system lets
+   move fast (--d-instant). Kept for that reason, not by inheritance. */
 .k-arrow-link:hover,
 .k-arrow-link:focus-visible { color: var(--text-accent); }
 
-/* The arrow is drawn, not swapped. Shaft and head are separate paths on
-   one SVG: on hover the shaft retracts and redraws along the new axis
-   (stroke-dashoffset) while the head swings to point north-east. East
-   arrow becomes north-east arrow — a real change of shape, done with
-   nothing but transforms and a dash offset, so it stays on the
-   compositor. */
+/* AT REST IT IS A LINE. A plain horizontal stroke that claims nothing
+   about where the link goes. On hover it becomes an arrow, and WHICH
+   arrow is the point: east for internal, north-east only for external.
+   The previous version morphed every link to north-east, and ↗ is the
+   web's near-universal sign for "opens elsewhere" while all of these
+   are internal. Checklist 2.1, closed by respecting the convention
+   rather than overriding it.
+
+   The head grows out of the shaft's own tip. Scaling from the vertex
+   is geometrically identical to drawing each barb outward along its
+   length — for a straight segment leaving the origin those are the
+   same picture — and it is one property, on the compositor.
+   non-scaling-stroke holds the weight constant while the geometry
+   scales; butt caps are what stop a scale(0) head rendering as a dot,
+   which round caps would. The join keeps its own round. */
 .k-arrow-link__ico {
   display: block; width: 1.05em; height: 1.05em; flex: none; overflow: visible;
 }
 .k-arrow-link__ico svg { display: block; width: 100%; height: 100%; overflow: visible; }
-.k-arrow-link__shaft {
-  stroke-dasharray: 12;
-  stroke-dashoffset: 0;
-  transition: stroke-dashoffset var(--d-base) var(--e-settle),
-              transform var(--d-base) var(--e-settle);
-  transform-origin: 2px 8px;
-}
+.k-arrow-link__shaft { stroke-linecap: round; }
 .k-arrow-link__head {
+  stroke-linejoin: round; stroke-linecap: butt;
+  vector-effect: non-scaling-stroke;
+  transform-box: view-box; transform-origin: 13px 8px;
   transition: transform var(--d-base) var(--e-settle);
-  transform-origin: 8px 8px;
 }
-.k-arrow-link:hover .k-arrow-link__shaft,
-.k-arrow-link:focus-visible .k-arrow-link__shaft {
-  transform: rotate(-45deg);
+/* The group carries both the external swing and the forward step, so
+   the shaft and its head stay one object through either.
+
+   Composed as rotate() THEN translate(): transform functions carry the
+   coordinate frame along, so the translate runs along the arrow's own
+   axis. Internal steps east, external steps north-east, from one
+   distance — the arrow always advances the way it points. */
+.k-arrow-link__g {
+  --k-arrow-step: 3px;   /* user units in a 16 viewBox, so ~3.4 real px */
+  transform-box: view-box; transform-origin: 8px 8px;
+  transition: transform var(--d-base) var(--e-settle);
 }
-.k-arrow-link:hover .k-arrow-link__head,
-.k-arrow-link:focus-visible .k-arrow-link__head {
-  transform: rotate(-45deg) translate(2px, 0);
+.k-arrow-link-ext .k-arrow-link__g { transform: rotate(-45deg); }
+
+/* THE DEFAULT IS THE RESOLVED ARROW, and the line-at-rest is the
+   pointer-device refinement layered on top. Written this way round so
+   touch — which never gets a hover — keeps the icon that carries the
+   meaning, rather than a bare line that never resolves into anything.
+   Same rule as the button's second label.
+
+   The ext rules must stay AFTER the plain ones: an external link
+   matches both selectors at equal specificity, so source order is what
+   decides. */
+@media (hover: hover) {
+  .k-arrow-link__head { transform: scale(0); }
+  .k-arrow-link-ext .k-arrow-link__g { transform: none; }
+  .k-arrow-link:hover .k-arrow-link__head { transform: scale(1); }
+  .k-arrow-link:hover .k-arrow-link__g { transform: translate(var(--k-arrow-step), 0); }
+  .k-arrow-link-ext:hover .k-arrow-link__g {
+    transform: rotate(-45deg) translate(var(--k-arrow-step), 0);
+  }
+}
+.k-arrow-link:focus-visible .k-arrow-link__head { transform: scale(1); }
+.k-arrow-link:focus-visible .k-arrow-link__g { transform: translate(var(--k-arrow-step), 0); }
+.k-arrow-link-ext:focus-visible .k-arrow-link__g {
+  transform: rotate(-45deg) translate(var(--k-arrow-step), 0);
 }
 
 /* ---------- hairline divider ----------

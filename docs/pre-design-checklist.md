@@ -4,8 +4,9 @@ Everything that has to land **before section design starts**. Section design mea
 building sections 2–9 of the homepage against `homepage-choreography.md`; the point of
 this list is that none of it should be discovered halfway through that.
 
-Status as of the last commit: buttons, arrow links, cards, reveal, aperture menu and Lenis
-are **built**; the cursor and the page transition are **not started**.
+Status as of the last commit: buttons (interaction **rebuilt** — see §1), arrow links, cards,
+reveal, aperture menu, Lenis and the fluid cursor are **built**; the page transition is
+**not started**.
 
 Each item says what *done* looks like, so it can be checked rather than argued about.
 
@@ -26,32 +27,48 @@ Neither is a design decision. Both are inputs.
 
 ---
 
-## 1. Buttons
+## 1. Buttons — interaction REBUILT
 
-Built: proximity lean at rest, fill growing from the bottom rule, per-letter label roll,
-ghost variant, `sr-only` real string, reduced-motion and touch guards on the JS.
+The proximity lean and the `scaleY` fill are **gone**. Rejected as "not subtle, not premium",
+and the diagnosis was that the button ran three simultaneous ideas — lean, fill, roll — of
+which the loudest carried no information.
+
+Built now: **the drawn edge** — two heads leave the point where the pointer crossed the border,
+travel in opposite directions and meet at the far side, at constant speed derived from the
+perimeter — plus the per-letter roll, retained. Rationale and mechanics in `components.md`.
+
+**Rest state is an `--ice-deep` fill inside a 3px white border, and the fill does not change on
+hover.** An inversion beat was built and cut. The white border is the *gap*: it reads as page
+on white, so at rest the button is a plain ice-deep pill, and on hover the line is drawn
+**outside** the border box so that band of white holds it off the fill. The line is `--ice-deep`
+at 2px, since with no colour change behind it, it carries the hover state alone.
 
 | # | Item | Why it blocks | Done when |
 |---|---|---|---|
-| 1.1 | **Touch behaviour of the hover state** | The fill and roll are `:hover`-driven. On touch, `:hover` *sticks after tap* — the button stays filled with the wrong label showing until something else is tapped. The JS proximity is already guarded; the CSS is not. | Hover rules sit inside `@media (hover: hover)`, and touch gets a defined `:active` state instead. Verified on a real device or emulation. |
-| 1.2 | **The second label is desktop-only** | It never appears without hover, so anything it says is invisible to every touch user. | A written rule: `hoverLabel` may only ever restate, never inform. Applied when the real CTA copy is chosen. |
-| 1.3 | **Size variants** | Only one size exists. A hero CTA and a footer link cannot be the same size, and inventing sizes mid-section-build is how a system drifts. | At minimum a default and a large, both defined in `tokens.css`. |
-| 1.4 | **Disabled + submitting states** | `/contact` posts to the Resend route. A form button with no pending state will get double-submitted. | Both states defined, with the roll suppressed while pending. |
-| 1.5 | **Proximity vs the cursor** | Both track the mouse. Two things reacting to the same movement can read as noise rather than one response. | Judged side by side once the cursor exists (§3). |
+| ~~1.1~~ | ~~**Touch behaviour of the hover state**~~ | **Done, and now mostly moot.** The roll's `:hover` rules sit inside `@media (hover: hover)` and `:focus-visible` is written separately outside it, so keyboard users on touch devices keep the state. With the fill no longer changing there is nothing left that *could* stick: touch gets the `:active` press and no draw. | ✅ Still worth one pass on a real device alongside 6.3. |
+| ~~1.2~~ | ~~**The second label is desktop-only**~~ | **Done.** The rule is written in `components.md`: `hoverLabel` may only ever restate, never inform. (It was briefly *load-bearing* too, under the inversion that has since been cut — with a static fill the roll is a plain label swap again.) | ✅ Rule written. Applies when 1.6 is chosen. |
+| 1.3 | **Size variants** | Only one size exists. A hero CTA and a footer link cannot be the same size, and inventing sizes mid-section-build is how a system drifts. | At minimum a default and a large, both defined in `tokens.css`. Note the draw is already size-independent — constant speed means a larger button just takes proportionally longer. |
+| 1.4 | **Disabled + submitting states** | `/contact` posts to the Resend route. A form button with no pending state will get double-submitted. | Both states defined, with the roll **and the draw** suppressed while pending. |
+| ~~1.5~~ | ~~**Proximity vs the cursor**~~ | **Closed by deletion.** The lean is gone, so nothing but the fluid answers raw pointer movement. The button now answers a *crossing*, which is a different event. | ✅ |
 | 1.6 | **Real CTA copy** | Placeholder pairs (“Start a project” / “Let’s talk”) are stand-ins. | Final pairs chosen for every CTA on the site. |
+| 1.7 | **The draw's speed and weight** | First real look produced four fixes: the line was **pinned by its top-left**, so measurement error pooled at the bottom and the white band read thinner there (now centred, and measured fractionally); the per-letter split **collapsed every space** to zero width; the label lines were **flex-start against a longer sizer**, so the shorter one sat off-centre; and the draw was **too fast** (`SPEED` 1.0 → 0.62, ~440ms → ~710ms, with the roll decoupled onto `--d-base` so it no longer drags along with it). The levers are `SPEED` (duration), `LINE_W` (weight) and `PAD` in `Button.tsx`, plus `--k-btn-bw` in `tokens.css` for how much white sits between fill and line. | Re-watched after these. |
+| 1.8 | **The line hangs outside the button box** | The SVG extends 8px past the border box on every side. It is `pointer-events: none` so it cannot block clicks, but any ancestor with `overflow: hidden` will clip the line, and tightly packed buttons could have their lines meet. | Checked once buttons appear in real sections, not just the gallery. |
 
 ---
 
 ## 2. Arrow links
 
-Built: shaft and head as separate paths, both swinging to a new axis on hover so east
-becomes north-east; label shifts to `--text-accent`.
+**Rebuilt.** At rest it is a **plain line** — not an arrow, not a chevron — claiming nothing
+about where the link goes. On hover the head grows out of the shaft's own tip, and *which*
+arrow it becomes is the point: **east for internal, north-east only for external** (an
+`external` prop). Label still shifts to `--text-accent`.
 
 | # | Item | Why it blocks | Done when |
 |---|---|---|---|
-| 2.1 | **↗ already means "external link"** | This is a real semantic clash, not a nitpick: a north-east arrow is the web's near-universal sign for *opens elsewhere*. Every one of these links is **internal**. Either the convention gets deliberately overridden, or the hover target shape changes. | Decided. If kept, external links need a genuinely different marker. |
+| ~~2.1~~ | ~~**↗ already means "external link"**~~ | **Decided: respect the convention, don't override it.** ↗ now appears only on links that genuinely leave the site; internal links resolve to →, which means forward/next/still here. This also gives the rest state a job — the icon stays neutral until you are about to act on it, then tells you what kind of destination it is at the moment that matters. Touch shows the resolved arrow permanently, since there is no hover and a bare line would never resolve into anything meaningful. | ✅ External marker exists and is genuinely different. |
 | 2.2 | **Inline-in-paragraph variant** | The current one is a standalone block. Body copy will need an inline version and its underline will collide with the drawn rule. | An inline variant exists, or a rule saying arrow links never appear inline. |
-| 2.3 | **On `--surface-raised`** | The ice rule is 2.52:1 on white and lower on mist. Alternating sections are part of the system. | Checked on mist; adjusted or ruled out. |
+| 2.3 | **On `--surface-raised`** | The ice rule is 2.52:1 on white and lower on mist. Alternating sections are part of the system. The icon itself is `currentColor`, so it is unaffected — this is only about the drawn rule. | Checked on mist; adjusted or ruled out. |
+| 2.4 | **`external` has to actually get used** | The prop controls the marker only; target and rel stay the caller's business. It is worth nothing if call sites forget it, and a missed one is worse than the old blanket ↗ because the distinction now carries meaning. | Every off-site link in the real pages passes `external`. |
 
 ---
 
@@ -77,10 +94,10 @@ stops a single blue ramp reading as a gradient sticker.
 | # | Still open | Why it matters | Done when |
 |---|---|---|---|
 | 3.5 | **Frame budget, unmeasured** | A fluid sim ping-ponging float framebuffers every frame, plus a full-viewport `multiply` composite. Never measured — every test ran in a throttled background tab at 0fps. | Watched at speed in a foreground tab, on the work section with three cards playing. |
-| 3.6 | **Intensity and solver tuning** | Raised once for visibility: `intensity` 30 (prop), `dpr [0.5, 1]`, `densityDissipation` 0.982, `radius` 0.19, `dyeRes` 512, and a `pow(0.70)` on the density curve to lift the thin outer wisps. `curl` and `pressure` are still the source project's, tuned against a **dark** page. | Judged in motion on white; the fastest levers are `intensity` (prop) and `densityDissipation`. |
-| 3.7 | **Fluid vs proximity buttons** (was 1.5) | Both answer the same pointer movement. | Judged in a foreground tab. |
+| 3.6 | **Intensity and solver tuning** | Raised once for visibility, then **retuned for persistence**: `intensity` 30 → **55**, `densityDissipation` 0.982 → **0.95**, plus a new **`uFade` floor (0.08)** on the density curve. `dpr [0.5, 1]`, `radius` 0.19, `dyeRes` 512 and the `pow(0.70)` wisp lift are unchanged. `curl` and `pressure` are still the source project's, tuned against a **dark** page. All three knobs are now props on `FluidCursor` (`intensity` / `fade` / `decay`), so tuning no longer means editing the shader. | Judged in motion on white. |
+| ~~3.7~~ | ~~**Fluid vs proximity buttons**~~ (was 1.5) | **Closed by deletion.** The proximity lean is gone (§1), so the fluid is the only thing answering raw pointer movement. The button's draw answers a *crossing* instead, which is a distinct event and does not compete. | ✅ |
 | 3.8 | **WebGL context cost on every page** | One context per page load, plus float framebuffers. Fine on a desktop; worth knowing on low-end hardware. | Checked, and a kill-switch decided if needed. |
-| 3.9 | **"Good, but we can improve it"** | Signed off as the direction, not as finished. Nothing specific named yet, so the candidates are: dye that persists too long or not long enough, the graphite/smoke balance, splat radius, whether the trail should respond to *what* it is over (the `data-lens` hint API was written for the lens and is now unused), and whether it should fade near body copy the way the choreography asks the lens to. | A specific note on what to change. |
+| 3.9 | **"Good, but we can improve it"** | **The first specific note came in: the trail stayed visible far too long, and explicitly *not* that it was too strong.** Fixed in 3.6 — the diagnosis was that presence and persistence were the same knob, since every lever for a stronger trail also made it last longer. The `uFade` floor is what separates them. Still open, and now the candidates are narrower: the graphite/smoke balance, splat radius, whether the trail should respond to *what* it is over (the `data-lens` hint API was written for the lens and is now unused), and whether it should fade near body copy the way the choreography asks the lens to. | The next specific note. |
 
 ---
 

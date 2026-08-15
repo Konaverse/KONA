@@ -112,7 +112,7 @@ than carrying a copy of it — so the reference cannot drift from the code.
 | **Burger** | **built** | Two rules, not three — three reads generic. On hover the short rule extends to meet the long one: the aperture implied before it opens. |
 | **Button · primary** | **rebuilt** | Rest is still (see below). Hover: the fill grows up from the bottom rule while the label **rolls letter by letter** and a second label rolls up behind it — same direction, same curve, one motion. Approach: **proximity lean**. |
 | **Button · ghost** | **rebuilt** | Same mechanics, filling in `--accent-wash`. |
-| **Arrow link** | **rebuilt** | The arrow is **drawn, not swapped**. Shaft and head are separate paths on one SVG; on hover both swing to a new axis so an east arrow becomes a north-east one — a real change of shape from transforms and a dash offset, no morphing library, never leaves the compositor. The label shifts to `--text-accent` because a 2.52:1 hairline can't carry a hover state alone. |
+| **Arrow link** | **rebuilt** | **At rest it is a line**, claiming nothing about the destination. On hover the head **grows out of the shaft's own tip** — scaling from the vertex, which for straight barbs is the same picture as drawing each one outward — and the whole arrow **steps forward along its own axis**. **East for internal, north-east only for external** (see below). Touch shows the resolved arrow permanently. The label shifts to `--text-accent`: shape plus colour beats shape alone at 16px. |
 | **Project tile** | **rebuilt** | **No frame, no rounded box, no shadow** — the media *is* the card, type sits under it on the page. Hover plays a screen recording; entrance is the stretch-and-recover (below). |
 | **List row** | **built** | Rows are **not** links, so no arrow chip, no row-wide cursor, and **no hover state at all** — that's the design, not an omission. Anything answering the cursor implies it can be clicked. The whole affordance sits on the single arrow link below the list. |
 | **Section header** | done | Heading + body, no eyebrow. The restraint *is* the design. |
@@ -143,11 +143,148 @@ breaks two rules already locked.**
    outline is *the* AI-startup landing-page tell. Reaching for it undercuts a studio whose
    pitch is that it doesn't build templates.
 
-**What replaces it: proximity.** The button leans a few pixels toward an approaching cursor
-before it is ever hovered — capped at 6px, eased toward the target so leaving glides rather
-than cuts. It is alive *only when a human is near it*, which is exactly the calm-but-
-fascinating register, and it is far rarer than an animated border. Disabled under
-`prefers-reduced-motion` and on touch (`hover: none`), where it would be dead code.
+**The proximity lean that replaced it has since been cut too.** It leaned a few pixels toward
+an approaching cursor, which sounds alive and tested badly: it moved *because a cursor was
+near*, information the person moving the cursor already had, and it answered the same pointer
+movement as the fluid — two things reacting to one input read as noise, not as one response.
+
+### What the button does instead: the edge answers where you arrived
+
+Three properties separate a premium hover from a cheap one, and they are worth naming because
+they decide every future component too:
+
+- **Precision over amplitude.** Premium is not *small*, it is *exact*. Defined start, defined
+  end, no overshoot — which `--e-settle` already gives us.
+- **Causality.** The motion is caused by *you specifically* and carries something about your
+  input. A generic animation plays identically every time; a premium one is a response. This
+  is the largest lever and the cheapest to get wrong.
+- **One gesture, not three.** The old button ran a proximity lean, a `scaleY` fill and a
+  letter roll simultaneously. Any one of those is defensible. Together they are the reason it
+  read cheap — more than any single one of them was.
+
+**Beat 1 — the line.** Where the pointer crosses the edge, two heads leave that exact point in
+opposite directions, travel the perimeter and meet at the far side. The button's own hairline
+is the *track*; the ice line is drawn over it, so an existing edge lights up rather than a
+border materialising out of nothing. Keyboard focus has no entry point, so it draws from
+bottom centre.
+
+Two implementation notes that carry the feel:
+
+- **Constant speed, not constant duration.** Duration is derived from the perimeter
+  (`P / 1.0px per ms`, clamped to 280–640ms), so a wide CTA's line does not travel faster than
+  a narrow one's. Nobody notices this consciously; everybody feels it. JS publishes the result
+  as `--k-btn-draw` and the CSS reads it.
+- **Both heads come from one number.** The drawn arc is always centred on the entry offset
+  with half-width `L/2`, so growing `L` from 0 to the perimeter grows it symmetrically in both
+  directions — no second path, no drift between the halves. The dash pattern always totals
+  exactly the perimeter so it tiles the closed path seamlessly; the naive `L, P` with a
+  negative offset looks simpler and silently clips wherever the dash wraps past the path start.
+
+Leaving reverses the same tween, at the same speed, back to the entry point. Re-entering a
+partly drawn line deliberately does *not* re-anchor — that would make it jump.
+
+**The fill does not change.** An inversion beat (ink → white on hover) was built and then cut:
+the primary is now an **ice-deep fill inside a white border**, and it stays that way. So the
+drawn line plus the label roll is the entire gesture.
+
+**The white border is the gap, not decoration.** This is the whole reason the primary reads the
+way it does. On a white page a white border *is* page, so at rest you see a plain ice-deep
+pill and the border is invisible by design. Its job starts on hover: the line is drawn
+**outside the border box**, so that band of white is what holds the line off the fill and lets
+both stay readable. An earlier pass drew the line *on* the border and covered it, which is
+exactly what this replaces — the line comes out of the border rather than replacing it.
+
+Consequences worth knowing:
+
+- **The SVG is larger than the button and hangs outside it**, 8px on every side. It is
+  `pointer-events: none`, so it cannot block clicks, but an ancestor with `overflow: hidden`
+  will clip the line.
+- **Centre it, do not pin it.** The obvious placement is a negative `top`/`left` paying back the
+  border width and the pad — absolute positioning resolves against the *padding* box, so both
+  have to be repaid. That was the first version and it was wrong in a specific way: it put the
+  whole of any measurement error at the **bottom**, so the white band read visibly thinner
+  there than at the top. `top/left: 50%` with `translate(-50%, -50%)` is symmetric by
+  construction — it needs to know neither the border width nor the pad, and any residual error
+  splits evenly. Measuring the border box **fractionally** rather than rounding removes most of
+  the error in the first place.
+- **The line is `--ice-deep`** (6.1:1 on the page) rather than `--ice` (2.52:1). With no colour
+  change behind it, the line is now the only hover feedback besides the roll, so it carries the
+  state alone and is stroked at 2px rather than a hairline.
+- **The focus ring needs `outline-offset: 6px`**, up from the global 3px, or it lands on top of
+  the drawn line.
+
+**The roll is a label swap again.** It was briefly load-bearing — under inversion, two pinned
+label lines were what stopped a single element crossfading through the moment it matched its
+own background. With the fill static that constraint is gone and both lines are simply the
+button's own colour. It runs on `--d-base` and lands *before* the line does; the line closing
+after it is what seals the state.
+
+Two things the per-letter split gets wrong if you build it the obvious way, both found on the
+first real look at it:
+
+- **A space must be an NBSP.** Each letter is its own `inline-block`, so a span holding only a
+  normal space has that space as both the leading *and* the trailing white space of its own
+  line box — which CSS removes. It collapses to zero width and every word runs together.
+- **The lines must be centred, not flex-start.** The invisible sizer holds the width of
+  whichever label is *longer*, so left-aligning leaves the shorter one hanging off to the left.
+  The rest label is usually the longer one, which is why this shows up as "the hover label is
+  off-centre" rather than as both being wrong.
+
+**The rule that follows: `hoverLabel` may only ever restate, never inform.** The second label
+appears on hover and focus only, so it does not exist for touch users at all. It can say the
+same thing in different words; it may never carry information the first label does not.
+
+### The arrow link: ↗ was saying the wrong thing
+
+The old arrow morphed east into **north-east** on hover. That is a real semantic clash, not a
+nitpick — ↗ is the web's near-universal sign for *opens elsewhere*, and every link using this
+component is **internal**. The choice was to override the convention deliberately or to change
+the shape. Overriding a convention that strong buys nothing, so:
+
+| | resolves to | means |
+|---|---|---|
+| internal (default) | **→** east | forward, next, still here |
+| `external` | **↗** north-east | leaves the site |
+
+**At rest it is a line** — not an arrow, not a chevron. A plain horizontal stroke claims
+nothing about the destination, which is what lets the hover carry real information: the icon
+stays neutral until you are about to act on it, then tells you what kind of destination this is
+at exactly the moment that matters. The rest state earns its place instead of just being the
+before-picture.
+
+Mechanically the head **grows out of the shaft's own tip**. Scaling from the vertex is
+geometrically identical to drawing each barb outward along its length — for a straight segment
+leaving the origin they are the same picture — so it is one property and it stays on the
+compositor.
+
+**The arrow also steps forward as it resolves**, and forward means *along its own axis*. The
+group's transform is composed `rotate()` then `translate()`, and because transform functions
+carry the coordinate frame along, one distance (`--k-arrow-step`, 3 user units in a 16 viewBox)
+gives east travel to internal arrows and north-east travel to external ones. The arrow always
+advances the way it points. Growing a head and advancing are one statement — *it goes that
+way* — not two competing ones, which is what keeps this inside the one-gesture rule the button
+section argues for.
+
+Two details that are easy to get wrong:
+
+- **`vector-effect: non-scaling-stroke`** on the head, or the stroke weight scales with the
+  geometry and the barbs fade in thin instead of growing at full weight.
+- **`stroke-linecap: butt`** on the head. A zero-length subpath with *round* caps renders as a
+  dot, so a `scale(0)` head would leave a permanent blob at the arrow tip. The join keeps its
+  own `round`.
+- **The `-ext` rules must come after the plain ones.** An external link matches both
+  `.k-arrow-link:hover` and `.k-arrow-link-ext:hover` at equal specificity, so source order is
+  the only thing deciding which transform wins. Move them and external links lose their swing.
+
+**Touch gets the resolved arrow permanently.** The line-at-rest is a pointer-device refinement,
+so the CSS is written with the arrow as the *default* and `scale(0)` applied only inside
+`@media (hover: hover)`. A touch user who never sees a hover would otherwise be left with an
+icon that never resolves into anything meaningful — the same rule as the button's second label:
+a hover state may restate, it may not be the only place meaning lives.
+
+The one risk this introduces: the distinction is only worth something if call sites actually
+pass `external`. A missed one is now *worse* than the old blanket ↗, because the marker means
+something. Logged as checklist 2.4.
 
 ### The card entrance: stretch without bounce
 
@@ -176,9 +313,15 @@ which is the exact failure the rule names. Two were cut:
 - **List row hairline warming** — removed entirely, since the rows aren't links (above).
 
 **The four that remain, each earning it:** the arrow link's drawn rule (the primary
-navigation affordance, carrying every destination) · the button's iris in `--ice-deep` (the
-primary CTA) · the burger's hover (it is the entire nav) · the cursor lens fringe (the
-signature, always present).
+navigation affordance, carrying every destination) · the primary button (the CTA) · the
+burger's hover (it is the entire nav) · the fluid cursor (the signature, always present).
+
+**The button's entry got more expensive and needs watching.** It used to be an ink pill that
+showed accent only on hover. It is now an **`--ice-deep` fill at rest**, which is a permanent,
+large, saturated use rather than a transient one — plus the drawn line in the same value on
+hover. That is a legitimate spend for a primary CTA and there are rarely more than two on a
+page, but it is no longer free, and it is the reason the ghost variant must stay accent-less.
+If a page ends up with several primaries, this is the first thing to look at.
 
 **The budget is now full.** Any new accent use has to displace one of these four, not join them.
 

@@ -22,6 +22,16 @@ import { ICE_PALETTE, type FluidPalette } from './fluid/FluidEffect'
  * white is the no-op, so the page is untouched at rest, and where the fluid has
  * density it tints toward ice. Same idea, opposite polarity.
  *
+ * PERSISTENCE is the other thing that had to change. Presence and duration were
+ * COUPLED: the only levers for a stronger trail were more dye and slower decay,
+ * and both of them also made it last longer. The result was a trail still
+ * reading as a 10% tint on white almost four seconds after the pointer stopped.
+ *
+ * The `fade` floor breaks the coupling. It gives the tail a defined end instead
+ * of an asymptote, so gain can be raised without buying time along with it.
+ * Decay then drops 0.982 -> 0.95 and gain rises 30 -> 55 to hold the peak: the
+ * trail now saturates exactly as hard as before and is gone in 0.70s.
+ *
  * MOUNTED ONLY WHERE IT EARNS ITS COST: skipped entirely on touch (no pointer
  * to push the fluid) and under reduced motion. Mounting is deferred to an
  * effect so the WebGL context is never created during SSR or on a machine that
@@ -29,12 +39,20 @@ import { ICE_PALETTE, type FluidPalette } from './fluid/FluidEffect'
  */
 export default function FluidCursor({
   palette = ICE_PALETTE,
-  /** Density-to-colour gain. Raise to make the trail read stronger. */
-  intensity = 30,
+  /** Density-to-colour gain. Raise to make the trail read STRONGER. */
+  intensity = 55,
+  /** Density floor. Raise to make the trail END SOONER — below it nothing is
+   *  painted at all, so the tail stops rather than fading forever. */
+  fade = 0.08,
+  /** Per-frame dye decay. Raise to make the trail LAST LONGER; it is
+   *  exponential, so 0.982 is a 0.64s half-life and 0.95 is 0.23s. */
+  decay,
   zIndex = 55,
 }: {
   palette?: FluidPalette
   intensity?: number
+  fade?: number
+  decay?: number
   zIndex?: number
 }) {
   const [on, setOn] = useState(false)
@@ -69,7 +87,7 @@ export default function FluidCursor({
       aria-hidden="true"
     >
       <EffectComposer>
-        <Fluid palette={palette} intensity={intensity} />
+        <Fluid palette={palette} intensity={intensity} fade={fade} decay={decay} />
       </EffectComposer>
     </Canvas>
   )

@@ -191,12 +191,13 @@ export default function DesignSystemPage() {
             </div>
 
             <div className="ds-demo">
-              <p className="ds-label">Arrow link · the arrow redraws its own shape</p>
+              <p className="ds-label">Arrow link · a line that resolves into an arrow</p>
               <div className="ds-stage" style={{ gap: 'var(--s-7)' }}>
                 <ArrowLink href="#">See all services</ArrowLink>
                 <ArrowLink href="#">Pricing</ArrowLink>
+                <ArrowLink href="#" external>Read the case study</ArrowLink>
               </div>
-              <p className="ds-note">Shaft and head are separate paths on one SVG. On hover both swing to a new axis, so an east arrow becomes a north-east one — a real change of shape from transforms and a dash offset, no morphing library, and it never leaves the compositor. The label shifts to ice-deep because a 2.52:1 hairline cannot carry a hover state alone.</p>
+              <p className="ds-note">At rest it is a plain line, claiming nothing about where the link goes. On hover the head grows out of the shaft&rsquo;s own tip and the whole arrow steps forward along its own axis — so the internal ones advance east and the external one advances north-east, off a single distance. <em>Which</em> arrow it becomes is the point. Internal resolves to east; only the third one here, marked <code>external</code>, swings to north-east. ↗ is the web&rsquo;s near-universal sign for &ldquo;opens elsewhere&rdquo;, so every link wearing it was a real semantic clash. The rest state now does work: the icon stays neutral until you are about to act on it, then tells you what kind of destination this is. On touch, where there is no hover, the resolved arrow is shown permanently.</p>
             </div>
 
             <div className="ds-demo">

@@ -36,12 +36,20 @@ export default class FluidEffect extends Effect {
   constructor({
     tFluid = new Texture(),
     intensity = 1.0,
+    fade = 0.08,
     palette = ICE_PALETTE,
-  }: { tFluid?: Texture; intensity?: number; palette?: FluidPalette } = {}) {
+  }: {
+    tFluid?: Texture
+    intensity?: number
+    /** Density floor. Below it the trail paints nothing, so it ends. */
+    fade?: number
+    palette?: FluidPalette
+  } = {}) {
     super('FluidEffect', POST_FRAG, {
       uniforms: new Map<string, Uniform<unknown>>([
         ['tFluid', new Uniform(tFluid)],
         ['uIntensity', new Uniform(intensity)],
+        ['uFade', new Uniform(fade)],
         ['uIce', new Uniform(rgb(palette.ice))],
         ['uGraphite', new Uniform(rgb(palette.graphite))],
         ['uIceDeep', new Uniform(rgb(palette.iceDeep))],
@@ -56,6 +64,11 @@ export default class FluidEffect extends Effect {
 
   setIntensity(v: number) {
     const u = this.uniforms.get('uIntensity')
+    if (u) u.value = v
+  }
+
+  setFade(v: number) {
+    const u = this.uniforms.get('uFade')
     if (u) u.value = v
   }
 
