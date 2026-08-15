@@ -55,10 +55,10 @@ becomes north-east; label shifts to `--text-accent`.
 
 ---
 
-## 3. Cursor — lens BUILT
+## 3. Cursor — fluid BUILT, working, open for improvement
 
-`src/components/v4/CursorLens.tsx`. It genuinely refracts: a generated SVG displacement map
-is fed to `backdrop-filter`, so real pixels bend rather than a highlight being faked.
+`src/components/v4/FluidCursor.tsx` + `src/components/v4/fluid/`. Signed off as the right
+direction — *"the cursor is good but we can improve it."*
 
 **3.1 Scope — decided: the fluid, and only the fluid.** Ported from `giats-portfolio`
 (`src/components/v4/fluid/` + `FluidCursor.tsx`), a full Navier-Stokes solver in GLSL.
@@ -77,9 +77,10 @@ stops a single blue ramp reading as a gradient sticker.
 | # | Still open | Why it matters | Done when |
 |---|---|---|---|
 | 3.5 | **Frame budget, unmeasured** | A fluid sim ping-ponging float framebuffers every frame, plus a full-viewport `multiply` composite. Never measured — every test ran in a throttled background tab at 0fps. | Watched at speed in a foreground tab, on the work section with three cards playing. |
-| 3.6 | **Intensity and solver tuning** | `intensity` is now a prop (default 12, was an effective 5). The solver constants — dissipation, curl, radius, pressure — are the source project's untouched, and were tuned against a **dark** page. | Tuned on white, in motion. |
+| 3.6 | **Intensity and solver tuning** | Raised once for visibility: `intensity` 30 (prop), `dpr [0.5, 1]`, `densityDissipation` 0.982, `radius` 0.19, `dyeRes` 512, and a `pow(0.70)` on the density curve to lift the thin outer wisps. `curl` and `pressure` are still the source project's, tuned against a **dark** page. | Judged in motion on white; the fastest levers are `intensity` (prop) and `densityDissipation`. |
 | 3.7 | **Fluid vs proximity buttons** (was 1.5) | Both answer the same pointer movement. | Judged in a foreground tab. |
 | 3.8 | **WebGL context cost on every page** | One context per page load, plus float framebuffers. Fine on a desktop; worth knowing on low-end hardware. | Checked, and a kill-switch decided if needed. |
+| 3.9 | **"Good, but we can improve it"** | Signed off as the direction, not as finished. Nothing specific named yet, so the candidates are: dye that persists too long or not long enough, the graphite/smoke balance, splat radius, whether the trail should respond to *what* it is over (the `data-lens` hint API was written for the lens and is now unused), and whether it should fade near body copy the way the choreography asks the lens to. | A specific note on what to change. |
 
 ---
 
