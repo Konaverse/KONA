@@ -123,14 +123,21 @@
   --d-quick:   240ms;   /* small state changes, cursor */
   --d-base:    420ms;   /* component-level movement */
   --d-slow:    900ms;   /* section reveals, structural */
-  --d-cinema: 1400ms;   /* page transitions, hero */
+  --d-cinema: 1400ms;   /* hero */
+  --d-page:    680ms;   /* page transition -- MEASURED, see --e-page */
 
-  /* Easings. Four, all named for what they do.
+  /* Easings. Five, all named for what they do.
      No back or bounce curves: they break the register. */
   --e-glass:  cubic-bezier(0.22, 1.00, 0.36, 1.00);  /* default reveal, expo-out */
   --e-drift:  cubic-bezier(0.65, 0.00, 0.35, 1.00);  /* scrubbed and pinned scroll */
-  --e-arc:    cubic-bezier(0.83, 0.00, 0.17, 1.00);  /* page transition, exoape arc */
+  --e-arc:    cubic-bezier(0.83, 0.00, 0.17, 1.00);  /* long symmetric sweep */
   --e-settle: cubic-bezier(0.16, 1.00, 0.30, 1.00);  /* hover, cursor, settling */
+  /* The page transition, fitted frame-by-frame to the reference recording
+     rather than chosen (rms 0.02 over 11 samples). It exists because none of
+     the four above fit: e-glass 0.099, e-settle 0.148, e-drift 0.407 and
+     e-arc -- which the choreography document originally specified for this
+     move -- 0.426, the worst of the set. Brief ease-in, very long ease-out. */
+  --e-page:   cubic-bezier(0.304, 0.635, 0.00, 0.835);
 
   /* Stagger between siblings in one reveal. Never more than four steps —
      past that the last element arrives after the reader has moved on. */
@@ -190,6 +197,28 @@ html { -webkit-text-size-adjust: 100%; }
   font-weight: var(--w-regular);
   line-height: var(--lh-body);
   -webkit-font-smoothing: antialiased;
+}
+
+/* No visible scrollbar anywhere on v4 — user decision (2026-08-16).
+   Two reasons: the register (Lenis owns the scroll; a native bar is
+   the one piece of browser chrome on an otherwise sealed surface),
+   and a mechanical one — a classic Windows scrollbar takes layout
+   width, so any moment that changes scrollability mid-page-transition
+   shifts the whole page sideways by ~17px. Hiding the bar removes
+   that class of jump entirely. Scrolling itself is untouched.
+
+   Scoped through :has(.k-root) because the bar belongs to <html>,
+   which is shared with the legacy site; collapses to a plain html
+   rule when legacy goes. Both spellings are needed: scrollbar-width
+   is standard (Chrome 121+, Firefox, Safari 18.2+), the pseudo covers
+   older WebKit. */
+html:has(.k-root) {
+  scrollbar-width: none;
+}
+html:has(.k-root)::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 :focus-visible {
@@ -836,3 +865,175 @@ html.lenis, html.lenis body { height: auto; }
    two pointer-followers was one too many. The component and its CSS are in
    git history if it is ever wanted back. The --lens-* tokens above stay:
    they name a magnification and a fringe, which the fluid can still use. */
+
+/* ============================================================
+   PAGE TRANSITION
+   ------------------------------------------------------------
+   Two layers move: the outgoing page, frozen as a cloned "ghost"
+   in a fixed clip window, and the real incoming page rising
+   behind it. The geometry, and where each number was measured
+   from, is in src/components/v4/PageTransition.tsx.
+
+   Nothing here is mounted at rest -- the ghost is created on
+   click and removed on completion. That matters: a permanently
+   mounted full-viewport layer above the fluid is exactly what
+   the cursor lens did, and it re-rasterised the backdrop over
+   the fluid until it was removed.
+
+   .k-pt__view carries NOTHING at rest and must never get a CSS
+   transition. GSAP writes its transform inline for the duration
+   of the move and clears it after; a CSS transition on the same
+   properties would be a second owner of one curve.
+   ============================================================ */
+
+/* The frozen outgoing page's WINDOW. Fixed, viewport-sized, and it
+   never moves — the full-height clone inside it does. Animating the
+   window itself was tried first and exposed a strip of bare
+   background under its rising bottom edge; sliding the clone within
+   the clip instead means the outgoing page's below-the-fold content
+   rises into view, the way a real sheet being pushed up behaves.
+
+   z-index 1 -- UNDERNEATH the incoming page, which is the whole
+   point of the move and what the first two attempts got wrong.
+   The incoming page slides up OVER this one and buries it; this
+   one never gets out of the way. Proof, from frame 57 of the
+   reference: the outgoing page still occupies y 272..630 at a
+   moment when the seam is at 272, and none of it is visible. */
+.k-pt__ghost {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  background: var(--surface);
+  /* Nothing here is clickable, and the page riding over it must
+     receive the clicks, not this. */
+  pointer-events: none;
+}
+
+/* The incoming page, lifted over the ghost for the duration of
+   the move. Applied by PageTransition and removed on completion,
+   because a permanent stacking context on the page wrapper would
+   change how everything inside it paints. */
+.k-pt__view.is-moving {
+  position: relative;
+  z-index: 2;
+  will-change: transform;
+  /* The page is a sheet, and a sheet is opaque. Without this the view
+     has no background of its own (the white lives on .k-root, which
+     does not move), so the dimmed ghost UNDERNEATH shows through the
+     incoming page for the whole ride — both pages superimposed in a
+     grey wash, which is exactly how the first recording of this move
+     actually looked. */
+  background: var(--surface);
+}
+
+/* The seam. Two white pages sliding over each other have no visible
+   edge, so the incoming sheet casts a soft shadow AHEAD of its top
+   edge — the one cue that says "lifted over", not "wiped across".
+   It hangs off the view (bottom: 100%), so it rides the same
+   transform and hugs the edge through the tilt. Wider than the view
+   because the sheet is rotated: the corners of a 2.2deg-tilted edge
+   would otherwise show the gradient ending. */
+.k-pt__view.is-moving::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: -10%;
+  right: -10%;
+  height: 140px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.13), rgba(0, 0, 0, 0));
+  pointer-events: none;
+  /* Defaults to 0 so the band is invisible during the pre-commit hold —
+     the sheet is parked just below the fold then, which would otherwise
+     pop a static shadow onto the bottom edge at click. The transition
+     timeline tweens the variable up during the first stretch of the
+     move, so the shadow arrives WITH the motion. */
+  opacity: var(--k-pt-seam, 0);
+}
+
+/* Holds the clone, pushed up by the scroll offset that was in
+   effect at click time so the ghost matches the screen exactly.
+   This is the element the outgoing tween moves. */
+.k-pt__ghost-inner {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  will-change: transform;
+}
+
+/* The darkening. Measured off the reference: the outgoing page
+   falls to ~0.42 of its luminance, so ~55% black over it. Lives
+   inside the ghost, so it travels with the page rather than
+   sitting over the whole viewport. */
+.k-pt__dim {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* A page two degrees off square pokes out sideways. `clip`
+   rather than `hidden` because clip does not create a scroll
+   container, so it cannot fight Lenis.
+
+   Redundant TODAY -- globals.css already clips html and body --
+   but globals.css belongs to the legacy site and leaves with it,
+   and this is the only reason a v4 page needs the clip. Keeping
+   it here means the transition does not quietly start showing a
+   horizontal scrollbar the day that file is deleted. */
+.k-pt-active {
+  overflow-x: clip;
+}
+
+/* ---------- horizontal nav (desktop) ----------
+   Added when desktop navigation moved off the burger. The
+   reason was the page transition: reaching a link through the
+   aperture meant opening a full-screen overlay, which then
+   closed back over the transition it had just triggered -- the
+   nav sits above both pages, so it painted over the one thing
+   you were trying to watch.
+
+   Mobile-first and mutually exclusive: the links are hidden by
+   default and the burger is shown, and the single breakpoint
+   swaps both. Exactly one is displayed at every width -- there
+   is no range where both or neither appear. */
+.k-nav-links {
+  display: none;
+  align-items: center;
+  gap: var(--s-6);
+}
+
+.k-nav-link {
+  font-size: var(--t-small);
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--d-instant) var(--e-settle);
+}
+.k-nav-link:hover { color: var(--text); }
+
+/* The current page states itself in the one place that can say
+   it without adding furniture: no underline, no dot, no accent
+   -- just the muted grey resolving to full ink. */
+.k-nav-link[aria-current='page'] { color: var(--text); }
+
+@media (min-width: 57.5rem) {
+  .k-nav-links { display: flex; }
+  .k-burger { display: none; }
+  /* Unreachable on desktop anyway, but it renders OPEN without
+     JS by design, and a desktop page that already has a working
+     nav must not be covered by a sitemap overlay. */
+  .k-aperture { display: none; }
+}
+
+/* Contact is not one of the five. The original decision put it
+   permanently OUTSIDE the burger so it could never be buried;
+   with a horizontal nav it is inherently never buried, but it
+   still should not read as the sixth item in a list of five.
+   The bar's own flex gap (--s-5) is TIGHTER than the gap inside
+   the link group (--s-6), which had it reading as the closest
+   sibling of Journal. This is the separation, not a colour or a
+   rule -- the accent budget does not stretch to nav furniture. */
+@media (min-width: 57.5rem) {
+  .k-nav-contact { margin-left: var(--s-6); }
+}

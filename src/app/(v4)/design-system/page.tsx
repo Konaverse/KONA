@@ -1,21 +1,17 @@
 import type { Metadata } from 'next'
-import ApertureMenu from '@/components/v4/ApertureMenu'
 import Reveal from '@/components/v4/Reveal'
 import Button from '@/components/v4/Button'
 import ArrowLink from '@/components/v4/ArrowLink'
 import ProjectCard from '@/components/v4/ProjectCard'
-import SmoothScroll from '@/components/v4/SmoothScroll'
-import FluidCursor from '@/components/v4/FluidCursor'
-import '@/styles/tokens.css'
 import './design-system.css'
 
 /**
  * The living design system. Real React, real tokens, real components — the same
- * CSS that ships, not a copy of it. Sits outside app/(site) so it renders
- * without the legacy navbar, footer, cursor and smooth-scroll wrapper.
+ * CSS that ships, not a copy of it.
  *
- * `.k-root` carries the Whiteout base styling as a wrapper class rather than a
- * bare `body` rule, because Next hoists every CSS import to global scope.
+ * The shell — `.k-root`, the noscript reveal fallback, grain, aperture menu,
+ * Lenis, the fluid cursor and the page transition — now lives in the shared
+ * app/(v4)/layout.tsx, so this file is only the page.
  */
 export const metadata: Metadata = {
   title: 'Design system',
@@ -77,21 +73,7 @@ function Section({ n, title, lede, children }: { n: string; title: React.ReactNo
 
 export default function DesignSystemPage() {
   return (
-    <div className="k-root ds">
-      {/* Every .k-reveal starts at opacity 0 and is turned on by an
-          IntersectionObserver. If JS never runs, that content would be
-          invisible forever — the whole page, blank. The aperture menu already
-          takes the progressive-enhancement stance (it renders OPEN without JS);
-          the reveal has to as well. Belongs in the root layout once the legacy
-          site is gone. */}
-      <noscript>
-        <style>{`.k-reveal{opacity:1!important;filter:none!important;transform:none!important}`}</style>
-      </noscript>
-      <div className="k-grain" />
-      <ApertureMenu />
-      <SmoothScroll>{null}</SmoothScroll>
-      <FluidCursor />
-
+    <div className="ds">
       <div className="k-page">
         {/* ---------------------------------------------------------- hero */}
         <section className="ds-section ds-hero">

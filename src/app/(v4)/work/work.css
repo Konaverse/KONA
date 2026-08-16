@@ -1,0 +1,28 @@
+/* Page-local layout for the /work stub. Everything visual comes from
+   tokens.css — this file only does section rhythm, the same way
+   design-system.css does. It stays small on purpose: when the real
+   work hub is designed, this is the file that gets rewritten. */
+
+.wk { position: relative; }
+
+.wk-section { padding-block: clamp(var(--s-9), 10vw, var(--s-11)); }
+
+.wk-hero {
+  padding-top: clamp(var(--s-11), 26vh, 20rem);
+  border-top: 0;
+}
+
+.wk-lead {
+  max-width: 46ch;
+  color: var(--text-muted);
+}
+
+.wk-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-6);
+}
+
+@media (max-width: 57.5rem) {
+  .wk-tiles { grid-template-columns: minmax(0, 1fr); }
+}

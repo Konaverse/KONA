@@ -16,19 +16,34 @@ import { gsap } from '@/lib/motion-v4'
  * Disabled outright under prefers-reduced-motion — smoothing IS motion, and
  * hijacked scrolling is a common vestibular trigger.
  */
+/**
+ * The live instance, module-scoped.
+ *
+ * Lenis owns scrolling, so anything that needs to *move* the scroll position
+ * has to go through it rather than window.scrollTo — notably the page
+ * transition, which must land the incoming route at the top instead of
+ * inheriting the outgoing route's offset (checklist §5.3). Null under reduced
+ * motion, where Lenis is never constructed and native scroll applies; callers
+ * must handle that.
+ */
+let lenis: Lenis | null = null
+export const getLenis = () => lenis
+
 export default function SmoothScroll({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
-    const lenis = new Lenis({ lerp: 0.1, smoothWheel: true })
+    const instance = new Lenis({ lerp: 0.1, smoothWheel: true })
+    lenis = instance
 
-    const tick = (time: number) => lenis.raf(time * 1000)
+    const tick = (time: number) => instance.raf(time * 1000)
     gsap.ticker.add(tick)
     gsap.ticker.lagSmoothing(0)
 
     return () => {
       gsap.ticker.remove(tick)
-      lenis.destroy()
+      instance.destroy()
+      if (lenis === instance) lenis = null
     }
   }, [])
 

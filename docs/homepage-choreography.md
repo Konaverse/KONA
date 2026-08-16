@@ -41,6 +41,14 @@ These apply everywhere and are decided once.
 
 **Nav. LOCKED.** Burger, with contact remaining visible outside it. Someone who wants to hire you should never have to open a menu to find out how. There is no horizontal nav in this system — the design system's earlier `Work · Studio · Contact` bar is removed. The menu opens as an **aperture**: one clip-path circle grown from the button's own centre, measured at click time, panel contents rising while the circle is still travelling, close reversing the same timeline faster so the menu is swallowed back into the button.
 
+> **UNLOCKED 2026-08-16 — desktop is a horizontal nav after all.** Not a change of taste; the burger and the page transition turned out to be incompatible. Reaching any link through the aperture means **opening a full-screen overlay first**, and that overlay then closes back over the transition it just triggered. The nav sits at `z-index: 50`, above both pages, so it paints over the exact thing it launched — the transition was unwatchable. Choosing between them, the transition wins.
+>
+> The reference site this transition is modelled on has a horizontal nav, and that is not a coincidence: a nav you click *through* an overlay cannot show you a page transition.
+>
+> **What survives:** the aperture and the burger still own navigation **below 57.5rem**, where five items plus Contact do not fit across a phone. The two are exact complements in CSS — one is displayed at every width, never both, never neither. Contact remains outside the set, now by spacing rather than by being the only thing not buried. The aperture is additionally `display: none` on desktop, because without JS it renders OPEN by design and must not cover a desktop page that already has a working nav.
+>
+> **What this costs:** the aperture is the most elaborate component in the system and it now only ever appears on phones. That is a real loss and it is the price of the transition being visible at all.
+
 **Outbound links. LOCKED.** The homepage links down to **seven URLs and no others**: the services hub, the work hub, the three featured case studies, pricing, and contact. The footer carries the full map and is the only place every URL appears.
 
 **What stays excluded, and why it matters more than the count.** Individual service pages — `/services` is what fans out to those six, and bypassing the hub would spray the homepage across the whole cluster. Blog posts — seven problem-cluster links was the original excess, and those are reached from the service pages instead. The discipline was never about the number; it is about not skipping a hub that exists to do the fanning.
@@ -48,6 +56,30 @@ These apply everywhere and are decided once.
 The consequences, section by section below: **section 3 states problems as text and links nowhere**, **section 4 lists services as text with one link to the hub**, **section 5's tiles each link to their case study**, and **section 8 links to pricing**. Sections 3 and 4 still do their SEO job either way — plainly-stated problems in real DOM text are what language models cite, and that works whether or not the words sit inside an anchor.
 
 **Page transitions.** The exoape arc. Outgoing view tilts away on a circular path while the next rises from beneath, and passes through a lens on the overlap so it distorts as it leaves. `--d-cinema` on `--e-arc`.
+
+> **Rewritten 2026-08-16 from the reference recording.** An earlier amendment on this line claimed *"the next rises from beneath"* could not be built without the View Transitions API, and substituted a blank white sheet rising in place of the real page. **That was wrong and is withdrawn.** The clause was literal, it is buildable, and the substitute was rejected on sight — a blank sheet has no outgoing page to tilt and nothing to darken, so it cannot express the move at all.
+>
+> The paragraph above is also wrong on its own numbers. Every figure below was **measured** off `page transition.mp4` (1918×900, 30fps) — the incoming page's top edge tracked per frame and per column by max-gradient with a robust line fit, the outgoing page's drift recovered by ZNCC patch matching, its darkening read as a luminance ratio:
+>
+> | | spec said | measured |
+> |---|---|---|
+> | duration | `--d-cinema` (1.4s) | **~0.68s** |
+> | easing | `--e-arc` | **`--e-page`** — `cubic-bezier(0.304, 0.635, 0, 0.835)` |
+> | **layering** | not stated | **incoming rides OVER the outgoing** — see below |
+> | incoming | "rises from beneath" ✓ | rises a full viewport, tilt **+2.2° → 0**, left top corner high |
+> | outgoing | "tilts away on a circular path" ✓ | drifts **up ~31%, left ~5%**, rotating to **−2.2°** |
+> | the lens | "passes through a lens … distorts" | **not a lens — a darkening.** Luminance falls to ~0.42, i.e. ~55% black |
+> | — | — | outgoing **leads** the incoming by ~100ms |
+>
+> `--e-arc` is worth calling out: fitted against the measured rise it is the **worst** of the four easing tokens (rms 0.43, against 0.02 for the fitted curve). It is symmetric ease-in-out; the reference is a brief ease-in into a very long ease-out tail. `--e-page` was added to `tokens.css` and `motion-v4.ts` rather than bending an existing token to a shape it is not.
+>
+> **The layering is the move, and it is not in the original sentence.** *"Tilts away … while the next rises from beneath"* reads as the old page getting out of the way to reveal the new one. It is the opposite: **the incoming page slides up and over the outgoing one and buries it.** The outgoing page never clears the viewport — it drifts about a third of a screen and is covered. Frame 57 proves it: the outgoing heading has reached y≈165, putting that page's own bottom edge near y≈630, while the seam between the two pages sits at y≈272. The outgoing page still occupies 272→630 and none of it is visible.
+>
+> Two builds were wrong because of this. The first raised a blank sheet; the second showed the real page but put the *outgoing* one on top, so the incoming was hidden behind a slab that drifted 20% of a screen and then vanished. That reads as a dissolve, not a page turn.
+>
+> Mechanism: the App Router only ever mounts one route tree, so the outgoing page is captured as a `cloneNode` inside a fixed, viewport-sized clip window offset by the scroll position, sitting *under* the live incoming page. The fixed chrome — aperture menu, grain, fluid — is not cloned and does not travel, which is what the reference does too.
+>
+> **Why this is a clone at all:** exoape is Nuxt/Vue, where Vue Router's `<Transition>` keeps the leaving and entering page components *both mounted* during a transition. Two real pages on screen is native there. React's App Router unmounts the old route the moment the new one commits. The browser-native equivalent is the View Transitions API — it snapshots both pages, composites them on the GPU, and its default paint order is already new-above-old. That is the better long-term answer; see checklist §5.10.
 
 **Reduced motion.** Every reveal becomes instant. The scrubbed section becomes a single still. Non-negotiable.
 
@@ -229,7 +261,7 @@ Full site map, quiet, at `small`. Every URL appears here and only here. Legal li
 
 ## Decided
 
-- **Nav is a burger** with Contact always outside it, opening as an aperture. No horizontal nav. See *Global behaviour*.
+- **Nav is a horizontal bar on desktop, the burger/aperture below 57.5rem.** Contact always outside the set. **Amended 2026-08-16** — the aperture's full-screen overlay closed back over the page transition and made it unwatchable. Reasoning under *Global behaviour · Nav*.
 - **Outbound links follow architecture §8** — services hub, work hub, contact. Sections 3, 4, 5 and 8 rewritten above; two exceptions flagged inline for a decision.
 - **Sections 3 and 4 stay separate.** They catch different search intent, and merging them would put two ideas in one viewport.
 

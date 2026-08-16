@@ -458,6 +458,15 @@ export default function Navbar() {
       }}
     >
       <motion.nav
+        initial={{
+          maxWidth: 1180,
+          marginTop: 15,
+          paddingLeft: 22,
+          paddingRight: 10,
+          borderRadius: 28,
+          backgroundColor: "rgba(8,8,10,0.12)",
+          boxShadow: "0 4px 24px -8px rgba(0,0,0,0.3)",
+        }}
         animate={{
           maxWidth: scrolled ? 920 : 1180,
           marginTop: scrolled ? 24 : 15,

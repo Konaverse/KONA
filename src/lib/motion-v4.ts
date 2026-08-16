@@ -22,6 +22,22 @@ export const EASE = {
   drift:  CustomEase.create('k-drift',  'M0,0 C0.65,0 0.35,1 1,1'),
   arc:    CustomEase.create('k-arc',    'M0,0 C0.83,0 0.17,1 1,1'),
   settle: CustomEase.create('k-settle', 'M0,0 C0.16,1 0.30,1 1,1'),
+  /**
+   * The reference's measured curve — KEPT FOR THE RECORD, no longer in use.
+   *
+   * Fitted to the reference recording frame by frame: the top edge of the
+   * incoming page was tracked across 1918x900 at 30fps and a cubic bezier was
+   * least-squares fitted to its rise (rms 0.022 over 11 samples). A brief
+   * ease-in into a very long ease-out tail; none of the four tokens fit it
+   * (e-glass 0.099 · e-settle 0.148 · e-drift 0.407 · e-arc 0.426).
+   *
+   * The transition ran on it, was watched, and the user chose EASE.arc over
+   * it — slow in, fast middle, soft landing, which is what the choreography
+   * document had specified all along. The measurement documented what exoape
+   * built; the feel pass decides what WE build. This stays so the comparison
+   * can be re-run in one line.
+   */
+  page:   CustomEase.create('k-page',   'M0,0 C0.304,0.635 0,0.835 1,1'),
 } as const
 
 /** Durations, in seconds, mirroring --d-* in tokens.css. */
@@ -31,6 +47,11 @@ export const DUR = {
   base:    0.42,
   slow:    0.9,
   cinema:  1.4,
+  /** The page transition. Measured off the reference at ~0.68s; lengthened to
+   *  1s by the user's decision after watching the working move — the feel pass
+   *  outranks the measurement. Runs on EASE.arc (also user-chosen; EASE.page
+   *  below preserves the measured curve if it is ever wanted back). */
+  page:    1.0,
 } as const
 
 /** --reveal-blur / --reveal-shift / --stagger. */
@@ -39,5 +60,12 @@ export const REVEAL = {
   shift:   18,
   stagger: 0.08,
 } as const
+
+/* Dev-only handle so headless recordings can slow the clock
+ * (window.__gsap.globalTimeline.timeScale(0.25)) and film a move in
+ * detail. Stripped from production bundles by the env guard. */
+if (process.env.NODE_ENV !== 'production' && typeof window !== 'undefined') {
+  ;(window as unknown as { __gsap: typeof gsap }).__gsap = gsap
+}
 
 export { gsap }

@@ -1,7 +1,24 @@
 'use client'
 
 /**
- * APERTURE MENU — the v4 navigation.
+ * NAVIGATION — a horizontal bar on desktop, the aperture on narrow screens.
+ *
+ * DESKTOP IS NOW A PLAIN HORIZONTAL NAV, reversing the original "burger only,
+ * no horizontal nav" decision. The reason is the page transition: reaching any
+ * link through the aperture meant opening a full-screen overlay first, and that
+ * overlay then closed back over the transition — the nav sits at z-index 50,
+ * above both pages, so it painted over the exact thing it had just triggered.
+ * You could not see the transition at all. The reference site the transition is
+ * modelled on has a horizontal nav for the same reason. Decision recorded in
+ * docs/site-architecture.md.
+ *
+ * Below 57.5rem the aperture still owns navigation — five items and a Contact
+ * do not fit across a phone — and the burger reappears with it. The horizontal
+ * links and the burger are exact complements: exactly one is ever displayed.
+ *
+ * The aperture is `display: none` on desktop as well as unreachable, because
+ * without JS it renders OPEN by design (see below); left visible it would cover
+ * a desktop page that already has a working nav.
  *
  * The burger IS the aperture: the whole menu grows out of it as one circle and
  * is swallowed back into it on close. Adapted from the `aperture` section in
@@ -26,6 +43,7 @@
  */
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { gsap, EASE, DUR, REVEAL } from '@/lib/motion-v4'
 
 /** useLayoutEffect warns when it runs during SSR; swap it out on the server. */
@@ -50,8 +68,15 @@ export interface ApertureMenuProps {
 
 export default function ApertureMenu({
   brand = 'Konaverse',
+  /**
+   * NOTE: only the routes that have a v4 page get the arc transition — the rest
+   * are still LEGACY URLs and hard-navigate into the old dark site. That is the
+   * honest current state, not an oversight: /services, /about, /pricing and
+   * /blog have no v4 route to point at yet. As each one is built, change its
+   * href here AND add it to V4_ROUTES in PageTransition.tsx.
+   */
   items = [
-    { label: 'Work', href: '/projects' },
+    { label: 'Work', href: '/work' },
     { label: 'Services', href: '/services' },
     { label: 'Studio', href: '/about' },
     { label: 'Pricing', href: '/pricing' },
@@ -63,6 +88,7 @@ export default function ApertureMenu({
   contactLabel = 'Contact',
   contactHref = '/contact',
 }: ApertureMenuProps) {
+  const pathname = usePathname()
   const rootRef = useRef<HTMLDivElement | null>(null)
   const overlayRef = useRef<HTMLDivElement | null>(null)
   const triggerRef = useRef<HTMLButtonElement | null>(null)
@@ -230,6 +256,22 @@ export default function ApertureMenu({
       {/* ---- persistent chrome. Contact never hides behind the burger. ---- */}
       <div className="k-nav-bar">
         <a href="/" className="k-nav-brand">{brand}</a>
+
+        {/* Desktop navigation. The exact complement of the burger below —
+            CSS shows one or the other, never both, never neither. */}
+        <nav className="k-nav-links" aria-label="Primary">
+          {items.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className="k-nav-link"
+              aria-current={pathname === item.href ? 'page' : undefined}
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+
         <a href={contactHref} className="k-nav-contact">{contactLabel}</a>
         <button
           ref={triggerRef}
