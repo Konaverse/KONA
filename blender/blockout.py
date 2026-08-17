@@ -304,10 +304,15 @@ def main():
         return
 
     if "--hero" in argv:
-        # The reference still of the locked configuration — what section 1
-        # gets laid out against until real renders exist.
+        # The reference stills of the locked configuration — what sections 1
+        # and 6 get laid out against until real renders exist. The clear
+        # state's dark-glass look is KEPT (user, 2026-08-17): transmission
+        # rays seeing the HDRI is the reveal's payoff, not an artifact.
         render_study("hero-ref", DECIDED["ratio"], DECIDED["thick"],
                      interior=DECIDED["interior"], samples=256, res=1280)
+        render_study("clear-ref", DECIDED["ratio"], DECIDED["thick"],
+                     interior=DECIDED["interior"], frost_roughness=0.03,
+                     samples=256, res=1280)
         return
 
     if "--poses" in argv:

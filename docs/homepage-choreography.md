@@ -313,9 +313,12 @@ horizontal, swung −25° off the camera axis, cube corner-forward** (three face
 band crosses behind the cube's top corner and in front at the bottom, which is what makes
 the counter-rotation legible), interior = the combo above (contact-sheet-3). Rig and
 studies: `blender/blockout.py`, renders in `blender/renders/blockout/`, reference still
-`hero-ref.png`. Known blockout artifact for the material pass: only camera rays see white,
-so the clear-state cube renders dark glass (it refracts the HDRI); feeding white to
-transmission rays fixes it and buys the §6 dissolve-to-white endpoint almost for free.
+`hero-ref.png` (frosted, §1) and `clear-ref.png` (clear, §6's far end). **The clear state
+renders as dark glass** — transmission rays see the HDRI, not the page white. First flagged
+as an artifact, then **kept as design (user, 2026-08-17: "generally I love the clear")**:
+the reveal's payoff is a dark jewel, the page's one dark moment on all that white, before
+the final handoff frames overexpose to white. Feeding white to transmission rays is
+reserved for those dissolve frames only — never "fix" the clear state to whiteness.
 
 **Sections 1 and 6 are designed against test renders, never against a placeholder box** —
 the hero's layout hangs off the real silhouette. Everything else on this page — sections 2,
