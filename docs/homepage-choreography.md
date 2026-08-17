@@ -293,9 +293,11 @@ it earns its place three ways:
   baked alpha does perfectly. The hero's occlusion trick survives the pipeline because of
   the material.
 - **The material is the story.** §6's scrub — frosted resolving to clear — becomes the page's
-  argument: something opaque made legible. The cube gets an **authored interior** (trapped
-  air, fractures, a suspended structure — undecided) so clarity *reveals* something; an
-  empty cube going clear ends with nothing.
+  argument: something opaque made legible. The cube gets an **authored interior — DECIDED
+  2026-08-17: a suspended precision lattice (the ring's material inside the ice) with sparse
+  trapped air around it** — so clarity *reveals* something; an empty cube going clear ends
+  with nothing. Structure carries the argument, the air carries the realism; the bubbles get
+  dialed finer in the material pass so the frame stays the subject.
 
 The risk is named: cube + ring are 3D's hello-world primitives. What keeps this out of that
 bucket is render craft (micro-bevels, imperfect frost, real dispersion) and the interior.
@@ -309,8 +311,11 @@ the cube, 1.60 as an orbit logo), band thickness **4.5%** of ring radius (2% van
 progress-indicator size, 8% reads as jewelry), hero attitude = **ring tipped 60° from
 horizontal, swung −25° off the camera axis, cube corner-forward** (three faces reading; the
 band crosses behind the cube's top corner and in front at the bottom, which is what makes
-the counter-rotation legible). Rig and studies: `blender/blockout.py`, renders in
-`blender/renders/blockout/`, reference still `hero-ref.png`.
+the counter-rotation legible), interior = the combo above (contact-sheet-3). Rig and
+studies: `blender/blockout.py`, renders in `blender/renders/blockout/`, reference still
+`hero-ref.png`. Known blockout artifact for the material pass: only camera rays see white,
+so the clear-state cube renders dark glass (it refracts the HDRI); feeding white to
+transmission rays fixes it and buys the §6 dissolve-to-white endpoint almost for free.
 
 **Sections 1 and 6 are designed against test renders, never against a placeholder box** —
 the hero's layout hangs off the real silhouette. Everything else on this page — sections 2,
@@ -319,4 +324,3 @@ the hero's layout hangs off the real silhouette. Everything else on this page �
 ## Still open
 
 1. **Does the pinned demonstration come before or after the work.** Currently after, so proof precedes demonstration. The reverse is defensible if you want to lead with capability.
-2. **The cube's interior** — what the clarity scrub reveals. Decided in the blockout phase.

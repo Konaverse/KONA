@@ -14,11 +14,13 @@ composite check. The final pipeline must re-solve this properly.
 """
 
 import math
+import random
 import sys
 import time
 from pathlib import Path
 
 import bpy
+import mathutils
 
 REPO = Path(__file__).resolve().parent.parent
 OUT_DIR = REPO / "blender" / "renders" / "blockout"
@@ -38,11 +40,14 @@ ICE_LINEAR = (0.216, 0.395, 0.585)
 RATIOS = [1.15, 1.35, 1.60]
 THICKS = [0.020, 0.045, 0.080]
 
-# DECIDED (user, 2026-08-17, off contact-sheets 1 and 2): ratio 1.35, band
-# 4.5%, hero attitude = POSE below. 1.15 read as an accessory on the cube,
-# 1.60 as an orbit logo; 2% risks vanishing at progress-indicator size, 8%
-# read as jewelry; flatter ring tips drifted planetary, steeper crowded.
-DECIDED = {"ratio": 1.35, "thick": 0.045}
+# DECIDED (user, 2026-08-17, off contact-sheets 1-3): ratio 1.35, band
+# 4.5%, hero attitude = POSE below, interior = combo (suspended lattice +
+# sparse trapped air). 1.15 read as an accessory on the cube, 1.60 as an
+# orbit logo; 2% risks vanishing at progress-indicator size, 8% read as
+# jewelry; flatter ring tips drifted planetary, steeper crowded; bubbles
+# alone read as decoration, fractures as organic bruising, lattice alone
+# risked sterile — structure carries the argument, air carries the realism.
+DECIDED = {"ratio": 1.35, "thick": 0.045, "interior": "combo"}
 
 POSE = {
     # DECIDED hero attitude (user, 2026-08-17, contact-sheet-2). Ring plane
@@ -62,13 +67,26 @@ def input_socket(node, *names):
     raise KeyError(f"none of {names} on {node.name}: {[s.name for s in node.inputs]}")
 
 
-def make_frost_material():
+def make_frost_material(roughness=0.45):
+    """roughness 0.45 = the frosted hero state; ~0.03 = the scrub's clear end."""
     mat = bpy.data.materials.new("frost-blockout")
     mat.use_nodes = True
     bsdf = mat.node_tree.nodes["Principled BSDF"]
     input_socket(bsdf, "Base Color").default_value = (0.88, 0.92, 0.98, 1.0)
-    input_socket(bsdf, "Roughness").default_value = 0.45
+    input_socket(bsdf, "Roughness").default_value = roughness
     input_socket(bsdf, "IOR").default_value = 1.31  # ice
+    input_socket(bsdf, "Transmission Weight", "Transmission").default_value = 1.0
+    return mat
+
+
+def make_air_material():
+    """An air pocket seen from inside ice: relative IOR 1/1.31."""
+    mat = bpy.data.materials.new("air-blockout")
+    mat.use_nodes = True
+    bsdf = mat.node_tree.nodes["Principled BSDF"]
+    input_socket(bsdf, "Base Color").default_value = (1.0, 1.0, 1.0, 1.0)
+    input_socket(bsdf, "Roughness").default_value = 0.08
+    input_socket(bsdf, "IOR").default_value = 1.0 / 1.31
     input_socket(bsdf, "Transmission Weight", "Transmission").default_value = 1.0
     return mat
 
@@ -81,6 +99,67 @@ def make_ring_material():
     input_socket(bsdf, "Metallic").default_value = 1.0
     input_socket(bsdf, "Roughness").default_value = 0.25
     return mat
+
+
+def add_bubbles(rng, rot, air, count, max_r=0.028):
+    """A rising diagonal plume of trapped air — authored, not uniform scatter.
+    Bigger pockets low, finer spray high, like craft ice."""
+    for _ in range(count):
+        t = rng.random()
+        p = mathutils.Vector((
+            -0.30 + 0.60 * t + rng.gauss(0, 0.09),
+            -0.30 + 0.60 * t + rng.gauss(0, 0.09),
+            -0.30 + 0.60 * t + rng.gauss(0, 0.09),
+        ))
+        p = mathutils.Vector(tuple(max(-0.42, min(0.42, c)) for c in p))
+        r = 0.006 + max_r * (rng.random() ** 2) * (1.15 - 0.6 * t)
+        bpy.ops.mesh.primitive_uv_sphere_add(radius=r, location=rot @ p,
+                                             segments=16, ring_count=8)
+        b = bpy.context.active_object
+        b.data.materials.append(air)
+        bpy.ops.object.shade_smooth()
+
+
+def add_lattice(cube_euler, metal):
+    """A suspended precision frame — the ring's material inside the ice."""
+    bpy.ops.mesh.primitive_cube_add(size=0.5, rotation=cube_euler)
+    lat = bpy.context.active_object
+    wf = lat.modifiers.new("Wire", "WIREFRAME")
+    wf.thickness = 0.022
+    lat.data.materials.append(metal)
+
+
+def build_interior(kind, cube_euler, air, metal):
+    """The authored interior — what the §6 clarity scrub reveals."""
+    rng = random.Random(7)
+    rot = mathutils.Euler(cube_euler).to_matrix()
+    if kind == "bubbles":
+        add_bubbles(rng, rot, air, 80)
+    elif kind == "fractures":
+        tex = bpy.data.textures.new("frac", "CLOUDS")
+        tex.noise_scale = 0.22
+        for _ in range(3):
+            bpy.ops.mesh.primitive_grid_add(size=1, x_subdivisions=24,
+                                            y_subdivisions=24)
+            pl = bpy.context.active_object
+            pl.scale = (0.62, 0.46, 1.0)
+            own = mathutils.Euler((rng.uniform(0.6, 2.2),
+                                   rng.uniform(-0.8, 0.8),
+                                   rng.uniform(0.0, 3.1)))
+            pl.rotation_euler = (rot @ own.to_matrix()).to_euler()
+            pl.location = rot @ mathutils.Vector((rng.uniform(-0.12, 0.12),
+                                                  rng.uniform(-0.12, 0.12),
+                                                  rng.uniform(-0.12, 0.12)))
+            disp = pl.modifiers.new("Displace", "DISPLACE")
+            disp.texture = tex
+            disp.strength = 0.05
+            pl.data.materials.append(air)
+            bpy.ops.object.shade_smooth()
+    elif kind == "lattice":
+        add_lattice(cube_euler, metal)
+    elif kind == "combo":
+        add_lattice(cube_euler, metal)
+        add_bubbles(rng, rot, air, 36, max_r=0.016)
 
 
 def build_world():
@@ -110,14 +189,15 @@ def build_world():
     return world
 
 
-def build_scene(ratio, thick, ring_euler=None, cube_euler=None):
+def build_scene(ratio, thick, ring_euler=None, cube_euler=None,
+                interior=None, frost_roughness=0.45):
     ring_euler = ring_euler or POSE["ring_euler"]
     cube_euler = cube_euler or POSE["cube_euler"]
     bpy.ops.wm.read_factory_settings(use_empty=True)
     scene = bpy.context.scene
     scene.world = build_world()
 
-    frost = make_frost_material()
+    frost = make_frost_material(frost_roughness)
     metal = make_ring_material()
 
     bpy.ops.mesh.primitive_cube_add(size=CUBE_EDGE, rotation=cube_euler)
@@ -130,6 +210,9 @@ def build_scene(ratio, thick, ring_euler=None, cube_euler=None):
         bpy.ops.object.shade_auto_smooth(angle=math.radians(30))
     except AttributeError:
         bpy.ops.object.shade_smooth()
+
+    if interior:
+        build_interior(interior, cube_euler, make_air_material(), metal)
 
     major = ratio * TUMBLE_R
     minor = thick * major
@@ -190,13 +273,15 @@ def setup_render(scene, samples, res):
 
 
 def render_study(name, ratio, thick, ring_euler=None, cube_euler=None,
-                 samples=96, res=640):
-    scene = build_scene(ratio, thick, ring_euler, cube_euler)
+                 interior=None, frost_roughness=0.45, samples=96, res=640):
+    scene = build_scene(ratio, thick, ring_euler, cube_euler,
+                        interior, frost_roughness)
     setup_render(scene, samples, res)
     scene.render.filepath = str(OUT_DIR / f"{name}.png")
     t0 = time.time()
     bpy.ops.render.render(write_still=True)
     print(f"[blockout] {name}: ratio={ratio} thick={thick} "
+          f"interior={interior} rough={frost_roughness} "
           f"rendered in {time.time() - t0:.0f}s -> {scene.render.filepath}")
 
 
@@ -208,11 +293,21 @@ def main():
         render_study("test", ratio=1.35, thick=0.045, samples=48, res=512)
         return
 
+    if "--interior" in argv:
+        # Sheet 3: interior concepts, each at BOTH scrub endpoints — an
+        # interior that only works in one state fails the §6 reveal.
+        for kind in ["bubbles", "fractures", "lattice", "combo"]:
+            for state, rough in (("frost", 0.45), ("clear", 0.03)):
+                render_study(f"i_{kind}_{state}", DECIDED["ratio"],
+                             DECIDED["thick"], interior=kind,
+                             frost_roughness=rough)
+        return
+
     if "--hero" in argv:
         # The reference still of the locked configuration — what section 1
         # gets laid out against until real renders exist.
         render_study("hero-ref", DECIDED["ratio"], DECIDED["thick"],
-                     samples=256, res=1280)
+                     interior=DECIDED["interior"], samples=256, res=1280)
         return
 
     if "--poses" in argv:
