@@ -262,19 +262,61 @@ Full site map, quiet, at `small`. Every URL appears here and only here. Legal li
 ## Decided
 
 - **Nav is a horizontal bar on desktop, the burger/aperture below 57.5rem.** Contact always outside the set. **Amended 2026-08-16** — the aperture's full-screen overlay closed back over the page transition and made it unwatchable. Reasoning under *Global behaviour · Nav*.
-- **Outbound links follow architecture §8** — services hub, work hub, contact. Sections 3, 4, 5 and 8 rewritten above; two exceptions flagged inline for a decision.
+- **Outbound links follow architecture §8** — services hub, work hub, contact. Sections 3, 4, 5 and 8 rewritten above; the two exceptions flagged inline (clickable project tiles, the `/pricing` link) are **both decided in favour** and folded into their sections.
 - **Sections 3 and 4 stay separate.** They catch different search intent, and merging them would put two ideas in one viewport.
+- **Section 5 is the page-turn**, superseding the earlier one-per-viewport / two-up question. Built as `ProjectSheets.tsx`; the section carries the decision inline.
 
-## Deferred
+## The object — DECIDED 2026-08-17
 
-- **Everything 3D — the object, sections 1 and 6, the frame pipeline.** Blocked on a prior question that has not been answered yet: *how Blender output actually reaches a browser.* Baked frame sequence, glTF with real-time lighting, or a rendered video are three different production pipelines with three different budgets, and the choice reaches back into the modelling and lighting setup — so it cannot be decided from the design side alone.
+The prior question this document deferred on — *how Blender output actually reaches a
+browser* — is answered, and the object itself is chosen. Both were user decisions in one
+sitting; detail lives in the pre-design checklist and memory.
 
-  Until that conversation happens, **sections 1 and 6 are not designable**, and the numbers in §6 (120 frames, 4–8MB, 250–300vh) are placeholders, not commitments. See `REDESIGN.md` §6 for the frame-count evidence carried over from the v3.1 build, which is relevant input to that conversation.
+**Pipeline: Blender (Cycles), delivered pre-rendered. Never a live Three.js scene.**
+Realism is the requirement, realism comes from path tracing, and a browser cannot path-trace
+— every real-time attempt read as plastic. Two delivery forms: a **video loop** for ambient
+presence (same spec family as the project-card videos) and a **scroll-scrubbed frame
+sequence** where the object must answer scroll (§6). Whiteout makes this cheap: render on
+pure white and it composites invisibly — no alpha-video codecs — with **alpha WebP** stills
+or sequences where the occlusion trick needs a true silhouette. The scene's rim light is
+`--ice`, which the token file already names "object tint". The §6 numbers (120 frames,
+4–8MB, 1600px, 250–300vh) remain estimates until test renders exist.
 
-  Everything else on this page — sections 2, 3, 4, 5, 7, 8, 9 and the footer — is fully designable now and does not touch 3D.
+**The object: a frosted ice cube inside a counter-rotating ring.** The user's concept, and
+it earns its place three ways:
+
+- **A calculable envelope.** The ring sweeps a fixed annulus and the cube tumbles inside a
+  known sphere, so section 1 can be laid out against an honest bounding circle before the
+  final render exists.
+- **Frost is load-bearing, not aesthetic.** Baked renders cannot refract live DOM text, so a
+  clear object behind the headline would break the illusion; a frosted one *occludes*, which
+  baked alpha does perfectly. The hero's occlusion trick survives the pipeline because of
+  the material.
+- **The material is the story.** §6's scrub — frosted resolving to clear — becomes the page's
+  argument: something opaque made legible. The cube gets an **authored interior** (trapped
+  air, fractures, a suspended structure — undecided) so clarity *reveals* something; an
+  empty cube going clear ends with nothing.
+
+The risk is named: cube + ring are 3D's hello-world primitives. What keeps this out of that
+bucket is render craft (micro-bevels, imperfect frost, real dispersion) and the interior.
+**First Blender session is a blockout, not modelling**: rough frost material, one HDRI, a
+dozen proportion studies — ring thickness, cube-to-ring ratio, axis tilts. Proportions
+decide whether it reads as an instrument or a logo.
+
+**Blockout session 1 decided (2026-08-17), off two contact sheets:** cube-to-ring ratio
+**1.35** (ring major radius / cube tumble-sphere radius; 1.15 read as an accessory stuck on
+the cube, 1.60 as an orbit logo), band thickness **4.5%** of ring radius (2% vanishes at
+progress-indicator size, 8% reads as jewelry), hero attitude = **ring tipped 60° from
+horizontal, swung −25° off the camera axis, cube corner-forward** (three faces reading; the
+band crosses behind the cube's top corner and in front at the bottom, which is what makes
+the counter-rotation legible). Rig and studies: `blender/blockout.py`, renders in
+`blender/renders/blockout/`, reference still `hero-ref.png`.
+
+**Sections 1 and 6 are designed against test renders, never against a placeholder box** —
+the hero's layout hangs off the real silhouette. Everything else on this page — sections 2,
+3, 4, 5, 7, 8, 9 and the footer — is designable now and does not touch 3D.
 
 ## Still open
 
-1. **Two projects side by side or one per viewport** in section 5. Depends on how strong the project images are.
-2. **Does the pinned demonstration come before or after the work.** Currently after, so proof precedes demonstration. The reverse is defensible if you want to lead with capability. *(Downstream of the 3D conversation — section 6 is the pinned one.)*
-3. **The two link exceptions** flagged in sections 5 and 8: clickable project tiles, and a `/pricing` link.
+1. **Does the pinned demonstration come before or after the work.** Currently after, so proof precedes demonstration. The reverse is defensible if you want to lead with capability.
+2. **The cube's interior** — what the clarity scrub reveals. Decided in the blockout phase.

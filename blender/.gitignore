@@ -1,0 +1,10 @@
+# Render output is regenerable from blockout.py — only decision artifacts
+# (contact sheets, hero-ref) are committed, via git add -f.
+renders/
+
+# Third-party (github.com/ahujasid/blender-mcp), re-downloadable.
+blender_mcp_addon.py
+
+# Blender save files and backups; the scripts are the source of truth.
+*.blend
+*.blend1
