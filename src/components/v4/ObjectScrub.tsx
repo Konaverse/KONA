@@ -63,30 +63,45 @@ export default function ObjectScrub({ frames, lines }: ObjectScrubProps) {
 
     /* Decode everything up front. On the homepage this preload belongs to
      * section 5's dwell (§6: "sequence preloads during section 5"); the
-     * test page just pays it on mount and reports how much it weighed. */
+     * test page just pays it on mount and reports how much it weighed.
+     *
+     * Into ImageBitmaps, not bare HTMLImageElements: img.decode() warms a
+     * cache the browser is free to evict, and 120 frames of raw pixels
+     * (~200MB at 640px) overflow it — so mid-scrub drawImage was paying a
+     * synchronous WebP re-decode per frame. A bitmap's pixels stay resident
+     * for its lifetime; the draw is a blit. */
     let disposed = false
-    const images = frames.map((src) => {
-      const img = new Image()
-      img.src = src
-      return img
-    })
+    const bitmaps: (ImageBitmap | null)[] = frames.map(() => null)
     /* is-live goes on via classList, NEVER via state: a state flip would
      * re-render, and React rewriting className from JSX is what silently
      * strips the imperative is-scrub class — the pin dies with it. One
      * owner for the element's classes, same discipline as ProjectSheets. */
-    Promise.all(images.map((img) => img.decode().catch(() => {}))).then(() => {
+    Promise.all(
+      frames.map((src, i) => {
+        const img = new Image()
+        img.src = src
+        return img
+          .decode()
+          .then(() => createImageBitmap(img))
+          .then((bmp) => {
+            if (disposed) bmp.close()
+            else bitmaps[i] = bmp
+          })
+          .catch(() => {})
+      }),
+    ).then(() => {
       if (!disposed) root.classList.add('is-live')
     })
 
     let drawn = -1
     const draw = (index: number) => {
-      const img = images[index]
-      if (!ctx || !img.naturalWidth) return
+      const bmp = bitmaps[index]
+      if (!ctx || !bmp) return
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
       const size = Math.round(canvas.clientWidth * dpr)
       if (canvas.width !== size) canvas.width = canvas.height = size
       ctx.clearRect(0, 0, size, size)
-      ctx.drawImage(img, 0, 0, size, size)
+      ctx.drawImage(bmp, 0, 0, size, size)
       drawn = index
     }
 
@@ -96,7 +111,7 @@ export default function ObjectScrub({ frames, lines }: ObjectScrubProps) {
       if (span <= 0) return
       const p = gsap.utils.clamp(0, 1, -rect.top / span)
 
-      const index = Math.round(p * (images.length - 1))
+      const index = Math.round(p * (bitmaps.length - 1))
       if (index !== drawn) draw(index)
 
       for (let i = 0; i < lineEls.length; i++) {
@@ -110,6 +125,7 @@ export default function ObjectScrub({ frames, lines }: ObjectScrubProps) {
 
     return () => {
       disposed = true
+      bitmaps.forEach((bmp) => bmp?.close())
       gsap.ticker.remove(update)
       root.classList.remove('is-scrub', 'is-live')
       root.style.height = ''

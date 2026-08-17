@@ -25,6 +25,18 @@ Every section has five parts:
 
 These apply everywhere and are decided once.
 
+**Rendering — LOCKED (SEO plan D5, 2026-08-17).** Every page ships SSR/SSG with all meaningful
+text, headings, links and JSON-LD in the raw HTML response. No major AI crawler except
+Google's Gemini executes JavaScript — a client-rendered page can rank on Google and be
+invisible to ChatGPT, Claude and Perplexity. **Acceptance test per page: view-source shows
+all copy, and the page reads fully with JavaScript disabled.** Consequences for this page:
+the reveal system may hide with CSS but never withhold from the DOM (it doesn't — and the
+`<noscript>` fallback in the (v4) layout is now load-bearing for revenue, not politeness);
+the page-turn's static fallback is the crawler's version of section 5; motion, WebGL and
+scroll sequences are an enhancement layer on top of real HTML, never the content itself.
+Every fact below marked [SEO] traces to `konaverse-seo-master-plan.md` — a plan, not gospel;
+it updates after Phase 0 research.
+
 **Scroll.** Smooth scroll with light inertia. Deceleration, never a hard stop.
 
 **Section rhythm.** `--section-y` on every break, held exactly. With no labels announcing sections, uneven spacing reads as a mistake rather than a variation.
@@ -35,9 +47,9 @@ These apply everywhere and are decided once.
 
 **Trigger point.** Reveals fire when the element is 15% into the viewport, not at the edge. Firing at the edge means the animation is over before it is properly visible.
 
-**Cursor lens.** Present site-wide at `--lens-scale` 1.06. Strengthens over the hero and project tiles, weakens over body copy where it would hurt reading.
+**Cursor.** ~~The lens.~~ **The fluid** (amended 2026-08-17 — the refracting lens was built and removed; two pointer-followers was one too many, and its backdrop-filter layer re-rasterised the fluid out of existence). The WebGL fluid trail is site-wide and augments the native cursor, never replaces it. Whether it should calm over body copy, the way this line once asked of the lens, is checklist 3.9's open question.
 
-**Progress indicator.** A miniature of the 3D object, near the burger, rotating in proportion to scroll position. Where you are in the page is expressed as where the object has turned to. This carries the wayfinding that the removed labels used to provide, so it is functional rather than ornamental.
+**Progress indicator.** **The ring** — the object's counter-rotating band (see *The object*, below) — near the burger, turned in proportion to scroll position. Where you are in the page is expressed as where the ring has turned to. This carries the wayfinding that the removed labels used to provide, so it is functional rather than ornamental. Under the pre-rendered pipeline it is a small scrubbed frame sequence, not a live model — one of the cheapest renders in the set.
 
 **Nav. LOCKED.** Burger, with contact remaining visible outside it. Someone who wants to hire you should never have to open a menu to find out how. There is no horizontal nav in this system — the design system's earlier `Work · Studio · Contact` bar is removed. The menu opens as an **aperture**: one clip-path circle grown from the button's own centre, measured at click time, panel contents rising while the circle is still travelling, close reversing the same timeline faster so the menu is swallowed back into the button.
 
@@ -103,7 +115,7 @@ Four elements. On white, that reads as expensive. Seven reads as busy.
 
 **SEO.** The `h1` lives here, as real DOM text, containing the primary term. Never inside the canvas. [SEO, expanded 2026-08-17:] the pre-rendered pipeline makes this section CWV-safe by construction — the LCP element is the headline or the object's poster frame (a real image, painting before any JS), and the object's box is **reserved at its calculable envelope** (explicit dimensions / aspect-ratio) so nothing shifts when media arrives. LCP < 2.5s, CLS < 0.1 are the thresholds, measured on field data.
 
-**Entrance.** No entrance. It is already there on load. The object holds a slow idle rotation, one full turn in roughly 10 seconds (amended 2026-08-17 off the motion test — 40s and a 20s retry both read too slow to the user; visible life outranks stealth), the ring counter-spinning about its own axis while its plane holds the decided attitude.
+**Entrance.** No entrance. It is already there on load. The object holds a constant idle rotation, one full turn per **5 seconds** (amended twice: 40s and a 20s retry read too slow, 2026-08-17; then the user picked 5s over 10s off the worn-ring previews the same evening — visible life outranks stealth), the ring counter-spinning about its own axis while its plane holds the decided attitude. The speed is an encode-time choice: the loop renders 120 frames per turn regardless, and the playback rate fed to the 60fps interpolation sets the period.
 
 **Handoff.** On scroll the object drifts up and back, losing scale and gaining blur, while the headline layers separate slightly at different rates. The hero does not slide away, it recedes.
 
@@ -118,6 +130,8 @@ Four elements. On white, that reads as expensive. Seven reads as busy.
 **On screen.** One large statement in `h1` or `display`, using the 200 to 600 weight jump for emphasis on two or three words. One paragraph beneath at `body`, capped at 68 characters per line. Nothing else on the screen at all.
 
 Content: what Konaverse does and who for. This is where "we build a story through a website" earns its place, and where the positioning gets stated once and never repeated.
+
+[SEO, 2026-08-17:] this section carries the **direct-answer duty** for the whole homepage — 44.2% of AI citations come from the first 30% of a page, so the claim plus its paragraph must work as a liftable, self-contained statement of what Konaverse is, does, and for whom. Written for a human first; extractable by construction, not by keyword-stuffing.
 
 **Entrance.** Headline resolves first, one continuous block rather than word by word. Paragraph follows 80ms later. Deliberately restrained: the emptiness around it is the effect.
 
@@ -171,7 +185,33 @@ A list beats cards here for two reasons. Cards are the most template-like patter
 
 **Job.** Proof. This is the section that actually sells.
 
-**On screen.** Three projects, generously spaced, one per viewport or two side by side with a large offset. Each: image, project name at `h3`, one line describing the work. No categories, no filters, no tags.
+**Mechanic — DECIDED (2026-08-17): the page-turn, scrubbed.** The section is pinned for
+`(N−1) × 120vh` and scroll drives the page transition's own grammar: each project is a
+full-bleed sheet; the next rises tilted +2.2° behind a seam shadow and buries the current
+one, which lifts 31%, drifts 5% left, swells to 1.05 and dims to 0.18 progressively —
+identical numbers to `PageTransition.tsx`, mapped linearly to scroll (the hand supplies the
+easing; Lenis supplies the smoothing). **No dwell — user call, 2026-08-17:** the first cut
+held each sheet still for 40% of its segment and it read as a pin; now the turns run
+back-to-back as one continuous motion, each sheet whole on screen for exactly the instant
+between arriving and being buried. Sheets are **bled 6% past every viewport edge** so the
+tilt, drift and swell never expose bare ground, which also keeps a waiting sheet's tilted
+corner below the fold until its turn. **The mini window** (added 2026-08-17, "keep the
+sheets AND the giats mechanic"): a pinned window right-of-centre whose image layers never
+move — each layer is clip-path'd per tick to the region below the incoming sheet's REAL
+top edge (same math, tilt included), so the only thing that ever happens inside it is the
+edge wiping through, exactly the stationary-image/moving-clip trick the giats stack is
+built on. When no edge is crossing, the window is still; its outgoing layer takes the same
+0.18 dim on the same clock. Scrub-only, hidden under 900px and in the static fallback.
+Clicking a sheet hands off into the real transition mid-language —
+the section teaches the navigation. This supersedes the earlier "one per viewport or two
+side by side" and replaces the ported giats stacking-parallax outright: that was someone
+else's move, and the user asked for a continuous mechanic of our own. Built as
+`src/components/v4/ProjectSheets.tsx`; at rest (no JS, reduced motion) it degrades to a
+plain vertical sequence of full-height projects.
+
+**On screen.** Three projects, one full-bleed sheet each. Each: image, project name at
+display scale (amended from `h3` — a full-bleed sheet with a timid caption reads as
+apology), one line describing the work, year. No categories, no filters, no tags.
 
 **Links — DECIDED. Each tile is a link to its own case study**, plus one link to `/projects`. Four links out of this section.
 
@@ -183,9 +223,12 @@ An image with a project name under it reads as a link whether or not it is one, 
 
 **Entrance.** Image reveals from the refraction state. Text 80ms behind it. Project images are the heaviest assets above the fold-line of most sessions, so these lazy load with a low-quality placeholder in mist.
 
-**Hover.** Tile lifts on `--lift-3`. The cursor lens strengthens over the image.
+**Hover.** ~~Tile lifts on `--lift-3`. The cursor lens strengthens over the image.~~ The
+lens is gone and a full-bleed sheet has nowhere to lift to. The hover is the arrow-link's
+language: a hairline draws toward ice under the project name (amended 2026-08-17).
 
-**Handoff.** The last project holds, then the whole section darkens very slightly toward mist as section 6 pins. That tonal shift is the only warning that something is about to happen.
+**Handoff.** The last sheet holds through its dwell, then the pin releases and the page
+scrolls on. The earlier mist-darkening handoff belongs to section 6's design pass.
 
 **3D.** Absent. Deliberately. The work has to stand on its own or it is not proof.
 
@@ -196,6 +239,8 @@ An image with a project name under it reads as a link whether or not it is one, 
 **Job.** Prove the capability instead of describing it. This section justifies the top tier without a price being mentioned.
 
 **On screen.** The object returns and **pins**. Scroll scrubs its rotation and its material state, from opaque to transparent, or frosted to clear. Two or three short lines of text appear and dissolve at fixed points in the scrub, positioned around the object, never overlapping it.
+
+[SEO, 2026-08-17:] those lines are **real DOM text, present in the raw HTML**, shown stacked and static in the no-JS / reduced-motion fallback alongside the single still. The scrub choreographs when they're *seen*; it never decides whether they *exist*.
 
 **Length.** Roughly 250 to 300 viewport-height percent of pinned scroll. Shorter and it feels like a gimmick. Longer and people leave.
 
@@ -228,6 +273,8 @@ An image with a project name under it reads as a link whether or not it is one, 
 **Job.** Answer the question before it is asked, and qualify the wrong leads out.
 
 **On screen.** Three tiers as ranges, not a feature comparison table. Name, starting figure, one line on what it suits. **One link to `/pricing` — DECIDED**, for the full picture.
+
+[SEO, 2026-08-17:] the figures are **real numbers in real DOM text** — "from €4,000" is citable by an AI engine; "contact us for pricing" is invisible to one. Cited pages carry more discrete facts than uncited ones, and this section plus section 2 are the homepage's two fact-carriers.
 
 Pricing is one of the two things people already ask on WhatsApp (architecture §5), so routing them to the footer for it was a real cost for no real gain. One deliberate line, using the arrow link.
 
@@ -308,11 +355,21 @@ decide whether it reads as an instrument or a logo.
 
 **Blockout session 1 decided (2026-08-17), off two contact sheets:** cube-to-ring ratio
 **1.35** (ring major radius / cube tumble-sphere radius; 1.15 read as an accessory stuck on
-the cube, 1.60 as an orbit logo), band thickness **4.5%** of ring radius (2% vanishes at
-progress-indicator size, 8% reads as jewelry), hero attitude = **ring tipped 60° from
-horizontal, swung −25° off the camera axis, cube corner-forward** (three faces reading; the
-band crosses behind the cube's top corner and in front at the bottom, which is what makes
-the counter-rotation legible), interior = the combo above (contact-sheet-3). Rig and
+the cube, 1.60 as an orbit logo), band thickness 4.5% of ring radius (2% vanishes at
+progress-indicator size, 8% reads as jewelry), hero attitude v1 = ring tipped 60° from
+horizontal, swung −25° off the camera axis, cube corner-forward (three faces reading; the
+band crossed behind the cube's top corner and in front at the bottom),
+interior = the combo above (contact-sheet-3).
+
+**Re-decided (user, 2026-08-17 evening, off the ringpose sheet — `rp_t072_p100`):** band
+thickness up to **7.2%**, hero attitude v2 = **ring dead face-on to the camera** (euler
+74°, 0°, 28° against the default cam az 28 / el 16), cube corner-forward unchanged. The
+face-on badge read was bracketed on the sheet deliberately and the user chose the badge;
+the v1 interlock (band crossing in front/behind the cube) is retired with it. Consequence:
+face-on, the counter-spin has no crossing band or edge glint to read from, so the satin
+gains **machining wear** (`satin_worn` in blockout.py) — rotationally asymmetric marks in
+object space that travel with the metal and make the spin visible; the idle also runs at
+constant angular velocity (the keyframe-ease bug is fixed — see `linear_keys`). Rig and
 studies: `blender/blockout.py`, renders in `blender/renders/blockout/`, reference still
 `hero-ref.png` (frosted, §1) and `clear-ref.png` (clear, §6's far end). **The clear state
 renders as dark glass** — transmission rays see the HDRI, not the page white. First flagged

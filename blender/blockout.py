@@ -59,15 +59,21 @@ THICKS = [0.020, 0.045, 0.080]
 # Ring DECIDED (user, 2026-08-17, off contact-sheet-7): satin aluminium —
 # legible on white AND against the dark jewel; dark steel read heavy,
 # white ceramic vanished at progress-indicator size.
-DECIDED = {"ratio": 1.35, "thick": 0.045, "interior": "combo",
+# Band and attitude re-DECIDED (user, 2026-08-17 evening, off the ringpose
+# sheet rp_t072_p100): band up 4.5% -> 7.2%, ring DEAD FACE-ON. The badge
+# read was shown bracketed on the sheet and the user chose the badge.
+DECIDED = {"ratio": 1.35, "thick": 0.072, "interior": "combo",
            "frost": "hybrid", "world": "bands", "clear_spread": 0.02,
-           "ring": "satin"}
+           # satin_worn: face-on + the user's visible-counter-spin ask NEED
+           # rotational asymmetry — a clean annulus spins invisibly.
+           "ring": "satin_worn"}
 
 POSE = {
-    # DECIDED hero attitude (user, 2026-08-17, contact-sheet-2). Ring plane
-    # ~0.64 dot to camera: an open ellipse that still encircles the cube.
-    # Face-on reads as a logo/badge; edge-on reads as a hula hoop.
-    "ring_euler": (math.radians(60), 0.0, math.radians(-25)),
+    # DECIDED hero attitude v2 (user, 2026-08-17 evening, ringpose sheet):
+    # face-on against the default camera (cam_az 28, cam_el 16) — derived as
+    # cam_dir.to_track_quat("Z", "Y"); recompute if the camera ever moves.
+    # v1 was the interlocked open ellipse (60, 0, -25), retired with the pick.
+    "ring_euler": (math.radians(74), 0.0, math.radians(28)),
     # Cube corner-forward so three faces read.
     "cube_euler": (math.radians(22), math.radians(-14), math.radians(32)),
 }
@@ -267,6 +273,38 @@ def ring_variant(kind):
         input_socket(bsdf, "Metallic").default_value = 0.8
         input_socket(bsdf, "Roughness").default_value = 0.5
         input_socket(bsdf, "Anisotropic").default_value = 0.6
+    elif kind == "satin_worn":
+        # The satin plus ROTATIONAL ASYMMETRY. A geometrically perfect
+        # annulus spinning about its own axis is invisible — glints anchor
+        # to the environment, not the metal — and face-on (POSE v2) there is
+        # no band edge to glint at all. Machining wear in Object coords
+        # travels with the mesh, so the counter-spin finally shows.
+        input_socket(bsdf, "Base Color").default_value = (0.94, 0.95, 0.96, 1.0)
+        input_socket(bsdf, "Metallic").default_value = 0.8
+        input_socket(bsdf, "Roughness").default_value = 0.5
+        input_socket(bsdf, "Anisotropic").default_value = 0.6
+        nt = mat.node_tree
+        coord = nt.nodes.new("ShaderNodeTexCoord")
+        noise = nt.nodes.new("ShaderNodeTexNoise")
+        noise.inputs["Scale"].default_value = 3.5
+        noise.inputs["Detail"].default_value = 5.0
+        noise.inputs["Roughness"].default_value = 0.55
+        ramp = nt.nodes.new("ShaderNodeValToRGB")
+        ramp.color_ramp.elements[0].position = 0.40
+        ramp.color_ramp.elements[1].position = 0.60
+        span = nt.nodes.new("ShaderNodeMapRange")
+        span.inputs["To Min"].default_value = 0.30
+        span.inputs["To Max"].default_value = 0.72
+        tint = nt.nodes.new("ShaderNodeMix")
+        tint.data_type = "RGBA"
+        tint.inputs["A"].default_value = (0.94, 0.95, 0.96, 1.0)
+        tint.inputs["B"].default_value = (0.79, 0.81, 0.835, 1.0)
+        nt.links.new(coord.outputs["Object"], noise.inputs["Vector"])
+        nt.links.new(noise.outputs["Fac"], ramp.inputs["Fac"])
+        nt.links.new(ramp.outputs["Color"], span.inputs["Value"])
+        nt.links.new(span.outputs["Result"], input_socket(bsdf, "Roughness"))
+        nt.links.new(ramp.outputs["Color"], tint.inputs["Factor"])
+        nt.links.new(tint.outputs["Result"], input_socket(bsdf, "Base Color"))
     elif kind == "ceramic":
         # glazed white ceramic — the quietest option on Whiteout
         input_socket(bsdf, "Base Color").default_value = (0.95, 0.96, 0.97, 1.0)
@@ -593,16 +631,26 @@ def build_scene(ratio, thick, ring_euler=None, cube_euler=None,
 
 
 def linear_keys(insert):
-    """Run `insert` (a callable doing keyframe_insert calls) with new keys
-    forced LINEAR. Blender 5.x slotted actions removed Action.fcurves —
-    set the new-key interpolation preference instead of editing curves."""
-    prefs = bpy.context.preferences.edit
-    old_interp = prefs.keyframe_new_interpolation_type
-    prefs.keyframe_new_interpolation_type = "LINEAR"
-    try:
-        insert()
-    finally:
-        prefs.keyframe_new_interpolation_type = old_interp
+    """Run `insert` (a callable doing keyframe_insert calls), then force every
+    key in every action LINEAR. The new-key interpolation PREFERENCE does not
+    reach scripted keyframe_insert() in Blender 5.x — keys land BEZIER
+    regardless (verified 2026-08-17; the eased idle loop shipped that way), so
+    walk the slotted actions and set the keys directly. Everything this rig
+    animates is meant linear: the idle is constant-velocity by definition and
+    the scrub's easing belongs to scroll, never the frames."""
+    insert()
+    for act in bpy.data.actions:
+        if hasattr(act, "layers"):  # 5.x slotted actions
+            for layer in act.layers:
+                for strip in layer.strips:
+                    for cb in strip.channelbags:
+                        for fc in cb.fcurves:
+                            for kp in fc.keyframe_points:
+                                kp.interpolation = "LINEAR"
+        else:  # pre-slot fallback
+            for fc in act.fcurves:
+                for kp in fc.keyframe_points:
+                    kp.interpolation = "LINEAR"
 
 
 def animate_counter_rotation(scene, frames):
@@ -630,7 +678,9 @@ def animate_counter_rotation(scene, frames):
 
 def build_idle_animation(scene, seconds=10, fps=12):
     """The hero idle v3: one full counter-rotation turn per `seconds`.
-    10s/turn DECIDED (user; 40s and 20s both read too slow); the tick
+    5s/turn DECIDED (user, off the worn-ring previews; 40s, 20s and 10s all
+    read too slow before it — speed is set at ENCODE time, the render is
+    always 120 frames per turn); the tick
     marker was removed (user) — the spin reads via the satin anisotropy
     and edge glints only."""
     frames = seconds * fps
@@ -721,6 +771,56 @@ def main():
         render_study("test", ratio=1.35, thick=0.045, samples=48, res=512)
         return
 
+    if "--checkanim" in argv:
+        # No render: build the idle animation and print every key's
+        # interpolation — the linear_keys regression check.
+        scene = build_scene(DECIDED["ratio"], DECIDED["thick"])
+        build_idle_animation(scene)
+        for act in bpy.data.actions:
+            for layer in act.layers:
+                for strip in layer.strips:
+                    for cb in strip.channelbags:
+                        for fc in cb.fcurves:
+                            interps = sorted({kp.interpolation
+                                              for kp in fc.keyframe_points})
+                            print(f"[blockout] {act.name} "
+                                  f"{fc.data_path}[{fc.array_index}]: {interps}")
+        return
+
+    if "--wear" in argv:
+        # A/B the spin-legibility wear against plain satin at the decided
+        # (face-on, 7.2% band) config — the still judges the LOOK; whether
+        # the spin reads is --motion worn's question.
+        for kind in ("satin", "satin_worn"):
+            render_study(f"w_{kind}", DECIDED["ratio"], DECIDED["thick"],
+                         interior=DECIDED["interior"],
+                         world_kind=DECIDED["world"],
+                         clear_spread=DECIDED["clear_spread"], ring_kind=kind)
+        return
+
+    if "--ringpose" in argv:
+        # User asks (2026-08-17): thicker band + ring swung toward the camera
+        # ("portrait"). Spectrum from the decided attitude (t=0) to dead
+        # face-on against the default camera (t=100) — face-on is the
+        # documented badge risk, so the sheet brackets it rather than jumping
+        # there. Clear state + satin ring: the ambient loop's own form.
+        az, el = math.radians(28), math.radians(16)
+        cam_dir = mathutils.Vector((math.cos(el) * math.sin(az),
+                                    -math.cos(el) * math.cos(az),
+                                    math.sin(el)))
+        q0 = mathutils.Euler(POSE["ring_euler"], "XYZ").to_quaternion()
+        q1 = cam_dir.to_track_quat("Z", "Y")
+        for thick in (0.045, 0.058, 0.072):
+            for t in (0.0, 0.4, 0.7, 1.0):
+                e = q0.slerp(q1, t).to_euler("XYZ")
+                render_study(f"rp_t{int(thick * 1000):03d}_p{int(t * 100):03d}",
+                             DECIDED["ratio"], thick, ring_euler=tuple(e),
+                             interior=DECIDED["interior"],
+                             world_kind=DECIDED["world"],
+                             clear_spread=DECIDED["clear_spread"],
+                             ring_kind=DECIDED["ring"])
+        return
+
     if "--interior" in argv:
         # Sheet 3: interior concepts, each at BOTH scrub endpoints — an
         # interior that only works in one state fails the §6 reveal.
@@ -748,7 +848,8 @@ def main():
         scene = build_scene(DECIDED["ratio"], DECIDED["thick"],
                             interior=DECIDED["interior"],
                             world_kind=DECIDED["world"],
-                            ring_kind=DECIDED["ring"])
+                            ring_kind="satin_worn" if "worn" in argv
+                            else DECIDED["ring"])
         # EEVEE shows rough transmission as black glass, so the cube runs a
         # white proxy here — this test judges timing, not material.
         proxy = bpy.data.materials.new("frost-motion-proxy")
@@ -787,7 +888,7 @@ def main():
 
     if "--idle" in argv:
         # The ambient presence, real materials this time (--motion was an
-        # EEVEE timing proxy): the CLEAR object at the decided 10s/turn,
+        # EEVEE timing proxy): the CLEAR object at the decided 5s/turn,
         # path-traced, for the loop a page actually plays. Frame 121 == 1,
         # so rendering 1..120 loops seamlessly. "--idle glass" swaps the
         # satin ring for the clear-family one; a digit resumes.
