@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Anton, Cormorant_Garamond, DM_Sans, Geist_Mono, Inter, Manrope } from 'next/font/google'
+import Script from 'next/script'
 import JsonLd from '@/components/JsonLd'
 import CookieConsent from '@/components/layout/CookieConsent'
 import GoogleAnalytics from '@/components/layout/GoogleAnalytics'
@@ -69,6 +70,8 @@ export const metadata: Metadata = {
   verification: {
     other: {
       'msvalidate.01': '914944C03F8EFCB0A516B441FE2CFADA',
+      'ahrefs-site-verification':
+        'dc2e708ac811df6996917c63938f9aad1cfffd0931992f5de686de37f17d5c60',
     },
   },
   robots: {
@@ -150,6 +153,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             consent — stays here. */}
         {children}
         <GoogleAnalytics GA_MEASUREMENT_ID="G-2PEZX44FP9" />
+        {/* Ahrefs Web Analytics — cookieless, so it sits outside the consent gate */}
+        <Script
+          src="https://analytics.ahrefs.com/analytics.js"
+          data-key="xEFczInRaLOwii40X9YNoA"
+          strategy="afterInteractive"
+        />
         <CookieConsent />
       </body>
     </html>
