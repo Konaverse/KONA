@@ -3,6 +3,7 @@ import Reveal from '@/components/v4/Reveal'
 import Button from '@/components/v4/Button'
 import ArrowLink from '@/components/v4/ArrowLink'
 import ProjectCard from '@/components/v4/ProjectCard'
+import ProjectSheets from '@/components/v4/ProjectSheets'
 import './work.css'
 
 /**
@@ -63,6 +64,22 @@ export default function WorkPage() {
           </div>
         </section>
 
+        <hr className="k-rule" />
+      </div>
+
+      {/* Homepage §5's page-turn, living here until the v4 homepage exists —
+          full bleed, so it sits OUTSIDE .k-page's gutter. */}
+      {/* Stand-in artwork from the legacy asset pool until B1 lands —
+          the mechanic needs real pixels to be judged in full. */}
+      <ProjectSheets
+        projects={[
+          { title: 'Meridian', line: 'A brand and site built as one continuous story.', year: '2026', href: '#', image: '/General/aesth_skyscrapers.png' },
+          { title: 'Atlas Freight', line: 'A logistics platform that reads like a dashboard should.', year: '2025', href: '#', image: '/General/aesth_office.png' },
+          { title: 'Nord Studio', line: 'One page, one argument, no scroll wasted.', year: '2025', href: '#', image: '/General/staircase.jpeg' },
+        ]}
+      />
+
+      <div className="k-page">
         <hr className="k-rule" />
 
         <section className="wk-section">

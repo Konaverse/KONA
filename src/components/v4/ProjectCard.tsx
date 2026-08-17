@@ -59,26 +59,35 @@ export default function ProjectCard({
       gsap.set(el, { opacity: 0, transformPerspective: 900 })
       gsap.set(media, { transformOrigin: '0% 0%' })
 
+      /* RETIMED after being watched on film (2026-08-16, the same sitting
+       * that retimed the page transition). As authored, opacity crawled up
+       * over 1.4s on a slow ease, so the entire squash-and-stretch played
+       * below ~20% opacity — the signature move performed invisibly, and the
+       * tiles read as "images failed to load" while scrolling past. Same
+       * verdict as the transition: get visible FAST, do the character while
+       * visible, be done in about a second. */
       const tl = gsap.timeline({
         paused: true,
         defaults: { ease: EASE.glass },
       })
 
-      // 1 — pulled from the top-left corner: it arrives long, thin and skewed,
-      //     as though still being drawn out of somewhere.
+      // 1 — visible almost immediately: the card must be OPAQUE while it is
+      //     still long, thin and skewed, or the deformation never reads.
+      tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: 'power2.out' }, 0)
       tl.fromTo(
         el,
-        { opacity: 0, y: 64, scaleX: 0.82, scaleY: 1.16, skewY: 4, rotate: -1.2 },
-        { opacity: 1, y: 0, duration: DUR.cinema, ease: EASE.drift },
+        { y: 64, scaleX: 0.82, scaleY: 1.16, skewY: 4, rotate: -1.2 },
+        { y: 0, duration: DUR.slow },
         0,
       )
       // 2 — the stretch releases and the shape recovers. Overshoot lives here
       //     as a SECOND resolving tween rather than an elastic ease, so the
       //     rectangle gets its wobble without a banned curve.
-      tl.to(el, { scaleX: 1.04, scaleY: 0.95, skewY: -1.4, rotate: 0.3, duration: DUR.slow * 0.55, ease: EASE.glass }, DUR.cinema * 0.42)
-      tl.to(el, { scaleX: 1, scaleY: 1, skewY: 0, rotate: 0, duration: DUR.slow, ease: EASE.settle }, DUR.cinema * 0.72)
-      // 3 — the caption arrives after the shape is solid, never during
-      tl.fromTo(body, { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: DUR.slow }, DUR.cinema * 0.8)
+      tl.to(el, { scaleX: 1.04, scaleY: 0.95, skewY: -1.4, rotate: 0.3, duration: DUR.base }, 0.18)
+      tl.to(el, { scaleX: 1, scaleY: 1, skewY: 0, rotate: 0, duration: DUR.slow * 0.55, ease: EASE.settle }, 0.18 + DUR.base * 0.8)
+      // 3 — the caption arrives WITH the settle, not a second after it: a
+      //     naked rectangle holding the stage alone reads as broken.
+      tl.fromTo(body, { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: DUR.slow * 0.55 }, 0.45)
 
       const io = new IntersectionObserver(
         (entries) => {

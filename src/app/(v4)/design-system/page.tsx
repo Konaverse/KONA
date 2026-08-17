@@ -164,12 +164,12 @@ export default function DesignSystemPage() {
         >
           <div className="ds-two">
             <div className="ds-demo">
-              <p className="ds-label">Button · still at rest, alive on approach</p>
+              <p className="ds-label">Button · still at rest, the edge answers where you arrived</p>
               <div className="ds-stage">
                 <Button href="#" hoverLabel="Let&rsquo;s talk">Start a project</Button>
                 <Button href="#" ghost hoverLabel="Case studies">See the work</Button>
               </div>
-              <p className="ds-note">Move the cursor <em>near</em> one without touching it. No perpetual animation — that would contradict the system&rsquo;s own &ldquo;nothing moves on its own&rdquo; rule and spend the accent budget continuously. Proximity instead: it leans toward an approaching cursor, alive only when a human is near. On hover the fill grows up from the bottom rule while the label rolls letter by letter and the second label rolls up behind it — same direction, same curve, so it lands as one motion.</p>
+              <p className="ds-note">Nothing moves until you cross the edge — no perpetual animation, no leaning at a nearby cursor. Then everything answers the crossing, from the exact point where you crossed: outside the border, two heads trace the perimeter in opposite directions and meet at the far side; inside it, a disc of page colour floods out and inverts the button, each letter flipping as the edge passes under it; and the label rolls to its second line. Three landings — label, fill, line — one origin, so it reads as one response. Enter from a different side and the whole gesture starts there instead. The ghost floods the other way, to ice-deep.</p>
             </div>
 
             <div className="ds-demo">

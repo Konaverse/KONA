@@ -358,30 +358,42 @@ html:has(.k-root)::-webkit-scrollbar {
    ice-deep pill — which is the point. The border is not decoration,
    it is the GAP.
 
-   HOVER is the drawn edge. Two heads leave the exact point where the
-   pointer crossed, travel the perimeter in opposite directions and
-   meet at the far side. The line is drawn OUTSIDE the border box, so
-   the white band stays clear underneath and both stay readable — the
-   line comes out of the border rather than replacing it. The fill
-   does not change. Geometry and dash maths are in v4/Button.tsx.
+   HOVER is the drawn edge AND the flood, both leaving the exact point
+   where the pointer crossed (user-directed, 2026-08-17). Outside the
+   border, two heads travel the perimeter in opposite directions and
+   meet at the far side; inside it, a disc of page colour grows from
+   the same point and inverts the button — fill to white, letters
+   flipping to ice-deep as the disc's edge passes under them. One
+   crossing, two expressions, one origin. Geometry, dash maths and the
+   disc's radius tween are in v4/Button.tsx.
 
    Duration is CONSTANT SPEED, derived from the perimeter, so a wide
    CTA's line does not travel faster than a narrow one's. It lives in
    Button.tsx (SPEED, ~710ms on a typical ~440px perimeter) and no
    longer crosses into CSS — the roll is on --d-base and lands first,
-   so the two do not need to share a number.
+   the flood second (FLOOD, 0.8 of the draw), the line closes last.
 
    The line is --ice-deep: 6.1:1 on the page, where --ice would be
-   2.52:1. With the fill no longer changing it is the only hover
-   feedback besides the roll, so it has to carry the state alone. */
+   2.52:1. Mid-flood it is the only thing separating an ever-whiter
+   fill from the white page, so it cannot get lighter than this. */
 .k-btn {
   --k-btn-bw: 3px;   /* the white band the line is held off by */
+  /* what the flood floods to, and what the letters flip to inside it.
+     The ghost variant inverts the pair. */
+  --k-btn-flood: var(--surface);
+  --k-btn-flood-ink: var(--ice-deep);
   position: relative;
   display: inline-flex; align-items: center; gap: var(--s-3);
   padding: var(--s-4) var(--s-6);
   border: var(--k-btn-bw) solid var(--white);
   border-radius: var(--r-full);
   background: var(--ice-deep); color: var(--white);
+  /* stop the fill at the padding edge — the same geometry the flood
+     covers. Left to paint under the border, the fill's antialiased rim
+     peeks past the flood as a faint dotted ice-deep ring once the disc
+     has flooded the button white (seen on film, 2026-08-17). Clipped,
+     any sub-pixel mismatch shows the page instead, which is white. */
+  background-clip: padding-box;
   font-family: var(--font-sans); font-size: var(--t-small);
   font-weight: var(--w-medium); line-height: 1;
   text-decoration: none; cursor: pointer;
@@ -418,10 +430,11 @@ html:has(.k-root)::-webkit-scrollbar {
 
 /* the roll. Both labels are absolutely positioned; an invisible sizer
    holds the width of whichever is longer so the button never resizes
-   mid-hover. The fill no longer changes, so both lines are simply the
-   button's own colour and this is a label swap again — nothing depends
-   on it for legibility any more. Per-letter stagger is 22ms: a ripple
-   across a short label, where 80ms would read as a wave.
+   mid-hover. The roll exists TWICE — once in the button's own colour,
+   once inside the flood in the flood ink — and the hover selectors
+   below match both copies, so they roll in lockstep and only the
+   colour differs across the disc's edge. Per-letter stagger is 22ms:
+   a ripple across a short label, where 80ms would read as a wave.
 
    CENTRED. The sizer is the LONGER of the two labels, so a flex-start
    line leaves the shorter one hanging off to the left — which is what
@@ -445,10 +458,39 @@ html:has(.k-root)::-webkit-scrollbar {
 }
 .k-btn__line--b span { transform: translateY(115%); }
 
+/* the flood. A disc of page colour grows from the pointer's entry
+   point — clip-path: circle() driven by three variables Button.tsx
+   tweens — and inverts the button from the inside. The layer is a
+   full copy of the roll on the flooded ground; the hard clip edge is
+   what flips each letter exactly as the disc passes under it.
+
+   It spans the PADDING BOX (inset: 0 on an absolute child resolves
+   against the padding edge), so the white border band stays out of
+   the flood and keeps holding the drawn line off whatever colour the
+   fill currently is.
+
+   MIRRORED LAYOUT: the padding and flex here repeat .k-btn's own, so
+   the copy of the roll lands exactly over the original. If .k-btn's
+   padding changes, this must change with it. */
+.k-btn__flood {
+  position: absolute; inset: 0;
+  display: flex; align-items: center;
+  padding: var(--s-4) var(--s-6);
+  border-radius: var(--r-full);
+  background: var(--k-btn-flood);
+  color: var(--k-btn-flood-ink);
+  pointer-events: none;
+  clip-path: circle(var(--k-btn-fr, 0px) at var(--k-btn-fx, 50%) var(--k-btn-fy, 100%));
+}
+
 /* button · ghost. No dark fill to hold the line off, so it keeps a
-   hairline border and takes the same drawn edge just outside it. */
+   hairline border and takes the same drawn edge just outside it.
+   Its flood runs the other way: ink-on-page at rest, white-on-ice-deep
+   under the disc — the same inversion, approached from the page side. */
 .k-btn-ghost {
   --k-btn-bw: var(--hair);
+  --k-btn-flood: var(--ice-deep);
+  --k-btn-flood-ink: var(--white);
   background: transparent; color: var(--ink); border-color: var(--hairline);
 }
 
@@ -472,9 +514,13 @@ html:has(.k-root)::-webkit-scrollbar {
   .k-btn__line--b { display: none; }
   .k-btn__edge path { stroke-dasharray: none !important; opacity: 0; }
   .k-btn:focus-visible .k-btn__edge path { opacity: 1; }
+  /* the flood appears rather than grows — JS never tweens the radius
+     in this mode, so the state shows by unclipping instead */
+  .k-btn:focus-visible .k-btn__flood { clip-path: none; }
 }
 @media (prefers-reduced-motion: reduce) and (hover: hover) {
   .k-btn:hover .k-btn__edge path { opacity: 1; }
+  .k-btn:hover .k-btn__flood { clip-path: none; }
 }
 
 /* ---------- arrow link ----------
@@ -633,6 +679,238 @@ html:has(.k-root)::-webkit-scrollbar {
 .k-card:hover .k-card__media::after,
 .k-card:focus-visible .k-card__media::after { transform: scaleX(1); }
 
+.k-card__body {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: var(--s-5); padding-top: var(--s-4);
+}
+.k-card__title {
+  margin: 0; font-size: var(--t-h3); font-weight: var(--w-medium);
+  letter-spacing: var(--ls-h3);
+}
+.k-card__meta { margin: 0; font-size: var(--t-small); color: var(--text-muted); }
+
+.k-card__placeholder {
+  background: radial-gradient(circle at 38% 32%, #FFF 0%, #F2F6F9 44%, #DFE9F1 74%, #C8D9E6 100%);
+}
+
+/* ============================================================
+   PROJECT SHEETS — the page-turn, scrubbed. Homepage §5.
+   ------------------------------------------------------------
+   The page transition's grammar driven by scroll: each project
+   is a full-bleed sheet; the next one rises tilted with a seam
+   shadow and buries the current one, which lifts, swells and
+   dims. Numbers live in ProjectSheets.tsx and are shared with
+   PageTransition.tsx — one grammar, two drivers.
+
+   AT REST this is a plain vertical sequence of full-height
+   projects — what no-JS and reduced-motion get. The driver adds
+   .is-scrub, which pins the stage and stacks the sheets.
+   ============================================================ */
+.k-sheets {
+  position: relative;
+}
+.k-sheets__stage {
+  position: relative;
+}
+.k-sheets.is-scrub .k-sheets__stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: clip; /* tilted, overscaled sheets poke past the stage */
+}
+.k-sheet {
+  position: relative;
+  display: block;
+  height: 100vh;
+  color: inherit;
+  text-decoration: none;
+  background: var(--surface);
+  will-change: transform;
+}
+.k-sheets.is-scrub .k-sheet {
+  position: absolute;
+  /* BLEED, not exact fit — user call (2026-08-17): a viewport-sized sheet
+     rotating 2.2° and drifting 5% exposes slivers of bare ground around
+     its edges mid-turn. 6% over every edge covers the worst combined
+     drift + rotation + swell, and it is also what keeps a parked sheet's
+     tilted corner from peeking above the fold before its turn (the corner
+     rise is ~41px; the extra travel from the taller box is ~54px). */
+  inset: -6%;
+  height: auto;
+}
+/* the caption compensates for the bleed so it still sits a house margin
+   off the REAL viewport edge, not the bled one */
+.k-sheets.is-scrub .k-sheet__cap {
+  left: calc(var(--s-8) + 6vw);
+  bottom: calc(var(--s-9) + 6vh);
+}
+/* The seam — identical trick to .k-pt__view.is-moving::before: a
+   shadow cast AHEAD of the sheet's top edge, opacity driven by a
+   variable the scrub timeline tweens over the first stretch of
+   each turn. Wider than the sheet because the edge is rotated. */
+.k-sheet::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: -10%;
+  right: -10%;
+  height: 140px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.13), rgba(0, 0, 0, 0));
+  pointer-events: none;
+  opacity: var(--seam, 0);
+}
+.k-sheet__media {
+  position: absolute;
+  inset: 0;
+  display: block;
+  /* B1: no assets yet. Three placeholder washes in the ice family,
+     different enough that a turn is legible on film. Replaced by
+     real posters/recordings the day assets land. */
+  background: radial-gradient(circle at 38% 32%, #FFF 0%, #F2F6F9 44%, #DFE9F1 74%, #C8D9E6 100%);
+}
+.k-sheet:nth-child(2) .k-sheet__media {
+  background: radial-gradient(circle at 62% 28%, #FFF 0%, #EEF3F6 40%, #D5E2EC 72%, #B9CFDF 100%);
+}
+.k-sheet:nth-child(3) .k-sheet__media {
+  background: radial-gradient(circle at 45% 65%, #FDFEFF 0%, #E9F0F5 42%, #CFDEE9 70%, #AAC5D8 100%);
+}
+.k-sheet__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* Real artwork is photographic and mostly dark, so the caption flips to
+   white over a soft scrim — the reference's own arrangement, and the dim
+   grammar was built for exactly this. The scrim is on the media, UNDER
+   the dim, so the darkening still reads as one move. */
+.k-sheet.has-image .k-sheet__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.12) 34%, rgba(0, 0, 0, 0) 55%);
+  pointer-events: none;
+}
+.k-sheet.has-image .k-sheet__name {
+  color: #fff;
+}
+.k-sheet.has-image .k-sheet__line,
+.k-sheet.has-image .k-sheet__year {
+  color: rgba(255, 255, 255, 0.72);
+}
+.k-sheet__dim {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+}
+.k-sheet__cap {
+  position: absolute;
+  left: var(--s-8);
+  bottom: var(--s-9);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  max-width: 72%;
+}
+.k-sheet__name {
+  position: relative;
+  align-self: flex-start;
+  font-weight: var(--w-medium);
+}
+/* the hover: the arrow-link's drawn hairline, under the name */
+.k-sheet__name::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--d-base) var(--e-settle);
+}
+.k-sheet:hover .k-sheet__name::after,
+.k-sheet:focus-visible .k-sheet__name::after {
+  transform: scaleX(1);
+}
+.k-sheet__line {
+  color: var(--text-muted);
+}
+.k-sheet__year {
+  color: var(--text-muted);
+}
+
+/* ---------- the mini window ----------
+   The giats stacking-parallax mechanic, studied and kept honest:
+   a pinned window on the right whose layers NEVER move. Each layer
+   is a stationary image clip-path'd to the region below the
+   incoming SHEET's top edge — computed per tick from the same
+   progress that drives the sheets — so the only thing that ever
+   changes inside the window is the real edge wiping through it,
+   tilt and all. When no edge is crossing, the window is still.
+   Scrub-only: it is an ornament of the pinned form and means
+   nothing in the static fallback. */
+.k-sheets__mini {
+  display: none;
+}
+.k-sheets.is-scrub .k-sheets__mini {
+  display: block;
+  position: absolute;
+  /* centred within the RIGHT HALF of the viewport (user call,
+     2026-08-17): its middle sits at 75% of the stage, which is
+     viewport-wide when pinned. Width began as 40% of that half
+     (20vw), then 28vw, now 36vw — stepped up twice the same day on
+     the user's "bigger". At 36vw it spans 57–93% of the viewport,
+     still clear of both the centre line and the right edge. The
+     floor keeps it from dwindling near the 900px cutoff. */
+  left: 75%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: max(320px, 36vw);
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--r-sm);
+  /* lifted off the artwork: a whisper of depth, not a card frame */
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+}
+.k-sheets__mini-item {
+  position: absolute;
+  inset: 0;
+  display: block;
+  /* the driver rewrites the polygon every tick during a turn */
+  will-change: clip-path;
+}
+.k-sheets__mini-img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.k-sheets__mini-wash-0 { background: radial-gradient(circle at 38% 32%, #FFF 0%, #F2F6F9 44%, #DFE9F1 74%, #C8D9E6 100%); }
+.k-sheets__mini-wash-1 { background: radial-gradient(circle at 62% 28%, #FFF 0%, #EEF3F6 40%, #D5E2EC 72%, #B9CFDF 100%); }
+.k-sheets__mini-wash-2 { background: radial-gradient(circle at 45% 65%, #FDFEFF 0%, #E9F0F5 42%, #CFDEE9 70%, #AAC5D8 100%); }
+.k-sheets__mini-shade {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+}
+/* no room for a second window on small screens */
+@media (max-width: 900px) {
+  .k-sheets.is-scrub .k-sheets__mini { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .k-card__video { display: none; }
+}
+
 /* ============================================================
    OBJECT SCRUB — homepage §6, the demonstration.
    ------------------------------------------------------------
@@ -713,22 +991,78 @@ html:has(.k-root)::-webkit-scrollbar {
   bottom: 26%;
 }
 
-.k-card__body {
-  display: flex; align-items: baseline; justify-content: space-between;
-  gap: var(--s-5); padding-top: var(--s-4);
+/* ---------- cookie consent ----------
+   The one piece of chrome that renders from the ROOT layout, over the
+   legacy pages and v4 alike — which is why CookieConsent.tsx imports
+   this file itself instead of relying on the (v4) layout. Everything
+   here is :root variables and k- prefixed, so the import is inert on
+   the old pages; a Whiteout card over the dark legacy site is
+   deliberate, the banner previews the register until legacy goes.
+
+   No overflow: hidden on the card — the buttons' drawn edge hangs 8px
+   outside their border boxes and must not be clipped (checklist 1.8);
+   the --s-6 padding is what gives it room. */
+.k-cookie {
+  position: fixed;
+  right: var(--s-5);
+  bottom: var(--s-5);
+  z-index: 90;
+  max-width: 26rem;
+  padding: var(--s-6);
+  background: var(--surface);
+  color: var(--text);
+  border: var(--hair) solid var(--hairline);
+  border-radius: var(--r-md);
+  box-shadow: var(--lift-3);
+  font-family: var(--font-sans);
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity var(--d-base) var(--e-glass),
+    transform var(--d-base) var(--e-glass);
 }
-.k-card__title {
-  margin: 0; font-size: var(--t-h3); font-weight: var(--w-medium);
+.k-cookie.is-in { opacity: 1; transform: none; }
+.k-cookie.is-leaving { opacity: 0; transform: translateY(12px); }
+@media (max-width: 640px) {
+  .k-cookie {
+    left: var(--s-4);
+    right: var(--s-4);
+    bottom: var(--s-4);
+    max-width: none;
+  }
+}
+.k-cookie__title {
+  margin: 0 0 var(--s-3);
+  font-size: var(--t-h3);
+  font-weight: var(--w-medium);
   letter-spacing: var(--ls-h3);
+  line-height: var(--lh-snug);
 }
-.k-card__meta { margin: 0; font-size: var(--t-small); color: var(--text-muted); }
-
-.k-card__placeholder {
-  background: radial-gradient(circle at 38% 32%, #FFF 0%, #F2F6F9 44%, #DFE9F1 74%, #C8D9E6 100%);
+.k-cookie__body {
+  margin: 0 0 var(--s-5);
+  font-size: var(--t-small);
+  color: var(--text-muted);
+  line-height: var(--lh-body);
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .k-card__video { display: none; }
+.k-cookie__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+}
+/* quiet, not hidden: the policy link is the banner's only underline */
+.k-cookie__policy {
+  display: inline-block;
+  margin-top: var(--s-4);
+  font-size: var(--t-small);
+  color: var(--text-muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--d-instant) var(--e-settle);
+}
+.k-cookie__policy:hover,
+.k-cookie__policy:focus-visible {
+  color: var(--text-accent);
 }
 
 /* ---------- utilities ---------- */

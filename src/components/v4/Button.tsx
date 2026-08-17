@@ -22,9 +22,18 @@ import { gsap, EASE } from '@/lib/motion-v4'
  * white border with the line, as the previous pass did, is the thing being
  * avoided.
  *
- * The fill does not change. The label rolls to its second line, and that with
- * the drawn edge is the whole gesture. The roll runs on --d-base and finishes
- * first; the line keeps going and closing it is what seals the state.
+ * THE FLOOD (user-directed, 2026-08-17). Inside the border, a disc of page
+ * colour grows from that same entry point and inverts the button: the fill
+ * floods to white and the letters flip to ice-deep exactly as the disc's edge
+ * passes under them. One crossing, two expressions, one origin — the line
+ * traces outside the border while the colour floods inside it. The label
+ * rolls on --d-base and lands first, the flood lands second, and the line
+ * closing last is what seals the state.
+ *
+ * The flip is a full copy of the roll sitting on the flooded ground, clipped
+ * to the disc (clip-path: circle() driven by three CSS variables this file
+ * tweens). Ghost buttons flood the other way — ice-deep ground, white text —
+ * via the same two custom properties.
  *
  * CONSTANT SPEED, not constant duration: the duration is derived from the
  * perimeter, so a wide CTA's line does not travel faster than a narrow one's.
@@ -48,9 +57,14 @@ const SAMPLES = 240
  *  clipped by its own canvas. The CSS centres the SVG rather than offsetting
  *  by this, so the two do not have to agree on a number. */
 const PAD = 8
-/** stroke width. The line now carries the hover state alone, with no colour
- *  change behind it, so it is a little heavier than a hairline. */
+/** stroke width. A little heavier than a hairline: at rest there is still no
+ *  colour behind it, and mid-flood it has to hold against a changing fill. */
 const LINE_W = 2
+
+/** the flood's share of the draw's duration. Same origin, own clock: it
+ *  should land after the roll (--d-base) and just before the line closes —
+ *  label, fill, line, in that order. */
+const FLOOD = 0.8
 
 type Pt = { x: number; y: number; l: number }
 
@@ -119,7 +133,16 @@ export default function Button({
   const ref = useRef<HTMLElement | null>(null)
   const pathRef = useRef<SVGPathElement | null>(null)
   const tween = useRef<ReturnType<typeof gsap.to> | null>(null)
-  const geo = useRef({ P: 0, D: 440, t: 0, L: 0, pts: [] as Pt[] })
+  const floodTween = useRef<ReturnType<typeof gsap.to> | null>(null)
+  const geo = useRef({
+    P: 0, D: 440, t: 0, L: 0, pts: [] as Pt[],
+    /* flood state. The circle lives in PADDING-BOX coordinates (the flood
+       layer spans the padding box, inside the white border), so pointer
+       coords have to be shifted by the border width bw. fr is the current
+       radius, FR the full one — the distance from the entry point to the
+       farthest corner, so the disc always finishes covering the fill. */
+    bw: 0, pw: 0, ph: 0, fx: 0, fy: 0, fr: 0, FR: 0,
+  })
   const [box, setBox] = useState({ w: 0, h: 0 })
 
   const a = children
@@ -164,8 +187,14 @@ export default function Button({
       const { x, y } = p.getPointAtLength(l)
       pts.push({ x, y, l })
     }
-    geo.current = { P, D, t: geo.current.t, L: 0, pts }
+    // measured, not assumed: the ghost variant's border is a hairline, not 3px
+    const bw = parseFloat(getComputedStyle(el).borderTopWidth) || 0
+    geo.current = {
+      ...geo.current, P, D, pts, L: 0, fr: 0,
+      bw, pw: box.w - 2 * bw, ph: box.h - 2 * bw,
+    }
     p.style.strokeDasharray = dash(0, 0, P)
+    el.style.setProperty('--k-btn-fr', '0px')
   }, [box.w, box.h])
 
   /** nearest point on the perimeter. Takes BORDER-BOX coordinates and shifts
@@ -218,6 +247,44 @@ export default function Button({
     })
   }, [])
 
+  /**
+   * The flood, same discipline as the draw: anchored only from a standing
+   * start (re-centring a half-grown disc would jump), duration proportional
+   * to the radius left to cover, so an interrupted flood keeps its speed.
+   * Retreat collapses back toward the entry point, the same place the line
+   * retreats to. Takes BORDER-BOX pointer coordinates.
+   */
+  const runFlood = useCallback((forward: boolean, bx?: number, by?: number) => {
+    const el = ref.current
+    const g = geo.current
+    if (!el || g.pw <= 0) return
+    if (forward && bx !== undefined && by !== undefined && g.fr < 1) {
+      const x = Math.min(Math.max(bx - g.bw, 0), g.pw)
+      const y = Math.min(Math.max(by - g.bw, 0), g.ph)
+      g.fx = x
+      g.fy = y
+      g.FR = Math.hypot(Math.max(x, g.pw - x), Math.max(y, g.ph - y))
+      el.style.setProperty('--k-btn-fx', `${x}px`)
+      el.style.setProperty('--k-btn-fy', `${y}px`)
+    }
+    if (g.FR <= 0) return
+    floodTween.current?.kill()
+    const to = forward ? g.FR : 0
+    const span = Math.abs(to - g.fr)
+    const apply = () => el.style.setProperty('--k-btn-fr', `${g.fr}px`)
+    if (span < 0.5) {
+      g.fr = to
+      apply()
+      return
+    }
+    floodTween.current = gsap.to(g, {
+      fr: to,
+      duration: ((span / g.FR) * g.D * FLOOD) / 1000,
+      ease: EASE.settle,
+      onUpdate: apply,
+    })
+  }, [])
+
   useEffect(() => {
     const el = ref.current
     if (!el) return
@@ -228,17 +295,29 @@ export default function Button({
 
     const enter = (e: PointerEvent) => {
       const r = el.getBoundingClientRect()
-      run(true, offsetFor(e.clientX - r.left, e.clientY - r.top))
+      const bx = e.clientX - r.left
+      const by = e.clientY - r.top
+      run(true, offsetFor(bx, by))
+      runFlood(true, bx, by)
     }
     const leave = () => {
-      if (!el.matches(':focus-visible')) run(false)
+      if (!el.matches(':focus-visible')) {
+        run(false)
+        runFlood(false)
+      }
     }
     const focus = () => {
       // no entry point for a keyboard — bottom centre
-      if (el.matches(':focus-visible')) run(true, offsetFor(box.w / 2, box.h))
+      if (el.matches(':focus-visible')) {
+        run(true, offsetFor(box.w / 2, box.h))
+        runFlood(true, box.w / 2, box.h)
+      }
     }
     const blur = () => {
-      if (!el.matches(':hover')) run(false)
+      if (!el.matches(':hover')) {
+        run(false)
+        runFlood(false)
+      }
     }
 
     el.addEventListener('pointerenter', enter)
@@ -251,9 +330,15 @@ export default function Button({
       el.removeEventListener('focus', focus)
       el.removeEventListener('blur', blur)
     }
-  }, [box.w, box.h, run, offsetFor])
+  }, [box.w, box.h, run, runFlood, offsetFor])
 
-  useEffect(() => () => void tween.current?.kill(), [])
+  useEffect(
+    () => () => {
+      tween.current?.kill()
+      floodTween.current?.kill()
+    },
+    [],
+  )
 
   const inner = (
     <>
@@ -283,6 +368,17 @@ export default function Button({
         <span className="k-btn__line k-btn__line--a" aria-hidden="true">{split(a, 'a')}</span>
         <span className="k-btn__line k-btn__line--b" aria-hidden="true">{split(b, 'b')}</span>
         <span className="sr-only">{a}</span>
+      </span>
+      {/* the flood: the inverted copy, clipped to the growing disc. Its CSS
+          mirrors the button's own padding and flex so this roll lands exactly
+          over the one above; the hover selectors match both, so the two copies
+          roll in lockstep and only the colour differs across the disc's edge. */}
+      <span className="k-btn__flood" aria-hidden="true">
+        <span className="k-btn__roll">
+          <span className="k-btn__sizer">{sizer}</span>
+          <span className="k-btn__line k-btn__line--a">{split(a, 'a')}</span>
+          <span className="k-btn__line k-btn__line--b">{split(b, 'b')}</span>
+        </span>
       </span>
     </>
   )

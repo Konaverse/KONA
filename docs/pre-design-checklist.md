@@ -4,11 +4,12 @@ Everything that has to land **before section design starts**. Section design mea
 building sections 2–9 of the homepage against `homepage-choreography.md`; the point of
 this list is that none of it should be discovered halfway through that.
 
-Status as of the last commit: buttons (interaction **rebuilt** — see §1), arrow links, cards,
-reveal, aperture menu, Lenis, the fluid cursor and **the page transition** are all **built**.
-What remains unbuilt is the form input and the footer (§6), and what remains *unjudged* is
-anything that has only ever been watched in a throttled tab — the card entrance (4.2) and now
-the arc itself (5.6).
+Status as of the last commit: buttons (interaction **rebuilt** — see §1, now including the
+flood), arrow links, cards, reveal, aperture menu, Lenis, the fluid cursor, **the page
+transition** and the restyled cookie banner (6.2) are all **built**. The form input and the
+footer are **deferred by the user (2026-08-17, "they will come later")** — moved to §7, no
+longer blocking section design. What remains *unjudged* is anything that has only ever been
+watched in a throttled tab — the card entrance (4.2) and the arc itself (5.6).
 
 **Cards are parked, not cancelled** (decided 2026-08-16): B1 needs real recordings, so the
 work went to the transition instead. Everything in §4 resumes the moment assets land.
@@ -41,13 +42,18 @@ which the loudest carried no information.
 
 Built now: **the drawn edge** — two heads leave the point where the pointer crossed the border,
 travel in opposite directions and meet at the far side, at constant speed derived from the
-perimeter — plus the per-letter roll, retained. Rationale and mechanics in `components.md`.
+perimeter — plus the per-letter roll, retained, plus **the flood** (user-directed 2026-08-17):
+a disc of page colour growing from the same entry point that inverts the button — fill to
+white, letters flipping to ice-deep as the disc's edge passes under them. Rationale and
+mechanics in `components.md`.
 
-**Rest state is an `--ice-deep` fill inside a 3px white border, and the fill does not change on
-hover.** An inversion beat was built and cut. The white border is the *gap*: it reads as page
-on white, so at rest the button is a plain ice-deep pill, and on hover the line is drawn
-**outside** the border box so that band of white holds it off the fill. The line is `--ice-deep`
-at 2px, since with no colour change behind it, it carries the hover state alone.
+**Rest state is an `--ice-deep` fill inside a 3px white border.** On hover the fill inverts via
+the flood — the first inversion beat was cut as a state swap; this one is an event, anchored to
+the crossing like the line. The white border is the *gap*: it reads as page on white, so at
+rest the button is a plain ice-deep pill, and on hover the line is drawn **outside** the border
+box so that band of white holds it off the fill. The line is `--ice-deep` at 2px — mid-flood it
+is the only thing separating the whitened fill from the white page. Ghost floods the other way
+(ice-deep ground, white letters) via `--k-btn-flood` / `--k-btn-flood-ink`.
 
 | # | Item | Why it blocks | Done when |
 |---|---|---|---|
@@ -59,6 +65,7 @@ at 2px, since with no colour change behind it, it carries the hover state alone.
 | 1.6 | **Real CTA copy** | Placeholder pairs (“Start a project” / “Let’s talk”) are stand-ins. | Final pairs chosen for every CTA on the site. |
 | 1.7 | **The draw's speed and weight** | First real look produced four fixes: the line was **pinned by its top-left**, so measurement error pooled at the bottom and the white band read thinner there (now centred, and measured fractionally); the per-letter split **collapsed every space** to zero width; the label lines were **flex-start against a longer sizer**, so the shorter one sat off-centre; and the draw was **too fast** (`SPEED` 1.0 → 0.62, ~440ms → ~710ms, with the roll decoupled onto `--d-base` so it no longer drags along with it). The levers are `SPEED` (duration), `LINE_W` (weight) and `PAD` in `Button.tsx`, plus `--k-btn-bw` in `tokens.css` for how much white sits between fill and line. | Re-watched after these. |
 | 1.8 | **The line hangs outside the button box** | The SVG extends 8px past the border box on every side. It is `pointer-events: none` so it cannot block clicks, but any ancestor with `overflow: hidden` will clip the line, and tightly packed buttons could have their lines meet. | Checked once buttons appear in real sections, not just the gallery. |
+| ~~1.9~~ | ~~**The flood, film-verified**~~ | **Built and watched (2026-08-17, the harness's new `hover:` mode — real Puppeteer mouse input, so `pointerenter` fires with true coordinates).** The film caught one defect: the ice-deep fill's antialiased rim peeked past the flooded disc as a faint dotted ring, because the fill painted under the border. Fixed with `background-clip: padding-box` — fill and flood now share one edge and any sub-pixel mismatch shows page-white. Verified in, settled, and retreat states at 8× zoom. | ✅ User sign-off on feel pending a live look. |
 
 ---
 
@@ -72,7 +79,7 @@ arrow it becomes is the point: **east for internal, north-east only for external
 | # | Item | Why it blocks | Done when |
 |---|---|---|---|
 | ~~2.1~~ | ~~**↗ already means "external link"**~~ | **Decided: respect the convention, don't override it.** ↗ now appears only on links that genuinely leave the site; internal links resolve to →, which means forward/next/still here. This also gives the rest state a job — the icon stays neutral until you are about to act on it, then tells you what kind of destination it is at the moment that matters. Touch shows the resolved arrow permanently, since there is no hover and a bare line would never resolve into anything meaningful. | ✅ External marker exists and is genuinely different. |
-| 2.2 | **Inline-in-paragraph variant** | The current one is a standalone block. Body copy will need an inline version and its underline will collide with the drawn rule. | An inline variant exists, or a rule saying arrow links never appear inline. |
+| ~~2.2~~ | ~~**Inline-in-paragraph variant**~~ | **Decided by the user (2026-08-17): no inline variant.** The rule the done-when asked for now exists: **arrow links never appear inline in body copy** — they are standalone blocks only. | ✅ Rule, not a variant. |
 | 2.3 | **On `--surface-raised`** | The ice rule is 2.52:1 on white and lower on mist. Alternating sections are part of the system. The icon itself is `currentColor`, so it is unaffected — this is only about the drawn rule. | Checked on mist; adjusted or ruled out. |
 | 2.4 | **`external` has to actually get used** | The prop controls the marker only; target and rel stay the caller's business. It is worth nothing if call sites forget it, and a missed one is worse than the old blanket ↗ because the distinction now carries meaning. | Every off-site link in the real pages passes `external`. |
 
@@ -115,12 +122,13 @@ hover, stretch-and-recover entrance.
 | # | Item | Why it blocks | Done when |
 |---|---|---|---|
 | 4.1 | **Assets** (= blocker B1) | — | Three recordings: **muted, no audio track, 8–12s seamless loop, 1600px wide, MP4 (h.264) + WebM, target ≤2MB each**, plus a poster still per card as WebP at the same dimensions. |
-| 4.2 | **The entrance has never been seen play** | Every test so far ran in a throttled background tab where Chrome delivers zero frames, so GSAP froze the timeline mid-tween. The animation is *built and verified as wiring*, but its actual feel is unjudged. | Watched in a real foreground tab, at speed, and either signed off or retimed. |
+| ~~4.2~~ | ~~**The entrance has never been seen play**~~ | **Watched on film (the harness's `wheel:` mode drives Lenis with real WheelEvents) — and retimed, because the verdict was damning: opacity crawled up over 1.4s on a slow ease, so the entire squash-and-stretch played below ~20% opacity. The signature move performed invisibly, and the tiles read as "images failed to load", with captions arriving a further second late.** Retimed to the same philosophy as the transition's feel pass: opaque in 0.3s so the deformation is SEEN, release at 0.18s, settled by ~1s, caption riding the settle instead of trailing it. Deformation values unchanged — they were never the problem; the invisibility was. | ✅ Retimed and film-verified. User sign-off on feel pending a live look. |
 | 4.3 | **Mobile has no hover, so the video never plays** | On phones the card is a static poster — the main move is simply absent for what will be most traffic. | Decided: autoplay on intersection, tap-to-play, or poster-only by design. |
 | 4.4 | **`onFocus` plays the video** | Keyboard tabbing through the work section will start three videos in sequence. May be right, may be startling. | Confirmed by keyboard walkthrough. |
 | 4.5 | **Aspect ratio** | Currently 16:10. Website screenshots are usually taller. | Confirmed against the real recordings. |
 | 4.6 | **Poster loading vs LCP** | Architecture §7 names Core Web Vitals as the live risk. Posters are the heaviest thing above the fold on the work section. | Posters lazy below the fold, eager only if one is the LCP element. |
-| 4.7 | **2-up or 3-up** | Open question from `homepage-choreography.md` §5 — depends on how strong the images are, which cannot be judged without 4.1. | Chosen once real assets exist. |
+| ~~4.7~~ | ~~**2-up or 3-up**~~ | **Superseded: neither.** Homepage §5 is now the page-turn — full-bleed sheets scrubbed through the transition's grammar (choreography §5 carries the decision, 2026-08-17). The /work hub keeps the tile grid; the two do different jobs. | ✅ |
+| 4.8 | **The page-turn section** (`ProjectSheets.tsx`) | Built and film-verified: turn, seam, dim, release — the transition's numbers driven by scroll, mounted on `/work` as the homepage §5 preview until that page exists. Refined per user (2026-08-17): **no dwell** (continuous, back-to-back turns) and **6% bleed** on every sheet so tilt/drift never show ground and no waiting sheet peeks early. Stand-in art from the legacy pool with white captions over a scrim. **Plus the mini window**: the giats stationary-image/moving-clip mechanic kept as a pinned window whose layers are clip-path'd to the incoming sheet's real edge per tick — film-verified half-and-half at the crossing. **Window geometry re-cut per user (2026-08-17): centred within the right half (middle at 75% of the viewport), 16:9, width 36vw (320px floor) — user-approved ("that's perfect")** — began the day as right-edge-hugging 24vw/420px-max 16:10, then 20vw centred, 28vw, and 36vw on two rounds of "bigger". At 36vw it spans 57–93% of the viewport. Film-verified; the clip maths needed no change since it measures the box live. Degrades to a plain vertical sequence without JS or under reduced motion. | User sign-off on feel in a live tab; real media + nav-legibility decision (`mix-blend-mode: difference`?) outstanding. |
 
 ---
 
@@ -225,20 +233,32 @@ bubble through the wrapper.
 | # | Item | Why it blocks | Done when |
 |---|---|---|---|
 | ~~6.1~~ | ~~**`.k-root` and the `<noscript>` fallback live on one page only**~~ | **Done.** Both now live in **`app/(v4)/layout.tsx`**, along with the grain, the aperture menu, Lenis, the fluid cursor and the page transition — so a new v4 route is a `page.tsx` and nothing else. `(v4)` is a route group, so no URL changed: `/design-system` is still `/design-system`. Not the *root* layout, deliberately — that is shared with the legacy site, and `.k-root` on `body` would repaint it white. | ✅ Moves to `<body>` when legacy goes. |
-| 6.2 | **The legacy cookie banner renders over v4 pages** | It is global in the root layout and still v3.1 dark. It covers the bottom-right of every v4 page. | Restyled to Whiteout, keeping the consent logic intact. |
+| ~~6.2~~ | ~~**The legacy cookie banner renders over v4 pages**~~ | **Done (2026-08-17).** Rebuilt on `k-cookie` in `tokens.css`: white card, hairline border, `--lift-3`, Manrope, v4 Buttons (primary Accept, ghost Essential only), CSS-token entrance instead of framer-motion. **Consent logic untouched** — same storage key, same gtag update, same 2s delay. The component imports `tokens.css` itself since it renders from the ROOT layout over legacy pages too, where the (v4) layout's import doesn't reach; everything in that file is :root vars + k- classes, so the import is inert there. A Whiteout card over the dark legacy site is deliberate. Screenshot-verified on both. Copy is placeholder (6.6). | ✅ |
 | 6.3 | **Touch audit across every hover-only state** | 1.1 is the known case; card hover and arrow hover have the same shape of problem. | One pass over every `:hover` rule in `tokens.css`, each either guarded or deliberately left. |
 | 6.4 | **Focus-visible audit** | The global ring is `2px solid var(--focus-ring)` at `3px` offset. It has not been checked against the pill button, the card, or the aperture rows. | Walked with a keyboard, every interactive element legible. |
 | 6.5 | **Reduced motion — already largely handled** | The `:root` override collapses `--d-base/quick/slow/cinema` to 1ms and zeroes the reveal blur and shift, so every CSS transition using those tokens is covered without per-component blocks. **`--d-instant` is deliberately excluded** — colour is not motion. | No action; recorded so nobody "fixes" it later. |
-| 6.6 | **Real copy** | Every string in the components is placeholder. | Final copy for nav, CTAs, service names, project captions. |
+| 6.6 | **Real copy** | Every string in the components is placeholder. **User decision (2026-08-17): handled by the user, off this list** — no copy task blocks section design. | Final copy arrives from the user; placeholders stand until then. |
+| 6.7 | **The D5 rendering gate** (SEO plan, 2026-08-17) | No major AI crawler except Gemini executes JS: a client-rendered page is invisible to ChatGPT, Claude and Perplexity. Every v4 page must be SSG/SSR with all copy, headings, links and JSON-LD in the raw HTML; motion and WebGL are an enhancement layer only. The `<noscript>` fallback and every static degradation (sheets, §6 still) are load-bearing. | Per page: view-source contains all copy AND the page reads fully with JavaScript disabled. Run once per new section, and once site-wide before launch. |
+| 6.8 | **The placement editor** (user request, 2026-08-17) | Designing the hero means placing the object *exactly* — position, size, rotation, blur, opacity, and later the §6 scrub mapping. Doing that by editing numbers and refreshing is slow enough to distort the design. A **dev-only slider panel** (the friend's-project pattern) that live-drives the object container's CSS transforms and copies the final values out to code. Never ships to production — also what keeps 6.7 and CWV clean. | Built when hero design starts; the export path (sliders → tokens/props) works end to end. |
 
 ---
 
 ## 7. Still deferred, and not on this list
 
-**All 3D** — the object, and homepage sections 1 and 6. Blocked on the prior question of how
-Blender output actually reaches a browser (baked frames vs glTF vs video: three pipelines,
-three budgets, and the choice reaches back into modelling). Sections 2, 3, 4, 5, 7, 8, 9 and
-the footer do not touch 3D and are designable without it.
+**3D — UNBLOCKED 2026-08-17.** The prior question (how Blender output reaches a browser) is
+answered: **Blender Cycles, pre-rendered only** — video loop for ambient presence, scrubbed
+frame sequence for §6, alpha WebP where occlusion needs a silhouette, rendered on white so
+Whiteout composites it without alpha video. And the object is chosen: **a frosted ice cube
+with an authored interior, inside a counter-rotating ring** (user concept; frost is
+load-bearing — baked renders can't refract live DOM text). Full rationale in
+`homepage-choreography.md` §"The object". **Claude drives Blender** (user decision) — the
+first session is a proportion blockout, not modelling. Sections 1 and 6 stay undesigned only
+until test renders exist; they are designed against renders, never a placeholder box.
+Sections 2, 3, 4, 5, 7, 8, 9 and the footer do not touch 3D and are designable now.
+
+**The form input and the footer** — deferred by the user (2026-08-17, "they will come later").
+The two components stay unbuilt and unblocking; they return to the list when the user calls
+them, at the latest when `/contact` and the footer sections are actually designed.
 
 ---
 
@@ -250,15 +270,17 @@ the footer do not touch 3D and are designable without it.
 What is left, in order:
 
 1. **One foreground-tab sitting** — the single highest-value hour on this list. The arc
-   (5.6), the card entrance (4.2) and the fluid's frame budget (3.5) are *all* blocked on the
-   same thing: nothing has ever been watched at speed, because every test tab throttles to
-   0fps. Three unknowns, one session, no code required to start.
+   (5.6), the card entrance (4.2), the page-turn + mini window (4.8), the button flood (1.9)
+   and the fluid's frame budget (3.5) are *all* waiting on the same thing: the user watching
+   at speed, because every agent-visible tab throttles to 0fps. Five sign-offs, one session,
+   no code required to start.
 2. **Record the three videos** (B1) — the last true input, and the only one that needs the
    camera rather than the keyboard.
 3. **Cards** (§4) the moment those land.
 4. **The audits** (§6.3 touch, §6.4 focus-visible) as one pass over everything, not
-   per-component — and now including the transition's intercepted links.
-5. **Form input and footer** (§6), the last two unbuilt components.
-6. Then section design starts.
+   per-component — and now including the transition's intercepted links and the cookie
+   banner.
+5. Then section design starts. (Form input, footer and real copy are off the critical path —
+   §7 and 6.6.)
 
-Item 1 gates the sign-off on three separate pieces of work, so it should not wait for item 2.
+Item 1 gates the sign-off on five separate pieces of work, so it should not wait for item 2.

@@ -184,9 +184,31 @@ Two implementation notes that carry the feel:
 Leaving reverses the same tween, at the same speed, back to the entry point. Re-entering a
 partly drawn line deliberately does *not* re-anchor — that would make it jump.
 
-**The fill does not change.** An inversion beat (ink → white on hover) was built and then cut:
-the primary is now an **ice-deep fill inside a white border**, and it stays that way. So the
-drawn line plus the label roll is the entire gesture.
+**Beat 2 — the flood** (user-directed, 2026-08-17). Inside the border, a disc of page colour
+grows from the **same entry point** — `clip-path: circle()` driven by variables the JS tweens —
+and inverts the button: fill to white, letters flipping to ice-deep exactly as the disc's edge
+passes under them. This is the inversion beat back, but as an *event* rather than a state
+swap: the first inversion was cut as part of the three-simultaneous-ideas problem, and it
+crossfaded regardless of where you were. This one is anchored to the crossing, travels, and
+lands between the roll and the line (`FLOOD = 0.8` of the draw's duration in `Button.tsx`).
+One crossing, three landings — label, fill, line — all from one origin, which is what lets
+three movements still read as one response.
+
+Flood mechanics that carry it:
+
+- **The flip is a duplicated roll.** The flood layer is a copy of the roll sitting on the
+  flooded ground, clipped to the disc; the hard clip edge is what flips each letter. The
+  layer mirrors the button's own padding and flex so the copy lands exactly over the
+  original — if the button's padding changes, `.k-btn__flood` changes with it.
+- **`background-clip: padding-box` on the button is load-bearing.** Left to paint under the
+  border, the ice-deep fill's antialiased rim peeks past the flooded disc as a faint dotted
+  ring (found on film, 2026-08-17). Clipped, fill and flood share one edge and any sub-pixel
+  mismatch shows page-white instead.
+- **Ghost floods the other way** — ice-deep ground, white letters — via the same two custom
+  properties (`--k-btn-flood`, `--k-btn-flood-ink`).
+- **Same discipline as the line:** anchored only from a standing start, proportional speed on
+  interrupt, retreat collapses back to the entry point, keyboard draws from bottom centre,
+  touch never floods, and reduced motion shows the flooded state without growing it.
 
 **The white border is the gap, not decoration.** This is the whole reason the primary reads the
 way it does. On a white page a white border *is* page, so at rest you see a plain ice-deep
@@ -208,17 +230,19 @@ Consequences worth knowing:
   construction — it needs to know neither the border width nor the pad, and any residual error
   splits evenly. Measuring the border box **fractionally** rather than rounding removes most of
   the error in the first place.
-- **The line is `--ice-deep`** (6.1:1 on the page) rather than `--ice` (2.52:1). With no colour
-  change behind it, the line is now the only hover feedback besides the roll, so it carries the
-  state alone and is stroked at 2px rather than a hairline.
+- **The line is `--ice-deep`** (6.1:1 on the page) rather than `--ice` (2.52:1). Mid-flood it
+  is the only thing separating an ever-whiter fill from the white page, so it cannot get
+  lighter than this, and it is stroked at 2px rather than a hairline.
 - **The focus ring needs `outline-offset: 6px`**, up from the global 3px, or it lands on top of
   the drawn line.
 
-**The roll is a label swap again.** It was briefly load-bearing — under inversion, two pinned
+**The roll is load-bearing again — but differently.** Under the first inversion, two pinned
 label lines were what stopped a single element crossfading through the moment it matched its
-own background. With the fill static that constraint is gone and both lines are simply the
-button's own colour. It runs on `--d-base` and lands *before* the line does; the line closing
-after it is what seals the state.
+own background. Under the flood the legibility problem is solved by the duplicated copy
+instead: the original roll goes invisible wherever the disc covers it (white on white) and
+the flood's ice-deep copy shows there, with the clip edge doing the handover per letter. The
+hover selectors match both copies, so they roll in lockstep. It runs on `--d-base` and lands
+*before* the flood and the line; the line closing after everything is what seals the state.
 
 Two things the per-letter split gets wrong if you build it the obvious way, both found on the
 first real look at it:

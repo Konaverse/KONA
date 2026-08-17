@@ -8,7 +8,16 @@
  *
  *   outdir     where the frames land (t<ms>_i<n>.png, ms from recording start)
  *   fromPath   route to start on            (default /design-system)
- *   toPath     route to navigate to         (default /work)
+ *   toPath     route to navigate to         (default /work) — OR "wheel:<delta>"
+ *              to film a scroll-triggered move instead of a navigation: the
+ *              harness dispatches real WheelEvents (what Lenis listens to) in
+ *              small steps until <delta> px worth have been sent, so scroll
+ *              reveals and card entrances fire exactly as they would under a
+ *              user's wheel — OR "hover:<selector>" to film a hover
+ *              interaction: the mouse (Puppeteer's real input pipeline, so
+ *              pointerenter fires with true coordinates) approaches from the
+ *              left, crosses onto the first match, dwells, and leaves — which
+ *              films both the draw/flood and their retreat.
  *   timeScale  gsap globalTimeline scale — 0.25 films the move in 4x detail
  *              (needs the dev-only window.__gsap handle from motion-v4.ts)
  *   scrollY    scroll depth before clicking (default 0)
@@ -51,7 +60,9 @@ const CHROME =
   page.on('pageerror', (e) => consoleLines.push(`[pageerror] ${e.message}`))
 
   // Warm both routes so dev-mode compilation doesn't distort the recorded run.
-  await page.goto(BASE + TO, { waitUntil: 'networkidle2', timeout: 60000 })
+  if (!TO.startsWith('wheel:') && !TO.startsWith('hover:')) {
+    await page.goto(BASE + TO, { waitUntil: 'networkidle2', timeout: 60000 })
+  }
   await page.goto(BASE + FROM, { waitUntil: 'networkidle2', timeout: 60000 })
   await new Promise((r) => setTimeout(r, 1500)) // let the entry reveals finish
 
@@ -77,15 +88,60 @@ const CHROME =
   await cdp.send('Page.startScreencast', { format: 'png', everyNthFrame: 1 })
 
   await new Promise((r) => setTimeout(r, 300))
-  const clicked = await page.evaluate((to) => {
-    const a = [...document.querySelectorAll('a')].find(
-      (x) => new URL(x.href, location.href).pathname === to,
-    )
-    if (!a) return false
-    a.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, button: 0 }))
-    return true
-  }, TO)
-  if (!clicked) throw new Error(`no link to ${TO} found on ${FROM}`)
+  if (TO.startsWith('wheel:')) {
+    // wheel:<totalPx>[:<steps>[:<intervalMs>]] — slow cadence films scrubbed
+    // sections legibly; the default is a quick flick.
+    const [total = 1200, steps = 20, interval = 50] = TO.slice(6).split(':').map(Number)
+    await page.evaluate(async (o) => {
+      const per = o.total / o.steps
+      for (let i = 0; i < o.steps; i++) {
+        document.body.dispatchEvent(
+          new WheelEvent('wheel', {
+            deltaY: per,
+            bubbles: true,
+            cancelable: true,
+            clientX: innerWidth / 2,
+            clientY: innerHeight / 2,
+          }),
+        )
+        await new Promise((r) => setTimeout(r, o.interval))
+      }
+    }, { total, steps, interval })
+  } else if (TO.startsWith('hover:')) {
+    const sel = TO.slice(6)
+    // bring the target on screen first (instant, so nothing films the jump),
+    // then let its reveal finish before the approach starts
+    const found = await page.evaluate((s) => {
+      const el = document.querySelector(s)
+      if (!el) return false
+      el.scrollIntoView({ block: 'center', behavior: 'instant' })
+      return true
+    }, sel)
+    if (!found) throw new Error(`no element matches ${sel} on ${FROM}`)
+    await new Promise((r) => setTimeout(r, 900))
+    const box = await page.evaluate((s) => {
+      const r = document.querySelector(s).getBoundingClientRect()
+      return { x: r.left, y: r.top, w: r.width, h: r.height }
+    }, sel)
+    // enter through the left edge at 60% height — an asymmetric entry point,
+    // so an anchored draw/flood is distinguishable from a centred one
+    const cy = box.y + box.h * 0.6
+    await page.mouse.move(box.x - 60, cy)
+    await new Promise((r) => setTimeout(r, 250))
+    await page.mouse.move(box.x + box.w * 0.5, cy, { steps: 12 })
+    await new Promise((r) => setTimeout(r, Math.max(1400, 1400 / TIMESCALE)))
+    await page.mouse.move(box.x - 80, cy - 40, { steps: 8 })
+  } else {
+    const clicked = await page.evaluate((to) => {
+      const a = [...document.querySelectorAll('a')].find(
+        (x) => new URL(x.href, location.href).pathname === to,
+      )
+      if (!a) return false
+      a.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, button: 0 }))
+      return true
+    }, TO)
+    if (!clicked) throw new Error(`no link to ${TO} found on ${FROM}`)
+  }
 
   await new Promise((r) => setTimeout(r, Math.max(2500, 2500 / TIMESCALE)))
   await cdp.send('Page.stopScreencast')
