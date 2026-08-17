@@ -47,7 +47,16 @@ THICKS = [0.020, 0.045, 0.080]
 # jewelry; flatter ring tips drifted planetary, steeper crowded; bubbles
 # alone read as decoration, fractures as organic bruising, lattice alone
 # risked sterile — structure carries the argument, air carries the realism.
-DECIDED = {"ratio": 1.35, "thick": 0.045, "interior": "combo"}
+# Frost DECIDED (user, 2026-08-17, off contact-sheets 4-5): "hybrid" —
+# thin volume scatter (0.7) + blue absorption (1.2) + noise rime surface.
+# Holds the silhouette on white (the blowout fix), reads as ice, keeps the
+# lattice tease. The clear state stays plain glass — the dark jewel.
+# Clear-state world DECIDED (user, 2026-08-17, off contact-sheet-6): the
+# authored "bands" env + dispersion spread 0.02. The d5 RGB striping is a
+# 3-sample fake artifact — stronger fire needs more spectral lobes, not
+# more spread. One world lights BOTH states (the scrub can't jump worlds).
+DECIDED = {"ratio": 1.35, "thick": 0.045, "interior": "combo",
+           "frost": "hybrid", "world": "bands", "clear_spread": 0.02}
 
 POSE = {
     # DECIDED hero attitude (user, 2026-08-17, contact-sheet-2). Ring plane
@@ -76,6 +85,76 @@ def make_frost_material(roughness=0.45):
     input_socket(bsdf, "Roughness").default_value = roughness
     input_socket(bsdf, "IOR").default_value = 1.31  # ice
     input_socket(bsdf, "Transmission Weight", "Transmission").default_value = 1.0
+    return mat
+
+
+def frost_variant(kind):
+    """Material-pass frost candidates. 'base' is the blockout control;
+    the others break the surface with noise and move the milk into the
+    volume, which is how real frosted ice works."""
+    mat = bpy.data.materials.new(f"frost-{kind}")
+    mat.use_nodes = True
+    nt = mat.node_tree
+    bsdf = nt.nodes["Principled BSDF"]
+    out = nt.nodes["Material Output"]
+    # near-white, NOT 0.88-blue: multi-bounce transmission compounds any
+    # surface tint (0.88^n goes denim). Tint lives in the absorption only.
+    input_socket(bsdf, "Base Color").default_value = (0.985, 0.99, 1.0, 1.0)
+    input_socket(bsdf, "IOR").default_value = 1.31
+    input_socket(bsdf, "Transmission Weight", "Transmission").default_value = 1.0
+    input_socket(bsdf, "Roughness").default_value = 0.45
+    if kind == "base":
+        return mat
+
+    # imperfect frost: noise-broken roughness + micro bump
+    noise = nt.nodes.new("ShaderNodeTexNoise")
+    noise.inputs["Scale"].default_value = 7.0
+    noise.inputs["Detail"].default_value = 8.0
+    ramp = nt.nodes.new("ShaderNodeMapRange")
+    ramp.inputs["From Min"].default_value = 0.35
+    ramp.inputs["From Max"].default_value = 0.65
+    ramp.inputs["To Min"].default_value = 0.30
+    ramp.inputs["To Max"].default_value = 0.58
+    nt.links.new(noise.outputs["Fac"], ramp.inputs["Value"])
+    nt.links.new(ramp.outputs["Result"], input_socket(bsdf, "Roughness"))
+    bump = nt.nodes.new("ShaderNodeBump")
+    bump.inputs["Strength"].default_value = 0.06
+    nt.links.new(noise.outputs["Fac"], bump.inputs["Height"])
+    nt.links.new(bump.outputs["Normal"], input_socket(bsdf, "Normal"))
+    if kind == "noise":
+        return mat
+
+    if kind == "vol":
+        # milk in the depth, clearer surface: internal scattering
+        vol = nt.nodes.new("ShaderNodeVolumeScatter")
+        vol.inputs["Color"].default_value = (0.92, 0.96, 1.0, 1.0)
+        vol.inputs["Density"].default_value = 2.0
+        vol.inputs["Anisotropy"].default_value = 0.35
+        nt.links.new(vol.outputs["Volume"], out.inputs["Volume"])
+        ramp.inputs["To Min"].default_value = 0.12
+        ramp.inputs["To Max"].default_value = 0.30
+    elif kind == "absorb":
+        # depth tints faintly toward ice
+        vol = nt.nodes.new("ShaderNodeVolumeAbsorption")
+        vol.inputs["Color"].default_value = (0.80, 0.90, 0.97, 1.0)
+        vol.inputs["Density"].default_value = 2.0
+        nt.links.new(vol.outputs["Volume"], out.inputs["Volume"])
+    elif kind == "hybrid":
+        # thin milk for body + blue depth: scatter and absorption added
+        scat = nt.nodes.new("ShaderNodeVolumeScatter")
+        scat.inputs["Color"].default_value = (1.0, 1.0, 1.0, 1.0)
+        scat.inputs["Density"].default_value = 0.7
+        scat.inputs["Anisotropy"].default_value = 0.35
+        absb = nt.nodes.new("ShaderNodeVolumeAbsorption")
+        # retuned for the darker bands world (1.2 read denim-blue there)
+        absb.inputs["Color"].default_value = (0.91, 0.945, 0.975, 1.0)
+        absb.inputs["Density"].default_value = 0.6
+        add = nt.nodes.new("ShaderNodeAddShader")
+        nt.links.new(scat.outputs["Volume"], add.inputs[0])
+        nt.links.new(absb.outputs["Volume"], add.inputs[1])
+        nt.links.new(add.outputs["Shader"], out.inputs["Volume"])
+        ramp.inputs["To Min"].default_value = 0.15
+        ramp.inputs["To Max"].default_value = 0.38
     return mat
 
 
@@ -162,8 +241,11 @@ def build_interior(kind, cube_euler, air, metal):
         add_bubbles(rng, rot, air, 36, max_r=0.016)
 
 
-def build_world():
-    """HDRI drives lighting and reflections; camera rays see pure white."""
+def build_world(kind="studio"):
+    """Lighting/reflection environment; camera rays always see pure white.
+    'studio' = the built-in HDRI. 'bands' = an authored abstract env — soft
+    bright strips on graphite plus one ice zone, so the clear cube's internal
+    reflections stop reading as recognisable light fixtures."""
     world = bpy.data.worlds.new("blockout-world")
     world.use_nodes = True
     nt = world.node_tree
@@ -172,32 +254,91 @@ def build_world():
     out = nt.nodes.new("ShaderNodeOutputWorld")
     mix = nt.nodes.new("ShaderNodeMixShader")
     light_path = nt.nodes.new("ShaderNodeLightPath")
+    bg_env = nt.nodes.new("ShaderNodeBackground")
 
-    env = nt.nodes.new("ShaderNodeTexEnvironment")
-    env.image = bpy.data.images.load(str(HDRI))
-    bg_hdri = nt.nodes.new("ShaderNodeBackground")
-    bg_hdri.inputs["Strength"].default_value = 0.5
+    if kind == "studio":
+        env = nt.nodes.new("ShaderNodeTexEnvironment")
+        env.image = bpy.data.images.load(str(HDRI))
+        bg_env.inputs["Strength"].default_value = 0.5
+        nt.links.new(env.outputs["Color"], bg_env.inputs["Color"])
+    else:  # bands
+        coord = nt.nodes.new("ShaderNodeTexCoord")
+        mapping = nt.nodes.new("ShaderNodeMapping")
+        mapping.inputs["Rotation"].default_value = (0.0, 0.6, 0.4)
+        grad = nt.nodes.new("ShaderNodeTexGradient")
+        ramp = nt.nodes.new("ShaderNodeValToRGB")
+        ramp.color_ramp.interpolation = "B_SPLINE"
+        e = ramp.color_ramp.elements
+        e[0].position = 0.0
+        e[0].color = (0.02, 0.022, 0.025, 1.0)
+        e[1].position = 1.0
+        e[1].color = (0.03, 0.033, 0.038, 1.0)
+        for pos, col in [(0.38, (0.02, 0.022, 0.025, 1.0)),
+                         (0.45, (1.0, 1.0, 1.0, 1.0)),
+                         (0.52, (0.02, 0.022, 0.025, 1.0)),
+                         (0.70, (0.13, 0.20, 0.30, 1.0)),
+                         (0.78, (0.03, 0.033, 0.038, 1.0)),
+                         (0.86, (0.32, 0.33, 0.34, 1.0)),
+                         (0.93, (0.03, 0.033, 0.038, 1.0))]:
+            el = e.new(pos)
+            el.color = col
+        bg_env.inputs["Strength"].default_value = 2.0
+        nt.links.new(coord.outputs["Generated"], mapping.inputs["Vector"])
+        nt.links.new(mapping.outputs["Vector"], grad.inputs["Vector"])
+        nt.links.new(grad.outputs["Fac"], ramp.inputs["Fac"])
+        nt.links.new(ramp.outputs["Color"], bg_env.inputs["Color"])
 
     bg_white = nt.nodes.new("ShaderNodeBackground")
     bg_white.inputs["Color"].default_value = (1.0, 1.0, 1.0, 1.0)
 
-    nt.links.new(env.outputs["Color"], bg_hdri.inputs["Color"])
     nt.links.new(light_path.outputs["Is Camera Ray"], mix.inputs["Fac"])
-    nt.links.new(bg_hdri.outputs["Background"], mix.inputs[1])
+    nt.links.new(bg_env.outputs["Background"], mix.inputs[1])
     nt.links.new(bg_white.outputs["Background"], mix.inputs[2])
     nt.links.new(mix.outputs["Shader"], out.inputs["Surface"])
     return world
 
 
+def make_dispersion_material(spread):
+    """Clear-state glass with faked dispersion: three Glass BSDFs, one per
+    colour channel, IOR split by `spread`. spread 0 = the plain dark jewel."""
+    mat = bpy.data.materials.new(f"clear-disp-{spread}")
+    mat.use_nodes = True
+    nt = mat.node_tree
+    out = nt.nodes["Material Output"]
+    nt.nodes.remove(nt.nodes["Principled BSDF"])
+    add1 = nt.nodes.new("ShaderNodeAddShader")
+    add2 = nt.nodes.new("ShaderNodeAddShader")
+    for i, (col, ior) in enumerate([((1, 0, 0, 1), 1.31 - spread),
+                                    ((0, 1, 0, 1), 1.31),
+                                    ((0, 0, 1, 1), 1.31 + spread)]):
+        g = nt.nodes.new("ShaderNodeBsdfGlass")
+        g.inputs["Color"].default_value = col
+        g.inputs["Roughness"].default_value = 0.03
+        g.inputs["IOR"].default_value = ior
+        if i < 2:
+            nt.links.new(g.outputs["BSDF"], add1.inputs[i])
+        else:
+            nt.links.new(g.outputs["BSDF"], add2.inputs[1])
+    nt.links.new(add1.outputs["Shader"], add2.inputs[0])
+    nt.links.new(add2.outputs["Shader"], out.inputs["Surface"])
+    return mat
+
+
 def build_scene(ratio, thick, ring_euler=None, cube_euler=None,
-                interior=None, frost_roughness=0.45):
+                interior=None, frost_roughness=0.45, frost_kind=None,
+                world_kind="studio", clear_spread=None):
     ring_euler = ring_euler or POSE["ring_euler"]
     cube_euler = cube_euler or POSE["cube_euler"]
     bpy.ops.wm.read_factory_settings(use_empty=True)
     scene = bpy.context.scene
-    scene.world = build_world()
+    scene.world = build_world(world_kind)
 
-    frost = make_frost_material(frost_roughness)
+    if clear_spread is not None:
+        frost = make_dispersion_material(clear_spread)
+    elif frost_kind:
+        frost = frost_variant(frost_kind)
+    else:
+        frost = make_frost_material(frost_roughness)
     metal = make_ring_material()
 
     bpy.ops.mesh.primitive_cube_add(size=CUBE_EDGE, rotation=cube_euler)
@@ -230,15 +371,20 @@ def build_scene(ratio, thick, ring_euler=None, cube_euler=None,
     # Soft white key upper-front-right; ice rim behind-left (the object tint).
     bpy.ops.object.light_add(type="AREA", location=(2.6, -2.4, 3.0))
     key = bpy.context.active_object
-    key.data.energy = 60
+    # rebalanced for the bands world: the dark env made the ice rim the
+    # dominant source and turned the frost denim-blue
+    key.data.energy = 130
     key.data.size = 3.0
     key.rotation_euler = (math.radians(38), 0, math.radians(45))
 
     bpy.ops.object.light_add(type="AREA", location=(-3.0, 3.2, 1.2))
     rim = bpy.context.active_object
-    rim.data.energy = 420
+    rim.data.energy = 150
     rim.data.size = 2.0
-    rim.data.color = ICE_LINEAR
+    # Desaturated ice, NOT ICE_LINEAR: a saturated colored area light floods
+    # a scattering volume under a dark env (found the hard way — the frost
+    # rendered denim-blue under bands until the rim was neutralised).
+    rim.data.color = (0.52, 0.64, 0.78)
     rim.rotation_euler = (math.radians(72), 0, math.radians(-137))
 
     # Camera auto-framed off the ring so every study fills the frame alike.
@@ -266,6 +412,8 @@ def setup_render(scene, samples, res):
     scene.cycles.samples = samples
     scene.cycles.use_adaptive_sampling = True
     scene.cycles.use_denoising = True
+    # default is 0 and renders scattering volumes black
+    scene.cycles.volume_bounces = 8
     scene.render.resolution_x = res
     scene.render.resolution_y = res
     scene.render.image_settings.file_format = "PNG"
@@ -273,9 +421,12 @@ def setup_render(scene, samples, res):
 
 
 def render_study(name, ratio, thick, ring_euler=None, cube_euler=None,
-                 interior=None, frost_roughness=0.45, samples=96, res=640):
+                 interior=None, frost_roughness=0.45, frost_kind=None,
+                 world_kind="studio", clear_spread=None,
+                 samples=96, res=640):
     scene = build_scene(ratio, thick, ring_euler, cube_euler,
-                        interior, frost_roughness)
+                        interior, frost_roughness, frost_kind,
+                        world_kind, clear_spread)
     setup_render(scene, samples, res)
     scene.render.filepath = str(OUT_DIR / f"{name}.png")
     t0 = time.time()
@@ -303,15 +454,50 @@ def main():
                              frost_roughness=rough)
         return
 
+    if "--frost" in argv:
+        # Material pass, phase 1: frost candidates at the locked config.
+        # Optionally name specific kinds after --frost to re-render a subset.
+        all_kinds = ["base", "noise", "vol", "absorb", "hybrid"]
+        kinds = [a for a in argv if a in all_kinds] or all_kinds
+        for kind in kinds:
+            render_study(f"f_{kind}", DECIDED["ratio"], DECIDED["thick"],
+                         interior=DECIDED["interior"], frost_kind=kind)
+        return
+
+    if "--check" in argv:
+        # Fast both-states check under the DECIDED world, study res.
+        render_study("check-frost", DECIDED["ratio"], DECIDED["thick"],
+                     interior=DECIDED["interior"], frost_kind=DECIDED["frost"],
+                     world_kind=DECIDED["world"])
+        render_study("check-clear", DECIDED["ratio"], DECIDED["thick"],
+                     interior=DECIDED["interior"], world_kind=DECIDED["world"],
+                     clear_spread=DECIDED["clear_spread"])
+        return
+
+    if "--jewel" in argv:
+        # Material pass, phase 2: the clear state's environment (studio HDRI
+        # vs authored bands) crossed with dispersion strength (d0 = control,
+        # the loved dark jewel as-is).
+        for env in ["studio", "bands"]:
+            for tag, spread in (("d0", 0.0), ("d2", 0.02), ("d5", 0.05)):
+                render_study(f"j_{env}_{tag}", DECIDED["ratio"],
+                             DECIDED["thick"], interior=DECIDED["interior"],
+                             world_kind=env, clear_spread=spread)
+        return
+
     if "--hero" in argv:
         # The reference stills of the locked configuration — what sections 1
         # and 6 get laid out against until real renders exist. The clear
         # state's dark-glass look is KEPT (user, 2026-08-17): transmission
         # rays seeing the HDRI is the reveal's payoff, not an artifact.
         render_study("hero-ref", DECIDED["ratio"], DECIDED["thick"],
-                     interior=DECIDED["interior"], samples=256, res=1280)
+                     interior=DECIDED["interior"],
+                     frost_kind=DECIDED["frost"],
+                     world_kind=DECIDED["world"], samples=256, res=1280)
         render_study("clear-ref", DECIDED["ratio"], DECIDED["thick"],
-                     interior=DECIDED["interior"], frost_roughness=0.03,
+                     interior=DECIDED["interior"],
+                     world_kind=DECIDED["world"],
+                     clear_spread=DECIDED["clear_spread"],
                      samples=256, res=1280)
         return
 
