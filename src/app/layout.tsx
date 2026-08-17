@@ -66,6 +66,11 @@ export const metadata: Metadata = {
   authors: [{ name: 'Konaverse', url: 'https://kona-verse.com' }],
   creator: 'Konaverse',
   publisher: 'Konaverse',
+  verification: {
+    other: {
+      'msvalidate.01': '914944C03F8EFCB0A516B441FE2CFADA',
+    },
+  },
   robots: {
     index: true,
     follow: true,
