@@ -201,7 +201,7 @@ An image with a project name under it reads as a link whether or not it is one, 
 
 **Entrance.** The section pins at the top of the viewport and the scrub begins immediately. There is no separate entrance animation, because the scrub is the animation.
 
-**Technical.** Baked Blender frame sequence, 120 frames, WebP, roughly 4 to 8MB at 1600px. This is the single heaviest thing on the site and there is exactly one of them. First paint is a still, sequence preloads during section 5.
+**Technical.** Baked Blender frame sequence, 120 frames, WebP. **MEASURED (2026-08-17, delivery validation): ~4.2MB at 1600px q82**, extrapolated from an every-12th-frame render — frost frames cost ~29KB, the jewel's prism fire 50–60KB, the dissolve's final frame 4.6KB of almost-nothing. A full 640px validation set (all 120 frames, 1.54MB) scrubs cleanly under real wheel events on `/object-scrub`; the mechanic is `ObjectScrub.tsx`, the frames come from `blender/blockout.py --scrub`. This is the single heaviest thing on the site and there is exactly one of them. First paint is a still, sequence preloads during section 5.
 
 **Handoff.** The object dissolves into white on the final frames. Pin releases. This is the one place a fade is allowed, because it is an overexposure, which is the direction's own logic.
 
@@ -279,8 +279,9 @@ presence (same spec family as the project-card videos) and a **scroll-scrubbed f
 sequence** where the object must answer scroll (§6). Whiteout makes this cheap: render on
 pure white and it composites invisibly — no alpha-video codecs — with **alpha WebP** stills
 or sequences where the occlusion trick needs a true silhouette. The scene's rim light is
-`--ice`, which the token file already names "object tint". The §6 numbers (120 frames,
-4–8MB, 1600px, 250–300vh) remain estimates until test renders exist.
+`--ice`, which the token file already names "object tint". The §6 numbers are now
+MEASURED (2026-08-17, delivery validation): 120 frames at 1600px is ~4.2MB WebP —
+inside the 4–8MB envelope. 250–300vh is the one §6 number still unfelt at full scale.
 
 **The object: a frosted ice cube inside a counter-rotating ring.** The user's concept, and
 it earns its place three ways:

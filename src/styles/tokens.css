@@ -633,6 +633,86 @@ html:has(.k-root)::-webkit-scrollbar {
 .k-card:hover .k-card__media::after,
 .k-card:focus-visible .k-card__media::after { transform: scaleX(1); }
 
+/* ============================================================
+   OBJECT SCRUB — homepage §6, the demonstration.
+   ------------------------------------------------------------
+   The pre-rendered object answering scroll: pinned stage, a
+   canvas stepping through the baked frame sequence, the copy
+   floating around the object at fixed points in the scrub.
+   Driver and frame choreography live in ObjectScrub.tsx; the
+   frames come out of blender/blockout.py --scrub.
+
+   AT REST this is a still and the lines stacked as plain text —
+   what no-JS, reduced-motion and every crawler get (SEO D5).
+   ============================================================ */
+.k-oscrub {
+  position: relative;
+  background: var(--surface);
+}
+.k-oscrub__stage {
+  position: relative;
+  padding: var(--s-9) 0;
+}
+.k-oscrub.is-scrub .k-oscrub__stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  padding: 0;
+  overflow: clip;
+}
+.k-oscrub__media {
+  position: relative;
+  width: min(72vh, 68vw);
+  aspect-ratio: 1;
+  margin: 0 auto;
+}
+.k-oscrub.is-scrub .k-oscrub__media {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+}
+.k-oscrub__still,
+.k-oscrub__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+/* the canvas replaces the still only once every frame has decoded —
+   until then the pinned stage shows frame 1, which IS the still */
+.k-oscrub__canvas { visibility: hidden; }
+.k-oscrub.is-live .k-oscrub__canvas { visibility: visible; }
+.k-oscrub.is-live .k-oscrub__still { visibility: hidden; }
+/* At rest the lines read as a plain stacked sequence under the still. */
+.k-oscrub__line {
+  max-width: 24ch;
+  margin: var(--s-6) auto 0;
+  text-align: center;
+}
+/* In scrub mode they float beside the object — never over it — and the
+   driver owns their opacity per tick. */
+.k-oscrub.is-scrub .k-oscrub__line {
+  position: absolute;
+  margin: 0;
+  opacity: 0;
+  text-align: left;
+}
+.k-oscrub.is-scrub .k-oscrub__line--1 {
+  left: var(--s-8);
+  top: 38%;
+}
+.k-oscrub.is-scrub .k-oscrub__line--2 {
+  right: var(--s-8);
+  top: 30%;
+  text-align: right;
+}
+.k-oscrub.is-scrub .k-oscrub__line--3 {
+  left: var(--s-8);
+  bottom: 26%;
+}
+
 .k-card__body {
   display: flex; align-items: baseline; justify-content: space-between;
   gap: var(--s-5); padding-top: var(--s-4);

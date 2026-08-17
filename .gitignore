@@ -47,3 +47,8 @@ next-env.d.ts
 *.MOV
 *.avi
 *.mkv
+# …except the baked 3D-object delivery media: ~1MB by design, produced by
+# blender/blockout.py and versioned with it so the site never points at a
+# loop the rig can't reproduce
+!public/object/*.mp4
+!public/object/*.webm

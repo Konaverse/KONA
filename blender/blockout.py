@@ -72,6 +72,9 @@ POSE = {
     "cube_euler": (math.radians(22), math.radians(-14), math.radians(32)),
 }
 
+# Set by build_scene(scrub=True): the sockets build_scrub_animation drives.
+SCRUB_SOCKETS = None
+
 
 def input_socket(node, *names):
     for n in names:
@@ -276,6 +279,15 @@ def ring_variant(kind):
         input_socket(bsdf, "Metallic").default_value = 1.0
         input_socket(bsdf, "Roughness").default_value = 0.35
         input_socket(bsdf, "Anisotropic").default_value = 0.7
+    elif kind == "glass":
+        # the user's "even the ring clear" candidate (2026-08-17): the ring
+        # in the cube's own material family. Risks to judge off the render:
+        # vanishing at progress-indicator size, and a spin with no glints.
+        input_socket(bsdf, "Base Color").default_value = (0.985, 0.99, 1.0, 1.0)
+        input_socket(bsdf, "Metallic").default_value = 0.0
+        input_socket(bsdf, "Roughness").default_value = 0.05
+        input_socket(bsdf, "IOR").default_value = 1.45
+        input_socket(bsdf, "Transmission Weight", "Transmission").default_value = 1.0
     return mat
 
 
@@ -324,11 +336,21 @@ def build_world(kind="studio"):
     light_path = nt.nodes.new("ShaderNodeLightPath")
     bg_env = nt.nodes.new("ShaderNodeBackground")
 
+    # The §6 handoff's overexposure: a named, keyframeable mix that feeds
+    # white to everything the env drives — the reserved dissolve-to-white
+    # move. 0 everywhere except the scrub's final frames.
+    dissolve = nt.nodes.new("ShaderNodeMix")
+    dissolve.data_type = "RGBA"
+    dissolve.name = "dissolve"
+    dissolve.inputs["Factor"].default_value = 0.0
+    dissolve.inputs["B"].default_value = (1.0, 1.0, 1.0, 1.0)
+    nt.links.new(dissolve.outputs["Result"], bg_env.inputs["Color"])
+
     if kind == "studio":
         env = nt.nodes.new("ShaderNodeTexEnvironment")
         env.image = bpy.data.images.load(str(HDRI))
         bg_env.inputs["Strength"].default_value = 0.5
-        nt.links.new(env.outputs["Color"], bg_env.inputs["Color"])
+        nt.links.new(env.outputs["Color"], dissolve.inputs["A"])
     else:  # bands
         coord = nt.nodes.new("ShaderNodeTexCoord")
         mapping = nt.nodes.new("ShaderNodeMapping")
@@ -354,7 +376,7 @@ def build_world(kind="studio"):
         nt.links.new(coord.outputs["Generated"], mapping.inputs["Vector"])
         nt.links.new(mapping.outputs["Vector"], grad.inputs["Vector"])
         nt.links.new(grad.outputs["Fac"], ramp.inputs["Fac"])
-        nt.links.new(ramp.outputs["Color"], bg_env.inputs["Color"])
+        nt.links.new(ramp.outputs["Color"], dissolve.inputs["A"])
 
     bg_white = nt.nodes.new("ShaderNodeBackground")
     bg_white.inputs["Color"].default_value = (1.0, 1.0, 1.0, 1.0)
@@ -392,16 +414,98 @@ def make_dispersion_material(spread):
     return mat
 
 
+def make_scrub_material(spread):
+    """The §6 morph: ONE material spanning frosted -> clear, so the scrub
+    can keyframe between the two decided endpoints. At clarity 0 this is
+    exactly frost_variant('hybrid'); at clarity 1 the volumes are at zero
+    density, the surface is 0.03-smooth, and a Mix Shader has crossfaded
+    to the dispersion glass stack — make_dispersion_material's recipe.
+    Returns (mat, sockets): every socket the scrub animation keyframes."""
+    mat = bpy.data.materials.new("frost-scrub")
+    mat.use_nodes = True
+    nt = mat.node_tree
+    bsdf = nt.nodes["Principled BSDF"]
+    out = nt.nodes["Material Output"]
+
+    # -- the hybrid frost branch (see frost_variant) --
+    input_socket(bsdf, "Base Color").default_value = (0.985, 0.99, 1.0, 1.0)
+    input_socket(bsdf, "IOR").default_value = 1.31
+    input_socket(bsdf, "Transmission Weight", "Transmission").default_value = 1.0
+    noise = nt.nodes.new("ShaderNodeTexNoise")
+    noise.inputs["Scale"].default_value = 7.0
+    noise.inputs["Detail"].default_value = 8.0
+    ramp = nt.nodes.new("ShaderNodeMapRange")
+    ramp.inputs["From Min"].default_value = 0.35
+    ramp.inputs["From Max"].default_value = 0.65
+    ramp.inputs["To Min"].default_value = 0.15
+    ramp.inputs["To Max"].default_value = 0.38
+    nt.links.new(noise.outputs["Fac"], ramp.inputs["Value"])
+    nt.links.new(ramp.outputs["Result"], input_socket(bsdf, "Roughness"))
+    bump = nt.nodes.new("ShaderNodeBump")
+    bump.inputs["Strength"].default_value = 0.06
+    nt.links.new(noise.outputs["Fac"], bump.inputs["Height"])
+    nt.links.new(bump.outputs["Normal"], input_socket(bsdf, "Normal"))
+    scat = nt.nodes.new("ShaderNodeVolumeScatter")
+    scat.inputs["Color"].default_value = (1.0, 1.0, 1.0, 1.0)
+    scat.inputs["Density"].default_value = 0.7
+    scat.inputs["Anisotropy"].default_value = 0.35
+    absb = nt.nodes.new("ShaderNodeVolumeAbsorption")
+    absb.inputs["Color"].default_value = (0.91, 0.945, 0.975, 1.0)
+    absb.inputs["Density"].default_value = 0.6
+    add = nt.nodes.new("ShaderNodeAddShader")
+    nt.links.new(scat.outputs["Volume"], add.inputs[0])
+    nt.links.new(absb.outputs["Volume"], add.inputs[1])
+    nt.links.new(add.outputs["Shader"], out.inputs["Volume"])
+
+    # -- the dispersion glass branch (see make_dispersion_material) --
+    add1 = nt.nodes.new("ShaderNodeAddShader")
+    add2 = nt.nodes.new("ShaderNodeAddShader")
+    for i, (col, ior) in enumerate([((1, 0, 0, 1), 1.31 - spread),
+                                    ((0, 1, 0, 1), 1.31),
+                                    ((0, 0, 1, 1), 1.31 + spread)]):
+        g = nt.nodes.new("ShaderNodeBsdfGlass")
+        g.inputs["Color"].default_value = col
+        g.inputs["Roughness"].default_value = 0.03
+        g.inputs["IOR"].default_value = ior
+        if i < 2:
+            nt.links.new(g.outputs["BSDF"], add1.inputs[i])
+        else:
+            nt.links.new(g.outputs["BSDF"], add2.inputs[1])
+    nt.links.new(add1.outputs["Shader"], add2.inputs[0])
+
+    mix = nt.nodes.new("ShaderNodeMixShader")
+    mix.inputs["Fac"].default_value = 0.0
+    nt.links.new(bsdf.outputs["BSDF"], mix.inputs[1])
+    nt.links.new(add2.outputs["Shader"], mix.inputs[2])
+    nt.links.new(mix.outputs["Shader"], out.inputs["Surface"])
+
+    sockets = {
+        "rough_min": ramp.inputs["To Min"],
+        "rough_max": ramp.inputs["To Max"],
+        "bump": bump.inputs["Strength"],
+        "scatter": scat.inputs["Density"],
+        "absorb": absb.inputs["Density"],
+        "glass_mix": mix.inputs["Fac"],
+    }
+    return mat, sockets
+
+
 def build_scene(ratio, thick, ring_euler=None, cube_euler=None,
                 interior=None, frost_roughness=0.45, frost_kind=None,
-                world_kind="studio", clear_spread=None, ring_kind=None):
+                world_kind="studio", clear_spread=None, ring_kind=None,
+                scrub=False, cam_az=28, cam_el=16, lens=60):
     ring_euler = ring_euler or POSE["ring_euler"]
     cube_euler = cube_euler or POSE["cube_euler"]
     bpy.ops.wm.read_factory_settings(use_empty=True)
     scene = bpy.context.scene
     scene.world = build_world(world_kind)
 
-    if clear_spread is not None:
+    global SCRUB_SOCKETS
+    SCRUB_SOCKETS = None
+    if scrub:
+        frost, SCRUB_SOCKETS = make_scrub_material(
+            clear_spread if clear_spread is not None else DECIDED["clear_spread"])
+    elif clear_spread is not None:
         frost = make_dispersion_material(clear_spread)
     elif frost_kind:
         frost = frost_variant(frost_kind)
@@ -421,7 +525,16 @@ def build_scene(ratio, thick, ring_euler=None, cube_euler=None,
         bpy.ops.object.shade_smooth()
 
     if interior:
+        before = set(bpy.data.objects)
         build_interior(interior, cube_euler, make_air_material(), metal)
+        # The interior must tumble WITH the cube in any animated render.
+        # Unparented, it held still while the cube turned — invisible in
+        # the idle test only because EEVEE ran an opaque proxy cube.
+        bpy.context.view_layer.update()
+        inv = cube.matrix_world.inverted()
+        for obj in set(bpy.data.objects) - before:
+            obj.parent = cube
+            obj.matrix_parent_inverse = inv
 
     major = ratio * TUMBLE_R
     minor = thick * major  # kept as half the band's face-on width
@@ -460,8 +573,9 @@ def build_scene(ratio, thick, ring_euler=None, cube_euler=None,
     rim.rotation_euler = (math.radians(72), 0, math.radians(-137))
 
     # Camera auto-framed off the ring so every study fills the frame alike.
-    dist = 4.4 * (major + minor)
-    az, el = math.radians(28), math.radians(16)
+    # dist scales with the lens so a tele override keeps the same framing.
+    dist = 4.4 * (major + minor) * (lens / 60)
+    az, el = math.radians(cam_az), math.radians(cam_el)
     cam_loc = (
         dist * math.cos(el) * math.sin(az),
         -dist * math.cos(el) * math.cos(az),
@@ -469,7 +583,7 @@ def build_scene(ratio, thick, ring_euler=None, cube_euler=None,
     )
     bpy.ops.object.camera_add(location=cam_loc)
     cam = bpy.context.active_object
-    cam.data.lens = 60
+    cam.data.lens = lens
     bpy.ops.object.empty_add(location=(0, 0, 0))
     target = bpy.context.active_object
     track = cam.constraints.new("TRACK_TO")
@@ -478,18 +592,24 @@ def build_scene(ratio, thick, ring_euler=None, cube_euler=None,
     return scene
 
 
-def build_idle_animation(scene, seconds=10, fps=12):
-    """The hero idle v3: cube tumbles one full turn per `seconds` about
-    world Z; the ring spins about its OWN normal, counter-direction.
-    10s/turn DECIDED (user; 40s and 20s both read too slow); the tick
-    marker was removed (user) —
-    the spin reads via the satin anisotropy and edge glints only. v1
-    precessed the ring's plane and cycled through the rejected badge/hoop
-    attitudes — the plane must HOLD the decided pose."""
-    frames = seconds * fps
-    scene.render.fps = fps
-    scene.frame_start = 1
-    scene.frame_end = frames
+def linear_keys(insert):
+    """Run `insert` (a callable doing keyframe_insert calls) with new keys
+    forced LINEAR. Blender 5.x slotted actions removed Action.fcurves —
+    set the new-key interpolation preference instead of editing curves."""
+    prefs = bpy.context.preferences.edit
+    old_interp = prefs.keyframe_new_interpolation_type
+    prefs.keyframe_new_interpolation_type = "LINEAR"
+    try:
+        insert()
+    finally:
+        prefs.keyframe_new_interpolation_type = old_interp
+
+
+def animate_counter_rotation(scene, frames):
+    """One full cube turn about world Z over `frames`; the ring spins about
+    its OWN normal, counter-direction. The ring's plane HOLDS the decided
+    attitude — v1 precessed it and cycled through the rejected badge/hoop
+    poses; never animate the attitude."""
     cube = bpy.data.objects["Cube"]
     ring = bpy.data.objects["ring"]
 
@@ -500,18 +620,66 @@ def build_idle_animation(scene, seconds=10, fps=12):
     ring.parent = carrier
     ring.rotation_euler = (0.0, 0.0, 0.0)
 
-    # Blender 5.x slotted actions removed Action.fcurves — set the new-key
-    # interpolation preference instead of editing curves after the fact.
-    prefs = bpy.context.preferences.edit
-    old_interp = prefs.keyframe_new_interpolation_type
-    prefs.keyframe_new_interpolation_type = "LINEAR"
-    try:
+    def insert():
         for obj, direction in ((cube, 1.0), (ring, -1.0)):
             obj.keyframe_insert("rotation_euler", frame=1)
             obj.rotation_euler.z += direction * math.tau
             obj.keyframe_insert("rotation_euler", frame=frames + 1)
-    finally:
-        prefs.keyframe_new_interpolation_type = old_interp
+    linear_keys(insert)
+
+
+def build_idle_animation(scene, seconds=10, fps=12):
+    """The hero idle v3: one full counter-rotation turn per `seconds`.
+    10s/turn DECIDED (user; 40s and 20s both read too slow); the tick
+    marker was removed (user) — the spin reads via the satin anisotropy
+    and edge glints only."""
+    frames = seconds * fps
+    scene.render.fps = fps
+    scene.frame_start = 1
+    scene.frame_end = frames
+    animate_counter_rotation(scene, frames)
+
+
+# §6 scrub choreography, in frames of the 120-frame sequence. The resolve
+# is staged: the milk (scatter) clears first so the interior arrives, the
+# surface polish + prism fire complete at `clear`, the dark jewel dwells,
+# and the env feeds white from `dissolve` to the end — the reserved
+# overexposure handoff. All linear: scroll supplies the easing.
+SCRUB = {
+    "frames": 120,
+    "hold": 8,       # full-frost opening beat
+    "milk": 78,      # scatter density reaches zero
+    "fire_in": 64,   # dispersion-glass crossfade begins
+    "clear": 92,     # fully the dark jewel from here
+    "dissolve": 108, # env -> white begins; frame 120 is blown out
+}
+
+
+def build_scrub_animation(scene):
+    """Keyframe the frosted->clear morph over the counter-rotation. Uses
+    the sockets make_scrub_material exposed (build_scene(scrub=True))."""
+    frames = SCRUB["frames"]
+    scene.frame_start = 1
+    scene.frame_end = frames
+    animate_counter_rotation(scene, frames)
+
+    def key(sock, points):
+        for frame, value in points:
+            sock.default_value = value
+            sock.keyframe_insert("default_value", frame=frame)
+
+    s = SCRUB_SOCKETS
+    dissolve = scene.world.node_tree.nodes["dissolve"].inputs["Factor"]
+
+    def insert():
+        key(s["rough_min"], [(SCRUB["hold"], 0.15), (SCRUB["clear"], 0.03)])
+        key(s["rough_max"], [(SCRUB["hold"], 0.38), (SCRUB["clear"], 0.03)])
+        key(s["bump"], [(SCRUB["hold"], 0.06), (SCRUB["clear"], 0.0)])
+        key(s["scatter"], [(SCRUB["hold"], 0.7), (SCRUB["milk"], 0.0)])
+        key(s["absorb"], [(SCRUB["hold"], 0.6), (SCRUB["clear"], 0.0)])
+        key(s["glass_mix"], [(SCRUB["fire_in"], 0.0), (SCRUB["clear"], 1.0)])
+        key(dissolve, [(SCRUB["dissolve"], 0.0), (frames, 1.0)])
+    linear_keys(insert)
 
 
 def setup_render(scene, samples, res):
@@ -531,10 +699,11 @@ def setup_render(scene, samples, res):
 def render_study(name, ratio, thick, ring_euler=None, cube_euler=None,
                  interior=None, frost_roughness=0.45, frost_kind=None,
                  world_kind="studio", clear_spread=None, ring_kind=None,
-                 samples=96, res=640):
+                 samples=96, res=640, cam_az=28, cam_el=16, lens=60):
     scene = build_scene(ratio, thick, ring_euler, cube_euler,
                         interior, frost_roughness, frost_kind,
-                        world_kind, clear_spread, ring_kind)
+                        world_kind, clear_spread, ring_kind,
+                        cam_az=cam_az, cam_el=cam_el, lens=lens)
     setup_render(scene, samples, res)
     scene.render.filepath = str(OUT_DIR / f"{name}.png")
     t0 = time.time()
@@ -614,6 +783,116 @@ def main():
         bpy.ops.render.render(animation=True)
         print(f"[blockout] motion idle: {scene.frame_end} frames in "
               f"{time.time() - t0:.0f}s -> {seq_dir}")
+        return
+
+    if "--idle" in argv:
+        # The ambient presence, real materials this time (--motion was an
+        # EEVEE timing proxy): the CLEAR object at the decided 10s/turn,
+        # path-traced, for the loop a page actually plays. Frame 121 == 1,
+        # so rendering 1..120 loops seamlessly. "--idle glass" swaps the
+        # satin ring for the clear-family one; a digit resumes.
+        scene = build_scene(DECIDED["ratio"], DECIDED["thick"],
+                            interior=DECIDED["interior"],
+                            world_kind=DECIDED["world"],
+                            clear_spread=DECIDED["clear_spread"],
+                            ring_kind="glass" if "glass" in argv else DECIDED["ring"])
+        build_idle_animation(scene)
+        setup_render(scene, samples=96, res=640)
+        for a in argv:
+            if a.isdigit():
+                scene.frame_start = int(a)
+        seq_dir = OUT_DIR.parent / "idle-clear"
+        seq_dir.mkdir(parents=True, exist_ok=True)
+        scene.render.filepath = str(seq_dir / "frame####")
+        t0 = time.time()
+        bpy.ops.render.render(animation=True)
+        print(f"[idle] clear loop frames {scene.frame_start}-{scene.frame_end} "
+              f"in {time.time() - t0:.0f}s -> {seq_dir}")
+        return
+
+    if "--glassring" in argv:
+        # The clear-ring studies: the decided three-quarter pose and the
+        # front badge, both all-clear, for the user's call.
+        render_study("g_glass_clear", DECIDED["ratio"], DECIDED["thick"],
+                     interior=DECIDED["interior"], world_kind=DECIDED["world"],
+                     clear_spread=DECIDED["clear_spread"], ring_kind="glass")
+        render_study("b_corner_clear_glass", DECIDED["ratio"], DECIDED["thick"],
+                     ring_euler=(math.radians(90), 0.0, 0.0),
+                     cube_euler=POSE["cube_euler"],
+                     interior=DECIDED["interior"], world_kind=DECIDED["world"],
+                     clear_spread=DECIDED["clear_spread"], ring_kind="glass",
+                     cam_az=0, cam_el=0, lens=85)
+        return
+
+    if "--front" in argv:
+        # The badge (user request, 2026-08-17): ring perfectly face-on and
+        # centred, the cube reading inside it. This is the composition the
+        # HERO pose deliberately avoids (face-on = logo read) — here the
+        # logo read is the point. Camera dead-on at 85mm so the circle is a
+        # circle; three cube poses x both material states for the pick.
+        cube_poses = [
+            ("square", (0.0, 0.0, 0.0)),
+            ("diamond", (0.0, math.radians(45), 0.0)),
+            ("corner", POSE["cube_euler"]),
+        ]
+        face_on = (math.radians(90), 0.0, 0.0)
+        for pose_name, cube_euler in cube_poses:
+            for state in ("frost", "clear"):
+                render_study(
+                    f"b_{pose_name}_{state}", DECIDED["ratio"], DECIDED["thick"],
+                    ring_euler=face_on, cube_euler=cube_euler,
+                    interior=DECIDED["interior"],
+                    frost_kind=DECIDED["frost"] if state == "frost" else None,
+                    clear_spread=DECIDED["clear_spread"] if state == "clear" else None,
+                    world_kind=DECIDED["world"], ring_kind=DECIDED["ring"],
+                    cam_az=0, cam_el=0, lens=85)
+        return
+
+    if "--scrub" in argv:
+        # §6 delivery validation — the frosted->clear morph, scrubbed.
+        #   --scrub probe        stills across the timeline at study res
+        #   --scrub seq [start]  the full 120-frame sequence at 640 (resumable)
+        #   --scrub sizing       every 12th frame at 1600 for the size estimate
+        scene = build_scene(DECIDED["ratio"], DECIDED["thick"],
+                            interior=DECIDED["interior"],
+                            world_kind=DECIDED["world"],
+                            clear_spread=DECIDED["clear_spread"],
+                            ring_kind=DECIDED["ring"], scrub=True)
+        build_scrub_animation(scene)
+        if "probe" in argv:
+            setup_render(scene, samples=96, res=640)
+            for f in (1, 30, 60, 80, 92, 100, 112, 120):
+                scene.frame_set(f)
+                scene.render.filepath = str(OUT_DIR / f"s_probe_{f:03d}.png")
+                t0 = time.time()
+                bpy.ops.render.render(write_still=True)
+                print(f"[scrub] probe frame {f}: {time.time() - t0:.0f}s")
+        elif "sizing" in argv:
+            setup_render(scene, samples=128, res=1600)
+            seq_dir = OUT_DIR.parent / "scrub-sizing"
+            seq_dir.mkdir(parents=True, exist_ok=True)
+            for f in [1] + list(range(12, SCRUB["frames"] + 1, 12)):
+                path = seq_dir / f"frame{f:04d}.png"
+                if path.exists():  # resumable: a killed run keeps its frames
+                    print(f"[scrub] sizing frame {f}: kept")
+                    continue
+                scene.frame_set(f)
+                scene.render.filepath = str(path)
+                t0 = time.time()
+                bpy.ops.render.render(write_still=True)
+                print(f"[scrub] sizing frame {f}: {time.time() - t0:.0f}s")
+        else:  # seq
+            setup_render(scene, samples=96, res=640)
+            for a in argv:
+                if a.isdigit():
+                    scene.frame_start = int(a)
+            seq_dir = OUT_DIR.parent / "scrub"
+            seq_dir.mkdir(parents=True, exist_ok=True)
+            scene.render.filepath = str(seq_dir / "frame####")
+            t0 = time.time()
+            bpy.ops.render.render(animation=True)
+            print(f"[scrub] seq frames {scene.frame_start}-{scene.frame_end} "
+                  f"in {time.time() - t0:.0f}s -> {seq_dir}")
         return
 
     if "--ring" in argv:
