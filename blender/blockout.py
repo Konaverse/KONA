@@ -55,8 +55,12 @@ THICKS = [0.020, 0.045, 0.080]
 # authored "bands" env + dispersion spread 0.02. The d5 RGB striping is a
 # 3-sample fake artifact — stronger fire needs more spectral lobes, not
 # more spread. One world lights BOTH states (the scrub can't jump worlds).
+# Ring DECIDED (user, 2026-08-17, off contact-sheet-7): satin aluminium —
+# legible on white AND against the dark jewel; dark steel read heavy,
+# white ceramic vanished at progress-indicator size.
 DECIDED = {"ratio": 1.35, "thick": 0.045, "interior": "combo",
-           "frost": "hybrid", "world": "bands", "clear_spread": 0.02}
+           "frost": "hybrid", "world": "bands", "clear_spread": 0.02,
+           "ring": "satin"}
 
 POSE = {
     # DECIDED hero attitude (user, 2026-08-17, contact-sheet-2). Ring plane
@@ -241,6 +245,37 @@ def build_interior(kind, cube_euler, air, metal):
         add_bubbles(rng, rot, air, 36, max_r=0.016)
 
 
+def ring_variant(kind):
+    """Ring material candidates. 'control' is the blockout polished steel,
+    which reads heavy/dark on the white page."""
+    mat = bpy.data.materials.new(f"ring-{kind}")
+    mat.use_nodes = True
+    bsdf = mat.node_tree.nodes["Principled BSDF"]
+    if kind == "control":
+        input_socket(bsdf, "Base Color").default_value = (0.82, 0.84, 0.87, 1.0)
+        input_socket(bsdf, "Metallic").default_value = 1.0
+        input_socket(bsdf, "Roughness").default_value = 0.25
+    elif kind == "satin":
+        # bright brushed aluminium — silver on white
+        input_socket(bsdf, "Base Color").default_value = (0.90, 0.91, 0.92, 1.0)
+        input_socket(bsdf, "Metallic").default_value = 1.0
+        input_socket(bsdf, "Roughness").default_value = 0.42
+        input_socket(bsdf, "Anisotropic").default_value = 0.6
+    elif kind == "ceramic":
+        # glazed white ceramic — the quietest option on Whiteout
+        input_socket(bsdf, "Base Color").default_value = (0.95, 0.96, 0.97, 1.0)
+        input_socket(bsdf, "Metallic").default_value = 0.0
+        input_socket(bsdf, "Roughness").default_value = 0.32
+        input_socket(bsdf, "Coat Weight", "Clearcoat").default_value = 0.4
+    elif kind == "titan":
+        # brushed titanium with a cool cast
+        input_socket(bsdf, "Base Color").default_value = (0.72, 0.76, 0.82, 1.0)
+        input_socket(bsdf, "Metallic").default_value = 1.0
+        input_socket(bsdf, "Roughness").default_value = 0.35
+        input_socket(bsdf, "Anisotropic").default_value = 0.7
+    return mat
+
+
 def build_world(kind="studio"):
     """Lighting/reflection environment; camera rays always see pure white.
     'studio' = the built-in HDRI. 'bands' = an authored abstract env — soft
@@ -326,7 +361,7 @@ def make_dispersion_material(spread):
 
 def build_scene(ratio, thick, ring_euler=None, cube_euler=None,
                 interior=None, frost_roughness=0.45, frost_kind=None,
-                world_kind="studio", clear_spread=None):
+                world_kind="studio", clear_spread=None, ring_kind=None):
     ring_euler = ring_euler or POSE["ring_euler"]
     cube_euler = cube_euler or POSE["cube_euler"]
     bpy.ops.wm.read_factory_settings(use_empty=True)
@@ -339,7 +374,7 @@ def build_scene(ratio, thick, ring_euler=None, cube_euler=None,
         frost = frost_variant(frost_kind)
     else:
         frost = make_frost_material(frost_roughness)
-    metal = make_ring_material()
+    metal = ring_variant(ring_kind) if ring_kind else make_ring_material()
 
     bpy.ops.mesh.primitive_cube_add(size=CUBE_EDGE, rotation=cube_euler)
     cube = bpy.context.active_object
@@ -422,11 +457,11 @@ def setup_render(scene, samples, res):
 
 def render_study(name, ratio, thick, ring_euler=None, cube_euler=None,
                  interior=None, frost_roughness=0.45, frost_kind=None,
-                 world_kind="studio", clear_spread=None,
+                 world_kind="studio", clear_spread=None, ring_kind=None,
                  samples=96, res=640):
     scene = build_scene(ratio, thick, ring_euler, cube_euler,
                         interior, frost_roughness, frost_kind,
-                        world_kind, clear_spread)
+                        world_kind, clear_spread, ring_kind)
     setup_render(scene, samples, res)
     scene.render.filepath = str(OUT_DIR / f"{name}.png")
     t0 = time.time()
@@ -464,14 +499,29 @@ def main():
                          interior=DECIDED["interior"], frost_kind=kind)
         return
 
+    if "--ring" in argv:
+        # Material pass, phase 3: ring candidates in BOTH states — the ring
+        # lives against the white page (frosted) and the dark jewel (clear).
+        for kind in ["control", "satin", "ceramic", "titan"]:
+            render_study(f"g_{kind}_frost", DECIDED["ratio"], DECIDED["thick"],
+                         interior=DECIDED["interior"],
+                         frost_kind=DECIDED["frost"],
+                         world_kind=DECIDED["world"], ring_kind=kind)
+            render_study(f"g_{kind}_clear", DECIDED["ratio"], DECIDED["thick"],
+                         interior=DECIDED["interior"],
+                         world_kind=DECIDED["world"],
+                         clear_spread=DECIDED["clear_spread"], ring_kind=kind)
+        return
+
     if "--check" in argv:
         # Fast both-states check under the DECIDED world, study res.
         render_study("check-frost", DECIDED["ratio"], DECIDED["thick"],
                      interior=DECIDED["interior"], frost_kind=DECIDED["frost"],
-                     world_kind=DECIDED["world"])
+                     world_kind=DECIDED["world"], ring_kind=DECIDED["ring"])
         render_study("check-clear", DECIDED["ratio"], DECIDED["thick"],
                      interior=DECIDED["interior"], world_kind=DECIDED["world"],
-                     clear_spread=DECIDED["clear_spread"])
+                     clear_spread=DECIDED["clear_spread"],
+                     ring_kind=DECIDED["ring"])
         return
 
     if "--jewel" in argv:
@@ -493,12 +543,13 @@ def main():
         render_study("hero-ref", DECIDED["ratio"], DECIDED["thick"],
                      interior=DECIDED["interior"],
                      frost_kind=DECIDED["frost"],
-                     world_kind=DECIDED["world"], samples=256, res=1280)
+                     world_kind=DECIDED["world"],
+                     ring_kind=DECIDED["ring"], samples=256, res=1280)
         render_study("clear-ref", DECIDED["ratio"], DECIDED["thick"],
                      interior=DECIDED["interior"],
                      world_kind=DECIDED["world"],
                      clear_spread=DECIDED["clear_spread"],
-                     samples=256, res=1280)
+                     ring_kind=DECIDED["ring"], samples=256, res=1280)
         return
 
     if "--poses" in argv:
