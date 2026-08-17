@@ -101,9 +101,9 @@ Four elements. On white, that reads as expensive. Seven reads as busy.
 
 **The occlusion is the whole trick.** Text passing behind the object and other text in front of it is the one move that proves the object exists in space rather than being pasted on. Production consequence: the render exports **with alpha**, as WebP, and the type sits in two DOM layers, one behind and one in front. This reaches back into the Blender setup, so it is decided here.
 
-**SEO.** The `h1` lives here, as real DOM text, containing the primary term. Never inside the canvas.
+**SEO.** The `h1` lives here, as real DOM text, containing the primary term. Never inside the canvas. [SEO, expanded 2026-08-17:] the pre-rendered pipeline makes this section CWV-safe by construction — the LCP element is the headline or the object's poster frame (a real image, painting before any JS), and the object's box is **reserved at its calculable envelope** (explicit dimensions / aspect-ratio) so nothing shifts when media arrives. LCP < 2.5s, CLS < 0.1 are the thresholds, measured on field data.
 
-**Entrance.** No entrance. It is already there on load. The object holds a slow idle rotation, one full turn in roughly 40 seconds, slow enough that you are not certain it is moving.
+**Entrance.** No entrance. It is already there on load. The object holds a slow idle rotation, one full turn in roughly 10 seconds (amended 2026-08-17 off the motion test — 40s and a 20s retry both read too slow to the user; visible life outranks stealth), the ring counter-spinning about its own axis while its plane holds the decided attitude.
 
 **Handoff.** On scroll the object drifts up and back, losing scale and gaining blur, while the headline layers separate slightly at different rates. The hero does not slide away, it recedes.
 

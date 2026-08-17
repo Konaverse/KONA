@@ -19,6 +19,7 @@ import sys
 import time
 from pathlib import Path
 
+import bmesh
 import bpy
 import mathutils
 
@@ -256,10 +257,12 @@ def ring_variant(kind):
         input_socket(bsdf, "Metallic").default_value = 1.0
         input_socket(bsdf, "Roughness").default_value = 0.25
     elif kind == "satin":
-        # bright brushed aluminium — silver on white
-        input_socket(bsdf, "Base Color").default_value = (0.90, 0.91, 0.92, 1.0)
-        input_socket(bsdf, "Metallic").default_value = 1.0
-        input_socket(bsdf, "Roughness").default_value = 0.42
+        # bright brushed aluminium — silver on white. Metallic is dropped a
+        # touch: the washer's FLAT faces average the mostly-dark env, so a
+        # pure metal read gunmetal; the diffuse floor keeps it silver.
+        input_socket(bsdf, "Base Color").default_value = (0.94, 0.95, 0.96, 1.0)
+        input_socket(bsdf, "Metallic").default_value = 0.8
+        input_socket(bsdf, "Roughness").default_value = 0.5
         input_socket(bsdf, "Anisotropic").default_value = 0.6
     elif kind == "ceramic":
         # glazed white ceramic — the quietest option on Whiteout
@@ -274,6 +277,36 @@ def ring_variant(kind):
         input_socket(bsdf, "Roughness").default_value = 0.35
         input_socket(bsdf, "Anisotropic").default_value = 0.7
     return mat
+
+
+def make_washer_ring(name, center_r, width, thick, segs=192):
+    """Flat annulus with a rectangular cross-section — a coin with the
+    middle drilled out (user, 2026-08-17; replaces the torus). center_r is
+    the band's centreline, width its radial extent, thick its axial depth."""
+    outer = center_r + width / 2
+    inner = center_r - width / 2
+    bm = bmesh.new()
+    top_o, bot_o, top_i, bot_i = [], [], [], []
+    for i in range(segs):
+        a = math.tau * i / segs
+        ca, sa = math.cos(a), math.sin(a)
+        top_o.append(bm.verts.new((outer * ca, outer * sa, thick / 2)))
+        bot_o.append(bm.verts.new((outer * ca, outer * sa, -thick / 2)))
+        top_i.append(bm.verts.new((inner * ca, inner * sa, thick / 2)))
+        bot_i.append(bm.verts.new((inner * ca, inner * sa, -thick / 2)))
+    for i in range(segs):
+        j = (i + 1) % segs
+        bm.faces.new((top_o[i], top_o[j], top_i[j], top_i[i]))
+        bm.faces.new((bot_i[i], bot_i[j], bot_o[j], bot_o[i]))
+        bm.faces.new((top_o[i], bot_o[i], bot_o[j], top_o[j]))
+        bm.faces.new((top_i[j], bot_i[j], bot_i[i], top_i[i]))
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    mesh = bpy.data.meshes.new(name)
+    bm.to_mesh(mesh)
+    bm.free()
+    obj = bpy.data.objects.new(name, mesh)
+    bpy.context.scene.collection.objects.link(obj)
+    return obj
 
 
 def build_world(kind="studio"):
@@ -313,7 +346,7 @@ def build_world(kind="studio"):
                          (0.52, (0.02, 0.022, 0.025, 1.0)),
                          (0.70, (0.13, 0.20, 0.30, 1.0)),
                          (0.78, (0.03, 0.033, 0.038, 1.0)),
-                         (0.86, (0.32, 0.33, 0.34, 1.0)),
+                         (0.86, (0.50, 0.51, 0.52, 1.0)),
                          (0.93, (0.03, 0.033, 0.038, 1.0))]:
             el = e.new(pos)
             el.color = col
@@ -391,17 +424,21 @@ def build_scene(ratio, thick, ring_euler=None, cube_euler=None,
         build_interior(interior, cube_euler, make_air_material(), metal)
 
     major = ratio * TUMBLE_R
-    minor = thick * major
-    bpy.ops.mesh.primitive_torus_add(
-        major_radius=major,
-        minor_radius=minor,
-        major_segments=128,
-        minor_segments=32,
-        rotation=ring_euler,
-    )
-    ring = bpy.context.active_object
+    minor = thick * major  # kept as half the band's face-on width
+    width = 2 * minor
+    ring = make_washer_ring("ring", major, width, 0.55 * width)
+    ring.rotation_euler = ring_euler
+    bev = ring.modifiers.new("Bevel", "BEVEL")
+    bev.width = width * 0.06
+    bev.segments = 2
     ring.data.materials.append(metal)
-    bpy.ops.object.shade_smooth()
+    bpy.ops.object.select_all(action="DESELECT")
+    bpy.context.view_layer.objects.active = ring
+    ring.select_set(True)
+    try:
+        bpy.ops.object.shade_auto_smooth(angle=math.radians(30))
+    except AttributeError:
+        bpy.ops.object.shade_smooth()
 
     # Soft white key upper-front-right; ice rim behind-left (the object tint).
     bpy.ops.object.light_add(type="AREA", location=(2.6, -2.4, 3.0))
@@ -439,6 +476,42 @@ def build_scene(ratio, thick, ring_euler=None, cube_euler=None,
     track.target = target
     scene.camera = cam
     return scene
+
+
+def build_idle_animation(scene, seconds=10, fps=12):
+    """The hero idle v3: cube tumbles one full turn per `seconds` about
+    world Z; the ring spins about its OWN normal, counter-direction.
+    10s/turn DECIDED (user; 40s and 20s both read too slow); the tick
+    marker was removed (user) —
+    the spin reads via the satin anisotropy and edge glints only. v1
+    precessed the ring's plane and cycled through the rejected badge/hoop
+    attitudes — the plane must HOLD the decided pose."""
+    frames = seconds * fps
+    scene.render.fps = fps
+    scene.frame_start = 1
+    scene.frame_end = frames
+    cube = bpy.data.objects["Cube"]
+    ring = bpy.data.objects["ring"]
+
+    # carrier holds the locked attitude; the ring spins local-Z inside it
+    carrier = bpy.data.objects.new("ring-carrier", None)
+    scene.collection.objects.link(carrier)
+    carrier.rotation_euler = tuple(ring.rotation_euler)
+    ring.parent = carrier
+    ring.rotation_euler = (0.0, 0.0, 0.0)
+
+    # Blender 5.x slotted actions removed Action.fcurves — set the new-key
+    # interpolation preference instead of editing curves after the fact.
+    prefs = bpy.context.preferences.edit
+    old_interp = prefs.keyframe_new_interpolation_type
+    prefs.keyframe_new_interpolation_type = "LINEAR"
+    try:
+        for obj, direction in ((cube, 1.0), (ring, -1.0)):
+            obj.keyframe_insert("rotation_euler", frame=1)
+            obj.rotation_euler.z += direction * math.tau
+            obj.keyframe_insert("rotation_euler", frame=frames + 1)
+    finally:
+        prefs.keyframe_new_interpolation_type = old_interp
 
 
 def setup_render(scene, samples, res):
@@ -497,6 +570,50 @@ def main():
         for kind in kinds:
             render_study(f"f_{kind}", DECIDED["ratio"], DECIDED["thick"],
                          interior=DECIDED["interior"], frost_kind=kind)
+        return
+
+    if "--motion" in argv:
+        # Motion test: the hero idle at EEVEE preview quality, real duration.
+        # Timing is the question; the frost's volume look is not (EEVEE), so
+        # the cube runs the plain 0.45 frost here.
+        scene = build_scene(DECIDED["ratio"], DECIDED["thick"],
+                            interior=DECIDED["interior"],
+                            world_kind=DECIDED["world"],
+                            ring_kind=DECIDED["ring"])
+        # EEVEE shows rough transmission as black glass, so the cube runs a
+        # white proxy here — this test judges timing, not material.
+        proxy = bpy.data.materials.new("frost-motion-proxy")
+        proxy.use_nodes = True
+        b = proxy.node_tree.nodes["Principled BSDF"]
+        input_socket(b, "Base Color").default_value = (0.92, 0.94, 0.97, 1.0)
+        input_socket(b, "Roughness").default_value = 0.5
+        cube = bpy.data.objects["Cube"]
+        cube.data.materials.clear()
+        cube.data.materials.append(proxy)
+        build_idle_animation(scene)
+        # resume support: "--motion 419" re-renders from that frame on
+        for a in argv:
+            if a.isdigit():
+                scene.frame_start = int(a)
+        for engine in ("BLENDER_EEVEE_NEXT", "BLENDER_EEVEE"):
+            try:
+                scene.render.engine = engine
+                break
+            except TypeError:
+                continue
+        scene.render.resolution_x = 480
+        scene.render.resolution_y = 480
+        scene.view_settings.view_transform = "Standard"
+        # Blender 5.x removed movie output — render a PNG sequence and
+        # encode with ffmpeg outside (see the encode step in the tooling).
+        scene.render.image_settings.file_format = "PNG"
+        seq_dir = OUT_DIR / "motion"
+        seq_dir.mkdir(parents=True, exist_ok=True)
+        scene.render.filepath = str(seq_dir / "frame####")
+        t0 = time.time()
+        bpy.ops.render.render(animation=True)
+        print(f"[blockout] motion idle: {scene.frame_end} frames in "
+              f"{time.time() - t0:.0f}s -> {seq_dir}")
         return
 
     if "--ring" in argv:
