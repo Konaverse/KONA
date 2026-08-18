@@ -297,6 +297,10 @@
    ============================================================ */
 .hw-hero {
   position: relative;
+  /* raised with the claim: §3 slides under BOTH — on tall viewports the
+     claim can be shorter than the 100svh overlap, and the section must
+     never paint over the hero's tail */
+  z-index: 2;
   min-height: 100svh;
   display: grid;
   place-items: center;
@@ -445,6 +449,29 @@
 }
 
 /* ---------- §2 skeleton ---------- */
+/* An opaque, z-raised sheet: §3 slides UNDER it (margin-top −100svh on
+   .sv), so the claim's bottom edge is what uncovers the dark image —
+   the depth reveal. The section is full-width (its old k-page max-width
+   moved to an inner div) or the image would peek past its sides on
+   screens wider than --page-max. */
+.hm-claim {
+  position: relative;
+  z-index: 2;
+  background: var(--surface);
+}
+/* the seam — the page-turn's grammar, quieter: the sheet casts just
+   ahead of its edge onto whatever slides beneath, which is only ever
+   §3's image */
+.hm-claim::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 110px;
+  background: linear-gradient(to bottom, rgba(4, 7, 12, 0.18), rgba(4, 7, 12, 0));
+  pointer-events: none;
+}
 .hm-claim-line {
   margin: 0;
   max-width: 24ch;
@@ -457,4 +484,681 @@
 }
 .hm-claim-rule {
   margin-top: var(--section-y);
+}
+
+/* ============================================================
+   §3 — WHAT WE SOLVE: the credit roll over the glass portrait.
+   The section slides under §2 and its background scrolls slower
+   than the hand — the depth reveal. Problems are loose text
+   thrown into the scene, no containers, rolling like credits at
+   four speeds. Mechanism notes in SolveCredits.tsx.
+   ============================================================ */
+.sv {
+  position: relative;
+  /* already in the viewport, hidden behind the claim, by the claim's
+     last screen — the reveal is the claim's edge lifting off it */
+  margin-top: -100svh;
+  /* the image's own deep blue-black, for any sliver the cover crop
+     or the drift could ever expose */
+  background: #060a10;
+  /* NO overflow on this element: it would become the sticky frame's
+     scroll container and the frame would stop sticking */
+}
+.sv-frame {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  /* takes no flow height: the list below starts at the section's top
+     and rides over the frame */
+  margin-bottom: -100svh;
+  overflow: clip;
+}
+.sv-img {
+  position: absolute;
+  left: 0;
+  /* Oversized past the drift's full travel. The travel is 0.45 × the sticky
+     range (SolveCredits.tsx computes it live), and the range is the section
+     height minus one viewport — currently ~242svh, so travel ≈ ±54.5vh; ±63vh
+     here leaves ~8.5vh of safety each side. IF §3 GROWS (more items, bigger
+     paddings) THIS MUST GROW WITH IT or the drift exposes the frame edge. */
+  top: -63vh;
+  width: 100%;
+  height: calc(100% + 126vh);
+  object-fit: cover;
+  /* the ticker owns this the whole time the section is on screen */
+  will-change: transform;
+}
+/* legibility scrim: the portrait's bright glass streaks cross the text
+   columns, and loose text has no container to shelter in. Heavier at
+   the foot where the credits enter. */
+.sv-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(4, 7, 12, 0.34) 0%,
+    rgba(4, 7, 12, 0.10) 34%,
+    rgba(4, 7, 12, 0.44) 100%
+  );
+}
+
+.sv-list {
+  position: relative;
+  max-width: var(--page-max);
+  margin-inline: auto;
+  /* The top pad is the image-only beat — one clean stretch of portrait
+     between the claim's edge clearing and the first problem entering.
+     It must stay ABOVE 100svh: below that the first item would sit
+     inside the viewport (occluded behind the claim) from the start,
+     and its IntersectionObserver entrance would fire while hidden.
+     The bottom pad is the EXIT beat: its last 100svh is the zone §4
+     (margin-top: -100svh) buries as it rises, so the credits end a
+     clear 22svh before it — pure image for the burial, mirroring the
+     entry. The sticky frame stays pinned through the whole cover. */
+  padding: 108svh var(--page-pad) 122svh;
+}
+.sv-item {
+  max-width: 34ch;
+  will-change: transform;
+}
+.sv-q {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.96);
+}
+.sv-a {
+  margin: var(--s-4) 0 0;
+  color: rgba(255, 255, 255, 0.72);
+}
+/* the scatter — abstract placement, not a grid: left, past centre,
+   left of centre, right. Vertical gaps deliberately uneven. */
+.sv-item-1 { margin-left: 4%; }
+.sv-item-2 { margin-left: 48%; margin-top: 14svh; }
+.sv-item-3 { margin-left: 16%; margin-top: 18svh; }
+.sv-item-4 { margin-left: 56%; margin-top: 14svh; }
+
+@media (max-width: 57.5rem) {
+  .sv-list { padding: 94svh var(--page-pad) 18svh; }
+  /* the scatter survives, gentler — phone columns have no room for 48% */
+  .sv-item-1 { margin-left: 0; }
+  .sv-item-2 { margin-left: 10%; margin-top: 18svh; }
+  .sv-item-3 { margin-left: 0; margin-top: 22svh; }
+  .sv-item-4 { margin-left: 12%; margin-top: 16svh; }
+}
+
+/* ============================================================
+   §4 — WHAT WE DO: the index/detail instrument.
+   The section is an opaque sheet that rises OVER §3's portrait
+   (margin-top −100svh) and buries it — the claim's reveal
+   grammar, mirrored. Right: the six services as an unlinked tab
+   index whose active name letter-fills to ink. Left: the active
+   service blown up — numeral, self-drawing hairline glyph, name,
+   paragraph. Mechanism notes in ServicesIndex.tsx.
+   ============================================================ */
+.wd {
+  position: relative;
+  z-index: 2;
+  margin-top: -100svh;
+  background: var(--surface);
+}
+/* the seam, cast UPWARD onto the portrait ahead of the rising edge —
+   the claim's ::after mirrored */
+.wd::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  height: 110px;
+  background: linear-gradient(to top, rgba(4, 7, 12, 0.18), rgba(4, 7, 12, 0));
+  pointer-events: none;
+}
+.wd-head {
+  margin: 0 0 var(--s-9);
+  max-width: 22ch;
+  font-weight: var(--w-light);
+}
+.wd-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: clamp(var(--s-7), 6vw, var(--s-11));
+  align-items: start;
+}
+
+/* ---------- the deck ----------
+   Server-rendered as six stacked readable blocks (the no-JS page);
+   .is-live grid-stacks them into one cell so the tallest panel sizes
+   the deck and GSAP owns which one is visible. */
+.wd-deck:not(.is-live) .wd-panel + .wd-panel {
+  margin-top: var(--s-9);
+}
+.wd-deck.is-live {
+  display: grid;
+}
+.wd-deck.is-live .wd-panel {
+  grid-area: 1 / 1;
+}
+.wd-numrow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s-6);
+}
+.wd-mask {
+  display: block;
+  overflow: hidden;
+  /* the numeral rises through this edge; descenders don't exist in
+     digits but the crop needs a hair of air */
+  padding-bottom: 0.06em;
+}
+.wd-num {
+  display: block;
+  font-size: var(--t-display);
+  font-weight: var(--w-light);
+  line-height: var(--lh-display);
+  letter-spacing: var(--ls-display);
+  color: var(--text);
+}
+.wd-name {
+  margin: var(--s-6) 0 0;
+  font-weight: var(--w-regular);
+}
+.wd-para {
+  margin: var(--s-4) 0 0;
+  color: var(--text-muted);
+  max-width: 44ch;
+}
+
+/* ---------- the glyphs ----------
+   Hairline instruments: constant 1.25px stroke at any display size,
+   every drawable path normalised to pathLength 100 so one dashoffset
+   tween draws it. Each glyph keeps exactly ONE idle motion. */
+.wd-glyph {
+  width: clamp(110px, 11vw, 170px);
+  aspect-ratio: 1;
+  flex: none;
+  color: var(--ink);
+  overflow: visible;
+}
+.wd-glyph path,
+.wd-glyph rect,
+.wd-glyph circle,
+.wd-glyph ellipse {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.wd-glyph .g-draw {
+  stroke-dasharray: 100;
+}
+.wd-glyph .g-dot {
+  fill: currentColor;
+  stroke: none;
+}
+.wd-glyph .g-old {
+  stroke: var(--graphite);
+}
+/* The idles — transform/opacity only, one or two per glyph, each earning
+   its place as part of the scene rather than decoration. Rotating and
+   swaying groups centre on their own geometry via fill-box. */
+/* The orbit dots travel their ellipses (planes hold still — see the glyph
+   note in ServicesIndex.tsx). The paths are the two ellipses written as
+   arc pairs, endpoints pre-rotated about their centres. Hidden outright
+   where Motion Path is unsupported — a dot parked at the SVG origin is
+   worse than no dot. */
+.wd-g1 .g-orbdot {
+  display: none;
+}
+@supports (offset-path: path('M 0 0 L 1 1')) {
+  .wd-g1 .g-orbdot {
+    display: inline;
+  }
+  .wd-g1 .g-orbdot1 {
+    offset-path: path('M 5.8 64.7 A 46 13 -16 1 0 94.2 39.3 A 46 13 -16 1 0 5.8 64.7 Z');
+    animation: wd-travel 13s linear infinite;
+  }
+  .wd-g1 .g-orbdot2 {
+    offset-path: path('M 34.1 24.6 A 30 9 58 1 0 65.9 75.4 A 30 9 58 1 0 34.1 24.6 Z');
+    animation: wd-travel 9s linear infinite reverse;
+  }
+}
+@keyframes wd-travel {
+  from { offset-distance: 0%; }
+  to   { offset-distance: 100%; }
+}
+.g-spark {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: wd-spark 5s var(--e-settle) infinite;
+}
+@keyframes wd-spark {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.4; transform: scale(0.7) rotate(18deg); }
+}
+.wd-g2 .g-cursor {
+  animation: wd-cursor 7s ease-in-out infinite alternate;
+}
+@keyframes wd-cursor {
+  0%   { transform: translate(-8px, -6px); }
+  55%  { transform: translate(3px, 2px); }
+  /* the click: a quick dip at the far end of the travel */
+  70%  { transform: translate(3px, 2px) scale(0.86); }
+  100% { transform: translate(5px, 4px); }
+}
+.wd-g3 .g-caret {
+  animation: wd-caret 1.4s steps(1) infinite;
+}
+@keyframes wd-caret {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.15; }
+}
+.wd-g3 .g-type {
+  transform-box: fill-box;
+  transform-origin: left center;
+  animation: wd-type 5s ease-in-out infinite alternate;
+}
+@keyframes wd-type {
+  from { transform: scaleX(0.45); }
+  to   { transform: scaleX(1); }
+}
+/* the page and its scroll dot travel together — one system, one clock */
+.wd-g4 .g-page {
+  animation: wd-page 6s ease-in-out infinite alternate;
+}
+@keyframes wd-page {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-14px); }
+}
+.wd-g4 .g-scroll {
+  animation: wd-scroll 6s ease-in-out infinite alternate;
+}
+@keyframes wd-scroll {
+  from { transform: translateY(0); }
+  to   { transform: translateY(56px); }
+}
+.wd-g5 .g-old {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: wd-sway 9s ease-in-out infinite alternate;
+}
+@keyframes wd-sway {
+  from { transform: rotate(-2.4deg); }
+  to   { transform: rotate(2.4deg); }
+}
+/* the flow's dashes march from the old page toward the new one */
+.wd-g5 .g-flow {
+  stroke: var(--graphite);
+  animation: wd-flow 1.6s linear infinite;
+}
+@keyframes wd-flow {
+  to { stroke-dashoffset: -16; }
+}
+.wd-g6 .g-lens {
+  animation: wd-lens 7s ease-in-out infinite alternate;
+}
+@keyframes wd-lens {
+  from { transform: translate(-6px, -2px); }
+  to   { transform: translate(5px, 3px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wd-g1 .g-orbdot,
+  .g-spark,
+  .wd-g2 .g-cursor,
+  .wd-g3 .g-caret,
+  .wd-g3 .g-type,
+  .wd-g4 .g-page,
+  .wd-g4 .g-scroll,
+  .wd-g5 .g-old,
+  .wd-g5 .g-flow,
+  .wd-g6 .g-lens {
+    animation: none;
+  }
+}
+
+/* ---------- the index ----------
+   Unlinked tabs: cursor stays default (no navigation promised), the
+   hover/active answer is the name letter-filling to ink — §2's fill
+   signature at hover speed, the sweep carried by per-letter delays. */
+.wd-index {
+  display: flex;
+  flex-direction: column;
+  /* §4's entrance cascade is 60ms, faster than the house 80 (doc §4) */
+  --stagger: 60ms;
+}
+.wd-row {
+  appearance: none;
+  background: none;
+  border: 0;
+  margin: 0;
+  padding: var(--s-4) 0;
+  position: relative; /* anchors the progress line */
+  display: block;
+  width: 100%;
+  text-align: left;
+  cursor: default;
+  font-family: var(--font-sans);
+  font-size: var(--t-h2);
+  font-weight: var(--w-regular);
+  letter-spacing: var(--ls-h2);
+  line-height: var(--lh-tight);
+  color: var(--text-muted);
+}
+/* The cycle's clock, made visible (user call): a THICK ice-deep line under
+   the active row that fills across the 4s window — the jump lands exactly
+   when it completes. One of the accent's few appearances, and the only
+   one that moves continuously; the ticker writes its dashoffset. */
+.wd-prog {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  width: 100%;
+  height: 4px;
+}
+.wd-prog line {
+  stroke: var(--ice-deep);
+  stroke-width: 4;
+  stroke-linecap: butt;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+}
+.wd-row.is-active .wd-prog {
+  display: block;
+}
+@media (prefers-reduced-motion: reduce) {
+  /* no cycle, no clock */
+  .wd-prog {
+    display: none !important;
+  }
+}
+.wd-row [style*='--i'] {
+  transition: color var(--d-quick) var(--e-settle);
+  transition-delay: calc(var(--i, 0) * 14ms);
+}
+.wd-row.is-active [style*='--i'] {
+  color: var(--text);
+}
+
+/* ---------- foot ---------- */
+.wd-foot {
+  margin-top: var(--s-9);
+}
+/* the handoff: the last hairline extends full bleed to both viewport
+   edges (doc §4) — it opens the page out just before the work */
+.wd-foot-rule {
+  margin-top: var(--section-y);
+}
+
+/* ---------- mobile: index first, deck under it ---------- */
+@media (max-width: 57.5rem) {
+  .wd-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .wd-index {
+    order: -1;
+  }
+  .wd-row {
+    font-size: var(--t-h3);
+    padding: var(--s-3) 0;
+  }
+  .wd-glyph {
+    width: clamp(90px, 24vw, 130px);
+  }
+}
+
+/* ---------- §5 foot: the hub link under the page-turn ---------- */
+.hm-workfoot {
+  /* the pin has just released — the link needs a beat, not a full break */
+  padding-block: var(--s-9) var(--section-y);
+}
+
+/* ============================================================
+   §6 — THE INTERLUDE: the CRT turn-on, the aurora stage, the
+   split word, the ultra card. Mechanism notes in Interlude.tsx.
+   ============================================================ */
+.iv {
+  position: relative;
+  background: var(--surface);
+  /* the blank white passage the tube turns on inside of — the STATIC
+     form (no-JS, reduced motion). The scrub form drops it: the blank
+     beat lives inside the pin instead. */
+  padding: 26svh 0 var(--section-y);
+}
+/* the pinned form — the driver adds is-scrub and sets the height; the
+   scroll then drives the door open and closed through the pin */
+.iv.is-scrub {
+  padding: 0;
+}
+.iv-frame {
+  position: relative;
+  height: 100svh;
+}
+.iv.is-scrub .iv-frame {
+  position: sticky;
+  top: 0;
+}
+/* The power-on hairline. Ice-deep core, not white: it draws over the
+   still-white passage (film caught a white line on a white page), and
+   ice-deep carries the glow on both grounds — it fades as the stage
+   lands anyway. */
+.iv-line {
+  position: absolute;
+  left: 1.5%;
+  right: 1.5%;
+  top: 50%;
+  height: 3px;
+  margin-top: -1.5px;
+  background: var(--ice-deep);
+  box-shadow:
+    0 0 18px rgba(127, 168, 201, 0.95),
+    0 0 64px rgba(127, 168, 201, 0.55);
+  opacity: 0;
+  z-index: 2;
+  pointer-events: none;
+  transform-origin: 50% 50%;
+}
+.iv-stage {
+  position: relative;
+  height: 100%;
+  overflow: clip;
+  /* the aurora's CSS understudy: three slanted beams + a cold wash on
+     ink. What no-JS, reduced motion and a failed context see — and the
+     ground the canvas paints over everywhere else. */
+  background:
+    radial-gradient(120% 90% at 72% 8%, rgba(127, 168, 201, 0.17), transparent 55%),
+    linear-gradient(112deg, transparent 40%, rgba(46, 95, 138, 0.22) 50%, transparent 60%),
+    linear-gradient(76deg, transparent 28%, rgba(127, 168, 201, 0.11) 36%, transparent 45%),
+    #070b11;
+  will-change: transform;
+}
+.iv-aurora {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+/* the turn-on's phosphor bloom */
+.iv-bloom {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: radial-gradient(90% 60% at 50% 50%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0) 70%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------- the word: giant, behind the card, split by the pointer ---------- */
+.iv-word {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, var(--wl, 1)) 6%,
+    #000 46%,
+    #000 54%,
+    rgba(0, 0, 0, var(--wr, 1)) 94%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, var(--wl, 1)) 6%,
+    #000 46%,
+    #000 54%,
+    rgba(0, 0, 0, var(--wr, 1)) 94%
+  );
+}
+.iv-word span {
+  display: block;
+  white-space: nowrap;
+  /* no-JS approximation; the effect fits it edge to edge exactly */
+  font-size: 15vw;
+  font-weight: var(--w-semi);
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  /* low alpha by design — the aurora reads through it */
+  color: rgba(244, 248, 251, 0.16);
+}
+
+/* ---------- the ultra card ---------- */
+.iv-cardpos {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  perspective: 1100px;
+}
+.iv-card {
+  position: relative;
+  width: min(600px, 88vw);
+  padding: var(--s-6);
+  border-radius: 14px;
+  overflow: hidden;
+  /* chrome without backdrop-filter (it re-rasterises the fluid): dark
+     glass gradient, hairline metal edge, top highlight, ice halo */
+  background:
+    linear-gradient(165deg, rgba(30, 40, 52, 0.9), rgba(10, 14, 20, 0.94) 55%),
+    #0b0f15;
+  border: 1px solid rgba(190, 215, 235, 0.16);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 30px 90px -20px rgba(0, 0, 0, 0.8),
+    0 0 90px -30px rgba(127, 168, 201, 0.55);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+/* the faded neon grid — strongest at the top edge, gone by the foot */
+.iv-grid {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: rgba(127, 168, 201, 0.30);
+  -webkit-mask-image: radial-gradient(130% 110% at 50% 0%, #000 0%, rgba(0, 0, 0, 0.22) 55%, transparent 82%);
+  mask-image: radial-gradient(130% 110% at 50% 0%, #000 0%, rgba(0, 0, 0, 0.22) 55%, transparent 82%);
+  pointer-events: none;
+}
+/* the specular sheen riding the pointer */
+.iv-sheen {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    46% 38% at var(--sx, 50%) var(--sy, 40%),
+    rgba(255, 255, 255, 0.11),
+    transparent 70%
+  );
+  pointer-events: none;
+}
+.iv-card-head {
+  position: relative;
+  margin-bottom: var(--s-6);
+}
+.iv-card-kicker {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgba(180, 205, 226, 0.72);
+}
+.iv-card-line {
+  margin: var(--s-3) 0 0;
+  max-width: 30ch;
+  font-size: var(--t-h3);
+  font-weight: var(--w-medium);
+  letter-spacing: var(--ls-h3);
+  line-height: var(--lh-snug);
+  color: #f2f6fa;
+}
+.iv-rings {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--s-4);
+}
+.iv-ring {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-3);
+  text-align: center;
+}
+.iv-ring-dial {
+  position: relative;
+  width: clamp(62px, 6.4vw, 92px);
+  aspect-ratio: 1;
+}
+.iv-ring-dial svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* start at 12 o'clock, the PageSpeed way */
+  transform: rotate(-90deg);
+}
+.iv-ring-track,
+.iv-ring-val {
+  fill: none;
+  stroke-width: 3;
+}
+.iv-ring-track {
+  stroke: rgba(255, 255, 255, 0.1);
+}
+.iv-ring-val {
+  stroke: var(--ice);
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  filter: drop-shadow(0 0 6px rgba(127, 168, 201, 0.65));
+}
+.iv-ring-num {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: var(--w-semi);
+}
+.iv-ring-label {
+  color: rgba(190, 208, 224, 0.66);
+}
+
+@media (max-width: 57.5rem) {
+  .iv { padding-top: 16svh; }
+  .iv-card { width: 92vw; padding: var(--s-5); }
+  .iv-rings { grid-template-columns: repeat(2, 1fr); gap: var(--s-5); }
+  .iv-ring-dial { width: 64px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .iv-sheen { display: none; }
+  .iv-line { display: none; }
 }

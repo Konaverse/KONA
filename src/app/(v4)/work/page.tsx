@@ -67,15 +67,19 @@ export default function WorkPage() {
         <hr className="k-rule" />
       </div>
 
-      {/* Homepage §5's page-turn, living here until the v4 homepage exists —
-          full bleed, so it sits OUTSIDE .k-page's gutter. */}
-      {/* Stand-in artwork from the legacy asset pool until B1 lands —
-          the mechanic needs real pixels to be judged in full. */}
+      {/* The same page-turn as homepage §5, with the FULL set — the
+          homepage carries the three featured, this hub carries them all
+          (user call, 2026-08-18). Full bleed, so it sits OUTSIDE .k-page's
+          gutter. PLACEHOLDER projects; stand-in artwork from the
+          moody-blue design/images pool (public/work/) until B1 lands. */}
       <ProjectSheets
         projects={[
-          { title: 'Meridian', line: 'A brand and site built as one continuous story.', year: '2026', href: '#', image: '/General/aesth_skyscrapers.png' },
-          { title: 'Atlas Freight', line: 'A logistics platform that reads like a dashboard should.', year: '2025', href: '#', image: '/General/aesth_office.png' },
-          { title: 'Nord Studio', line: 'One page, one argument, no scroll wasted.', year: '2025', href: '#', image: '/General/staircase.jpeg' },
+          { title: 'Meridian', line: 'A brand and site built as one continuous story.', year: '2026', href: '#', image: '/work/fog.webp' },
+          { title: 'Atlas Freight', line: 'A logistics platform that reads like a dashboard should.', year: '2025', href: '#', image: '/work/city.webp' },
+          { title: 'Nord Studio', line: 'One page, one argument, no scroll wasted.', year: '2025', href: '#', image: '/work/hall.webp' },
+          { title: 'Kyma Hotels', line: 'A booking flow that feels like arrival.', year: '2024', href: '#', image: '/work/cathedral.webp' },
+          { title: 'Orbit Analytics', line: 'Numbers, given a sense of gravity.', year: '2024', href: '#', image: '/work/orb.webp' },
+          { title: 'Volt & Co', line: 'An e-commerce build with no template bones.', year: '2024', href: '#', image: '/work/corridor.webp' },
         ]}
       />
 

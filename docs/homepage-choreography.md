@@ -216,11 +216,44 @@ plain statement; reduced motion never dims. Paragraph keeps the standard reveal,
 
 **Handoff.** A hairline rule enters from the left over `--d-slow`, drawing across the full content width. This is the section break with no label attached, and it is the only decorative element the page allows itself.
 
+> **Amended 2026-08-18 (with §3's design):** the rule stays, and the handoff gained a second
+> act — §3 slides UNDER this section (see §3), so the claim's bottom edge lifting off the
+> dark portrait IS the break. The claim became a full-width, opaque, z-raised sheet with a
+> quiet seam shadow cast past its edge (the page-turn's grammar at whisper volume).
+
 **3D.** Absent.
 
 ---
 
 ## Section 3 — What we solve
+
+> **DESIGNED 2026-08-18 (user direction) — the credit roll behind the claim.** Built as
+> `SolveCredits.tsx` + `.sv-*` in home.css. The page's first dark passage — the blue
+> refracted-glass portrait (`public/home/portrait-glass.webp`, from the user's content set,
+> eager-loaded) is the whole background of a ~250svh section. Two moves:
+>
+> - **The depth reveal.** The section carries `margin-top: -100svh`, so by the claim's
+>   last screen it already fills the viewport, invisible behind the opaque claim. The
+>   claim then scrolls at hand speed while the image — a sticky 100svh frame plus a
+>   counter-drift (0.45 × the sticky range, computed live) — runs at **~0.45× scroll**: it
+>   genuinely scrolls, at half pace. *(Feel round, same day: the first cut was ±14vh ≈
+>   0.2× and the user called it "barely moving" — near-pinned is NOT the brief; the image
+>   must visibly scroll, slower. Film-measured after tuning: face moved ~118px against
+>   ~317px of scroll ≈ 0.37–0.45× depending on position.)* The hero is z-raised too, so a
+>   short claim on a tall viewport never lets §3 paint over it.
+> - **The credits.** The problems are loose text thrown into the scene — no containers,
+>   no grid: scattered left / past-centre / left-of-centre / right, uneven vertical gaps,
+>   each rolling at its own speed (0.72 / 0.82 / 1.08 / 1.16) via the house ticker. The
+>   offset is zero as an item crosses the viewport's middle, so nothing strays far from
+>   layout — items just travel there at different rates. Adjacent same-column items are
+>   kept in different columns, so differential drift can never collide them.
+>
+> Legibility: white text over a soft scrim, heavier at the foot where the credits enter.
+> The first item starts >100svh into the section — below the viewport at reveal start —
+> or its entrance would fire while still occluded behind the claim (real bug, caught in
+> design). Fallback: no-JS and reduced motion keep the sticky background and the static
+> scatter; all copy is server-rendered DOM text (view-source verified). Copy is
+> PLACEHOLDER except the doc's own example line.
 
 **Job.** Catch the visitor who has a symptom rather than a solution, and carry the problem cluster.
 
@@ -230,15 +263,64 @@ plain statement; reduced motion never dims. Paragraph keeps the standard reveal,
 
 **This is still the section that feeds AI search**, because it states questions plainly and answers them plainly — and that works on the strength of the DOM text, not on the anchors. The problem cluster is reached from the footer map and from the service pages, which is where §8 wants that traffic routed.
 
-**Entrance.** Staggered, 80ms apart, top to bottom. Each item reveals as it crosses the trigger point rather than all together, so the section builds as you move through it.
+**Entrance.** Staggered, 80ms apart, top to bottom. Each item reveals as it crosses the trigger point rather than all together, so the section builds as you move through it. *(Held: each item is its own Reveal pair — h2 first, body 80ms behind — riding on the rolling wrapper; separate elements, so the entrance transform and the credit drift never fight.)*
 
-**Handoff.** Vertical space alone. No rule here. Alternating the break treatment between space and hairline is what stops the rhythm becoming mechanical.
+**Handoff.** Vertical space alone. No rule here. Alternating the break treatment between space and hairline is what stops the rhythm becoming mechanical. *(Superseded 2026-08-18 with §4's design: the section ends in one extra viewport of pure image — the exit beat — and §4 rises OVER it as an opaque sheet while the portrait keeps its ~0.45× drift, burying it with the same grammar the claim used to reveal it. The sticky frame releases exactly as it is fully covered.)*
 
 **3D.** Absent.
 
 ---
 
 ## Section 4 — What we do
+
+> **REDESIGNED 2026-08-18 (user direction, from a "stages" reference image) — the index/
+> detail instrument.** Built as `ServicesIndex.tsx` + `.wd-*` in home.css. The reference's grammar — full list on the right with the active entry in
+> ink and the rest faded, the active entry blown up on the left — adapted to Whiteout:
+>
+> - **Arrival mirrors §3's own.** §4 is an opaque z-raised white sheet with
+>   `margin-top: -100svh`; §3 gained one extra viewport of pure image after the last
+>   problem (the exit beat, mirroring the entry beat), and its sticky frame stays pinned
+>   and drifting at ~0.45× for the whole burial. §4 casts its seam shadow UPWARD onto the
+>   portrait — the claim's move, mirrored. The dark passage opens and closes with the same
+>   grammar.
+> - **Right: the index.** Six service names (3D Websites · Web Design · Web Development ·
+>   One-page Websites · Website Redesign · SEO) as unlinked tab buttons, muted at rest.
+>   Activation is HOVER (tap on touch), and the active name **letter-fills to ink** —
+>   §2's fill signature replayed at hover speed via per-letter transition-delay. Cursor
+>   stays default: rows still promise no navigation (architecture §8 unchanged).
+> - **Left: the detail.** Giant `01…06` numeral (ink, 200, display scale) rising through a
+>   mask on each swap — the button-roll grammar at section scale; the panel itself swaps
+>   with the refraction signature, never a fade. Each service carries a **hairline glyph**
+>   (user call, over photos): a stroke-drawn instrument in the ink/hairline palette that
+>   draws itself in via `pathLength=100` dashoffset and keeps ONE slow idle motion after —
+>   the hero orbit's language. Photos were rejected because the page's imagery budget is
+>   spent (§3's portrait, §5's sheets) and client work supplies the only colour.
+> - **Auto-cycle (user call):** the active service advances every **4s** on the ticker
+>   *(feel round, same day: 5s with a 12s manual grace read as "takes too long" — the
+>   grace is gone, hover-pause covers that job)*, pauses while the pointer is over the
+>   instrument, only runs on-screen. **The clock is visible (user direction):** a THICK
+>   ice-deep progress line under the active row — an SVG line whose dashoffset the ticker
+>   writes — fills across exactly the 4s window, and the jump lands when it completes;
+>   pausing freezes it mid-fill. It is one of the accent's few appearances and the only
+>   continuously-moving one, granted by the user against the "rest is still" default.
+>   The section demonstrates itself; a visitor who never hovers still meets all six.
+> - **Glyph craft round (user: "each one needs to be magnificent"):** the six became
+>   scenes, not icons — the object's world (two counter-turning orbits, trapped air, a
+>   sparkle), the staircase with its own layout roughed in and the designer's cursor
+>   still nudging (with a click dip), a browser editor typing one line against a blinking
+>   caret, the one-pager whose content and scroll dot travel as one system, the redesign
+>   whose dashed past sways while its flow-arc dashes march toward the solid future, and
+>   the results page whose lens holds the only thing that matters — the line going up.
+> - **The reference's furniture that did not survive:** the coral accent number (accent
+>   never carries text here), the tracked-caps header (one h2 sentence with a 600-weight
+>   word instead), the "(04) – our stages" eyebrow (no labels).
+>
+> SEO/fallback: all six names AND paragraphs are server-rendered; JS collapses the six
+> detail blocks into a swap deck (`is-live` grid-stacking). No-JS reads the list plus six
+> stacked details; reduced motion gets instant swaps, no idle loops, no auto-cycle.
+> Everything below this block that still speaks of rows-with-hairlines describes the
+> superseded list form; the constraints it argues (rows unlinked, ONE hub link carrying
+> the whole affordance, 60ms entrance cascade) all carry into the instrument unchanged.
 
 **Job.** The service cluster. Route commercial intent into the service pages.
 
@@ -313,13 +395,44 @@ scrolls on. The earlier mist-darkening handoff belongs to section 6's design pas
 
 ---
 
-## Section 6 — The gallery *(rewritten 2026-08-18 — was "The demonstration")*
+## Section 6 — The interlude *(rewritten AGAIN 2026-08-18 — was "The gallery", before that "The demonstration")*
 
-> **Replaced 2026-08-18, user call.** The pinned object scrub is cut from the homepage.
-> The reasoning is the day's larger decision (see *How to read this*): premium comes from
-> the motion system, not the render. Nothing is deleted — the scrub mechanic
-> (`ObjectScrub.tsx`, `/object-scrub`, the validated frame pipeline in
-> `blender/blockout.py --scrub`) stays built and shelved.
+> **REPLACED 2026-08-18 evening, user call ("forget about the credit stuff") — the
+> credit-flow gallery is dead before it was built; the staged images live on in §5's
+> stand-in artwork. §6 is now THE INTERLUDE — the section where the studio proves the
+> claim "we play with motion and hover interactions smartly" by doing it. Reference:
+> `public/interlude_website.png`. Built as `Interlude.tsx` + `.iv-*` in home.css.**
+>
+> - **The door — the turn-on, scrubbed** *(amended the same evening, user: NO glitch,
+>   "smoothly", and the open/close must be part of the choreography)*. The section PINS
+>   (~270svh, JS-set) and the scroll drives the whole opening: the hairline draws from
+>   the centre across the first ~14% of the scrub, the dark stage expands vertically out
+>   of it to ~45%, the word / card / rings resolve to ~76%, and the rest of the pin is
+>   dwell inside the world. Every tween is ease:'none' — the hand supplies the easing,
+>   Lenis the smoothing, the page-turn's own rule. Being a scrub it is REVERSIBLE by
+>   construction: scrolling back up closes the world through the same door — entering
+>   and exiting are the same move. The glitch died in the amendment; the phosphor bloom
+>   (smooth) survived. No-JS / reduced motion get the static open 100svh stage in flow.
+> - **The stage.** Full-bleed, 100svh, ink ground under a HAND-WRITTEN WebGL aurora —
+>   not a gradient wash: wandering curtains with internal rays and white tips, slanted
+>   asymmetrically, in ice / ice-deep / white over ink. Raw WebGL fullscreen quad (no
+>   three.js), half-res canvas, driven by the shared ticker only while on screen; a
+>   layered CSS gradient stands in for no-JS/reduced-motion/context-failure.
+> - **The word.** One giant uppercase word (placeholder "REMEMBERED"), edge to edge
+>   (JS-fitted to the stage width), low-alpha white, sitting BEHIND the card. It answers
+>   the pointer: whichever side of the stage the cursor is on, that side of the word
+>   fades to fully transparent — a lerped mask gradient, back to symmetric on leave.
+> - **The ultra card.** Centre, over the word: a chrome/glass card (NO backdrop-filter —
+>   it re-rasterises the fluid) with a faded neon SVG grid, statements on top, and FOUR
+>   progress rings imitating PageSpeed — Performance / Accessibility / Best Practices /
+>   SEO with the percentage inside, rings drawing and numbers counting up on the stage's
+>   open. The card TILTS toward the cursor about its own centre (perspective + lerped
+>   rotateX/rotateY from anywhere on the stage) and carries a moving specular sheen.
+>
+> [SEO] The word, the statements and the scores are real DOM text, server-rendered; the
+> rings' final dashoffsets are inline styles, so the no-JS page shows the true scores.
+> Reduced motion: stage open, aurora static (one frame), no tilt/sheen/mask-follow, no
+> count-up. Nothing from the gallery draft survives here.
 
 **Job.** Visual density and a pace change. After four text-led sections, this is where the
 page opens the throttle and shows volume — the studio's world in imagery rather than
@@ -489,4 +602,6 @@ alone.
    the demonstration is replaced by the credit-flow gallery. Its position (currently the §6
    slot, after the work) is re-askable once the gallery is designed.
 2. **Dark sections.** The footer's dark version is decided; whether any section goes dark
-   is the user's open call ("on the verge", 2026-08-18).
+   is the user's open call ("on the verge", 2026-08-18). *(First data point, same day: §3
+   went dark by the user's own design — the credit roll runs over the blue glass portrait.
+   The page's dark notes are now §1's jewel, §3, and the footer.)*
