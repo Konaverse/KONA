@@ -60,7 +60,7 @@ import { getLenis } from './SmoothScroll'
  */
 
 /** Every route inside app/(v4). ADD NEW V4 ROUTES HERE — see the warn below. */
-export const V4_ROUTES = ['/design-system', '/work']
+export const V4_ROUTES = ['/', '/design-system', '/work', '/hero-object']
 
 const isV4Route = (path: string) =>
   V4_ROUTES.some((r) => path === r || path.startsWith(`${r}/`))

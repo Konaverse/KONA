@@ -385,7 +385,10 @@ html:has(.k-root)::-webkit-scrollbar {
   position: relative;
   display: inline-flex; align-items: center; gap: var(--s-3);
   padding: var(--s-4) var(--s-6);
-  border: var(--k-btn-bw) solid var(--white);
+  /* transparent, not white (2026-08-18): the band's job is spacing, and on
+     the hero's gradient a white band read as a sticker halo. Transparent
+     shows whatever ground the button sits on — identical on white pages. */
+  border: var(--k-btn-bw) solid transparent;
   border-radius: var(--r-full);
   background: var(--ice-deep); color: var(--white);
   /* stop the fill at the padding edge — the same geometry the flood
@@ -1416,6 +1419,12 @@ html.lenis, html.lenis body { height: auto; }
   display: none;
   align-items: center;
   gap: var(--s-6);
+  /* Centred in the BAR, not in the flex flow (2026-08-18, reference-image
+     pass): brand keeps the left edge, Contact and burger the right, links
+     hold the true centre of the viewport. */
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .k-nav-link {
@@ -1450,4 +1459,76 @@ html.lenis, html.lenis body { height: auto; }
    rule -- the accent budget does not stretch to nav furniture. */
 @media (min-width: 57.5rem) {
   .k-nav-contact { margin-left: var(--s-6); }
+}
+
+/* ---------- nav scroll behaviour (2026-08-18, homepage pass) ----------
+   Three states, all class-toggled from ApertureMenu's ticker:
+     at top        -- transparent, sitting on the hero
+     scrolled      -- .is-grounded: solid surface + a hairline (as a 1px
+                      shadow, so it costs no layout), because a fixed bar
+                      over body copy is unreadable without ground
+     scrolling down-- .is-hidden: the bar leaves; scrolling up brings it
+                      back. The menu being open pins it visible.
+   NO backdrop-filter here, deliberately: a backdrop-filter layer
+   re-rasterised the WebGL fluid out of existence once already (the
+   lens, checklist 3.x). Solid surface or nothing. */
+.k-nav-bar {
+  transition:
+    transform var(--d-base) var(--e-settle),
+    background-color var(--d-quick) var(--e-settle),
+    box-shadow var(--d-quick) var(--e-settle);
+}
+.k-nav-bar.is-grounded {
+  /* near-solid, not backdrop-filter: over the hero's gradient it softens,
+     over the white page it reads as solid surface */
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 1px 0 var(--hairline);
+}
+.k-nav-bar.is-hidden { transform: translateY(-102%); }
+@media (prefers-reduced-motion: reduce) {
+  /* Grounding is state, not motion; hiding is motion. */
+  .k-nav-bar { transition: none; }
+  .k-nav-bar.is-hidden { transform: none; }
+}
+
+/* ---------- nav label roll (2026-08-18, homepage pass) ----------
+   The button's roll at nav scale: whole word, not per-letter -- the
+   ripple is the CTA's voice, the nav speaks more quietly. The muted
+   copy rolls out, the ink copy rolls in, so the roll itself performs
+   the muted-to-ink resolve the old colour transition described.
+   Same sizer construction as .k-btn__roll: the real string lives in
+   a .sr-only span, both painted copies are aria-hidden. */
+.k-navlink__roll {
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+.k-navlink__sizer {
+  display: block;
+  visibility: hidden;
+  white-space: nowrap;
+}
+.k-navlink__line {
+  position: absolute;
+  inset: 0;
+  white-space: nowrap;
+  transition: transform var(--d-base) var(--e-settle);
+}
+.k-navlink__line--b {
+  transform: translateY(110%);
+  color: var(--text);
+}
+@media (hover: hover) {
+  .k-nav-link:hover .k-navlink__line--a,
+  .k-nav-contact:hover .k-navlink__line--a { transform: translateY(-110%); }
+  .k-nav-link:hover .k-navlink__line--b,
+  .k-nav-contact:hover .k-navlink__line--b { transform: translateY(0); }
+}
+.k-nav-link:focus-visible .k-navlink__line--a,
+.k-nav-contact:focus-visible .k-navlink__line--a { transform: translateY(-110%); }
+.k-nav-link:focus-visible .k-navlink__line--b,
+.k-nav-contact:focus-visible .k-navlink__line--b { transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) {
+  /* No roll; the link-level colour transition still carries hover. */
+  .k-navlink__line--b { display: none; }
 }

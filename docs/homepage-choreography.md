@@ -17,7 +17,7 @@ Every section has five parts:
 
 **The rule that keeps the page coherent:** one idea per viewport. The page is long. That is fine. What kills the premium reading is density per screen, not length.
 
-**The object appears in two sections out of nine.** Sections 1 and 6. Everywhere else it is absent. That ratio is what makes it feel deliberate rather than decorative.
+**The object appears in ~~two sections~~ one section out of nine — §1 only (amended 2026-08-18).** §6's scrubbed demonstration is replaced by the credit-flow gallery (see §6) and the scrub is shelved. The day's larger call, from the user: **the object is not what makes the page feel premium — micro-animations, hover interactions, motion and general aesthetic quality are.** A 3D set-piece without a major role isn't worth its weight; what keeps the object worth shipping is the hero occlusion trick, which is a purposeful move rather than decoration.
 
 ---
 
@@ -99,6 +99,66 @@ The consequences, section by section below: **section 3 states problems as text 
 
 ## Section 1 — Arrival
 
+> **VARIANT B — "the staircase" — LIVE ON `/` since 2026-08-18 night, from the user's own
+> wireframe** (`image.png`, second one that day). A trial WITHOUT the 3D object — the user:
+> *"maybe the choice was bad from the beginning … I just want to try one without the 3d
+> model. Don't delete the current hero."* Variant A (the object cut, below) is parked at
+> **`/hero-object`** for live comparison; swap one import in `app/(v4)/page.tsx` to
+> restore it. The user also said **this hero decides everything that follows it** — the
+> A/B outcome sets the page's whole direction, so §§2-9 design waits on it.
+>
+> The build (`HeroPortrait.tsx`, `.hw-*` in home.css): two overlapping rounded rectangles
+> union into a staircase with concave fillets — drawn ONCE as an SVG clipPath (viewBox
+> 815×375), so it scales losslessly — and the refracted-glass portrait
+> (`public/home/portrait-refracted.webp`, from the user's content set) flows through both
+> blocks, running a slow ken-burns inside the still window (clip on a <g>, transform on
+> the <image>, or the window would breathe too). Top-left quadrant: the user's own
+> headline — "Build the website that will make [image chip: the typing shot] stand out",
+> with "y o u" letter-spaced under the chip (JS centres it; the letters fly in and ALIGN
+> on entrance — the user's requested move). Bottom-right quadrant: paragraph + ghost CTA.
+> Atmosphere blobs behind, entrance timeline, ken-burns perpetual. Mobile: headline, plain
+> rounded crop, paragraph, CTA. The k-btn band went white→transparent for gradient grounds.
+>
+> **User notes applied (same night, "that's perfect, I love it"), then revised once
+> more:** the headline's voices settled as — "Build the website" and "stand out" in
+> LIGHT grey at LIGHT weight (#9aa6ae/200, a deliberate one-off paler than --text-muted,
+> display type only), "that will make" ink extralight, "you" ink bold at full headline
+> size with tight tracking, tucked up clear of the image block below. Chip radius --r-md.
+> **The hover swap was built, film-verified, and then REMOVED at the user's request** —
+> "you" simply lives under the chip; restoring it is a small, known change (the measured
+> --hw-rise mechanism is in git history). What remains alive: atmosphere, ken-burns,
+> entrance (lines rise, chip pops, "you" letters fly in and align), and pointer parallax —
+> the portrait leans up to ~10px toward the cursor inside the still window, lerped on the
+> ticker (image rendered 3% oversize so the pan never exposes the clip edge).
+
+> **SECOND CUT (VARIANT A) — 2026-08-18 evening, rebuilt against the user's reference image
+> (`image.png`, run through the image-to-code analysis), superseding the same morning's
+> four-element minimal cut, which the user rejected: *"not what I had in my head … you are
+> building such a static website."* The correction is a DIRECTION statement, not a layout
+> tweak: premium here means ALIVE — atmosphere, entrance, perpetual subtle motion, rich
+> composition with deliberate white space. Everything below lives in `HeroStage.tsx` +
+> `home.css`:
+>
+> - **The ground is alive.** An ambient ice-toned gradient field — three radial blobs on
+>   transform-only loops (43s/57s/71s, frozen under reduced motion) — that never stops
+>   moving, fading to plain surface at the hero's bottom so §2 continues on white. The old
+>   "nothing on this site moves on its own" stance is retired by user direction.
+> - **The headline flows AROUND the object.** One sentence, two blocks (three staggered
+>   lines left, two right), words in three voices: ink 200, ink 600, and "faded" muted 200
+>   (kept AA instead of the reference's true fade). Line 3's tail dies behind the object;
+>   the right block sits in front of the rim. The h1 is `display: contents` so its two
+>   spans layer on opposite sides of the video without duplicate text.
+> - **Entrance EXISTS** — the "No entrance" rule below is amended by the user. Object
+>   resolves from blur, lines rise masked with the refraction signature, the orbit draws
+>   itself, chrome refracts in; ~1.9s, --e-glass.
+> - **The object wears an orbit**: a tilted hairline ellipse with two dot callouts, which
+>   recontextualises the face-on ring from "badge" to "instrument". Display is capped at
+>   560px so the 640px render never upscales — upscaling was the "low res" complaint. The
+>   user still doubts the ring reads premium; a 1600px re-render and a glossier grade are
+>   the real fix, queued for the next Blender window.
+> - New furniture: one sparkle accent, a bottom-left "Selected work" anchor with the lead
+>   line, CTA under the left block. The four-element austerity is superseded.
+
 **Job.** Make someone feel something before they read anything, and say what you do in one line.
 
 **On screen.**
@@ -113,11 +173,25 @@ Four elements. On white, that reads as expensive. Seven reads as busy.
 
 **The occlusion is the whole trick.** Text passing behind the object and other text in front of it is the one move that proves the object exists in space rather than being pasted on. Production consequence: the render exports **with alpha**, as WebP, and the type sits in two DOM layers, one behind and one in front. This reaches back into the Blender setup, so it is decided here.
 
+> **Implemented 2026-08-18 (`HeroStage.tsx`), and no alpha was needed.** The delivered hero
+> is the exported idle loop (`public/object/idle-clear.mp4`) — the **clear state**, decided
+> by the export itself; frost exists only as stills now. Because the ring is dead face-on,
+> its outer rim is a **constant circle across every frame**, so a `clip-path: circle()`
+> hugging the rim (38.6% of the square) turns the white-composited video into a circular
+> sprite that occludes exactly at the metal's edge. The type sits in two DOM layers as
+> specified: line 1 is painted by an aria-hidden front overlay (it crosses the rim's top
+> arc IN FRONT — the satin is light there, so ink stays legible), line 2 by the real `h1`
+> behind (its tail dies into the ring and the dark cube — occluded text needs no contrast).
+> Each line is painted exactly once; a `<noscript>` block restores a plain fully-visible
+> `h1`, so the JS-disabled test still sees the whole headline. Alpha WebP stays parked; a
+> silhouette-accurate mask can replace the rim circle if ever wanted.
+
 **SEO.** The `h1` lives here, as real DOM text, containing the primary term. Never inside the canvas. [SEO, expanded 2026-08-17:] the pre-rendered pipeline makes this section CWV-safe by construction — the LCP element is the headline or the object's poster frame (a real image, painting before any JS), and the object's box is **reserved at its calculable envelope** (explicit dimensions / aspect-ratio) so nothing shifts when media arrives. LCP < 2.5s, CLS < 0.1 are the thresholds, measured on field data.
 
-**Entrance.** No entrance. It is already there on load. The object holds a constant idle rotation, one full turn per **5 seconds** (amended twice: 40s and a 20s retry read too slow, 2026-08-17; then the user picked 5s over 10s off the worn-ring previews the same evening — visible life outranks stealth), the ring counter-spinning about its own axis while its plane holds the decided attitude. The speed is an encode-time choice: the loop renders 120 frames per turn regardless, and the playback rate fed to the 60fps interpolation sets the period.
+**Entrance.** ~~No entrance. It is already there on load.~~ **Amended 2026-08-18 (user):
+the hero HAS an entrance** — see the second-cut block above. The object holds a constant idle rotation, one full turn per **5 seconds** (amended twice: 40s and a 20s retry read too slow, 2026-08-17; then the user picked 5s over 10s off the worn-ring previews the same evening — visible life outranks stealth), the ring counter-spinning about its own axis while its plane holds the decided attitude. The speed is an encode-time choice: the loop renders 120 frames per turn regardless, and the playback rate fed to the 60fps interpolation sets the period.
 
-**Handoff.** On scroll the object drifts up and back, losing scale and gaining blur, while the headline layers separate slightly at different rates. The hero does not slide away, it recedes.
+**Handoff.** On scroll the object drifts up and back, losing scale and gaining blur, while the headline layers separate slightly at different rates. The hero does not slide away, it recedes. *(Implemented 2026-08-18: the object lags the scroll by 16vh at full depth while scaling to 0.9 and blurring to 8px; the back type layer lags 6vh, the front 2.5vh. gsap.ticker + rect math per the house pattern, desktop only, none of it under reduced motion. Filmed via the wheel harness; values are first-pass and open to a feel round.)*
 
 **3D.** Present. Primary.
 
@@ -133,7 +207,12 @@ Content: what Konaverse does and who for. This is where "we build a story throug
 
 [SEO, 2026-08-17:] this section carries the **direct-answer duty** for the whole homepage — 44.2% of AI citations come from the first 30% of a page, so the claim plus its paragraph must work as a liftable, self-contained statement of what Konaverse is, does, and for whom. Written for a human first; extractable by construction, not by keyword-stuffing.
 
-**Entrance.** Headline resolves first, one continuous block rather than word by word. Paragraph follows 80ms later. Deliberately restrained: the emptiness around it is the effect.
+**Entrance.** ~~Headline resolves first, one continuous block rather than word by word.~~
+**Amended 2026-08-18 (user: "the statement needs to come to life"): the statement is a
+scroll-driven letter fill** — the text sits faded at 0.14 and fills to full ink letter by
+letter as it travels from 88% to 42% of the viewport, with a feathered leading edge
+(`ScrollFillText.tsx`). Server-rendered at FULL ink, so the no-JS page and crawlers read a
+plain statement; reduced motion never dims. Paragraph keeps the standard reveal, 80ms later.
 
 **Handoff.** A hairline rule enters from the left over `--d-slow`, drawing across the full content width. This is the section break with no label attached, and it is the only decorative element the page allows itself.
 
@@ -234,23 +313,33 @@ scrolls on. The earlier mist-darkening handoff belongs to section 6's design pas
 
 ---
 
-## Section 6 — The demonstration
+## Section 6 — The gallery *(rewritten 2026-08-18 — was "The demonstration")*
 
-**Job.** Prove the capability instead of describing it. This section justifies the top tier without a price being mentioned.
+> **Replaced 2026-08-18, user call.** The pinned object scrub is cut from the homepage.
+> The reasoning is the day's larger decision (see *How to read this*): premium comes from
+> the motion system, not the render. Nothing is deleted — the scrub mechanic
+> (`ObjectScrub.tsx`, `/object-scrub`, the validated frame pipeline in
+> `blender/blockout.py --scrub`) stays built and shelved.
 
-**On screen.** The object returns and **pins**. Scroll scrubs its rotation and its material state, from opaque to transparent, or frosted to clear. Two or three short lines of text appear and dissolve at fixed points in the scrub, positioned around the object, never overlapping it.
+**Job.** Visual density and a pace change. After four text-led sections, this is where the
+page opens the throttle and shows volume — the studio's world in imagery rather than
+argument.
 
-[SEO, 2026-08-17:] those lines are **real DOM text, present in the raw HTML**, shown stacked and static in the no-JS / reduced-motion fallback alongside the single still. The scrub choreographs when they're *seen*; it never decides whether they *exist*.
+**Mechanic — the credit flow.** Content images stream vertically like end credits, in
+multiple columns at differential speeds — some columns running faster than scroll, some
+slower. **Draft, to be designed live against the real images** (generated 2026-08-18,
+staged in `design/images/`). Open while designing: column count, the speed ratios, whether
+any column runs against scroll, whether the section pins or flows free, and how hard it can
+push before it fights "one idea per viewport".
 
-**Length.** Roughly 250 to 300 viewport-height percent of pinned scroll. Shorter and it feels like a gimmick. Longer and people leave.
+**On screen.** The images, and almost nothing else. [SEO] If any text rides the flow it is
+real DOM text in the raw HTML, static in the no-JS fallback — the same rule the scrub
+obeyed.
 
-**Entrance.** The section pins at the top of the viewport and the scrub begins immediately. There is no separate entrance animation, because the scrub is the animation.
+**Entrance / handoff / fallback.** Designed with the mechanic. The no-JS and
+reduced-motion fallback is a static grid or stack of the same images.
 
-**Technical.** Baked Blender frame sequence, 120 frames, WebP. **MEASURED (2026-08-17, delivery validation): ~4.2MB at 1600px q82**, extrapolated from an every-12th-frame render — frost frames cost ~29KB, the jewel's prism fire 50–60KB, the dissolve's final frame 4.6KB of almost-nothing. A full 640px validation set (all 120 frames, 1.54MB) scrubs cleanly under real wheel events on `/object-scrub`; the mechanic is `ObjectScrub.tsx`, the frames come from `blender/blockout.py --scrub`. This is the single heaviest thing on the site and there is exactly one of them. First paint is a still, sequence preloads during section 5.
-
-**Handoff.** The object dissolves into white on the final frames. Pin releases. This is the one place a fade is allowed, because it is an overexposure, which is the direction's own logic.
-
-**3D.** Present. Primary. This is the payoff for the whole page.
+**3D.** Absent *(amended 2026-08-18 — was Present, Primary)*.
 
 ---
 
@@ -303,6 +392,12 @@ Pricing is one of the two things people already ask on WhatsApp (architecture §
 ## Footer
 
 Full site map, quiet, at `small`. Every URL appears here and only here. Legal links, the location line for local SEO, social. Hairline above it and nothing else decorative.
+
+**Dark-versioned — DECIDED 2026-08-18.** The footer inverts: dark ground, light text. With
+the scrub gone the demonstration's dark-glass payoff left the page — but the clear cube
+returned the same day as the hero's delivered state, so the page's dark notes are now the
+jewel in §1 and this footer. Whether any *sections* also go dark is still the user's open
+call ("on the verge", 2026-08-18) — the footer is the sure thing.
 
 ---
 
@@ -382,6 +477,16 @@ reserved for those dissolve frames only — never "fix" the clear state to white
 the hero's layout hangs off the real silhouette. Everything else on this page — sections 2,
 3, 4, 5, 7, 8, 9 and the footer — is designable now and does not touch 3D.
 
+**Delivery update 2026-08-18:** the idle **video loop is exported** and is the object's
+only homepage delivery — §1 ambient presence plus the occlusion trick. The §6 scrub is
+shelved with its section (the pipeline and `/object-scrub` stay in the tree), and no
+further Blender work is scheduled. The "designed against test renders" rule now binds §1
+alone.
+
 ## Still open
 
-1. **Does the pinned demonstration come before or after the work.** Currently after, so proof precedes demonstration. The reverse is defensible if you want to lead with capability.
+1. ~~Does the pinned demonstration come before or after the work.~~ **Moot 2026-08-18** —
+   the demonstration is replaced by the credit-flow gallery. Its position (currently the §6
+   slot, after the work) is re-askable once the gallery is designed.
+2. **Dark sections.** The footer's dark version is decided; whether any section goes dark
+   is the user's open call ("on the verge", 2026-08-18).

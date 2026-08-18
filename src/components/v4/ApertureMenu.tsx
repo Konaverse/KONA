@@ -90,6 +90,7 @@ export default function ApertureMenu({
 }: ApertureMenuProps) {
   const pathname = usePathname()
   const rootRef = useRef<HTMLDivElement | null>(null)
+  const barRef = useRef<HTMLDivElement | null>(null)
   const overlayRef = useRef<HTMLDivElement | null>(null)
   const triggerRef = useRef<HTMLButtonElement | null>(null)
   const closeRef = useRef<HTMLButtonElement | null>(null)
@@ -245,16 +246,73 @@ export default function ApertureMenu({
     return () => document.removeEventListener('keydown', onKey)
   }, [open, closeMenu])
 
+  /**
+   * Scroll behaviour (2026-08-18): grounded past the top, hidden while
+   * scrolling down, returned on the first upward intent. House pattern —
+   * gsap.ticker + position reads, no scroll listener, no ScrollTrigger.
+   * The 160px free zone means the bar never hides while the hero headline
+   * is still the thing on screen; the open menu pins it visible.
+   */
+  useEffect(() => {
+    const bar = barRef.current
+    if (!bar) return
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    let lastY = window.scrollY
+    let hidden = false
+    let grounded = false
+
+    const update = () => {
+      const y = window.scrollY
+      const g = y > 8
+      if (g !== grounded) {
+        grounded = g
+        bar.classList.toggle('is-grounded', g)
+      }
+      if (!reduce) {
+        const dy = y - lastY
+        const show = () => {
+          hidden = false
+          bar.classList.remove('is-hidden')
+        }
+        if (openRef.current || y < 160) {
+          if (hidden) show()
+        } else if (dy > 2 && !hidden) {
+          hidden = true
+          bar.classList.add('is-hidden')
+        } else if (dy < -2 && hidden) {
+          show()
+        }
+      }
+      lastY = y
+    }
+
+    gsap.ticker.add(update)
+    return () => gsap.ticker.remove(update)
+  }, [])
+
   const Arrow = () => (
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true">
       <path d="M2 8h11M9 3.5 13.5 8 9 12.5" />
     </svg>
   )
 
+  /** The nav's label roll — the button's move at nav scale, whole word.
+      Real string in .sr-only, both painted copies hidden from AT. */
+  const NavLabel = ({ text }: { text: string }) => (
+    <>
+      <span className="sr-only">{text}</span>
+      <span className="k-navlink__roll" aria-hidden="true">
+        <span className="k-navlink__sizer">{text}</span>
+        <span className="k-navlink__line k-navlink__line--a">{text}</span>
+        <span className="k-navlink__line k-navlink__line--b">{text}</span>
+      </span>
+    </>
+  )
+
   return (
     <div ref={rootRef} className="k-nav-root">
       {/* ---- persistent chrome. Contact never hides behind the burger. ---- */}
-      <div className="k-nav-bar">
+      <div ref={barRef} className="k-nav-bar">
         <a href="/" className="k-nav-brand">{brand}</a>
 
         {/* Desktop navigation. The exact complement of the burger below —
@@ -267,12 +325,14 @@ export default function ApertureMenu({
               className="k-nav-link"
               aria-current={pathname === item.href ? 'page' : undefined}
             >
-              {item.label}
+              <NavLabel text={item.label} />
             </a>
           ))}
         </nav>
 
-        <a href={contactHref} className="k-nav-contact">{contactLabel}</a>
+        <a href={contactHref} className="k-nav-contact">
+          <NavLabel text={contactLabel} />
+        </a>
         <button
           ref={triggerRef}
           type="button"
