@@ -193,7 +193,16 @@ function createAurora(canvas: HTMLCanvasElement) {
 
 /* ---------------- the section ---------------- */
 
-export default function Interlude() {
+/**
+ * `buried` — §7 rises over this section as an opaque sheet and buries it
+ * (see Process.tsx). It costs the pin ONE extra viewport of runway at the
+ * end, which the scrub deliberately does not consume: the world finishes
+ * opening exactly as the burial begins, then holds while it is covered. The
+ * frame drifts up at 0.45× through that beat, so the interlude is neither
+ * frozen nor travelling with the page — it is moving slower, which is what
+ * reads as depth. Set together with §7's own overlap in page.tsx.
+ */
+export default function Interlude({ buried = false }: { buried?: boolean }) {
   const rootRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
@@ -202,6 +211,7 @@ export default function Interlude() {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
     const q = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)
+    const frame = q('.iv-frame')
     const stage = q('.iv-stage')
     const line = q('.iv-line')
     const bloom = q('.iv-bloom')
@@ -211,7 +221,7 @@ export default function Interlude() {
     const canvas = root.querySelector<HTMLCanvasElement>('.iv-aurora')
     const ringArcs = Array.from(root.querySelectorAll<SVGCircleElement>('.iv-ring-val'))
     const ringNums = Array.from(root.querySelectorAll<HTMLElement>('.iv-ring-num'))
-    if (!stage || !line || !bloom || !word || !wordInner || !card || !canvas) return
+    if (!frame || !stage || !line || !bloom || !word || !wordInner || !card || !canvas) return
 
     const aurora = createAurora(canvas)
 
@@ -247,8 +257,11 @@ export default function Interlude() {
        ease:'none' and fromTo'd with immediateRender:false so the scrub is
        exact in BOTH directions — scrolling up closes the world. ---- */
     const SCRUB_VH = 170
+    /* the burial runway: one viewport the scrub does NOT spend, so §7 has
+       something to climb over while the open world holds */
+    const TAIL_VH = buried ? 100 : 0
     root.classList.add('is-scrub')
-    root.style.height = `${SCRUB_VH + 100}svh`
+    root.style.height = `${SCRUB_VH + 100 + TAIL_VH}svh`
 
     const tl = gsap.timeline({ paused: true, defaults: { ease: 'none' } })
     tl.fromTo(line, { scaleX: 0 }, { scaleX: 1, duration: 0.14 }, 0)
@@ -344,9 +357,23 @@ export default function Interlude() {
       const r = root.getBoundingClientRect()
       const vh = window.innerHeight
       if (r.bottom < -100 || r.top > vh + 100) return
-      /* the scrub: playhead = pin progress, in both directions */
-      const p = gsap.utils.clamp(0, 1, -r.top / Math.max(r.height - vh, 1))
+      const tail = buried ? vh : 0
+      /* the scrub: playhead = pin progress, in both directions. The tail is
+         excluded from the denominator, so the pacing is identical whether or
+         not §7 is there to bury it. */
+      const p = gsap.utils.clamp(0, 1, -r.top / Math.max(r.height - vh - tail, 1))
       tl.progress(p)
+      /* THE BURIAL. §7 sits at margin-top −100svh, so its top edge is at
+         r.bottom − vh: it enters the viewport bottom when r.bottom = 2vh and
+         covers this frame completely at r.bottom = vh. Across exactly that
+         window the frame drifts up at 0.45×, half the speed of the sheet
+         climbing over it. 0.45 always beats §7's 1.0, so the sheet's top
+         edge never falls behind the frame's bottom and no bare ground can
+         open between them. */
+      if (buried) {
+        const d = gsap.utils.clamp(0, vh, 2 * vh - r.bottom)
+        gsap.set(frame, { y: -0.45 * d })
+      }
       if (p > 0.1 && aurora) aurora.draw(gsap.ticker.time * 0.6)
       m += (mT - m) * 0.07
       rx += (rxT - rx) * 0.08
@@ -372,8 +399,9 @@ export default function Interlude() {
       tl.kill()
       root.classList.remove('is-scrub')
       root.style.height = ''
+      gsap.set(frame, { clearProps: 'transform' })
     }
-  }, [])
+  }, [buried])
 
   return (
     <section ref={rootRef} className="iv">

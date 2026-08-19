@@ -17,7 +17,10 @@
  *              interaction: the mouse (Puppeteer's real input pipeline, so
  *              pointerenter fires with true coordinates) approaches from the
  *              left, crosses onto the first match, dwells, and leaves — which
- *              films both the draw/flood and their retreat.
+ *              films both the draw/flood and their retreat — OR
+ *              "click:<selector>" to film a hover-then-click: same approach,
+ *              a dwell (films any cursor-follow tease), then a real click at
+ *              that point and a long hold (films whatever the click opens).
  *   timeScale  gsap globalTimeline scale — 0.25 films the move in 4x detail
  *              (needs the dev-only window.__gsap handle from motion-v4.ts)
  *   scrollY    scroll depth before clicking (default 0)
@@ -60,7 +63,7 @@ const CHROME =
   page.on('pageerror', (e) => consoleLines.push(`[pageerror] ${e.message}`))
 
   // Warm both routes so dev-mode compilation doesn't distort the recorded run.
-  if (!TO.startsWith('wheel:') && !TO.startsWith('hover:')) {
+  if (!TO.startsWith('wheel:') && !TO.startsWith('hover:') && !TO.startsWith('click:')) {
     await page.goto(BASE + TO, { waitUntil: 'networkidle2', timeout: 60000 })
   }
   await page.goto(BASE + FROM, { waitUntil: 'networkidle2', timeout: 60000 })
@@ -131,6 +134,30 @@ const CHROME =
     await page.mouse.move(box.x + box.w * 0.5, cy, { steps: 12 })
     await new Promise((r) => setTimeout(r, Math.max(1400, 1400 / TIMESCALE)))
     await page.mouse.move(box.x - 80, cy - 40, { steps: 8 })
+  } else if (TO.startsWith('click:')) {
+    const sel = TO.slice(6)
+    const found = await page.evaluate((s) => {
+      const el = document.querySelector(s)
+      if (!el) return false
+      el.scrollIntoView({ block: 'center', behavior: 'instant' })
+      return true
+    }, sel)
+    if (!found) throw new Error(`no element matches ${sel} on ${FROM}`)
+    await new Promise((r) => setTimeout(r, 900))
+    const box = await page.evaluate((s) => {
+      const r = document.querySelector(s).getBoundingClientRect()
+      return { x: r.left, y: r.top, w: r.width, h: r.height }
+    }, sel)
+    // approach diagonally onto an off-centre point — a follow/bloom anchored
+    // to the pointer is distinguishable from a centred one
+    const cx = box.x + box.w * 0.38
+    const cy = box.y + box.h * 0.55
+    await page.mouse.move(cx - 220, cy - 160)
+    await new Promise((r) => setTimeout(r, 250))
+    await page.mouse.move(cx, cy, { steps: 16 })
+    await new Promise((r) => setTimeout(r, Math.max(1100, 1100 / TIMESCALE)))
+    await page.mouse.click(cx, cy)
+    await new Promise((r) => setTimeout(r, Math.max(2600, 2600 / TIMESCALE)))
   } else {
     const clicked = await page.evaluate((to) => {
       const a = [...document.querySelectorAll('a')].find(

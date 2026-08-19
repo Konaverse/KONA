@@ -1,11 +1,13 @@
 import Reveal from '@/components/v4/Reveal'
 import HeroPortrait from '@/components/v4/HeroPortrait'
+import HeroPeel from '@/components/v4/HeroPeel'
 import ScrollFillText from '@/components/v4/ScrollFillText'
 import SolveCredits from '@/components/v4/SolveCredits'
-import ServicesIndex from '@/components/v4/ServicesIndex'
+import ServicesAccordion from '@/components/v4/ServicesAccordion'
 import ProjectSheets, { type SheetProject } from '@/components/v4/ProjectSheets'
 import ArrowLink from '@/components/v4/ArrowLink'
 import Interlude from '@/components/v4/Interlude'
+import Process from '@/components/v4/Process'
 import './home.css'
 
 /**
@@ -58,12 +60,28 @@ export default function HomePage() {
      /hero-object for comparison — swap the import to bring it back. */
   return (
     <main className="hm">
-      <HeroPortrait />
+      {/* The peel runway: HeroPeel marks this wrapper `is-run` when GL is
+          live — it grows to 170svh with the hero sticky inside, so the
+          WHOLE hero holds still while the eight-corner choreography plays
+          and releases exactly as the last corner unsticks. Unstyled (zero
+          layout impact) for no-JS / reduced motion / mobile. */}
+      <div className="hm-heropin">
+        <HeroPortrait />
+      </div>
+
+      {/* The hero peel: the eight-corner clock — grab, fold-forward,
+          unstick sweep, unfold, land as §2's full-bleed background. DOM
+          position matters — see HeroPeel.tsx. */}
+      <HeroPeel />
 
       {/* Full-width sheet with an inner k-page: §3 slides UNDER this
           section, so its background must span the whole viewport or the
           image would peek past the content column on wide screens. */}
       <section className="hm-claim k-section">
+        {/* the landing pad: an invisible measuring target — the sheet
+            lands INTO this inset rect (a contained card with margin all
+            around, not full bleed) and the GL paints the container */}
+        <div className="hm-claim-land" aria-hidden="true" />
         <div className="k-page">
           <ScrollFillText
             as="h2"
@@ -74,13 +92,12 @@ export default function HomePage() {
             Strategy, design, motion and engineering in one continuous process.
             Based in Cyprus, working globally.
           </Reveal>
-          <hr className="k-rule hm-claim-rule" />
         </div>
       </section>
 
       <SolveCredits />
 
-      <ServicesIndex />
+      <ServicesAccordion />
 
       {/* §5 — the page-turn. Full bleed, pins itself. */}
       <ProjectSheets projects={FEATURED} />
@@ -91,8 +108,14 @@ export default function HomePage() {
         <ArrowLink href="/work">All projects</ArrowLink>
       </div>
 
-      {/* §6 — the interlude: CRT turn-on, aurora stage, the ultra card */}
-      <Interlude />
+      {/* §6 — the interlude: CRT turn-on, aurora stage, the ultra card.
+          `buried` and §7's own overlap are a PAIR: §7 climbs over this
+          section as an opaque sheet while the frame below drifts at 0.45×.
+          Changing one without the other breaks the handoff. */}
+      <Interlude buried />
+
+      {/* §7 — how we work: the thread, drawn on scroll */}
+      <Process />
     </main>
   )
 }

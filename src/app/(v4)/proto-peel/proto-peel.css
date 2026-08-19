@@ -1,0 +1,66 @@
+/* PROTO-PEEL — validation page styles. The mechanic's own styles live here
+   too (mp-*): if the peel graduates to §5 these move to home.css with it. */
+
+.pp-runway {
+  min-height: 92svh;
+  display: grid;
+  place-content: center;
+  gap: 12px;
+  text-align: center;
+  background: var(--surface);
+  position: relative;
+}
+
+/* ---- the peel section ---- */
+
+/* static form (no-JS / reduced motion / no WebGL): a plain card in flow */
+.mp {
+  position: relative;
+  background: var(--surface);
+  padding: 20svh 0;
+}
+/* the pinned form — the driver adds is-scrub and sets the height */
+.mp.is-scrub {
+  padding: 0;
+}
+.mp-frame {
+  position: relative;
+  height: 100svh;
+  display: grid;
+  place-items: center;
+}
+.mp.is-scrub .mp-frame {
+  position: sticky;
+  top: 0;
+}
+.mp-card {
+  width: min(58vw, 960px);
+  aspect-ratio: 16 / 9;
+  border-radius: 18px; /* mirrors RADIUS in MediaPeel.tsx — the GL mask */
+  overflow: hidden;
+  background: var(--ink);
+}
+.mp-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* over the page, under the fluid cursor (40) and the nav (50) */
+.mp-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 30;
+}
+/* the GL plane draws the video from here on; the DOM card stays for the
+   rects and the a11y label but goes visually silent — background included,
+   or the ink slab stands exposed behind the sheet mid-peel (take 1) */
+.mp.is-gl .mp-video {
+  opacity: 0;
+}
+.mp.is-gl .mp-card {
+  background: transparent;
+}

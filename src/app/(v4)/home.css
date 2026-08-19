@@ -448,6 +448,54 @@
   }
 }
 
+/* ---------- the hero peel (HeroPeel.tsx) ---------- */
+/* THE RUNWAY: 70svh of extra scroll room between the hero and the claim.
+   NOT sticky (round 5's full freeze was rejected — "everything should
+   move together"): the hero scrolls naturally, stuck corners ride up
+   with it, and the sheet stretches across this gap between the leaving
+   hero and the arriving claim. `is-run` is added ONCE by HeroPeel when
+   GL is live and kept for the page's life — toggling it would shift
+   everything below by 70svh mid-page. Unstyled without it: no-JS /
+   reduced motion / mobile keep the plain flowing hero. */
+.hm-heropin.is-run {
+  height: 170svh;
+}
+
+/* Fixed full-viewport GL sheet at z-index 2, mounted in the DOM BETWEEN the
+   hero and the claim: the hero (z2, earlier) paints under it, the claim
+   (z2, later) paints over it — so the sheet covers the DOM image's spot in
+   flight and sits UNDER the claim's text when it lands as its background.
+   The fluid (40) and nav (50) stay above; §3 (unraised) stays below. */
+.hp-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+/* while the GL owns the pixels (any scrolled state): the DOM picture goes
+   silent — the SVG stays for the live rect — and the claim's white sheet
+   opens so the landed GL sheet IS its background. Never applies to no-JS /
+   reduced motion / mobile, which keep the plain DOM forms. */
+.hm-glhero .hw-shape .hw-img {
+  opacity: 0;
+}
+.hm-glhero .hm-claim {
+  background: transparent;
+}
+/* the landed sheet is DARK (the portrait full-bleed, graded down in the
+   shader), so the claim flips to the light voice while the GL owns the
+   background — the letter fill is opacity-on-currentColor, so the
+   mechanism carries over unchanged. The flip only ever happens while §2
+   is below the fold, so it is never seen switching. */
+.hm-glhero .hm-claim-line {
+  color: #f4f8fb;
+}
+.hm-glhero .hm-claim-body {
+  color: rgba(244, 248, 251, 0.66);
+}
+
 /* ---------- §2 skeleton ---------- */
 /* An opaque, z-raised sheet: §3 slides UNDER it (margin-top −100svh on
    .sv), so the claim's bottom edge is what uncovers the dark image —
@@ -458,6 +506,24 @@
   position: relative;
   z-index: 2;
   background: var(--surface);
+  /* ONE VIEWPORT (user, 2026-08-19 landing redesign): the claim is a
+     single-screen section and the sheet lands into .hm-claim-land — an
+     inset container with margin all around — not a full-bleed cover.
+     EXACTLY one viewport (not min-height): the whole landed container,
+     top and bottom margins included, must be visible in one screen.
+     The white margins are the page ground showing through the section's
+     transparent (under .hm-glhero) background, which is why §3 no longer
+     slides beneath this section. */
+  height: 100svh;
+  display: grid;
+  align-content: center;
+}
+/* the landing pad — a pure measuring target (the GL paints the actual
+   container): almost full cover, even margin on every side */
+.hm-claim-land {
+  position: absolute;
+  inset: clamp(1.5rem, 2.4vw, 3rem);
+  pointer-events: none;
 }
 /* the seam — the page-turn's grammar, quieter: the sheet casts just
    ahead of its edge onto whatever slides beneath, which is only ever
@@ -482,22 +548,19 @@
   max-width: var(--measure);
   color: var(--text-muted);
 }
-.hm-claim-rule {
-  margin-top: var(--section-y);
-}
 
 /* ============================================================
    §3 — WHAT WE SOLVE: the credit roll over the glass portrait.
-   The section slides under §2 and its background scrolls slower
-   than the hand — the depth reveal. Problems are loose text
-   thrown into the scene, no containers, rolling like credits at
-   four speeds. Mechanism notes in SolveCredits.tsx.
+   Problems are loose text thrown into the scene, no containers,
+   rolling like credits at four speeds. Mechanism notes in
+   SolveCredits.tsx.
    ============================================================ */
 .sv {
   position: relative;
-  /* already in the viewport, hidden behind the claim, by the claim's
-     last screen — the reveal is the claim's edge lifting off it */
-  margin-top: -100svh;
+  /* the old −100svh slide-under-§2 is GONE (2026-08-19): the claim is
+     now transparent under .hm-glhero so the peel's landed container can
+     show through it with WHITE margins — anything underlapping would
+     bleed through those margins. §3 arrives after the claim, plainly. */
   /* the image's own deep blue-black, for any sliver the cover crop
      or the drift could ever expose */
   background: #060a10;
@@ -547,15 +610,16 @@
   max-width: var(--page-max);
   margin-inline: auto;
   /* The top pad is the image-only beat — one clean stretch of portrait
-     between the claim's edge clearing and the first problem entering.
-     It must stay ABOVE 100svh: below that the first item would sit
-     inside the viewport (occluded behind the claim) from the start,
-     and its IntersectionObserver entrance would fire while hidden.
+     before the first problem enters. It was 108svh when §3 slid under
+     the claim (the pad had to outlast the 100svh occlusion or the first
+     item's IO entrance fired while hidden); with the underlap gone
+     (2026-08-19, the peel's landing needs white margins) the section
+     enters plainly and 20svh keeps the same visible dark breath.
      The bottom pad is the EXIT beat: its last 100svh is the zone §4
      (margin-top: -100svh) buries as it rises, so the credits end a
-     clear 22svh before it — pure image for the burial, mirroring the
-     entry. The sticky frame stays pinned through the whole cover. */
-  padding: 108svh var(--page-pad) 122svh;
+     clear 22svh before it — pure image for the burial. The sticky
+     frame stays pinned through the whole cover. */
+  padding: 20svh var(--page-pad) 122svh;
 }
 .sv-item {
   max-width: 34ch;
@@ -586,15 +650,18 @@
 }
 
 /* ============================================================
-   §4 — WHAT WE DO: the index/detail instrument.
+   §4 — WHAT WE DO: the accordion (redesigned 2026-08-19).
    The section is an opaque sheet that rises OVER §3's portrait
    (margin-top −100svh) and buries it — the claim's reveal
-   grammar, mirrored. Right: the six services as an unlinked tab
-   index whose active name letter-fills to ink. Left: the active
-   service blown up — numeral, self-drawing hairline glyph, name,
-   paragraph. Mechanism notes in ServicesIndex.tsx.
+   grammar, mirrored. Six full-bleed rows, each ONLY the service
+   name at display scale, centered, between edge-to-edge
+   hairlines. Hover: the name letter-fills to ink and the
+   service's image rides the cursor. Open: the image blooms from
+   the pointer into the panel's full-bleed dark ground — glyph,
+   numeral, copy and the one button out over it. Mechanism notes
+   in ServicesAccordion.tsx.
    ============================================================ */
-.wd {
+.wa {
   position: relative;
   z-index: 2;
   margin-top: -100svh;
@@ -602,7 +669,7 @@
 }
 /* the seam, cast UPWARD onto the portrait ahead of the rising edge —
    the claim's ::after mirrored */
-.wd::before {
+.wa::before {
   content: '';
   position: absolute;
   bottom: 100%;
@@ -612,66 +679,267 @@
   background: linear-gradient(to top, rgba(4, 7, 12, 0.18), rgba(4, 7, 12, 0));
   pointer-events: none;
 }
-.wd-head {
+.wa-head {
   margin: 0 0 var(--s-9);
   max-width: 22ch;
   font-weight: var(--w-light);
 }
-.wd-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-  gap: clamp(var(--s-7), 6vw, var(--s-11));
-  align-items: start;
+
+/* ---------- the rows ---------- */
+.wa-list {
+  /* §4's entrance cascade is 60ms, faster than the house 80 (doc §4) */
+  --stagger: 60ms;
+}
+.wa-item {
+  position: relative;
+  border-top: var(--hair) solid var(--hairline);
+}
+.wa-item:last-child {
+  border-bottom: var(--hair) solid var(--hairline);
+}
+.wa-h {
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+.wa-head-btn {
+  appearance: none;
+  background: none;
+  border: 0;
+  margin: 0;
+  display: block;
+  width: 100%;
+  padding: clamp(1.1rem, 2.8vh, 2rem) var(--page-pad);
+  text-align: center;
+  cursor: pointer;
+  font-family: var(--font-sans);
+}
+.wa-title {
+  display: inline-block;
+  font-size: clamp(2.1rem, 6.2vw, 5.4rem);
+  font-weight: var(--w-light);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  color: var(--text-muted);
+}
+/* the fill signature at hover speed: a left-to-right ink sweep carried by
+   per-letter transition delays; open, the same sweep runs to white */
+.wa-title [style*='--i'] {
+  transition: color var(--d-quick) var(--e-settle);
+  transition-delay: calc(var(--i, 0) * 13ms);
+}
+@media (hover: hover) {
+  .wa-item:not(.is-open) .wa-head-btn:hover .wa-title [style*='--i'] {
+    color: var(--text);
+  }
+}
+.wa-item:not(.is-open) .wa-head-btn:focus-visible .wa-title [style*='--i'] {
+  color: var(--text);
+}
+.wa-item.is-open .wa-title [style*='--i'] {
+  color: #f6fafd;
+}
+/* the ice-deep focus ring drowns on the dark image — lift it to ice */
+.wa-item.is-open .wa-head-btn:focus-visible {
+  outline-color: var(--ice);
 }
 
-/* ---------- the deck ----------
-   Server-rendered as six stacked readable blocks (the no-JS page);
-   .is-live grid-stacks them into one cell so the tallest panel sizes
-   the deck and GSAP owns which one is visible. */
-.wd-deck:not(.is-live) .wd-panel + .wd-panel {
-  margin-top: var(--s-9);
+/* ---------- the body / the room ---------- */
+.wa-body {
+  position: relative;
+  z-index: 1;
+  /* no-JS: open. JS sets height inline; the clip is what makes the
+     collapsed state honest. */
 }
-.wd-deck.is-live {
-  display: grid;
+.wa-list.is-live .wa-body {
+  overflow: clip;
 }
-.wd-deck.is-live .wd-panel {
-  grid-area: 1 / 1;
-}
-.wd-numrow {
+.wa-panel {
+  position: relative;
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: flex-end;
   gap: var(--s-6);
+  min-height: clamp(360px, 54svh, 580px);
+  padding-block: clamp(2rem, 5vh, 3.5rem) clamp(2.75rem, 7vh, 4.5rem);
 }
-.wd-mask {
+.wa-mask {
   display: block;
   overflow: hidden;
-  /* the numeral rises through this edge; descenders don't exist in
-     digits but the crop needs a hair of air */
+  align-self: flex-start;
   padding-bottom: 0.06em;
 }
-.wd-num {
+.wa-num {
   display: block;
-  font-size: var(--t-display);
+  font-size: clamp(3.25rem, 7.5vw, 6.25rem);
   font-weight: var(--w-light);
   line-height: var(--lh-display);
   letter-spacing: var(--ls-display);
-  color: var(--text);
+  color: rgba(246, 250, 253, 0.3);
 }
-.wd-name {
-  margin: var(--s-6) 0 0;
+.wa-cols {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: clamp(var(--s-7), 6vw, var(--s-10));
+}
+.wa-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  max-width: 56ch;
+}
+.wa-para {
+  margin: 0;
+  font-size: var(--t-h3);
   font-weight: var(--w-regular);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-h3);
+  color: rgba(244, 248, 251, 0.94);
 }
-.wd-para {
-  margin: var(--s-4) 0 0;
-  color: var(--text-muted);
-  max-width: 44ch;
+.wa-incl {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+.wa-incl li {
+  font-size: var(--t-small);
+  line-height: 1.55;
+  color: rgba(244, 248, 251, 0.66);
+}
+.wa-cta {
+  margin-top: var(--s-2);
+}
+/* the glyph over the image: the same hairline instrument, ice-lit — the
+   one place the page allows a glow, granted by the user's "neon" ask and
+   kept in the accent's own tone */
+.wa-panel .wd-glyph {
+  flex: none;
+  align-self: center;
+  width: clamp(180px, 21vw, 320px);
+  color: #e9f3fa;
+  /* two shells: a tight core so the line itself reads lit, a wide wash so
+     the ground around it does */
+  filter: drop-shadow(0 0 5px rgba(127, 168, 201, 0.8)) drop-shadow(0 0 26px rgba(127, 168, 201, 0.38));
+}
+/* the hairline whispers over a photograph — half a pixel of extra weight
+   keeps it an instrument instead of a watermark */
+.wa-panel .wd-glyph path,
+.wa-panel .wd-glyph rect,
+.wa-panel .wd-glyph circle,
+.wa-panel .wd-glyph ellipse {
+  stroke-width: 1.7;
+}
+.wa-panel .wd-glyph .g-old,
+.wa-panel .wd-glyph .g-flow {
+  stroke: rgba(233, 243, 250, 0.5);
+}
+
+/* ---------- the ground ---------- */
+.wa-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+.wa-bg img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: center;
+}
+.wa-scrim {
+  position: absolute;
+  inset: 0;
+  display: block;
+  /* dark bands top and bottom: the title needs the top one, the copy the
+     bottom one, and the middle stays open so the image reads */
+  background: linear-gradient(
+    to bottom,
+    rgba(5, 10, 16, 0.5) 0%,
+    rgba(5, 10, 16, 0.14) 30%,
+    rgba(5, 10, 16, 0.2) 56%,
+    rgba(5, 10, 16, 0.66) 100%
+  );
+}
+
+/* ---------- the satellite ----------
+   The image riding the cursor over closed rows. Fixed, GSAP-owned
+   transform, pointer-blind; never rendered for touch or reduced motion.
+   z 30: over the page, under the grain (40) like every other image. */
+.wa-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 30;
+  width: clamp(200px, 17vw, 290px);
+  aspect-ratio: 3 / 4;
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  pointer-events: none;
+  box-shadow: var(--lift-3);
+  opacity: 0;
+  visibility: hidden;
+}
+.wa-curimg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+}
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .wa-cursor {
+    display: none;
+  }
+}
+
+/* ---------- foot ---------- */
+.wa-foot {
+  margin-top: var(--s-9);
+}
+.wa-foot-rule {
+  margin-top: var(--section-y);
+}
+
+/* ---------- mobile ---------- */
+@media (max-width: 57.5rem) {
+  .wa-title {
+    font-size: clamp(1.9rem, 8.5vw, 2.6rem);
+  }
+  .wa-panel {
+    min-height: min(70svh, 520px);
+  }
+  .wa-cols {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--s-6);
+  }
+  /* the instrument becomes a top-right emblem; the numeral holds the
+     top-left, so the pair frames the panel */
+  .wa-panel .wd-glyph {
+    position: absolute;
+    top: clamp(1.5rem, 4vh, 2.5rem);
+    right: var(--page-pad);
+    width: clamp(84px, 22vw, 120px);
+  }
+  .wa-num {
+    font-size: clamp(2.5rem, 11vw, 3.5rem);
+  }
 }
 
 /* ---------- the glyphs ----------
    Hairline instruments: constant 1.25px stroke at any display size,
    every drawable path normalised to pathLength 100 so one dashoffset
-   tween draws it. Each glyph keeps exactly ONE idle motion. */
+   tween draws it. Each glyph keeps exactly ONE idle motion. Marked up
+   in ServicesAccordion.tsx; .wa-panel .wd-glyph above re-lights them
+   for the dark ground. */
 .wd-glyph {
   width: clamp(110px, 11vw, 170px);
   aspect-ratio: 1;
@@ -704,7 +972,7 @@
    its place as part of the scene rather than decoration. Rotating and
    swaying groups centre on their own geometry via fill-box. */
 /* The orbit dots travel their ellipses (planes hold still — see the glyph
-   note in ServicesIndex.tsx). The paths are the two ellipses written as
+   note in ServicesAccordion.tsx). The paths are the two ellipses written as
    arc pairs, endpoints pre-rotated about their centres. Hidden outright
    where Motion Path is unsupported — a dot parked at the SVG origin is
    worse than no dot. */
@@ -814,98 +1082,6 @@
   .wd-g5 .g-flow,
   .wd-g6 .g-lens {
     animation: none;
-  }
-}
-
-/* ---------- the index ----------
-   Unlinked tabs: cursor stays default (no navigation promised), the
-   hover/active answer is the name letter-filling to ink — §2's fill
-   signature at hover speed, the sweep carried by per-letter delays. */
-.wd-index {
-  display: flex;
-  flex-direction: column;
-  /* §4's entrance cascade is 60ms, faster than the house 80 (doc §4) */
-  --stagger: 60ms;
-}
-.wd-row {
-  appearance: none;
-  background: none;
-  border: 0;
-  margin: 0;
-  padding: var(--s-4) 0;
-  position: relative; /* anchors the progress line */
-  display: block;
-  width: 100%;
-  text-align: left;
-  cursor: default;
-  font-family: var(--font-sans);
-  font-size: var(--t-h2);
-  font-weight: var(--w-regular);
-  letter-spacing: var(--ls-h2);
-  line-height: var(--lh-tight);
-  color: var(--text-muted);
-}
-/* The cycle's clock, made visible (user call): a THICK ice-deep line under
-   the active row that fills across the 4s window — the jump lands exactly
-   when it completes. One of the accent's few appearances, and the only
-   one that moves continuously; the ticker writes its dashoffset. */
-.wd-prog {
-  display: none;
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 2px;
-  width: 100%;
-  height: 4px;
-}
-.wd-prog line {
-  stroke: var(--ice-deep);
-  stroke-width: 4;
-  stroke-linecap: butt;
-  stroke-dasharray: 100;
-  stroke-dashoffset: 100;
-}
-.wd-row.is-active .wd-prog {
-  display: block;
-}
-@media (prefers-reduced-motion: reduce) {
-  /* no cycle, no clock */
-  .wd-prog {
-    display: none !important;
-  }
-}
-.wd-row [style*='--i'] {
-  transition: color var(--d-quick) var(--e-settle);
-  transition-delay: calc(var(--i, 0) * 14ms);
-}
-.wd-row.is-active [style*='--i'] {
-  color: var(--text);
-}
-
-/* ---------- foot ---------- */
-.wd-foot {
-  margin-top: var(--s-9);
-}
-/* the handoff: the last hairline extends full bleed to both viewport
-   edges (doc §4) — it opens the page out just before the work */
-.wd-foot-rule {
-  margin-top: var(--section-y);
-}
-
-/* ---------- mobile: index first, deck under it ---------- */
-@media (max-width: 57.5rem) {
-  .wd-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .wd-index {
-    order: -1;
-  }
-  .wd-row {
-    font-size: var(--t-h3);
-    padding: var(--s-3) 0;
-  }
-  .wd-glyph {
-    width: clamp(90px, 24vw, 130px);
   }
 }
 
@@ -1161,4 +1337,225 @@
 @media (prefers-reduced-motion: reduce) {
   .iv-sheen { display: none; }
   .iv-line { display: none; }
+}
+
+/* ============================================================
+   §7 — HOW WE WORK: the thread (2026-08-19).
+   ------------------------------------------------------------
+   An opaque white sheet that rises OVER §6's pinned dark stage
+   and buries it, while §6's frame drifts up at 0.45× underneath
+   (the drift lives in Interlude.tsx behind its `buried` prop;
+   the overlap is `.pr.is-over` here, and JS sets both — without
+   JS §6 never pins, so the two sections simply stack).
+
+   Four moves in a left/right stagger joined by ONE hairline
+   thread that draws with scroll, a lit dot riding its head, and
+   each node filling to ice as the head arrives. Hover is a
+   reading focus across the group, never a link affordance.
+   Mechanism notes in Process.tsx.
+   ============================================================ */
+.pr {
+  position: relative;
+  background: var(--surface);
+}
+/* JS-only, and deliberately so: the overlap is meaningless unless §6 is
+   pinned, and §6 only pins under JS with motion allowed. */
+.pr.is-over {
+  z-index: 2;
+  margin-top: -100svh;
+}
+/* the seam, cast UPWARD onto the interlude ahead of the rising edge —
+   §4's move over §3, repeated here because it is the same event */
+.pr.is-over::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  height: 110px;
+  background: linear-gradient(to top, rgba(4, 7, 12, 0.22), rgba(4, 7, 12, 0));
+  pointer-events: none;
+}
+.pr-title {
+  margin: 0;
+  max-width: 20ch;
+  font-weight: var(--w-light);
+}
+.pr-lede {
+  margin: var(--s-5) 0 0;
+  color: var(--text-muted);
+  max-width: 54ch;
+}
+
+/* ---------- the stagger ----------
+   Four rows, alternating sides, with uneven spans and an extra drop on the
+   right-hand pair: the asymmetry is designed, and it is what gives the
+   thread something to travel across. */
+.pr-phases {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  margin-top: clamp(var(--s-9), 12vh, var(--s-11));
+}
+/* Rows are EXPLICIT. Left to auto-placement, moves 1 and 2 would pack into
+   the same row (their columns do not collide) and the thread would run as a
+   Z across a 2x2 block instead of a snake down the page. */
+.pr-move {
+  position: relative;
+  transition: opacity var(--d-base) var(--e-settle);
+}
+.pr-m1 { grid-row: 1; grid-column: 1 / span 5; }
+.pr-m2 { grid-row: 2; grid-column: 8 / span 5; }
+.pr-m3 { grid-row: 3; grid-column: 2 / span 5; }
+.pr-m4 { grid-row: 4; grid-column: 7 / span 6; }
+/* uneven drops: the rhythm is composed, not metronomic */
+.pr-m2 { margin-top: clamp(3.5rem, 10vh, 9rem); }
+.pr-m3 { margin-top: clamp(5rem, 14vh, 12rem); }
+.pr-m4 { margin-top: clamp(3.5rem, 10vh, 9rem); }
+/* the node hangs off the block's INNER edge, in this padding */
+.pr-move--l { padding-right: var(--s-7); }
+.pr-move--r { padding-left: var(--s-7); }
+
+.pr-name {
+  margin: 0;
+  font-size: var(--t-h2);
+  font-weight: var(--w-regular);
+  letter-spacing: var(--ls-h2);
+  line-height: var(--lh-tight);
+  color: var(--text);
+}
+.pr-body {
+  margin: var(--s-4) 0 0;
+  max-width: 40ch;
+  color: var(--text-muted);
+}
+/* the deliverable. Never hidden behind the hover — it is the line a buyer
+   is actually shopping for. */
+.pr-get {
+  margin: var(--s-4) 0 0;
+  max-width: 38ch;
+  padding-top: var(--s-4);
+  border-top: var(--hair) solid var(--hairline);
+  font-size: var(--t-small);
+  line-height: 1.55;
+  color: var(--text);
+}
+
+/* ---------- the node ---------- */
+.pr-node {
+  position: absolute;
+  top: 0.42em;
+  display: grid;
+  place-items: center;
+  width: 15px;
+  height: 15px;
+  border-radius: var(--r-full);
+  border: var(--hair) solid var(--hairline);
+  background: var(--surface);
+  transition:
+    border-color var(--d-base) var(--e-settle),
+    transform var(--d-base) var(--e-settle);
+}
+.pr-move--l .pr-node { right: 0; }
+.pr-move--r .pr-node { left: 0; }
+.pr-node i {
+  display: block;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--r-full);
+  background: var(--ice-deep);
+  transform: scale(0);
+  transition: transform var(--d-base) var(--e-settle);
+}
+/* the arrival: the drawing head has reached this node */
+.pr-node.is-lit {
+  border-color: var(--accent);
+}
+.pr-node.is-lit i {
+  transform: scale(1);
+}
+
+/* ---------- the thread ---------- */
+.pr-thread {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.pr-seg {
+  fill: none;
+  stroke: var(--hairline);
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+.pr-head {
+  fill: var(--ice-deep);
+  opacity: 0;
+  filter: drop-shadow(0 0 7px rgba(127, 168, 201, 0.9));
+}
+/* the no-JS spine: a plain centre hairline where the thread would run */
+.pr-phases::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: var(--hair);
+  background: var(--hairline);
+}
+.pr-phases.is-live::before {
+  display: none;
+}
+
+/* ---------- the hover: one focus, expressed across the group ----------
+   The hovered move comes to full ink and the others recede. These blocks
+   navigate nowhere, so nothing here may read as a link: no lift, no chip,
+   no cursor change. Contrast alone. */
+@media (hover: hover) {
+  .pr-phases:hover .pr-move {
+    opacity: 0.38;
+  }
+  .pr-phases:hover .pr-move:hover {
+    opacity: 1;
+  }
+  .pr-phases:hover .pr-move:hover .pr-node {
+    transform: scale(1.3);
+  }
+}
+
+.pr-foot {
+  margin-top: clamp(var(--s-9), 13vh, var(--s-11));
+}
+
+/* ---------- mobile: one column, the thread runs down the rail ---------- */
+@media (max-width: 57.5rem) {
+  .pr-phases {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pr-m1,
+  .pr-m2,
+  .pr-m3,
+  .pr-m4 {
+    grid-column: 1 / -1;
+    margin-top: var(--s-9);
+    padding-left: var(--s-7);
+    padding-right: 0;
+  }
+  .pr-m1 {
+    margin-top: 0;
+  }
+  .pr-move--l .pr-node,
+  .pr-move--r .pr-node {
+    left: 0;
+    right: auto;
+  }
+  .pr-phases::before {
+    left: 7px;
+  }
+  .pr-name {
+    font-size: var(--t-h3);
+  }
 }
