@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import Button from '@/components/v4/Button'
+import HeroTitle from '@/components/v4/HeroTitle'
 import { gsap, EASE, DUR } from '@/lib/motion-v4'
 
 /**
@@ -18,15 +19,15 @@ import { gsap, EASE, DUR } from '@/lib/motion-v4'
  * inside a <g> that carries the clip while the <image> itself runs a slow
  * ken-burns — the picture breathes inside a still window.
  *
- * The empty quadrants carry the content: top-left the headline — the
- * user's copy, "Build the website that will make [chip] stand out", with
- * "you" letter-spaced under the chip — bottom-right the paragraph and the
- * ghost CTA.
+ * The empty quadrants carry the content: top-left the headline —
+ * HeroTitle's breathing sentence, whose inline image pills swell and shrink
+ * on a 3s loop while the words re-wrap around them — bottom-right the
+ * paragraph and the ghost CTA.
  *
  * Alive, per the standing feedback: atmosphere blobs behind, ken-burns in
- * the glass, an entrance where the shape settles in, headline lines rise
- * masked, the chip pops, and the letters of "you" fly in and ALIGN (the
- * user's requested move). Reduced motion: everything instant and still.
+ * the glass, an entrance where the shape settles in; the headline runs its
+ * own arrival and loop (HeroTitle). Reduced motion: everything instant and
+ * still.
  *
  * The paragraph is PLACEHOLDER copy; the headline is the user's own line.
  */
@@ -43,27 +44,10 @@ export default function HeroPortrait() {
     const root = rootRef.current
     if (!root) return
     const qa = (sel: string) => Array.from(root.querySelectorAll<HTMLElement>(sel))
-    const youLetters = qa('.hw-you span')
-
-    // Centre "you" under the chip — the chip's offset depends on rendered
-    // text width, so CSS cannot know it. Re-run on resize. (The hover swap
-    // that once lifted "you" into the chip's slot was REMOVED by the user,
-    // 2026-08-18 — "you" just lives under the chip now.)
-    const chipwrap = root.querySelector<HTMLElement>('.hw-chipwrap')
-    const you = root.querySelector<HTMLElement>('.hw-you')
-    const wrap = root.querySelector<HTMLElement>('.hw-l2wrap')
-    const alignYou = () => {
-      if (!chipwrap || !you || !wrap) return
-      const c = chipwrap.getBoundingClientRect()
-      const w = wrap.getBoundingClientRect()
-      you.style.left = `${c.left - w.left + c.width / 2}px`
-    }
-    alignYou()
-    window.addEventListener('resize', alignYou)
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       gsap.set(qa('.hw-ent'), { opacity: 1, y: 0, yPercent: 0, filter: 'none' })
-      return () => window.removeEventListener('resize', alignYou)
+      return
     }
 
     // pointer parallax: the picture leans a few px toward the cursor,
@@ -95,28 +79,6 @@ export default function HeroPortrait() {
       0,
     )
     tl.fromTo(
-      qa('.hw-headline .hw-line'),
-      { yPercent: 112, filter: 'blur(14px)', opacity: 0 },
-      { yPercent: 0, filter: 'blur(0px)', opacity: 1, duration: DUR.slow, stagger: 0.1 },
-      0.14,
-    )
-    // scale only — the chip's opacity belongs to the hover swap's CSS, and
-    // a GSAP-inlined opacity would outrank it forever
-    tl.fromTo(
-      '.hw-chip',
-      { scale: 0.55, transformOrigin: '50% 50%' },
-      { scale: 1, duration: DUR.base, ease: EASE.settle },
-      0.5,
-    )
-    // "the letters come in and align"
-    tl.set('.hw-you', { opacity: 1 }, 0.66)
-    tl.fromTo(
-      youLetters,
-      { opacity: 0, x: (i: number) => (i - 1) * 36 },
-      { opacity: 1, x: 0, duration: DUR.base, ease: EASE.settle, stagger: 0.07 },
-      0.66,
-    )
-    tl.fromTo(
       qa('.hw-para, .hw-btn'),
       { y: 18, filter: 'blur(14px)', opacity: 0 },
       { y: 0, filter: 'blur(0px)', opacity: 1, duration: DUR.slow, stagger: 0.1 },
@@ -124,7 +86,6 @@ export default function HeroPortrait() {
     )
 
     return () => {
-      window.removeEventListener('resize', alignYou)
       root.removeEventListener('pointermove', onMove)
       gsap.ticker.remove(panTick)
       tl.kill()
@@ -174,43 +135,7 @@ export default function HeroPortrait() {
           </g>
         </svg>
 
-        <h1
-          className="hw-headline"
-          aria-label="Build the website that will make you stand out"
-        >
-          {/* Four voices, user-directed: "Build the website" grey bold ·
-              "that will make" ink extralight · "you" ink bold · "stand out"
-              grey bold. */}
-          <span aria-hidden="true">
-            <span className="hw-mask">
-              <span className="hw-line hw-ent">
-                <i className="hw-grey">Build the website</i>{' '}
-                <span className="hw-xlight">that will</span>
-              </span>
-            </span>
-            {/* "you" hangs BELOW the line, so it cannot live inside the
-                overflow-hidden mask — it anchors to this wrapper and the
-                effect aligns it under the chip. */}
-            <span className="hw-l2wrap">
-              <span className="hw-mask">
-                <span className="hw-line hw-ent">
-                  <span className="hw-xlight">make</span>{' '}
-                  <span className="hw-chipwrap">
-                    {/* no hw-ent here: the chip inherits the line's entrance
-                        (its own inline opacity would outrank the hover CSS) */}
-                    <img className="hw-chip" src="/home/typing.webp" alt="" />
-                  </span>{' '}
-                  <i className="hw-grey">stand out</i>
-                </span>
-              </span>
-              <span className="hw-you hw-ent">
-                <span>y</span>
-                <span>o</span>
-                <span>u</span>
-              </span>
-            </span>
-          </span>
-        </h1>
+        <HeroTitle />
 
         {/* mobile swaps the staircase for a plain rounded crop; sits after
             the headline in flow, hidden on desktop */}

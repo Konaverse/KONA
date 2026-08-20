@@ -221,6 +221,71 @@ plain statement; reduced motion never dims. Paragraph keeps the standard reveal,
 > dark portrait IS the break. The claim became a full-width, opaque, z-raised sheet with a
 > quiet seam shadow cast past its edge (the page-turn's grammar at whisper volume).
 
+> **REDESIGNED 2026-08-19 (user direction) — the claim becomes the container, then the
+> page turns dark.** Supersedes the letter-fill entrance, the slide-under handoff AND the
+> same day's one-screen landing. Built as `ClaimShrink.tsx` + the `.hm-claim-*` block in
+> home.css:
+>
+> - **Text in the container.** The statement and its paragraph moved INSIDE
+>   `.hm-claim-land` — the inset card the peel lands into — centred, so the type is part
+>   of the landed object, not a layer floating over it. HeroPeel keeps painting the
+>   card's ground on the pad's LIVE rect, so one transform moves card, portrait and type.
+> - **Entrance (changed).** The letter fill is retired here. As the sheet finishes
+>   expanding (section top 0.34→0.04 of the viewport) the words resolve in the house
+>   signature — opacity + 18px rise + 14px blur, feathered word by word (feather 4) —
+>   and the paragraph resolves over the tail of the same window. Scrubbed, reversible,
+>   server-rendered fully visible (SEO D5).
+> - **The pin and the shrink.** `.is-pin` (added once when the peel's GL engages, the
+>   `.is-run` permanence contract) grows the section to 320svh. Two 100svh sticky frames
+>   straddle the fixed GL canvas (z2): the BACK frame (z1) is the ground, the FRONT frame
+>   (z3) carries the pad + text — the section itself must never become a stacking
+>   context. Over pin progress 0.06→0.52 the pad scales to a ~420px tile at centre.
+> - **The dark turn.** Progress 0.30→0.62 fades `.hm-claim-dark` — §3's exact #060a10 —
+>   over the white ground. §2 now ENDS dark, so the §2→§3 handoff is a dark-to-dark cut
+>   and the old seam shadow is gone.
+> - **The orbit field** *(second pass, same day — user: "the blob background needs to be
+>   designed with purpose")*. The container shrinks into a NUCLEUS, so the outline blobs
+>   are its orbit: three irregular organic rings (catmull-rom, 12 breathing points each,
+>   hairline 1.6 stroke, no fills) share ONE centre — the exact point the tile condenses
+>   into — wider than tall like the tile itself, counter-rotating slowly, and TIGHTENING
+>   with the shrink (×1.16→×1.0). Inner ring strongest, outer ones recede (opacity 1 /
+>   .68 / .44). Ink strokes on the light phase, crossfaded to white with the dark.
+> - **The flowing line** *(second pass)*: a meaningful sentence, not the brand — "We
+>   build worlds that carry your story." (PLACEHOLDER) at 9.5vw, weight 200, edge to
+>   edge behind the tile; "worlds" and "story" carry --ice, the rest pure white (the one
+>   place raw ice touches text — it only ever reads on the dark ground). Mounted and
+>   moving from the start, revealed by opacity over progress 0.42→0.68, so the colour
+>   change uncovers a line already in motion.
+> - **The wordmark** *(second pass)*: KONAVERSE across the section's foot, full width
+>   (letters justified space-between, inline padding = the pad's inset so word and tile
+>   share edges), set in **Unbounded 600 — the one-family rule's single sanctioned trial
+>   exception** (user-directed; loaded in the v4 layout, used nowhere else, one line to
+>   revert), with a white→transparent gradient clipped into the glyphs so the word
+>   dissolves toward the page's foot. Entrance is TRIGGERED, not scrubbed: past pin
+>   progress 0.58 (hysteresis to 0.50) the letters rise out of the bottom clip in a
+>   left-to-right wave with a back.out(1.7) settle — the user's "wave and bounce back";
+>   scrolling back reverses the timeline. The register's no-bounce rule is deliberately
+>   broken here by user direction, in this one move.
+> - Fallbacks unchanged in spirit: no JS / reduced motion / mobile / no WebGL get one
+>   plain 100svh screen, ink on white — no pin, no rings, no marquee, no wordmark.
+
+> **REMOVED same day (user call) — the whole pinned scene.** "Remove the pin and shrink,
+> the blob lines, the flowing text… after the landing of the container, we scroll
+> normally to the next section, no pin, no shrink no nothing." Pin, shrink, dark turn,
+> orbit field, flowing sentence, wordmark and the Unbounded font trial all came out; §2
+> is ONE viewport again and hands off to §3 exactly as the inset-landing round left it.
+> What SURVIVES from the day's §2 work, both user-directed and live:
+>
+> - the statement and its paragraph INSIDE `.hm-claim-land` (centred) — the type is part
+>   of the landed object;
+> - the word-by-word refraction entrance (`ClaimEntrance.tsx` — the driver reduced to
+>   just this; the letter fill stays retired).
+>
+> A drawn calligraphic "Konaverse" signature was in prototyping when the scene was cut —
+> the working draft is parked at `design/konaverse-signature-draft.svg` (monoline
+> strokes, draws with the pathLength/dashoffset idiom; lettering unfinished) for
+> wherever a written signature lands next.
+
 **3D.** Absent.
 
 ---
@@ -241,6 +306,19 @@ plain statement; reduced motion never dims. Paragraph keeps the standard reveal,
 >   must visibly scroll, slower. Film-measured after tuning: face moved ~118px against
 >   ~317px of scroll ≈ 0.37–0.45× depending on position.)* The hero is z-raised too, so a
 >   short claim on a tall viewport never lets §3 paint over it.
+>
+>   **Rebuilt 2026-08-19 — the seam without the underlap.** The −100svh slide-under died
+>   with the peel's inset landing (the claim's white margins are transparent — anything
+>   underneath bleeds through), which silently killed the depth effect: the image rode
+>   up at hand speed during its own entry and only drifted once stuck. Restored, on the
+>   user's ask, as a WHOLE-LIFE drift in SolveCredits.tsx: apparent speed is a constant
+>   0.45× from the section's first sliver — during ENTRY the image counter-translates
+>   down at 0.55× inside the rising frame (the claim leaves at hand speed above it, the
+>   portrait crawls below: the depth seam), and once stuck the same 0.45× continues as
+>   the upward drift. A +3vh bias starts the entry framing **60vh deep** into the −63vh
+>   oversize, so the seam reveals the portrait's face, never its empty top edge. Travel
+>   budget (y: +3 → +58 → ≈−51vh) documented with `.sv-img` in home.css; the oversize is
+>   unchanged.
 > - **The credits.** The problems are loose text thrown into the scene — no containers,
 >   no grid: scattered left / past-centre / left-of-centre / right, uneven vertical gaps,
 >   each rolling at its own speed (0.72 / 0.82 / 1.08 / 1.16) via the house ticker. The
@@ -273,54 +351,98 @@ plain statement; reduced motion never dims. Paragraph keeps the standard reveal,
 
 ## Section 4 — What we do
 
-> **REDESIGNED 2026-08-18 (user direction, from a "stages" reference image) — the index/
-> detail instrument.** Built as `ServicesIndex.tsx` + `.wd-*` in home.css. The reference's grammar — full list on the right with the active entry in
-> ink and the rest faded, the active entry blown up on the left — adapted to Whiteout:
+> **SIX CARDS — LIVE since 2026-08-20, user-directed.** Replaces the bento of the same
+> day, which replaced the threshold, which replaced the accordion. `ServiceCards.tsx`,
+> `.sc-*` in home.css. `ServicesThreshold.tsx` and `ServicesAccordion.tsx` stay in the
+> tree unimported for comparison; the bento does not — it was this component with unequal
+> spans, and a second corpse of the same cards would only be noise. The six services,
+> their copy, their photographs, their glyphs and their TINTS live in `services-data.tsx`.
 >
-> - **Arrival mirrors §3's own.** §4 is an opaque z-raised white sheet with
->   `margin-top: -100svh`; §3 gained one extra viewport of pure image after the last
->   problem (the exit beat, mirroring the entry beat), and its sticky frame stays pinned
->   and drifting at ~0.45× for the whole burial. §4 casts its seam shadow UPWARD onto the
->   portrait — the claim's move, mirrored. The dark passage opens and closes with the same
->   grammar.
-> - **Right: the index.** Six service names (3D Websites · Web Design · Web Development ·
->   One-page Websites · Website Redesign · SEO) as unlinked tab buttons, muted at rest.
->   Activation is HOVER (tap on touch), and the active name **letter-fills to ink** —
->   §2's fill signature replayed at hover speed via per-letter transition-delay. Cursor
->   stays default: rows still promise no navigation (architecture §8 unchanged).
-> - **Left: the detail.** Giant `01…06` numeral (ink, 200, display scale) rising through a
->   mask on each swap — the button-roll grammar at section scale; the panel itself swaps
->   with the refraction signature, never a fade. Each service carries a **hairline glyph**
->   (user call, over photos): a stroke-drawn instrument in the ink/hairline palette that
->   draws itself in via `pathLength=100` dashoffset and keeps ONE slow idle motion after —
->   the hero orbit's language. Photos were rejected because the page's imagery budget is
->   spent (§3's portrait, §5's sheets) and client work supplies the only colour.
-> - **Auto-cycle (user call):** the active service advances every **4s** on the ticker
->   *(feel round, same day: 5s with a 12s manual grace read as "takes too long" — the
->   grace is gone, hover-pause covers that job)*, pauses while the pointer is over the
->   instrument, only runs on-screen. **The clock is visible (user direction):** a THICK
->   ice-deep progress line under the active row — an SVG line whose dashoffset the ticker
->   writes — fills across exactly the 4s window, and the jump lands when it completes;
->   pausing freezes it mid-fill. It is one of the accent's few appearances and the only
->   continuously-moving one, granted by the user against the "rest is still" default.
->   The section demonstrates itself; a visitor who never hovers still meets all six.
-> - **Glyph craft round (user: "each one needs to be magnificent"):** the six became
->   scenes, not icons — the object's world (two counter-turning orbits, trapped air, a
->   sparkle), the staircase with its own layout roughed in and the designer's cursor
->   still nudging (with a click dip), a browser editor typing one line against a blinking
->   caret, the one-pager whose content and scroll dot travel as one system, the redesign
->   whose dashed past sways while its flow-arc dashes march toward the solid future, and
->   the results page whose lens holds the only thing that matters — the line going up.
-> - **The reference's furniture that did not survive:** the coral accent number (accent
->   never carries text here), the tracked-caps header (one h2 sentence with a 600-weight
->   word instead), the "(04) – our stages" eyebrow (no labels).
+> **TWO COLUMNS, THREE ROWS, SIX IDENTICAL CARDS.** Same size, same shape, same five
+> layers. The bento's unequal spans are gone on purpose: the cards are the point now, so
+> nothing about the grid is allowed to make one service look more important than another.
+> The row height is set on the grid rather than left to content — the moment a row sizes
+> to its own copy, a service with a longer paragraph gets a taller card and the set stops
+> being uniform.
 >
-> SEO/fallback: all six names AND paragraphs are server-rendered; JS collapses the six
-> detail blocks into a swap deck (`is-live` grid-stacking). No-JS reads the list plus six
-> stacked details; reduced motion gets instant swaps, no idle loops, no auto-cycle.
-> Everything below this block that still speaks of rows-with-hairlines describes the
-> superseded list form; the constraints it argues (rows unlinked, ONE hub link carrying
-> the whole affordance, 60ms entrance cascade) all carry into the instrument unchanged.
+> **THE MEDIA PLATE TAKES EITHER.** Each card's largest element is a tinted, hairlined,
+> clipped panel sized for a PHOTOGRAPH. `media: 'glyph'` in `services-data.tsx` (what all
+> six ship as, while the photographs are stand-in art) centres the service's hairline
+> drawing on it; `media: 'photo'` fills the same panel edge to edge instead. One word per
+> card, no layout change either way.
+>
+> **EACH SERVICE STILL CARRIES ITS OWN LIGHT.** Six hues spaced evenly round the wheel
+> *starting at the house ice*, so tokens.css's single accent is a member of the set rather
+> than something it contradicts. `c1`/`c2` are aura, ring light and plate wash only —
+> never type. `deep` is the one value allowed to carry text or an icon stroke, and each
+> clears AA on white. The user's call; reasoning in `services-data.tsx`.
+>
+> **THE FIVE LAYERS**, bottom to top: the **aura** (two blurred radials in the service's
+> colours, drifting on a 26s loop, each card off-phase); the **pane**, a translucent white
+> gradient; the **cursor lens**; the **travelling border**, a conic gradient masked to a
+> 1px ring whose angle is spun through a registered `@property` so the bright arc genuinely
+> orbits — all six on one 17s clock with a negative delay off the card index, so the grid
+> never pulses in unison; then the plate and the type. Deliberately no `backdrop-filter`:
+> the only thing behind the pane is a blob already blurred, so it would buy an identical
+> picture for a per-frame GPU pass on six large elements.
+>
+> **HOVER IS ONE GESTURE.** The card lifts on a shadow tinted to its own colour, the aura
+> swells through the pane, the ring goes to full, the drawing **redraws itself** (the same
+> pathLength-100 dashoffset the entrance uses, run again), the name inks over letter by
+> letter into the service's deep tone (§2's fill signature at hover speed), the plate's
+> hairline warms, and the chip resolves from a line into an east arrow and steps forward.
+> Descriptions no longer hide: six cards this size have the room, and a card whose copy
+> only exists under the pointer is not the same card as the one beside it.
+>
+> ### THE PAPER ENTRANCE *(the user's ask: "can we do what the hero and WebGL do?")*
+>
+> **Not in WebGL, and the reason matters.** The hero peel textures an `<img>` onto a
+> 140x90 mesh. A card here is LIVE DOM — animated aura, conic ring, SVG drawing, real text
+> — and WebGL cannot texture a live subtree. So the same idea is built the one way that
+> keeps the content live: a **per-corner homography written as a single `matrix3d`**.
+>
+> A `matrix3d` maps the unit square onto any convex quadrilateral, so all four corners are
+> independently placeable. Give each corner its own easing window over the row's scroll
+> progress — the hero shader's corner-weighted stagger, exactly — and mid-flight some
+> corners have arrived while others have not. **That stretch is the paper.**
+>
+>   - the **LEFT** card is grabbed by its **TOP-RIGHT** corner
+>   - the **RIGHT** card is grabbed by its **TOP-LEFT** corner
+>
+> so the two INNER corners lead. They reach for each other across the gutter, meet first,
+> and the outer bodies swing in behind them until both cards settle flat and aligned. Each
+> card also starts displaced outward and below, so the pair converges on the centre rather
+> than dropping in. Scrub, not playback: progress is a pure function of the row's position,
+> so scrolling back up re-stretches the corners. One `gsap.ticker` subscription for the
+> section, reads batched before writes, and the transform lands on `.sc-cell` so the card's
+> own hover lift stays a plain transform underneath it.
+>
+> **WHAT IT CANNOT DO,** stated plainly: a homography is a PLANAR map. It grabs corners
+> and foreshortens, but it cannot ripple the middle of the sheet — a real curl needs
+> non-planar geometry. Corner stretch, perspective and stagger: yes. Fabric wobble: no.
+> If the wobble is wanted, the route is the hero's: put a photograph in the plate and peel
+> THAT in GL while the card frame does this.
+>
+> **ARRIVAL, unchanged through every version of this section.** §4 is an opaque z-raised
+> sheet with `margin-top: -100svh` that rises over §3's exit beat while the portrait keeps
+> drifting at ~0.45×, casting its seam shadow UPWARD. The section carries `overflow-x:
+> clip` (not `hidden` — the seam hangs outside it on the y axis) because the paper swings
+> the left card past the viewport edge on the way in.
+>
+> **ROUTING, unchanged.** Every card links to `/services#slug`. Architecture §8 holds —
+> rows are not routes, ONE hub fans out — because all six land on the hub and the fragment
+> only says which service you came for.
+>
+> **FALLBACK.** No JS, reduced motion, or narrower than 57.5rem (where the grid goes to
+> one column and there is no pair for the inner corners to reach across): the paper never
+> arms and the cards do the house reveal instead. Every name, paragraph and link is
+> server-rendered at every size. All copy is PLACEHOLDER (checklist 6.6).
+>
+> Everything below this block describing the bento, the threshold, the accordion, the
+> index/detail instrument or a rows-with-hairlines list is SUPERSEDED. Note this section
+> reverses the "a list beats cards here" verdict argued below — that call was the user's,
+> and the constraint it protected (rows must not imply navigation they do not provide) is
+> satisfied instead by making every card a real link to the hub.
 
 **Job.** The service cluster. Route commercial intent into the service pages.
 

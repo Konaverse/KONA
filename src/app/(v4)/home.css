@@ -313,6 +313,9 @@
   position: relative;
   width: min(100%, 1440px);
   aspect-ratio: 815 / 375;
+  /* the headline sizes off THIS box (cqi), not the viewport — its wrap
+     points are tuned in em and must not drift with window width */
+  container-type: inline-size;
 }
 
 .hw-shape {
@@ -339,70 +342,138 @@
 .hw-mimg { display: none; }
 
 /* ---------- headline, top-left quadrant ---------- */
+/* THE BREATHING HEADLINE (HeroTitle.tsx, 2026-08-19 user reference set).
+   One wrapping flow of words + three inline image pills; the pills' widths
+   change on a 3s loop and the sentence re-wraps around them.
+
+   The width is stated in `em` and the font-size in `cqi` off .hw-comp — the
+   wrap points are tuned in em, so type and box MUST scale together. A
+   viewport-based font-size here (var(--t-h1)) would drift the breaks. */
 .hw-headline {
   position: absolute;
   left: 5.5%;
   top: 1.5%;
   z-index: 2;
   margin: 0;
-  font-size: var(--t-h1);
-  font-weight: var(--w-regular);
+  width: 15em;
+  font-size: clamp(1.75rem, 3.85cqi, 3.5rem);
+  font-weight: var(--w-light);
   line-height: 1.38;
   letter-spacing: var(--ls-h1);
   color: var(--text);
 }
-.hw-mask {
-  display: block;
-  overflow: hidden;
-  padding-bottom: 0.08em;
-  margin-bottom: -0.08em;
+/* flex-wrap, not a text block: every word is its own measurable box (the
+   FLIP needs that) and the pre state can force its breaks with .hw-br */
+.hw-flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  row-gap: 0;
 }
-.hw-line {
+.hw-it {
   display: block;
   white-space: nowrap;
 }
-/* the voices (user-directed 2026-08-18, revised same night): grey words are
-   now LIGHT grey and LIGHT weight — deliberately paler than --text-muted on
-   display type only, a one-off hex by the user's call, not a token */
-.hw-grey {
-  font-style: normal;
-  font-weight: var(--w-light);
-  color: #9aa6ae;
-}
-.hw-xlight {
-  font-weight: var(--w-light);
-  color: var(--text);
-}
-.hw-l2wrap {
+.hw-w { margin-right: 0.26em; }
+/* the voices (user-directed 2026-08-18): grey words are LIGHT grey and LIGHT
+   weight — deliberately paler than --text-muted, display type only */
+.hw-grey { color: #9aa6ae; }
+.hw-ink  { color: var(--text); }
+.hw-key  { color: var(--text); font-weight: var(--w-semi); }
+
+/* the pills. Width is written by HeroTitle (inline, in em); --pw-rest carries
+   the resting width so CSS alone (no-JS) can hold the resting composition.
+
+   Radius is --r-md, the page's soft-rectangle token, NOT a capsule: the user
+   pulled the corners in on the feel pass, and a 10px corner on a 0.95em-tall
+   plate reads as a cut of film rather than a tag. */
+.hw-pill {
   position: relative;
-  display: block;
-}
-.hw-chipwrap {
-  display: inline-block;
-  vertical-align: -0.1em;
-  margin: 0 0.12em;
-}
-.hw-chip {
-  display: block;
-  width: clamp(96px, 8.6vw, 152px);
-  aspect-ratio: 3 / 1;
-  object-fit: cover;
+  flex: 0 0 auto;
+  width: var(--pw-rest);
+  /* the compositions are solved for the 15em desktop box; on the narrower
+     mobile flow a wide one would overrun the page, so it caps at the line */
+  max-width: 100%;
+  height: 0.95em;
+  margin-right: 0.26em;
+  overflow: hidden;
   border-radius: var(--r-md);
+  background: #e4ecf1;
+  /* material, not a hole: a hairline inside the crop and a shadow tinted to
+     the page's ink, never black */
+  box-shadow:
+    inset 0 0 0 1px rgb(24 40 51 / 0.07),
+    0 10px 24px -16px rgb(24 40 51 / 0.45);
 }
-/* the hover swap that lifted "you" into the chip's slot was REMOVED
-   (user call, 2026-08-18 late) — "you" simply lives under the chip */
-.hw-you {
+/* THE PLATE. A fixed 13.5em picture pinned left, so growing the pill UNVEILS
+   more of it instead of un-squashing it — the pill opens like an aperture.
+   --iox slides each plate to the part of the picture that pill should open on.
+   INVARIANT: |--iox| + the pill's widest composition <= 13em, or the plate
+   runs out before the pill does and the ground shows through. */
+.hw-pill img {
   position: absolute;
-  top: calc(100% - 0.24em); /* tucked up, clear of the image block below */
-  left: 42%; /* no-JS approximation; the effect centres it under the chip */
-  transform: translateX(-50%);
-  display: flex;
-  gap: 0.1em;
-  font-size: 1em; /* matches the headline, per the user's note */
-  font-weight: var(--w-semi);
-  line-height: 1;
-  color: var(--text);
+  top: 0;
+  left: var(--iox, 0);
+  width: 13.5em;
+  max-width: none;
+  height: 100%;
+  object-fit: cover;
+  /* The pills stay in the HERO'S palette, not bleached out of it: the big
+     window behind them is deep blue, and three grey chips read as placeholders
+     next to it. A CSS brightness() cannot lift a black — it multiplies — so
+     the plate is held at 88% over the pill's pale ground, which lifts the
+     shadows the way a print does while the blue survives. */
+  opacity: 0.88;
+  filter: saturate(1.05) brightness(1.18) contrast(0.92);
+  animation: hw-plate 34s ease-in-out infinite alternate;
 }
+/* the plate breathes. Kept small, and scaling UP with it, so the drift can
+   never pull the plate's far edge inside the pill. */
+@keyframes hw-plate {
+  from { transform: translate3d(0, 0, 0) scale(1.02); }
+  to   { transform: translate3d(-0.25em, 0, 0) scale(1.06); }
+}
+/* film grain over the plate: the one texture that makes a flat crop read as
+   material. Static SVG noise, no GPU cost beyond one composited layer. */
+.hw-pill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.3;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='90' height='90' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+/* the glint: HeroTitle runs this the length of a pill that just resized, so
+   the change of size reads as light catching an edge */
+.hw-glint {
+  position: absolute;
+  inset: -20% -40%;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 38%,
+    rgb(255 255 255 / 0.55) 50%,
+    transparent 62%
+  );
+}
+@media (prefers-reduced-motion: reduce) {
+  .hw-pill img { animation: none; }
+  .hw-glint { display: none; }
+}
+
+/* PRE — what loads: pure text on the rest state's line breaks, pills at
+   zero width. JS lifts `is-pre` once the words have arrived. */
+.hw-br { display: none; flex: 0 0 100%; height: 0; }
+.hw-flow.is-pre .hw-br { display: block; }
+.hw-flow.is-pre .hw-pill { width: 0; margin-right: 0; opacity: 0; }
+.hw-flow.is-pre .hw-w { opacity: 0; }
+
+/* FLIP — the flow freezes to absolute boxes for the length of one beat so the
+   re-wrap happens invisibly and each word can fly to its new line. */
+.hw-flow.is-flip { display: block; position: relative; }
+.hw-flow.is-flip > * { position: absolute; top: 0; left: 0; margin: 0; will-change: transform; }
 
 /* ---------- paragraph + CTA, bottom-right quadrant ---------- */
 .hw-side {
@@ -437,10 +508,13 @@
     border-radius: 20px;
     margin: var(--s-6) 0 0;
   }
-  .hw-headline { position: static; }
-  .hw-line { white-space: normal; }
-  /* room for the hanging "you" */
-  .hw-l2wrap { margin-bottom: 2.6em; }
+  /* the flow still re-wraps here — it just does it in a narrower box
+     at the shared h1 size, so the pills feel like inline thumbnails */
+  .hw-headline {
+    position: static;
+    width: auto;
+    font-size: var(--t-h1);
+  }
   .hw-side {
     position: static;
     width: auto;
@@ -484,11 +558,10 @@
 .hm-glhero .hm-claim {
   background: transparent;
 }
-/* the landed sheet is DARK (the portrait full-bleed, graded down in the
-   shader), so the claim flips to the light voice while the GL owns the
-   background — the letter fill is opacity-on-currentColor, so the
-   mechanism carries over unchanged. The flip only ever happens while §2
-   is below the fold, so it is never seen switching. */
+/* the landed sheet is DARK (the portrait, graded down in the shader), so
+   the claim flips to the light voice while the GL owns the card. The flip
+   only ever happens while §2 is below the fold, so it is never seen
+   switching. */
 .hm-glhero .hm-claim-line {
   color: #f4f8fb;
 }
@@ -496,57 +569,50 @@
   color: rgba(244, 248, 251, 0.66);
 }
 
-/* ---------- §2 skeleton ---------- */
-/* An opaque, z-raised sheet: §3 slides UNDER it (margin-top −100svh on
-   .sv), so the claim's bottom edge is what uncovers the dark image —
-   the depth reveal. The section is full-width (its old k-page max-width
-   moved to an inner div) or the image would peek past its sides on
-   screens wider than --page-max. */
+/* ============================================================
+   §2 — THE CLAIM: the landed container carries the statement.
+   ONE viewport, no pin — the 2026-08-19 pinned shrink/dark-turn
+   scene was built and removed the same day (user call: "after
+   the landing of the container, we scroll normally to the next
+   section"). What survived it: the statement living INSIDE the
+   container, and the word-resolve entrance (ClaimEntrance.tsx).
+   ============================================================ */
 .hm-claim {
   position: relative;
-  z-index: 2;
+  z-index: 2; /* over the GL canvas: the text rides ON the landed sheet */
   background: var(--surface);
-  /* ONE VIEWPORT (user, 2026-08-19 landing redesign): the claim is a
-     single-screen section and the sheet lands into .hm-claim-land — an
-     inset container with margin all around — not a full-bleed cover.
-     EXACTLY one viewport (not min-height): the whole landed container,
-     top and bottom margins included, must be visible in one screen.
-     The white margins are the page ground showing through the section's
-     transparent (under .hm-glhero) background, which is why §3 no longer
-     slides beneath this section. */
+  /* EXACTLY one viewport (not min-height): the whole landed container,
+     all four margins included, must be visible in one screen */
   height: 100svh;
-  display: grid;
-  align-content: center;
 }
-/* the landing pad — a pure measuring target (the GL paints the actual
-   container): almost full cover, even margin on every side */
+/* the landing pad IS the container: the peel's sheet lands on this rect
+   (HeroPeel reads it live) and the statement lives inside it — an inset
+   card with even margin all around, not a full-bleed cover. The white
+   margins are the page ground showing through the section's transparent
+   (under .hm-glhero) background. */
 .hm-claim-land {
   position: absolute;
   inset: clamp(1.5rem, 2.4vw, 3rem);
-  pointer-events: none;
-}
-/* the seam — the page-turn's grammar, quieter: the sheet casts just
-   ahead of its edge onto whatever slides beneath, which is only ever
-   §3's image */
-.hm-claim::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  height: 110px;
-  background: linear-gradient(to bottom, rgba(4, 7, 12, 0.18), rgba(4, 7, 12, 0));
-  pointer-events: none;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+  padding: clamp(2rem, 5vw, 4.5rem);
 }
 .hm-claim-line {
   margin: 0;
-  max-width: 24ch;
+  max-width: 22ch;
   font-weight: var(--w-light);
 }
 .hm-claim-body {
   margin: var(--s-6) 0 0;
-  max-width: var(--measure);
+  max-width: 52ch;
   color: var(--text-muted);
+}
+/* the entrance targets: inline-block so transform/filter apply. Visible
+   by default (SSR, no-JS, crawlers); ClaimEntrance resolves them in. */
+.hm-cw-i {
+  display: inline-block;
 }
 
 /* ============================================================
@@ -558,9 +624,9 @@
 .sv {
   position: relative;
   /* the old −100svh slide-under-§2 is GONE (2026-08-19): the claim is
-     now transparent under .hm-glhero so the peel's landed container can
-     show through it with WHITE margins — anything underlapping would
-     bleed through those margins. §3 arrives after the claim, plainly. */
+     transparent under .hm-glhero so the peel's landed container shows
+     through it with WHITE margins — anything underlapping would bleed
+     through those margins. §3 arrives after the claim, plainly. */
   /* the image's own deep blue-black, for any sliver the cover crop
      or the drift could ever expose */
   background: #060a10;
@@ -579,10 +645,12 @@
 .sv-img {
   position: absolute;
   left: 0;
-  /* Oversized past the drift's full travel. The travel is 0.45 × the sticky
-     range (SolveCredits.tsx computes it live), and the range is the section
-     height minus one viewport — currently ~242svh, so travel ≈ ±54.5vh; ±63vh
-     here leaves ~8.5vh of safety each side. IF §3 GROWS (more items, bigger
+  /* Oversized past the drift's full travel. The drift spans the section's
+     WHOLE life now (SolveCredits.tsx, 2026-08-19): y runs +3vh at the
+     first sliver → +58vh at the stick (the entry counter-translation,
+     0.55 × 100vh) → 58vh − 0.45 × (section − viewport) at the end —
+     ≈ −51vh with today's ~242svh range. ±63vh leaves ~5vh of safety at
+     the top and ~12vh at the bottom. IF §3 GROWS (more items, bigger
      paddings) THIS MUST GROW WITH IT or the drift exposes the frame edge. */
   top: -63vh;
   width: 100%;
@@ -1558,4 +1626,944 @@
   .pr-name {
     font-size: var(--t-h3);
   }
+}
+/* ============================================================
+   SECTION 4 — THE THRESHOLD (ServicesThreshold.tsx, 2026-08-19,
+   user drafts services_pinned_sections*.png). One hairline runs
+   the section and acts as a membrane: the queue below it is
+   clipped at its TOP edge, the active title above it is clipped
+   at its BOTTOM edge, and a name that slides up out of one
+   surfaces in the other. Mechanism notes in the component.
+
+   Nothing here pins until .is-scrub is added by JS — no-JS,
+   reduced motion and phones keep the plain stacked section.
+   ============================================================ */
+.wt {
+  /* ONE size for a service name, on either side of the line: the queue and
+     the active title have to read as the same object in two places */
+  --wt-name: clamp(1.45rem, 2.95vw, 2.65rem);
+  position: relative;
+  z-index: 2;
+  /* §3's burial, unchanged from the accordion: §4 rises over the portrait
+     as an opaque sheet while it keeps drifting at ~0.45x */
+  margin-top: -100svh;
+  background: var(--surface);
+}
+/* the seam, cast UPWARD onto the portrait ahead of the rising edge —
+   the claim's ::after mirrored */
+.wt::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  height: 110px;
+  background: linear-gradient(to top, rgba(4, 7, 12, 0.18), rgba(4, 7, 12, 0));
+  pointer-events: none;
+}
+
+.wt-stage { padding: var(--s-9) 0; }
+.wt.is-scrub .wt-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: grid;
+  /* an explicit 1fr: an auto column would size to the plate's max-content
+     and the composition would never reach its 1440 */
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
+  /* the top clears the fixed nav; the plate is centred in what is left */
+  padding: clamp(4.5rem, 9vh, 6.5rem) 0 var(--s-7);
+}
+
+/* ---------- THE PLATE ----------
+   Four bands, and the third one is the point: headline / picture + active
+   title / THE MEMBRANE / queue + copy. The last band is a fixed share of the
+   plate rather than auto — the queue has to be CLIPPED by the membrane, and a
+   band that sizes to its own content can never clip anything. */
+.wt-grid { display: grid; gap: 0; }
+.wt.is-scrub .wt-grid {
+  grid-template-rows: auto minmax(0, 1fr) auto minmax(215px, 32%);
+  height: min(82svh, 820px);
+  /* wider than --page-max: this plate is a composition, not a column of
+     prose, and it is sized against the hero's 1440 rather than the reading
+     measure every other section uses */
+  max-width: 1440px;
+}
+
+/* ---------- the headline, right-aligned (user draft) ---------- */
+.wt-head {
+  margin: 0 0 var(--s-5);
+  font-size: clamp(1.75rem, 3.5vw, 3.1rem);
+  font-weight: var(--w-light);
+  color: var(--text-muted);
+  text-align: right;
+  line-height: 1.24;
+}
+.wt-head b { font-weight: var(--w-semi); color: var(--text); }
+.wt-head-in { display: block; }
+.wt-head-l {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.26em;
+}
+/* the hero's pill, again, and live: whichever service is up is the picture
+   inside the sentence. Same material as .hw-pill — same radius, same
+   hairline, same tinted shadow — so the two sections read as one hand. */
+.wt-headpill {
+  position: relative;
+  flex: 0 0 auto;
+  width: clamp(7rem, 13vw, 13rem);
+  height: 0.92em;
+  overflow: hidden;
+  border-radius: var(--r-md);
+  background: #e4ecf1;
+  box-shadow:
+    inset 0 0 0 1px rgb(24 40 51 / 0.07),
+    0 10px 24px -16px rgb(24 40 51 / 0.45);
+}
+.wt-chip { position: absolute; inset: 0; }
+.wt-chip img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 42%;
+  opacity: 0.9;
+  filter: saturate(1.05) brightness(1.14) contrast(0.94);
+}
+
+/* ---------- above the membrane ---------- */
+.wt-upper {
+  display: grid;
+  grid-template-columns: minmax(0, 58fr) minmax(0, 42fr);
+  gap: var(--s-7);
+  align-items: stretch;
+  min-height: 0;
+}
+.wt-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  background: #0b1218;
+  aspect-ratio: 16 / 10;
+  min-height: 0;
+}
+.wt.is-scrub .wt-frame { height: 100%; aspect-ratio: auto; }
+/* the picture leans toward the cursor; the 1.06 overscale is the slack
+   that lean lives in, so the frame edge is never exposed */
+.wt-frame-in { position: absolute; inset: 0; transform: scale(1.06); }
+.wt-shot { position: absolute; inset: 0; margin: 0; }
+.wt-shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* an inner hairline of light, the way the hero's glass carries one */
+.wt-frame-edge {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.14);
+}
+
+/* the active service, right-aligned, sitting ON the membrane */
+.wt-now {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: var(--s-5);
+  min-width: 0;
+}
+/* a long name is wider than the column the frame leaves it, so the slot is
+   allowed to reach back across the gutter — it is right-aligned, and the
+   frame's right edge is the only thing it could ever meet */
+.wt.is-scrub .wt-nowname { width: calc(100% + 34vw); margin-left: -34vw; }
+.wt-glyphs {
+  position: relative;
+  width: clamp(70px, 7.5vw, 116px);
+  aspect-ratio: 1;
+}
+.wt-glyph { position: absolute; inset: 0; }
+.wt-glyph .wd-glyph { width: 100%; height: 100%; }
+/* the draw: the component writes --draw, the glyph reads it (the shared
+   .g-draw rule already sets pathLength-based dasharray) */
+.wt-glyph .g-draw { stroke-dashoffset: var(--draw, 0); }
+
+/* THE SLOT. Clipped at its bottom edge, which is the hairline: a title
+   rolls up out of the membrane and, later, out of the top. */
+.wt-nowname {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  /* the names are all caps, so the line box needs no descender room — but it
+     does need the cap to clear, and 1em would shave it */
+  height: 1.24em;
+  font-size: var(--wt-name);
+  font-weight: var(--w-light);
+  letter-spacing: -0.035em;
+  line-height: 1.24;
+  text-transform: uppercase;
+  color: var(--text);
+  text-align: right;
+}
+.wt-now-i {
+  position: absolute;
+  inset: 0;
+  display: block;
+  white-space: nowrap;
+}
+
+/* ---------- THE MEMBRANE ---------- */
+.wt-line {
+  position: relative;
+  height: var(--hair);
+  margin: var(--s-4) 0 0;
+  background: var(--hairline);
+}
+/* it doubles as the clock: the visitor is inside a scroll whose end they
+   cannot see, and this is the only thing that tells them where they are */
+.wt-line-fill {
+  position: absolute;
+  inset: 0;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  background: var(--ice-deep);
+}
+
+/* ---------- below the membrane ---------- */
+.wt-lower {
+  display: grid;
+  grid-template-columns: minmax(0, 45fr) minmax(0, 55fr);
+  gap: var(--s-7);
+  min-height: 0;
+}
+/* THE QUEUE. Clipped at its TOP edge — the same y as the slot's bottom. */
+/* THE QUEUE. Clipped at its TOP edge — the same y the title slot is clipped
+   at from the other side. The two masks meeting is the whole section. */
+.wt-queue { position: relative; min-height: 0; }
+.wt.is-scrub .wt-queue {
+  overflow: hidden;
+  height: 100%;
+  /* the TOP is a hard cut — that edge is the membrane, and the whole
+     section depends on a name being sliced by it. The BOTTOM is a fade:
+     the queue runs past the plate, and a name guillotined mid-letter down
+     there reads as a clipping bug rather than as "there are more". */
+  -webkit-mask-image: linear-gradient(to bottom, #000 74%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 74%, transparent 100%);
+}
+.wt-queue-track { list-style: none; margin: 0; padding: 0; will-change: transform; }
+.wt-q-row { margin: 0; }
+
+.wt-q {
+  appearance: none;
+  background: none;
+  border: 0;
+  /* tight, because the top of this row is what the membrane slices through:
+     generous leading would mean the line only ever cuts empty space */
+  padding: 0.16em 0 0.3em;
+  display: block;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--wt-name);
+  font-weight: var(--w-light);
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+/* the house fill signature at hover speed: a left-to-right ink sweep
+   carried by per-letter transition delays */
+.wt-q-t { display: inline-block; }
+.wt-q-t [style*='--i'] {
+  transition: color var(--d-quick) var(--e-settle);
+  transition-delay: calc(var(--i, 0) * 13ms);
+}
+@media (hover: hover) {
+  .wt-q:hover .wt-q-t [style*='--i'] { color: var(--text); }
+  .wt-q:hover .wt-q-rule { transform: scaleX(1); }
+}
+.wt-q:focus-visible .wt-q-t [style*='--i'] { color: var(--text); }
+.wt-q:focus-visible .wt-q-rule { transform: scaleX(1); }
+/* the rule draws in under the name — the one place the accent appears
+   on a service row */
+.wt-q-rule {
+  display: block;
+  height: var(--hair);
+  background: var(--ice-deep);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform var(--d-base) var(--e-settle);
+}
+.wt-q-end { padding-top: 0.5em; }
+
+/* the detail deck: one block visible, the next already rising */
+/* the copy sits a beat below the line; the queue does NOT — a name has to
+   be visibly cut by the membrane as it goes under */
+.wt-detail { position: relative; min-height: 0; padding-top: var(--s-5); }
+.wt.is-scrub .wt-detail > .wt-det { position: absolute; inset: 0 0 auto 0; }
+.wt-det { max-width: 46ch; }
+.wt-det-h {
+  margin: 0 0 var(--s-4);
+  font-size: var(--wt-name);
+  font-weight: var(--w-light);
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  text-transform: uppercase;
+  color: var(--text);
+}
+/* pinned, the slot above the membrane is the heading */
+.wt.is-scrub .wt-det-h { display: none; }
+/* THE STAGGER, WITHOUT A TIMELINE. The component writes one number per block
+   (--v, how present it is); each line carries its place in the block (--k) and
+   turns that number into its own delayed rise. Scrubbable, because it is still
+   a pure function of scroll — no transition, nothing to fall out of sync. */
+.wt-para,
+.wt-inc li,
+.wt-cta {
+  opacity: clamp(0, calc((var(--v, 1) - var(--k, 0) * 0.06) * 1.45), 1);
+  transform: translate3d(0, calc((1 - var(--v, 1)) * (9px + var(--k, 0) * 5px)), 0);
+}
+.wt-para { margin: 0; color: var(--text); }
+.wt-inc {
+  list-style: none;
+  margin: var(--s-5) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--s-3);
+}
+.wt-inc li {
+  display: grid;
+  grid-template-columns: 1.6rem 1fr;
+  align-items: center;
+  gap: var(--s-3);
+  font-size: var(--t-small);
+  color: var(--text-muted);
+}
+/* a tick of rule instead of a bullet: no decorative dots on this page */
+.wt-inc li i {
+  height: var(--hair);
+  background: var(--hairline);
+}
+.wt-cta { margin-top: var(--s-6); }
+
+/* ---------- no pin: the plain stacked section ---------- */
+/* This is what the server sends and what phones, no-JS and reduced motion
+   keep. The deck, the slot and the queue all fall back to normal flow. */
+.wt:not(.is-scrub) .wt-upper,
+.wt:not(.is-scrub) .wt-lower {
+  grid-template-columns: minmax(0, 1fr);
+}
+.wt:not(.is-scrub) .wt-nowname,
+.wt:not(.is-scrub) .wt-glyphs,
+.wt:not(.is-scrub) .wt-headpill { display: none; }
+.wt:not(.is-scrub) .wt-frame { margin-bottom: var(--s-6); }
+.wt:not(.is-scrub) .wt-shot { position: relative; }
+.wt:not(.is-scrub) .wt-shot ~ .wt-shot { display: none; }
+.wt:not(.is-scrub) .wt-frame-in { position: relative; inset: auto; transform: none; }
+.wt:not(.is-scrub) .wt-det + .wt-det { margin-top: var(--s-8); }
+/* the queue would only repeat the six headings here — but its last row is the
+   hub link, and that still has a job */
+.wt:not(.is-scrub) .wt-q-row:not(.wt-q-end) { display: none; }
+.wt:not(.is-scrub) .wt-queue { order: 2; margin-top: var(--s-7); }
+.wt:not(.is-scrub) .wt-lower { display: flex; flex-direction: column; }
+.wt:not(.is-scrub) .wt-q { cursor: default; }
+
+@media (max-width: 57.5rem) {
+  .wt-head { text-align: left; }
+  /* flowing text, not a flex row: on one column the row would strand its
+     bold word at the far edge */
+  .wt-head-l { display: block; }
+  .wt-headpill { display: inline-block; vertical-align: -0.1em; }
+  .wt-stage { padding: var(--s-8) 0; }
+}
+
+/* ============================================================
+   SECTION 4 — SIX CARDS (ServiceCards.tsx, 2026-08-20).
+   ------------------------------------------------------------
+   Replaces the bento of the same day, which replaced the
+   threshold, which replaced the accordion. The threshold and
+   the accordion stay above, unimported, for comparison; the
+   bento does not — it was this component with unequal spans,
+   and a second corpse of the same cards would only be noise.
+
+   TWO COLUMNS, THREE ROWS, SIX IDENTICAL CARDS. Same size,
+   same shape, same five layers. The only thing that differs
+   between them is the light each carries and the drawing it
+   holds — nothing in the grid is allowed to make one service
+   look more important than another.
+
+   The media plate is sized for a PHOTOGRAPH and holds the
+   drawing until one is supplied; `media` in services-data.tsx
+   is the switch, one word per card, no layout change.
+
+   Layer order inside every card, bottom to top:
+     .sc-blob   the aura        (colour, blurred, drifting)
+     .sc-glass  the pane        (translucent white + highlight)
+     .sc-spot   the cursor lens (--mx/--my, written by JS)
+     .sc-ring   the travelling border (conic + @property)
+     .sc-media / .sc-body       the plate and the type
+
+   THE PAPER ENTRANCE lives on .sc-cell, not .sc-card: JS writes
+   a per-corner matrix3d there every frame, which leaves the
+   card's own hover lift free to be a plain transform. See
+   ServiceCards.tsx for the mechanic and for what a planar
+   homography can and cannot do.
+   ============================================================ */
+
+/* the ring light's angle. Registered so it can be interpolated at all —
+   an unregistered custom property inside a conic-gradient is a string,
+   and a string does not animate. Where @property is unsupported the ring
+   simply holds still and reads as a gradient outline. */
+@property --sc-ang {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.sc {
+  /* ONE radius, and one inner radius derived from it. Cards use the first,
+     the media plate the second, the chip is the only pill (shape lock). */
+  --sc-r: clamp(16px, 1.2vw, 22px);
+  --sc-pad: clamp(1.3rem, 1.9vw, 2.1rem);
+  --sc-gap: clamp(0.9rem, 1.2vw, 1.5rem);
+  position: relative;
+  z-index: 2;
+  /* §3's burial, carried through every version of this section: §4 rises as
+     an opaque sheet over the portrait while it keeps drifting at ~0.45x */
+  margin-top: -100svh;
+  background: var(--surface);
+  /* the paper swings the cards outside the grid box on the way in, and the
+     left one would otherwise reach past the viewport edge and raise a
+     horizontal scrollbar. `clip`, not `hidden`: hidden would make this a
+     scroll container, and the seam below hangs OUTSIDE the section on the
+     y axis, which clip-on-one-axis leaves alone. */
+  overflow-x: clip;
+}
+/* the seam, cast UPWARD onto the portrait ahead of the rising edge */
+.sc::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  height: 110px;
+  background: linear-gradient(to top, rgba(4, 7, 12, 0.18), rgba(4, 7, 12, 0));
+  pointer-events: none;
+}
+
+/* wider than the reading column, narrower than the bento was: the cards have
+   to stay a size a photograph reads at, and two 900px cards do not. 1560 puts
+   each card near the hero plate's own proportion. */
+.sc-page {
+  max-width: 1560px;
+  margin-inline: auto;
+  padding-inline: var(--page-pad);
+  /* the top clears the seam by a viewport-relative beat, so the heading
+     never arrives while the sheet is still crossing the portrait */
+  padding-block: clamp(7rem, 16vh, 11rem) var(--section-y);
+}
+
+/* ---------- the header ----------
+   Heading and one line, stacked. No eyebrow: the page has none, and a label
+   above a heading that already says what the section is is noise. */
+.sc-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  margin-bottom: clamp(var(--s-7), 6vh, var(--s-9));
+  max-width: 46ch;
+}
+.sc-title {
+  margin: 0;
+  font-weight: var(--w-light);
+}
+.sc-lede {
+  margin: 0;
+  color: var(--text-muted);
+  max-width: 48ch;
+}
+
+/* ---------- THE GRID ----------
+   Two even columns and an explicit row height. The height is set here rather
+   than left to content so all six cards are the same card — the moment a row
+   sizes to its own copy, a service with a longer paragraph gets a taller
+   card, and the grid stops being uniform. */
+.sc-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: clamp(22rem, 27vw, 31rem);
+  gap: var(--sc-gap);
+}
+
+/* THE PAPER'S ELEMENT. Everything the entrance writes lands here, so the
+   card underneath keeps its own transform for the hover lift. */
+.sc-cell {
+  transform-origin: 0 0;
+  /* the house reveal, and the fallback: this is what runs with no JS, under
+     reduced motion, and anywhere narrower than two columns */
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity var(--d-slow) var(--e-glass),
+    transform var(--d-slow) var(--e-glass);
+  transition-delay: calc(var(--i) * 70ms);
+}
+.sc-grid.is-in .sc-cell {
+  opacity: 1;
+  transform: none;
+}
+/* handed over: JS writes transform and opacity inline from here on, and an
+   easing on a per-frame write would only fight the scrub */
+.sc-grid.is-paper .sc-cell {
+  opacity: 1;
+  transform: none;
+  transition: none;
+  will-change: transform, opacity;
+}
+.sc-grid.is-paper.is-done .sc-cell { will-change: auto; }
+
+/* ---------- THE CARD ----------
+   No border property: the hairline is an inset ring so every layer can sit
+   at inset:0 and still reach the card's true edge. */
+.sc-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  height: 100%;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: var(--s-5);
+  padding: var(--sc-pad);
+  border-radius: var(--sc-r);
+  background: var(--surface);
+  box-shadow:
+    inset 0 0 0 var(--hair) var(--hairline),
+    var(--lift-1);
+  color: var(--text);
+  text-decoration: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform var(--d-base) var(--e-settle),
+    box-shadow var(--d-base) var(--e-settle);
+}
+@media (hover: hover) {
+  .sc-card:hover {
+    transform: translateY(-5px);
+    box-shadow:
+      inset 0 0 0 var(--hair) color-mix(in oklab, var(--c1) 55%, var(--hairline)),
+      0 30px 66px -28px color-mix(in oklab, var(--c1) 72%, transparent),
+      var(--lift-2);
+  }
+}
+.sc-card:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+.sc-card:active { transform: translateY(-2px); }
+
+/* ---------- 1 · the aura ----------
+   The only colour in the card at rest, and it is already blurred, which is
+   why the pane above it is a plain translucent gradient rather than a
+   backdrop-filter: the picture is identical and it costs nothing per frame. */
+.sc-blob {
+  position: absolute;
+  inset: -35%;
+  z-index: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(38% 44% at 24% 20%, var(--c1) 0%, transparent 64%),
+    radial-gradient(42% 48% at 80% 78%, var(--c2) 0%, transparent 66%),
+    radial-gradient(70% 70% at 62% 44%, color-mix(in oklab, var(--c1) 45%, var(--c2)) 0%, transparent 72%);
+  filter: blur(24px);
+  opacity: 0.8;
+  transition:
+    opacity var(--d-base) var(--e-settle),
+    transform var(--d-slow) var(--e-settle);
+  animation: sc-drift 26s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * -3.4s);
+  pointer-events: none;
+}
+@keyframes sc-drift {
+  from { transform: scale(1) translate3d(-2%, 1%, 0); }
+  to   { transform: scale(1.1) translate3d(3%, -2%, 0); }
+}
+@media (hover: hover) {
+  .sc-card:hover .sc-blob {
+    opacity: 1;
+    animation-play-state: paused;
+    transform: scale(1.16);
+  }
+}
+
+/* ---------- 2 · the pane ----------
+   Heaviest white at the top-left where the plate's own tint would otherwise
+   double up, thinnest at the bottom-right. */
+.sc-glass {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  background: linear-gradient(
+    102deg,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 255, 255, 0.82) 40%,
+    rgba(255, 255, 255, 0.5) 100%
+  );
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92);
+  transition: opacity var(--d-base) var(--e-settle);
+  pointer-events: none;
+}
+@media (hover: hover) {
+  .sc-card:hover .sc-glass { opacity: 0.8; }
+}
+
+/* ---------- 3 · the cursor lens ----------
+   The house lens, scoped to a card: one radial in the service's own tint,
+   parked at the centre until JS starts writing --mx/--my. */
+.sc-spot {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  background: radial-gradient(
+    var(--lens-size) var(--lens-size) at var(--mx, 50%) var(--my, 50%),
+    color-mix(in oklab, var(--c1) 42%, transparent) 0%,
+    transparent 72%
+  );
+  opacity: 0;
+  transition: opacity var(--d-base) var(--e-settle);
+  pointer-events: none;
+}
+@media (hover: hover) {
+  .sc-card:hover .sc-spot { opacity: 1; }
+}
+
+/* ---------- 4 · THE TRAVELLING BORDER ----------
+   A conic gradient masked to a one-pixel ring, its angle spun through the
+   registered property above. All six run one 17s clock with a negative delay
+   off the card index, so the lights are permanently out of phase and the grid
+   never pulses in unison. Hover takes the light to full without touching the
+   phase, so the arc keeps its place through the whole interaction. */
+.sc-ring {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  padding: var(--hair);
+  background: conic-gradient(
+    from var(--sc-ang),
+    transparent 0%,
+    transparent 54%,
+    color-mix(in oklab, var(--c1) 85%, transparent) 68%,
+    var(--c2) 76%,
+    color-mix(in oklab, var(--c1) 85%, transparent) 84%,
+    transparent 96%,
+    transparent 100%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.85;
+  transition: opacity var(--d-base) var(--e-settle);
+  animation: sc-orbit 17s linear infinite;
+  animation-delay: calc(var(--i) * -2.6s);
+  pointer-events: none;
+}
+@keyframes sc-orbit {
+  to { --sc-ang: 360deg; }
+}
+@media (hover: hover) {
+  .sc-card:hover .sc-ring { opacity: 1; }
+}
+
+/* ---------- THE MEDIA PLATE ----------
+   A real panel, not a bare icon slot: it is the card's largest element and it
+   has to look finished holding a drawing AND holding a photograph, because
+   which one it holds is a one-word change. Tinted in the service's own light,
+   hairlined, and clipped — a photograph dropped in covers it edge to edge. */
+.sc-media {
+  position: relative;
+  z-index: 4;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  border-radius: calc(var(--sc-r) - 6px);
+  background:
+    linear-gradient(
+      152deg,
+      color-mix(in oklab, var(--c1) 26%, transparent) 0%,
+      color-mix(in oklab, var(--c2) 13%, transparent) 100%
+    ),
+    rgba(255, 255, 255, 0.42);
+  box-shadow:
+    inset 0 0 0 var(--hair) color-mix(in oklab, var(--c1) 32%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition:
+    box-shadow var(--d-base) var(--e-settle),
+    background-color var(--d-base) linear;
+}
+@media (hover: hover) {
+  .sc-card:hover .sc-media {
+    box-shadow:
+      inset 0 0 0 var(--hair) color-mix(in oklab, var(--cd) 34%, transparent),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+}
+/* the photograph, when a card is switched to one */
+.sc-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.02);
+  transition: transform var(--d-slow) var(--e-settle);
+}
+@media (hover: hover) {
+  .sc-card:hover .sc-photo { transform: scale(1.07); }
+}
+
+/* the drawing, when it is not.
+   Finally at the size these were drawn for: they are scenes, not icons, and
+   the plate is the first layout in this section with room for one. */
+.sc-drawing {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 74%;
+  max-width: 70%;
+  aspect-ratio: 1;
+  /* the line work is inked toward the service's own tone even at rest — six
+     identical graphite drawings is six identical cards */
+  color: color-mix(in oklab, var(--cd) 52%, var(--ink));
+  transition:
+    transform var(--d-base) var(--e-settle),
+    color var(--d-base) linear;
+}
+/* the glow the drawing stands in */
+.sc-drawing::before {
+  content: '';
+  position: absolute;
+  inset: -18%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, var(--c1) 46%, transparent) 0%,
+    transparent 68%
+  );
+  opacity: 0.55;
+  transform: scale(0.88);
+  transition:
+    opacity var(--d-base) var(--e-settle),
+    transform var(--d-slow) var(--e-settle);
+}
+.sc-drawing .wd-glyph {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  color: inherit;
+}
+@media (hover: hover) {
+  .sc-card:hover .sc-drawing {
+    transform: translateY(-6px);
+    color: var(--cd);
+  }
+  .sc-card:hover .sc-drawing::before {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  /* THE DRAWING REDRAWS ITSELF. Same pathLength-100 dashoffset the entrance
+     uses, run again — the line work is the feedback, so touching a card
+     rebuilds its instrument in front of you. */
+  .sc-card:hover .sc-drawing .g-draw {
+    animation: sc-redraw 0.95s var(--e-glass) both;
+  }
+}
+@keyframes sc-redraw {
+  from { stroke-dashoffset: 100; }
+  to   { stroke-dashoffset: 0; }
+}
+
+/* ---------- the type ----------
+   Name and chip on one line, description under it. The description no longer
+   hides: six cards this size have the room, and a card whose copy only exists
+   under the pointer is not the same card as the one beside it. */
+.sc-body {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: var(--s-5);
+  align-items: center;
+}
+.sc-name {
+  grid-column: 1;
+  margin: 0;
+  font-size: clamp(1.2rem, 1.55vw, 1.6rem);
+  font-weight: var(--w-medium);
+  letter-spacing: var(--ls-h3);
+  line-height: var(--lh-tight);
+  text-wrap: balance;
+}
+/* the ink sweep: §2's letter fill at hover speed, in the card's own deep
+   tone. Letters() writes the global letter index to --i on each span. */
+.sc-name > span > span > span {
+  transition: color var(--d-quick) linear;
+  transition-delay: calc(var(--i) * 15ms);
+}
+@media (hover: hover) {
+  .sc-card:hover .sc-name > span > span > span { color: var(--cd); }
+}
+.sc-para {
+  grid-column: 1;
+  margin: var(--s-3) 0 0;
+  max-width: 52ch;
+  color: var(--text-muted);
+  font-size: clamp(0.9rem, 0.95vw, 1rem);
+  line-height: var(--lh-snug);
+}
+
+/* the chip, on the house's arrow grammar (tokens.css .k-arrow-link): a plain
+   line at rest, an east arrow once you are about to act on it, stepping
+   forward along its own axis as it resolves. Touch never gets a hover, so
+   there the resolved arrow is the default. */
+.sc-chip {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  display: grid;
+  place-items: center;
+  width: clamp(2.1rem, 2.4vw, 2.5rem);
+  height: clamp(2.1rem, 2.4vw, 2.5rem);
+  border-radius: var(--r-full);
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 0 0 var(--hair) color-mix(in oklab, var(--c1) 46%, var(--hairline));
+  color: var(--text-muted);
+  transition:
+    color var(--d-base) linear,
+    background-color var(--d-base) linear,
+    box-shadow var(--d-base) var(--e-settle);
+}
+.sc-chip svg {
+  display: block;
+  width: 0.95rem;
+  height: auto;
+  overflow: visible;
+  transform-box: view-box;
+  transform-origin: 8px 8px;
+  transition: transform var(--d-base) var(--e-settle);
+}
+.sc-chip-head {
+  transform-box: view-box;
+  transform-origin: 13px 8px;
+  transition: transform var(--d-base) var(--e-settle);
+}
+@media (hover: hover) {
+  .sc-chip-head { transform: scale(0); }
+  .sc-card:hover .sc-chip-head,
+  .sc-card:focus-visible .sc-chip-head { transform: scale(1); }
+  .sc-card:hover .sc-chip svg,
+  .sc-card:focus-visible .sc-chip svg { transform: translateX(3px); }
+  .sc-card:hover .sc-chip,
+  .sc-card:focus-visible .sc-chip {
+    color: var(--cd);
+    background: color-mix(in oklab, var(--cd) 11%, rgba(255, 255, 255, 0.7));
+    box-shadow: inset 0 0 0 var(--hair) color-mix(in oklab, var(--cd) 45%, transparent);
+  }
+}
+
+/* ---------- the drawing builds itself as its card lands ----------
+   Same dashoffset the hover replays, so the entrance and the interaction are
+   one idea seen twice. */
+.sc-grid .sc-drawing .g-draw {
+  stroke-dashoffset: 100;
+  transition: stroke-dashoffset 1.05s var(--e-glass);
+  transition-delay: calc(var(--i) * 70ms + 220ms);
+}
+.sc-grid.is-in .sc-drawing .g-draw { stroke-dashoffset: 0; }
+
+/* ---------- narrower than two columns ----------
+   The pair is the composition — the paper entrance only means anything when
+   there are two cards to reach across the gutter, and ServiceCards.tsx gates
+   it on the same 57.5rem the house uses for desktop. Below that the grid goes
+   to one column and the cards keep everything else. */
+@media (max-width: 57.4375rem) {
+  .sc-grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-rows: auto;
+  }
+  .sc-card {
+    grid-template-rows: auto auto;
+    padding: var(--s-5);
+  }
+  .sc-media { aspect-ratio: 16 / 10; }
+  .sc-drawing { height: 70%; max-width: 66%; }
+}
+@media (max-width: 34rem) {
+  /* the chip stays ON the name's line. Stacked underneath it read as a
+     stray button floating between the heading and the copy. */
+  .sc-body { column-gap: var(--s-3); }
+  .sc-chip {
+    width: 2rem;
+    height: 2rem;
+  }
+  .sc-page { padding-block: clamp(5rem, 12vh, 8rem) var(--section-y); }
+}
+/* no pointer, no hover: the aura and the ring stop hiding behind a state
+   that device can never enter */
+@media (hover: none) {
+  .sc-blob { opacity: 0.9; }
+  .sc-ring { opacity: 0.9; }
+}
+
+/* ---------- reduced motion ----------
+   The paper never arms (ServiceCards.tsx returns before the ticker), the
+   drifting and orbiting stop, and the cards are simply there. Colour changes
+   on hover survive — they are state, not motion. */
+@media (prefers-reduced-motion: reduce) {
+  .sc-blob,
+  .sc-ring { animation: none; }
+  .sc-card:hover .sc-drawing .g-draw { animation: none; }
+  .sc-grid .sc-drawing .g-draw { stroke-dashoffset: 0; transition: none; }
+  .sc-cell,
+  .sc-card,
+  .sc-blob,
+  .sc-glass,
+  .sc-spot,
+  .sc-ring,
+  .sc-media,
+  .sc-photo,
+  .sc-drawing,
+  .sc-drawing::before,
+  .sc-chip,
+  .sc-chip svg,
+  .sc-chip-head,
+  .sc-name > span > span > span {
+    transition: none;
+  }
+  .sc-cell,
+  .sc-grid.is-in .sc-cell {
+    opacity: 1;
+    transform: none;
+  }
+  .sc-card:hover,
+  .sc-card:active { transform: none; }
+}
+
+/* the pane is the only transparency doing structural work here — without it
+   the aura would sit on top of the type. Solid it goes. */
+@media (prefers-reduced-transparency: reduce) {
+  .sc-glass { background: var(--surface); opacity: 1; }
+  .sc-card:hover .sc-glass { opacity: 1; }
+  .sc-spot { display: none; }
 }

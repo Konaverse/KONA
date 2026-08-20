@@ -15,12 +15,15 @@ import { gsap } from '@/lib/motion-v4'
  *
  * TWO PARALLAX SYSTEMS, ONE TICKER:
  *
- * 1. The depth reveal. The section slides UNDER §2 (margin-top −100svh in
- *    CSS; the claim is an opaque z-raised sheet), so by the claim's last
- *    screen this section already fills the viewport, invisible behind it.
- *    The claim then scrolls at hand speed while the image — sticky, plus a
- *    slow counter-drift across the sticky range — runs far slower. The
- *    claim's bottom edge uncovering a near-still image is the depth effect.
+ * 1. The depth reveal (rebuilt 2026-08-19 — no underlap). The section
+ *    arrives plainly (the old slide-under-§2 died with the peel's inset
+ *    landing), but the image's apparent speed is a constant 0.45× for its
+ *    WHOLE life: while the section ENTERS, the image counter-translates
+ *    down at 0.55× inside the rising frame — the claim above leaves at
+ *    hand speed while the portrait below crawls, which is the depth seam —
+ *    and the first sliver frames the image ~60vh deep, so the seam reveals
+ *    the portrait, not its empty top edge. Once the frame sticks the same
+ *    0.45× continues as the upward drift across the sticky range.
  *
  * 2. The credits. Each problem carries a speed (0.72–1.16). Per tick its
  *    layout position is recovered from the rect (minus the transform we
@@ -84,15 +87,22 @@ export default function SolveCredits() {
       const r = root.getBoundingClientRect()
       if (r.bottom < -200 || r.top > vh + 200) return
 
-      // The background's counter-drift: 0.45× apparent scroll speed, held
-      // CONSTANT by scaling the travel with the sticky range itself (0.45 ×
-      // (section − viewport), so ~±54vh today) — a fixed travel would slow
-      // back down every time the section grows, which is exactly how the
-      // first cut (±14vh ≈ 0.2×) earned the user's "barely moving". The
-      // .sv-img CSS oversize must always exceed the travel — see home.css.
+      // The background's counter-drift: 0.45× apparent speed for the whole
+      // life of the section, in two continuous phases. ENTRY (top: vh→0):
+      // the frame rises at hand speed, the image translates DOWN inside it
+      // at 0.55× — apparent 0.45×, the depth seam against the leaving
+      // claim. STUCK (top: 0→−range): the frame is fixed and the image
+      // drifts up at 0.45× directly, scaled by the range itself — a fixed
+      // travel would slow back down every time the section grows, which is
+      // how the first cut (±14vh ≈ 0.2×) earned the user's "barely
+      // moving". The +0.03vh bias starts the entry framing 60vh deep into
+      // the −63vh CSS oversize (the face at the seam, not the image's top
+      // edge); the oversize must always exceed the total travel — the
+      // budget lives with .sv-img in home.css.
       const range = Math.max(r.height - vh, 1)
+      const enter = Math.min(Math.max((vh - r.top) / vh, 0), 1)
       const p = Math.min(Math.max(-r.top / range, 0), 1)
-      const iy = (0.5 - p) * range * 0.45
+      const iy = vh * 0.03 + vh * 0.55 * enter - range * 0.45 * p
       if (img && Math.abs(iy - imgY) > 0.05) {
         imgY = iy
         gsap.set(img, { y: iy })

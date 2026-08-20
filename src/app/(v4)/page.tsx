@@ -1,9 +1,9 @@
-import Reveal from '@/components/v4/Reveal'
+import { Fragment } from 'react'
 import HeroPortrait from '@/components/v4/HeroPortrait'
 import HeroPeel from '@/components/v4/HeroPeel'
-import ScrollFillText from '@/components/v4/ScrollFillText'
+import ClaimEntrance from '@/components/v4/ClaimEntrance'
 import SolveCredits from '@/components/v4/SolveCredits'
-import ServicesAccordion from '@/components/v4/ServicesAccordion'
+import ServiceCards from '@/components/v4/ServiceCards'
 import ProjectSheets, { type SheetProject } from '@/components/v4/ProjectSheets'
 import ArrowLink from '@/components/v4/ArrowLink'
 import Interlude from '@/components/v4/Interlude'
@@ -48,12 +48,11 @@ const FEATURED: SheetProject[] = [
  * The v4 homepage, rebuilt section by section against
  * docs/homepage-choreography.md (binding).
  *
- * Currently live: §1 Arrival (HeroStage, second cut — the reference-image
- * rebuild) and a §2 skeleton whose statement fills letter by letter with
- * scroll (user-directed 2026-08-18). §2 still gets its own full design pass.
- *
  * All copy is PLACEHOLDER — the user writes the real lines (checklist 6.6).
  */
+const CLAIM_LINE =
+  'Konaverse is a web studio for brands that want their site to carry the story, not just the information.'
+
 export default function HomePage() {
   /* Hero A/B (2026-08-18): variant B, the user's staircase wireframe, is
      live here; variant A (the 3D object, HeroStage) is parked at
@@ -74,30 +73,41 @@ export default function HomePage() {
           position matters — see HeroPeel.tsx. */}
       <HeroPeel />
 
-      {/* Full-width sheet with an inner k-page: §3 slides UNDER this
-          section, so its background must span the whole viewport or the
-          image would peek past the content column on wide screens. */}
-      <section className="hm-claim k-section">
-        {/* the landing pad: an invisible measuring target — the sheet
-            lands INTO this inset rect (a contained card with margin all
-            around, not full bleed) and the GL paints the container */}
-        <div className="hm-claim-land" aria-hidden="true" />
-        <div className="k-page">
-          <ScrollFillText
-            as="h2"
-            className="t-h1 hm-claim-line"
-            text="Konaverse is a web studio for brands that want their site to carry the story, not just the information."
-          />
-          <Reveal as="p" className="t-body hm-claim-body" index={1}>
+      {/* §2 — the claim: the statement lives INSIDE the landing pad —
+          the container the peel's sheet lands on and keeps tracking — so
+          the type is part of the landed object. ONE viewport, no pin:
+          the page scrolls straight on to §3 (user call, 2026-08-19; the
+          pinned shrink/dark-turn scene built the same day was removed).
+          z-raised over the fixed GL canvas (z2) so the text rides ON the
+          landed sheet. */}
+      <section className="hm-claim">
+        <div className="hm-claim-land">
+          <h2 className="t-h1 hm-claim-line" aria-label={CLAIM_LINE}>
+            <span aria-hidden="true">
+              {CLAIM_LINE.split(' ').map((w, i, arr) => (
+                <Fragment key={i}>
+                  <span className="hm-cw-i">{w}</span>
+                  {i < arr.length - 1 ? ' ' : null}
+                </Fragment>
+              ))}
+            </span>
+          </h2>
+          <p className="t-body hm-claim-body">
             Strategy, design, motion and engineering in one continuous process.
             Based in Cyprus, working globally.
-          </Reveal>
+          </p>
         </div>
+        <ClaimEntrance />
       </section>
 
       <SolveCredits />
 
-      <ServicesAccordion />
+      {/* §4 — the cards: two columns, three rows, six identical cards, each
+          carrying its own light, entering as paper (per-corner matrix3d,
+          inner corners leading). Replaced the threshold 2026-08-20 (user
+          call); ServicesThreshold.tsx and ServicesAccordion.tsx both stay in
+          the tree, unimported, for comparison. */}
+      <ServiceCards />
 
       {/* §5 — the page-turn. Full bleed, pins itself. */}
       <ProjectSheets projects={FEATURED} />

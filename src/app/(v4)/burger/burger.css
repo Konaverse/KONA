@@ -1,0 +1,20 @@
+/* BURGER PREVIEW OVERRIDES — /burger only.
+   Desktop normally shows the horizontal links and hides the burger and
+   the aperture outright (tokens.css, min-width 57.5rem — "exactly one is
+   ever displayed"). This preview exists to SHOW someone the burger and
+   its aperture on a desktop screen, so the complement flips here: links
+   and Contact go, the burger stays top right, the aperture is reachable.
+
+   Scoped with :has() because the nav renders from the (v4) LAYOUT, above
+   this page's subtree — the rules are global (Next hoists all CSS) but
+   can only ever match while /burger's .bp main is in the DOM. */
+.k-root:has(.bp) .k-nav-links,
+.k-root:has(.bp) .k-nav-contact {
+  display: none;
+}
+.k-root:has(.bp) .k-burger {
+  display: flex;
+}
+.k-root:has(.bp) .k-aperture {
+  display: flex;
+}
