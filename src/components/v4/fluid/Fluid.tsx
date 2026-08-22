@@ -17,7 +17,7 @@ import {
   Vector2,
   Vector3,
 } from 'three'
-import FluidEffect, { ICE_PALETTE, type FluidPalette } from './FluidEffect'
+import FluidEffect, { MONO_PALETTE, type FluidPalette } from './FluidEffect'
 import {
   ADVECTION_FRAG,
   BASE_VERT,
@@ -86,7 +86,7 @@ function useDoubleFBO(w: number, h: number, options: Record<string, unknown>) {
 }
 
 export default function Fluid({
-  palette = ICE_PALETTE,
+  palette = MONO_PALETTE,
   intensity = 55,
   fade = 0.08,
   decay,

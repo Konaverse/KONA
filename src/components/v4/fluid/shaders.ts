@@ -184,25 +184,39 @@ void main() { gl_FragColor = uClearValue * texture2D(uTexture, vUv); }
 `
 
 /**
- * POST — rewritten, and this is the one part that is NOT a faithful port.
+ * POST — back to the port's own compositing, for the first time since it landed.
  *
- * The original composites for a DARK page: it renders a near-black background
- * with a light fluid and the canvas sits over the page with
- * `mix-blend-mode: difference`. On a dark page difference-with-black is a no-op
- * and the fluid lightens. On WHITE that same setup inverts — a pale blue fluid
- * would come out muddy orange, the exact opposite of "icey".
+ * The original composites with `mix-blend-mode: difference` over a near-black
+ * background. Whiteout could not use that: on an all-white page difference
+ * turns a pale blue fluid muddy orange, so this shader was rewritten to output
+ * WHITE where there is no fluid and composite with `multiply` instead.
  *
- * So Whiteout composites with `multiply` instead, and this shader outputs WHITE
- * where there is no fluid (multiply by white leaves the page untouched) and ice
- * where there is. Density drives a single lerp between the two rather than
- * scaling the colour itself, which is what kept the original's low-density
- * regions from going dark.
+ * THE MONOCHROME PIVOT PUTS DIFFERENCE BACK (2026-08-22), and it is not
+ * nostalgia — difference is the only compositing that does what the direction
+ * actually asks for. The page now has both polarities, and the cursor has to
+ * read on both. Difference gives that for free, because the operation is
+ * |backdrop - source|:
+ *
+ *   · source 0 (black)  -> backdrop, untouched. The no-op.
+ *   · source 1 (white)  -> 1 - backdrop. A full flip: black over paper,
+ *                          white over void, and neither had to be detected.
+ *   · source 0.5 (grey) -> everything under it converges toward mid grey,
+ *                          which is a soft wash rather than a hard invert.
+ *
+ * And it costs nothing extra to make the TYPE and the PHOTOGRAPHY invert with
+ * it: difference operates on whatever composited below the canvas, so a
+ * headline under the trail flips, and a photograph under it goes to negative,
+ * per pixel, with no per-surface handling anywhere in the code.
+ *
+ * So this shader outputs BLACK where there is no fluid, and ramps to white
+ * through the density. Value IS the amount of inversion; the palette is three
+ * points on that ramp rather than three hues.
  */
 export const POST_FRAG = /* glsl */ `
 uniform sampler2D tFluid;
-uniform vec3 uIce;      // --ice       #7FA8C9  the thin edges
-uniform vec3 uGraphite; // --graphite  #687076  the fast, smoky parts
-uniform vec3 uIceDeep;  // --ice-deep  #2E5F8A  the dense core
+uniform vec3 uEdge;   // thin trailing edges — a soft wash toward grey
+uniform vec3 uSmoke;  // the fast-moving parts
+uniform vec3 uCore;   // the dense core — white, a full inversion
 uniform float uIntensity;
 uniform float uFade;    // density below this paints nothing at all
 
@@ -229,24 +243,25 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor)
   float raw = length(fluid) * uIntensity;
   float a = smoothstep(uFade, 1.0, raw);
 
-  // pow < 1 still lifts the LOW end of what survives the floor. Under multiply
-  // a faint trail is nearly invisible on white, so the thin outer wisps need
-  // the gain far more than the core does — a linear ramp spends all its range
-  // on the middle.
+  // pow < 1 still lifts the LOW end of what survives the floor, so the thin
+  // outer wisps get the gain the core does not need — a linear ramp spends all
+  // its range on the middle.
   float d = clamp(pow(a, 0.70), 0.0, 1.0);
 
-  // DEPTH — density ramps white -> ice -> ice-deep. Thin trailing edges stay
-  // pale and airy, the core goes deep. Monotonically darkening, which is what
-  // keeps it reading as one substance rather than a gradient sticker.
-  vec3 c = mix(vec3(1.0), uIce, smoothstep(0.0, 0.26, d));
-  c = mix(c, uIceDeep, smoothstep(0.30, 0.92, d));
+  // DEPTH — density ramps black -> edge -> core, which under difference is a
+  // ramp from "leave the page alone" to "flip it completely". Thin trailing
+  // edges only wash the page toward grey; the core inverts it outright.
+  // Monotonically brightening, so it reads as one substance rather than a
+  // gradient sticker.
+  vec3 c = mix(vec3(0.0), uEdge, smoothstep(0.0, 0.26, d));
+  c = mix(c, uCore, smoothstep(0.30, 0.92, d));
 
-  // SPEED — graphite mixes into the quick-moving parts. It is the one neutral
-  // in the palette, so it reads as smoke pulled through the blue rather than
-  // as a third colour competing with it. Without this the whole thing is a
-  // single blue ramp and looks synthetic.
+  // SPEED — the quick-moving parts pull toward uSmoke instead of the core, so
+  // a fast smear stays a partial flip and a dwell goes all the way. That is
+  // the same two-quantity idea the ice version used to get with a neutral hue,
+  // expressed as value now that there are no hues left to use.
   float smoke = clamp(speed / (amount + 0.001) * 0.6, 0.0, 1.0);
-  c = mix(c, uGraphite, smoke * d * 0.55);
+  c = mix(c, uSmoke, smoke * d * 0.55);
 
   outputColor = vec4(c, 1.0);
 }

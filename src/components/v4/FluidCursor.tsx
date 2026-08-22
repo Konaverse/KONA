@@ -4,23 +4,37 @@ import { useEffect, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { EffectComposer } from '@react-three/postprocessing'
 import Fluid from './fluid/Fluid'
-import { ICE_PALETTE, type FluidPalette } from './fluid/FluidEffect'
+import { MONO_PALETTE, type FluidPalette } from './fluid/FluidEffect'
 
 /**
- * FLUID CURSOR — the ice trail.
+ * FLUID CURSOR — the trail that inverts what it touches.
  *
  * A full-viewport WebGL canvas sitting over the page, running a Navier-Stokes
  * simulation that the pointer pushes around. Ported from giats-portfolio.
  *
- * COMPOSITING is the part that had to change, and it is not a detail. The
- * original blends with `mix-blend-mode: difference` over a black canvas, which
- * is correct for a dark page: difference-with-black is a no-op, so the page
- * shows through and the fluid lightens it. On Whiteout that inverts — a pale
- * blue fluid over white would render muddy orange.
+ * COMPOSITING, and it is the whole design. This shipped as `multiply` over a
+ * white canvas because Whiteout was all white and difference would have turned
+ * a pale blue trail muddy orange. THE MONOCHROME PIVOT PUTS DIFFERENCE BACK
+ * (2026-08-22, user direction), which is what the port always used.
  *
- * So this composites with `multiply` over a white canvas instead. Multiply by
- * white is the no-op, so the page is untouched at rest, and where the fluid has
- * density it tints toward ice. Same idea, opposite polarity.
+ * Difference is |backdrop - source|, and that single operation covers every
+ * behaviour the direction asks for, with no per-surface code anywhere:
+ *
+ *   · black where there is no fluid is a NO-OP, so the page is untouched at rest
+ *   · a white core FLIPS whatever is under it — dark on paper, light on void,
+ *     and nothing had to detect which one it was over
+ *   · TEXT under the trail inverts with the ground it sits on, because
+ *     difference sees the composited result, not the section
+ *   · PHOTOGRAPHY and VIDEO go to negative per pixel, which is why the trail
+ *     reads differently over an image than over a flat ground for free
+ *
+ * WHAT THIS DEPENDS ON, and it is the fragile part: `mix-blend-mode` blends
+ * against the backdrop inside the nearest ancestor stacking context. The canvas
+ * is a direct child of `.k-root`, which is deliberately NOT a stacking context
+ * (no opacity, transform, filter or isolation on it), so the trail blends
+ * against the whole page beneath it. Put `isolation: isolate` — or an opacity,
+ * transform or filter — on `.k-root` or on any wrapper between it and this
+ * canvas, and the effect silently becomes a black rectangle doing nothing.
  *
  * PERSISTENCE is the other thing that had to change. Presence and duration were
  * COUPLED: the only levers for a stronger trail were more dye and slower decay,
@@ -38,7 +52,7 @@ import { ICE_PALETTE, type FluidPalette } from './fluid/FluidEffect'
  * will not use it.
  */
 export default function FluidCursor({
-  palette = ICE_PALETTE,
+  palette = MONO_PALETTE,
   /** Density-to-colour gain. Raise to make the trail read STRONGER. */
   intensity = 55,
   /** Density floor. Raise to make the trail END SOONER — below it nothing is
@@ -48,12 +62,17 @@ export default function FluidCursor({
    *  exponential, so 0.982 is a 0.64s half-life and 0.95 is 0.23s. */
   decay,
   zIndex = 55,
+  /** `difference` is the house setting. `exclusion` is the same idea with the
+   *  mid-tones pulled toward grey instead of flipping hard, kept as a one-word
+   *  comparison rather than a second design. */
+  blend = 'difference',
 }: {
   palette?: FluidPalette
   intensity?: number
   fade?: number
   decay?: number
   zIndex?: number
+  blend?: 'difference' | 'exclusion'
 }) {
   const [on, setOn] = useState(false)
 
@@ -70,10 +89,10 @@ export default function FluidCursor({
       flat
       linear
       // The source project ran this at [0.1, 0.5] — a tenth of native, upscaled
-      // ten times. On a dark page blended with `difference` that softness reads
-      // as atmosphere; on white through `multiply` it just smears the dye thin
-      // and washes the colour out, which was the single biggest reason the
-      // trail looked faint. Still well under native, so still cheap.
+      // ten times, which reads as atmosphere on a dark page. Raised to [0.5, 1]
+      // when the trail had to survive `multiply` on white, and KEPT there under
+      // difference: the core is a hard inversion now, and a hard edge upscaled
+      // ten times is a visibly blocky one. Still under native, so still cheap.
       dpr={[0.5, 1]}
       gl={{ antialias: false, stencil: false, depth: false }}
       style={{
@@ -81,8 +100,11 @@ export default function FluidCursor({
         inset: 0,
         zIndex,
         pointerEvents: 'none',
-        mixBlendMode: 'multiply',
-        background: 'white',
+        mixBlendMode: blend,
+        // BLACK, and it must be exactly black: difference with 0 is the
+        // identity, so this is what makes the page show through untouched
+        // everywhere the trail is not.
+        background: 'black',
       }}
       aria-hidden="true"
     >

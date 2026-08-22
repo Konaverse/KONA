@@ -103,7 +103,22 @@ it updates after Phase 0 research.
 
 **Trigger point.** Reveals fire when the element is 15% into the viewport, not at the edge. Firing at the edge means the animation is over before it is properly visible.
 
-**Cursor.** ~~The lens.~~ **The fluid** (amended 2026-08-17 — the refracting lens was built and removed; two pointer-followers was one too many, and its backdrop-filter layer re-rasterised the fluid out of existence). The WebGL fluid trail is site-wide and augments the native cursor, never replaces it. Whether it should calm over body copy, the way this line once asked of the lens, is checklist 3.9's open question.
+**Cursor — COMPOSITING REWRITTEN 2026-08-22 with the monochrome pivot.** The fluid now
+blends with `mix-blend-mode: difference` over a black canvas, which is what the original
+port always used and what Whiteout could not: on an all-white page difference turned a pale
+blue trail muddy orange, so it shipped as `multiply` over white instead. Monochrome, the
+page has both polarities and difference covers both with one operation, |backdrop - source|
+— black is a no-op, a white core flips whatever is under it, and the type and photography
+under the trail invert with it, per pixel, with no per-surface code. The palette is three
+points on a value ramp rather than three hues. **The dependency to know about:**
+`mix-blend-mode` blends against the nearest ancestor stacking context, and the canvas is a
+direct child of `.k-root` precisely because that is not one. Put `isolation`, an opacity, a
+transform or a filter on `.k-root` or any wrapper between it and the canvas and the whole
+effect silently becomes a black rectangle. **Known artifact, self-clearing:** over the
+*blue* stand-in photography the inversion reads orange. Difference of two neutral operands
+is neutral by construction, so this disappears the moment §1's imagery takes the noir grade.
+
+~~The lens.~~ **The fluid** (amended 2026-08-17 — the refracting lens was built and removed; two pointer-followers was one too many, and its backdrop-filter layer re-rasterised the fluid out of existence). The WebGL fluid trail is site-wide and augments the native cursor, never replaces it. Whether it should calm over body copy, the way this line once asked of the lens, is checklist 3.9's open question.
 
 **Progress indicator.** **The ring** — the object's counter-rotating band (see *The object*, below) — near the burger, turned in proportion to scroll position. Where you are in the page is expressed as where the ring has turned to. This carries the wayfinding that the removed labels used to provide, so it is functional rather than ornamental. Under the pre-rendered pipeline it is a small scrubbed frame sequence, not a live model — one of the cheapest renders in the set.
 

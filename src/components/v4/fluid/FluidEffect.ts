@@ -7,19 +7,39 @@ const rgb = (hex: string) => {
   return new Vector3(c.r, c.g, c.b)
 }
 
+/**
+ * Three points on a VALUE ramp, not three hues (monochrome pivot, 2026-08-22).
+ * The canvas composites with `mix-blend-mode: difference`, so each value here
+ * is literally an amount of inversion: black leaves the page alone, white flips
+ * it, and the greys between wash it toward mid.
+ */
 export type FluidPalette = {
-  /** Thin trailing edges. --ice */
-  ice: string
-  /** Fast-moving parts — the one neutral, read as smoke. --graphite */
-  graphite: string
-  /** The dense core. --ice-deep */
-  iceDeep: string
+  /** Thin trailing edges. Dim, so a wisp only washes the page toward grey. */
+  edge: string
+  /** Fast-moving parts. Between edge and core: a smear is a partial flip. */
+  smoke: string
+  /** The dense core. White — a full inversion of whatever is underneath. */
+  core: string
 }
 
+/**
+ * THE MONO PALETTE. Deliberately not tied to the ramp in tokens.css: these are
+ * blend operands rather than surface colours, and the two ends have to be true
+ * 0 and true 1 to be a clean no-op and a clean flip. --n-11 is not black and
+ * --n-0 is not white, exactly so they read as material; a difference operand
+ * has the opposite requirement.
+ */
+export const MONO_PALETTE: FluidPalette = {
+  edge:  '#5A5A5A',
+  smoke: '#B4B4B4',
+  core:  '#FFFFFF',
+}
+
+/** The pre-pivot ice, kept for one-line comparison. Not used on the site. */
 export const ICE_PALETTE: FluidPalette = {
-  ice: '#7FA8C9',
-  graphite: '#687076',
-  iceDeep: '#2E5F8A',
+  edge:  '#7FA8C9',
+  smoke: '#687076',
+  core:  '#2E5F8A',
 }
 
 /**
@@ -37,7 +57,7 @@ export default class FluidEffect extends Effect {
     tFluid = new Texture(),
     intensity = 1.0,
     fade = 0.08,
-    palette = ICE_PALETTE,
+    palette = MONO_PALETTE,
   }: {
     tFluid?: Texture
     intensity?: number
@@ -50,9 +70,9 @@ export default class FluidEffect extends Effect {
         ['tFluid', new Uniform(tFluid)],
         ['uIntensity', new Uniform(intensity)],
         ['uFade', new Uniform(fade)],
-        ['uIce', new Uniform(rgb(palette.ice))],
-        ['uGraphite', new Uniform(rgb(palette.graphite))],
-        ['uIceDeep', new Uniform(rgb(palette.iceDeep))],
+        ['uEdge', new Uniform(rgb(palette.edge))],
+        ['uSmoke', new Uniform(rgb(palette.smoke))],
+        ['uCore', new Uniform(rgb(palette.core))],
       ]),
     })
   }
@@ -73,8 +93,8 @@ export default class FluidEffect extends Effect {
   }
 
   setPalette(p: FluidPalette) {
-    this.uniforms.get('uIce')!.value = rgb(p.ice)
-    this.uniforms.get('uGraphite')!.value = rgb(p.graphite)
-    this.uniforms.get('uIceDeep')!.value = rgb(p.iceDeep)
+    this.uniforms.get('uEdge')!.value = rgb(p.edge)
+    this.uniforms.get('uSmoke')!.value = rgb(p.smoke)
+    this.uniforms.get('uCore')!.value = rgb(p.core)
   }
 }
