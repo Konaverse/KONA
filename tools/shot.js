@@ -15,6 +15,12 @@ const sel = process.argv[4] || null
   const page = await browser.newPage()
   await page.setViewport({ width: 1440, height: 1000, deviceScaleFactor: 1 })
   await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 })
+  if (process.env.PREVIEW_GRADE === '1') {
+    const { PREVIEW_GRADE } = require('./preview-grade')
+    await page.addStyleTag({ content: PREVIEW_GRADE })
+    await new Promise((r) => setTimeout(r, 300))
+  }
+
   // the reveal system starts everything at opacity 0 and switches it on with
   // an IntersectionObserver; headless still runs those, but give fonts + the
   // entrance a beat to land before we look.

@@ -40,6 +40,12 @@ const H = 900
   await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 })
   await new Promise((r) => setTimeout(r, 3000))
 
+  if (process.env.PREVIEW_GRADE === '1') {
+    const { PREVIEW_GRADE } = require('./preview-grade')
+    await page.addStyleTag({ content: PREVIEW_GRADE })
+    await new Promise((r) => setTimeout(r, 300))
+  }
+
   // park the section under test in the viewport before stroking. A selector
   // scrolls to that element; a bare number is a scrollY in px.
   if (scrollTo) {
