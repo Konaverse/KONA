@@ -1,24 +1,15 @@
 'use client'
 
 /**
- * NAVIGATION — a horizontal bar on desktop, the aperture on narrow screens.
+ * NAVIGATION — the burger and its aperture, at every width.
  *
- * DESKTOP IS NOW A PLAIN HORIZONTAL NAV, reversing the original "burger only,
- * no horizontal nav" decision. The reason is the page transition: reaching any
- * link through the aperture meant opening a full-screen overlay first, and that
- * overlay then closed back over the transition — the nav sits at z-index 50,
- * above both pages, so it painted over the exact thing it had just triggered.
- * You could not see the transition at all. The reference site the transition is
- * modelled on has a horizontal nav for the same reason. Decision recorded in
- * docs/site-architecture.md.
- *
- * Below 57.5rem the aperture still owns navigation — five items and a Contact
- * do not fit across a phone — and the burger reappears with it. The horizontal
- * links and the burger are exact complements: exactly one is ever displayed.
- *
- * The aperture is `display: none` on desktop as well as unreachable, because
- * without JS it renders OPEN by design (see below); left visible it would cover
- * a desktop page that already has a working nav.
+ * BURGER-ONLY AGAIN (2026-08-20, user decision), reversing the horizontal-nav
+ * interlude. The links had been added because reaching a link through the
+ * aperture opens a full-screen overlay that then closes back over the page
+ * transition it triggered — the nav sits at z-index 50, above both pages, so
+ * it painted over the exact thing it had just triggered. That tradeoff is now
+ * accepted in exchange for the aperture owning navigation everywhere; the bar
+ * carries only the brand, Contact, and the burger.
  *
  * The burger IS the aperture: the whole menu grows out of it as one circle and
  * is swallowed back into it on close. Adapted from the `aperture` section in
@@ -43,7 +34,6 @@
  */
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { usePathname } from 'next/navigation'
 import { gsap, EASE, DUR, REVEAL } from '@/lib/motion-v4'
 
 /** useLayoutEffect warns when it runs during SSR; swap it out on the server. */
@@ -88,7 +78,6 @@ export default function ApertureMenu({
   contactLabel = 'Contact',
   contactHref = '/contact',
 }: ApertureMenuProps) {
-  const pathname = usePathname()
   const rootRef = useRef<HTMLDivElement | null>(null)
   const barRef = useRef<HTMLDivElement | null>(null)
   const overlayRef = useRef<HTMLDivElement | null>(null)
@@ -314,21 +303,6 @@ export default function ApertureMenu({
       {/* ---- persistent chrome. Contact never hides behind the burger. ---- */}
       <div ref={barRef} className="k-nav-bar">
         <a href="/" className="k-nav-brand">{brand}</a>
-
-        {/* Desktop navigation. The exact complement of the burger below —
-            CSS shows one or the other, never both, never neither. */}
-        <nav className="k-nav-links" aria-label="Primary">
-          {items.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="k-nav-link"
-              aria-current={pathname === item.href ? 'page' : undefined}
-            >
-              <NavLabel text={item.label} />
-            </a>
-          ))}
-        </nav>
 
         <a href={contactHref} className="k-nav-contact">
           <NavLabel text={contactLabel} />

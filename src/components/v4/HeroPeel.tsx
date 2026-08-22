@@ -11,8 +11,10 @@ import { gsap } from '@/lib/motion-v4'
  * vertex shader): on the first scrolled pixel corner 1 (top right) is
  * grabbed and folded FORWARD over the pinned sheet, back side showing
  * mirrored; the unstick front sweeps 2,8 → 3,7 → 4,6 → 5 while an unfold
- * wave chases it in the same order; then the sheet lands and expands into
- * the full-bleed BACKGROUND of §2 — the claim's text arrives sitting on it.
+ * wave chases it in the same order — and the unfold IS the landing
+ * (2026-08-20): each vertex glides down into §2's card as it unfolds, so
+ * the sheet folds up out of the hero and unfolds down into the BACKGROUND
+ * of §2 — the claim's text arrives sitting on it.
  *
  * MECHANICS
  * - The portrait is a texture on a 140x90-segment plane (raw WebGL — the
@@ -23,7 +25,7 @@ import { gsap } from '@/lib/motion-v4'
  *   page like every other hero element; unstuck vertices progressively
  *   anchor to the card's at-rest spot (uDy = scrolled px), so the scroll
  *   itself stretches the sheet between the leaving hero and the arriving
- *   claim. A 70svh runway (.hm-heropin.is-run, NOT sticky) gives the
+ *   claim. A 35svh runway (.hm-heropin.is-run, NOT sticky) gives the
  *   stretch its room. uTo stays the LIVE rect of §2; the scrub is
  *   reversible by construction.
  * - The staircase lives in the FRAGMENT shader as an SDF: the union of the
@@ -120,10 +122,15 @@ void main() {
   float anch = max(smoothstep(0.0, 0.5, dw), smoothstep(0.5, 0.68, uShow));
   sp.y += uDy * 0.7 * anch;
 
-  /* the landing: corner 1 finds its place first (~70%), the others
-     follow, and the expansion into §2's full rect happens HERE — the
-     sheet keeps its original size and shape until then */
-  float ex = smoothstep(0.68 + w * 0.06, 0.92 + w * 0.06, uShow);
+  /* THE LANDING RIDES THE UNFOLD (2026-08-20, user): the unfold and the
+     landing used to be two separate beats — unfolded vertices anchored
+     back near the hero's rest spot, then a late window (0.68..0.92)
+     pulled them up into §2's card, so the released corner visibly
+     stretched back UP mid-flight before coming down. Now each vertex
+     glides to its landing spot AS it unfolds — same wave, corner 1
+     first — so the sheet folds up out of the hero and unfolds DOWN
+     into the arriving card, and nothing unfolded travels back up. */
+  float ex = unf;
   sp = mix(sp, uTo.xy + p * uTo.zw, ex);
 
   gl_Position = vec4(sp.x / uVp.x * 2.0 - 1.0, 1.0 - sp.y / uVp.y * 2.0, 0.0, 1.0);
@@ -411,16 +418,19 @@ export default function HeroPeel() {
         return
       }
 
-      /* the scrub, in two joined stretches: the first 65% of the timeline
-         (the whole unstick sweep, corners 1 → 5) rides the runway pin —
-         the hero stands still on screen while it plays — and the pin
-         releases exactly as the hinge completes; the last 35% (unfold
-         tail, landing, expansion) rides §2's approach as the page starts
-         moving again. Continuous and monotone at the joint. */
+      /* the scrub, proportional to SCROLL DISTANCE (2026-08-20, user: "I
+         need to be with the folding process when I scroll" — the old split
+         put the whole 65% sweep on the runway alone, so halving the runway
+         doubled the fold's speed). The two stretches — the runway and §2's
+         approach — are weighted by their own pixel lengths, so the timeline
+         advances at ONE even rate per scrolled pixel across the whole
+         journey, however long the runway is. Continuous and monotone. */
       const rPin = heropin.getBoundingClientRect()
-      const pp = gsap.utils.clamp(0, 1, -rPin.top / Math.max(rPin.height - vh, 1))
-      const ap = gsap.utils.clamp(0, 1, (vh - rTo.top) / (vh * 0.85))
-      const target = 0.65 * pp + 0.35 * ap
+      const wPin = Math.max(rPin.height - vh, 1)
+      const wAp = vh * 0.85
+      const pp = gsap.utils.clamp(0, 1, -rPin.top / wPin)
+      const ap = gsap.utils.clamp(0, 1, (vh - rTo.top) / wAp)
+      const target = (pp * wPin + ap * wAp) / (wPin + wAp)
       show += (target - show) * 0.16
       if (Math.abs(target - show) < 0.0005) show = target
 

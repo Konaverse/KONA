@@ -135,9 +135,11 @@ const HOME = COMPS[0]
 
 /** gap between flow items, kept in sync with .hw-w's margin-right */
 const GAP = '0.26em'
-/** when the pills sew in — late enough that the pure-text state (the user's
- *  "initial state" frame) reads for a beat on its own */
-const SEW = 2.0
+/** when the pills sew in — ONCE THE TEXT IS STILL (user 2026-08-20, third
+ *  pass): the word arrival settles at ~0.94s, and the boxes grow the beat
+ *  after. Sequenced, never overlapped — the text lands, then it is pushed.
+ *  (The original 2.0 hold read as the page taking its time.) */
+const SEW = 1.1
 /** dwell on a composition before the next one, randomised per beat */
 const HOLD_MIN = 2600
 const HOLD_MAX = 4400
@@ -231,7 +233,10 @@ export default function HeroTitle() {
       flow.style.height = `${flow.offsetHeight}px`
       flow.classList.add('is-flip')
 
-      const D = DUR.slow
+      /* the ENTRANCE beat plays at cinema length — the first expansion is
+         the page introducing itself and gets the extra air (user, third
+         pass: "smoother and slower"); the ongoing walk keeps DUR.slow */
+      const D = opts.sew ? DUR.cinema : DUR.slow
       const tl = gsap.timeline()
 
       /* TWO GROUPS, AND THE REASON THEY ARE SEPARATE.
@@ -324,8 +329,12 @@ export default function HeroTitle() {
       })
 
       if (opts.sew) {
-        gsap.set(pillEls, { opacity: 0 })
-        tl.to(pillEls, { opacity: 1, duration: DUR.base, ease: EASE.glass }, 0.1)
+        /* the pills arrive by WIDTH alone — full opacity from the first
+           pixel, so they visibly EXPAND out of nothing and push the words
+           aside (user 2026-08-20: the old fade-in read as appearing from
+           nowhere, not as growing). The FLIP's lockstep width tween is the
+           whole entrance. */
+        gsap.set(pillEls, { opacity: 1 })
       }
 
       running = tl
@@ -343,7 +352,10 @@ export default function HeroTitle() {
       return tl
     }
 
-    // ---- entrance: the words arrive as pure text, then the pills sew in ----
+    // ---- entrance: the words arrive as pure text, then the pills sew in.
+    // The arrival keeps its quick spirit but breathes (user, third pass:
+    // "like now but smoother"): a longer rise and a real stagger, settled
+    // by ~0.94s — just inside SEW, so the boxes only ever push still text. ----
     const intro = gsap.timeline()
     intro.fromTo(
       words,
@@ -352,15 +364,20 @@ export default function HeroTitle() {
         yPercent: 0,
         filter: 'blur(0px)',
         opacity: 1,
-        duration: DUR.slow,
+        duration: 0.7,
         ease: EASE.glass,
-        stagger: 0.035,
+        stagger: 0.03,
       },
-      0.12,
+      0,
     )
     intro.add(() => {
       if (!live) return
-      gsap.set(items, { clearProps: 'transform,filter' })
+      /* the sew starts flush with the arrival's tail — land any still-flying
+         word first, or the FLIP below would measure a mid-tween rect. Opacity
+         clears too: a killed word must not keep a stale inline 0.x (the CSS
+         resting state is 1 once is-pre goes). */
+      gsap.killTweensOf(words)
+      gsap.set(items, { clearProps: 'transform,filter,opacity' })
       comp = HOME
       morph(
         () => {

@@ -1403,63 +1403,14 @@ html.lenis, html.lenis body { height: auto; }
   overflow-x: clip;
 }
 
-/* ---------- horizontal nav (desktop) ----------
-   Added when desktop navigation moved off the burger. The
-   reason was the page transition: reaching a link through the
-   aperture meant opening a full-screen overlay, which then
-   closed back over the transition it had just triggered -- the
-   nav sits above both pages, so it painted over the one thing
-   you were trying to watch.
-
-   Mobile-first and mutually exclusive: the links are hidden by
-   default and the burger is shown, and the single breakpoint
-   swaps both. Exactly one is displayed at every width -- there
-   is no range where both or neither appear. */
-.k-nav-links {
-  display: none;
-  align-items: center;
-  gap: var(--s-6);
-  /* Centred in the BAR, not in the flex flow (2026-08-18, reference-image
-     pass): brand keeps the left edge, Contact and burger the right, links
-     hold the true centre of the viewport. */
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.k-nav-link {
-  font-size: var(--t-small);
-  color: var(--text-muted);
-  text-decoration: none;
-  transition: color var(--d-instant) var(--e-settle);
-}
-.k-nav-link:hover { color: var(--text); }
-
-/* The current page states itself in the one place that can say
-   it without adding furniture: no underline, no dot, no accent
-   -- just the muted grey resolving to full ink. */
-.k-nav-link[aria-current='page'] { color: var(--text); }
-
-@media (min-width: 57.5rem) {
-  .k-nav-links { display: flex; }
-  .k-burger { display: none; }
-  /* Unreachable on desktop anyway, but it renders OPEN without
-     JS by design, and a desktop page that already has a working
-     nav must not be covered by a sitemap overlay. */
-  .k-aperture { display: none; }
-}
-
-/* Contact is not one of the five. The original decision put it
-   permanently OUTSIDE the burger so it could never be buried;
-   with a horizontal nav it is inherently never buried, but it
-   still should not read as the sixth item in a list of five.
-   The bar's own flex gap (--s-5) is TIGHTER than the gap inside
-   the link group (--s-6), which had it reading as the closest
-   sibling of Journal. This is the separation, not a colour or a
-   rule -- the accent budget does not stretch to nav furniture. */
-@media (min-width: 57.5rem) {
-  .k-nav-contact { margin-left: var(--s-6); }
-}
+/* ---------- nav: burger at every width (2026-08-20) ----------
+   The horizontal desktop links are gone -- the burger and its
+   aperture own navigation everywhere, at every width. The known
+   cost, recorded when the links were added: navigating from the
+   aperture means the closing overlay paints back over the start
+   of the page transition. Accepted in exchange for one nav.
+   Contact stays OUTSIDE the burger, in the bar, so it can never
+   be buried behind a click. */
 
 /* ---------- nav scroll behaviour (2026-08-18, homepage pass) ----------
    Three states, all class-toggled from ApertureMenu's ticker:

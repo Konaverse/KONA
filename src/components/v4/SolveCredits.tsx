@@ -129,8 +129,12 @@ export default function SolveCredits() {
         {/* decorative — the content is the text riding over it. Eager on
             purpose: it sits exactly one viewport below the fold (the −100svh
             overlap), and a fast flick must never catch a lazy fetch mid-reveal
-            — 91KB buys the section's whole first impression. */}
-        <img className="sv-img" src="/home/portrait-glass.webp" alt="" />
+            — it buys the section's whole first impression. The Bosra
+            amphitheatre (user photo, 2026-08-20), cropped 4:5 for the tall
+            drifting frame; replaced the portrait-glass stand-in. FULL
+            resolution at q95 per the user's call — ~7MB; revisit before
+            launch if the section's arrival ever beats the fetch. */}
+        <img className="sv-img" src="/home/bosra.webp" alt="" />
         <i className="sv-shade" />
       </div>
 

@@ -523,16 +523,18 @@
 }
 
 /* ---------- the hero peel (HeroPeel.tsx) ---------- */
-/* THE RUNWAY: 70svh of extra scroll room between the hero and the claim.
-   NOT sticky (round 5's full freeze was rejected — "everything should
-   move together"): the hero scrolls naturally, stuck corners ride up
-   with it, and the sheet stretches across this gap between the leaving
-   hero and the arriving claim. `is-run` is added ONCE by HeroPeel when
-   GL is live and kept for the page's life — toggling it would shift
-   everything below by 70svh mid-page. Unstyled without it: no-JS /
-   reduced motion / mobile keep the plain flowing hero. */
+/* THE RUNWAY: 35svh of extra scroll room between the hero and the claim
+   (halved from 70svh, 2026-08-20 — user: the gap between the hero and
+   where the page sits read too long). NOT sticky (round 5's full freeze
+   was rejected — "everything should move together"): the hero scrolls
+   naturally, stuck corners ride up with it, and the sheet stretches
+   across this gap between the leaving hero and the arriving claim.
+   `is-run` is added ONCE by HeroPeel when GL is live and kept for the
+   page's life — toggling it would shift everything below by 35svh
+   mid-page. Unstyled without it: no-JS / reduced motion / mobile keep
+   the plain flowing hero. */
 .hm-heropin.is-run {
-  height: 170svh;
+  height: 135svh;
 }
 
 /* Fixed full-viewport GL sheet at z-index 2, mounted in the DOM BETWEEN the
