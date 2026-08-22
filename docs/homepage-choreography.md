@@ -1,7 +1,8 @@
 # Konaverse — Homepage Structure and Choreography
 
 Version 1. A draft to argue with, not a decision.
-System: Whiteout, single ice, Manrope only, no labels, refraction signature.
+System: monochrome tech noir, one ramp / two polarities, Manrope only, no labels, refraction signature.
+(Was "Whiteout, single ice" until the 2026-08-22 pivot below.)
 
 ---
 
@@ -18,6 +19,61 @@ Every section has five parts:
 **The rule that keeps the page coherent:** one idea per viewport. The page is long. That is fine. What kills the premium reading is density per screen, not length.
 
 **The object appears in ~~two sections~~ one section out of nine — §1 only (amended 2026-08-18).** §6's scrubbed demonstration is replaced by the credit-flow gallery (see §6) and the scrub is shelved. The day's larger call, from the user: **the object is not what makes the page feel premium — micro-animations, hover interactions, motion and general aesthetic quality are.** A 3D set-piece without a major role isn't worth its weight; what keeps the object worth shipping is the hero occlusion trick, which is a purposeful move rather than decoration.
+
+---
+
+## DIRECTION PIVOT — 2026-08-22: monochrome tech noir
+
+**"Whiteout, single ice" is retired.** The page goes black and white: tech noir, images
+carrying noise texture and distortion, glassy surfaces, richer hover and shadow, an agentic
+register. Sections mix dark and light grounds where each one earns it. User call; this
+block outranks every colour statement below it, and each section's own entry is amended as
+that section is reworked.
+
+**The rule that keeps it coherent: ONE RAMP, POLARITY FLIPPED — never two themes.** Every
+ground and every piece of type on the page comes out of one twelve-step cool-neutral ramp
+in `tokens.css`, paper at `--n-0` and void at `--n-11`, and neither end is absolute (white
+is not `#FFFFFF`, black is not `#000000`). A dark section is the light section's polarity
+flipped, not a second design.
+
+**No flip without a choreographed seam.** Mixing grounds is normally the thing that makes a
+page feel like two websites. What makes it legitimate here is that every ground change is
+already carried by a transition we own: the peel landing §1 into §2, §4 rising over §3, §7
+over §6. A section that simply starts dark for no reason is the failure mode, not the
+feature.
+
+**Colour is only ever emitted light, never a surface and never type.** The ice accent
+leaves the interface. `--ice-deep` survives in exactly one place — a stop in §6's aurora,
+which is light in the dark — plus the object's rim light in Blender. Reaching for it as UI
+is a bug.
+
+**The mechanism.** `.k-dark` (and `.k-light`, for a light surface inside a dark section)
+re-points the role tokens and does nothing else: no background, no stacking context — the
+latter is load-bearing, because §2's landing pad and §4's seam both depend on their
+ancestors not becoming one. Any component written against ROLES inverts for free; one
+written against a raw value does not, which is the migration signal. **Polarity follows the
+GROUND, not the section:** a glass panel over a dark photograph inside a light section
+takes `k-dark`.
+
+**Elevation is asymmetric, deliberately.** On light, depth is stacked micro-shadows plus an
+always-on inset hairline ring. On dark, depth is the surface ladder plus a hairline and a
+top-edge catch, and there is **no drop shadow at any level** — a shadow on a near-black
+ground is invisible. Both live in `--lift-1..5`, which re-point with the polarity.
+
+**Glass has no `backdrop-filter`.** It re-rasterises the WebGL fluid and has been removed
+three times. The four layers that actually sell glass are a 135° gradient fill, an outer
+1px stroke, an inset top-edge catch (the load-bearing one), and a second stroke inset by a
+pixel. `.k-glass` in `tokens.css`, with a `prefers-reduced-transparency` fallback.
+
+**Type is unchanged: Manrope, one family, no mono, no labels, no eyebrow size.** "Agentic"
+pulls toward a mono/label layer and that pull is refused — section-number eyebrows, version
+stamps, status dots, locale strips and scroll cues are the exact vocabulary that reads as
+generated. Agentic here is behaviour and material: instruments that respond, measure and
+draw themselves, which is what §6 and §7 already are.
+
+**Still carrying the old accent, section by section** (each clears on its own pass): §1's
+atmosphere blobs, §4's glyph glow, §6's interlude chrome and aurora palette, §7's thread
+head, and the WebGL fluid's own copy of the ice values in `components/v4/fluid/`.
 
 ---
 

@@ -1,53 +1,165 @@
 /* ============================================================
    KONAVERSE · DESIGN TOKENS
-   Direction: Whiteout · Accent route B (single ice) · Grain on
+   Direction: MONOCHROME TECH NOIR · one ramp, two polarities · grain on
    Type: Manrope 200/400/500/600 — ONE family, no second face.
    ------------------------------------------------------------
    This file is the source of truth. Figma variables mirror
    these names exactly. If a value changes, it changes here
    first, then gets pushed to Figma.
 
-   CHANGED FROM THE AUTHORED DRAFT — 3 edits, each measured,
-   each revertible in one line. Originals kept inline below.
-     1. --graphite   #6E767C -> #687076   (AA on mist)
-     2. --grain-opacity 0.42 -> 0.14      (white stayed white)
-     3. grain SVG gained feColorMatrix    (neutral, not RGB)
-   Rationale in REDESIGN.md §3. Revert any of them freely.
+   ------------------------------------------------------------
+   DIRECTION PIVOT — 2026-08-22, user call. "Whiteout · single ice"
+   is retired. The page is black and white: tech noir, noise-textured
+   imagery, glassy surfaces, richer hover and shadow.
 
-   Header previously read "Manrope + JetBrains Mono (utility)",
-   which contradicted §3 of this same file ("One family only.
-   No mono, no second face.") and the design system, which
-   loads only Manrope. Resolved in favour of one family.
+   THE ONE RULE THAT KEEPS IT COHERENT:
+   ONE RAMP, POLARITY FLIPPED — never two themes.
+
+   Sections mix dark and light grounds, which the anti-slop register
+   normally forbids ("the page has one theme; sections do not invert").
+   The ban's real target is a page that alternates between two unrelated
+   palettes, so the visitor feels they walked into a different website
+   mid-scroll. That is not what this is: every ground on this page is
+   drawn from the SAME twelve-step neutral ramp below, and a dark section
+   is the light section's polarity flipped, not a second design. It is
+   the same move Vercel makes when it says the dark band IS the depth
+   cue between light bands.
+
+   The corollary, and it is binding: no flip without a choreographed
+   seam. Every ground change on this page is carried by a transition we
+   already own (the peel landing 1 into 2, 4 rising over 3, 7 over 6).
+   A section that simply starts dark for no reason is the thing the ban
+   exists to stop.
+
+   COLOUR IS ONLY EVER EMITTED LIGHT, NEVER A SURFACE AND NEVER TYPE.
+   The ice accent leaves the interface entirely. --ice-deep survives in
+   exactly one role: a stop in the section 6 aurora, which is light in
+   the dark and the one place the register has always allowed colour. It
+   is NOT a role token any more; reaching for it as UI is a mistake.
+
+   THE ELEVATION GRAMMAR IS ASYMMETRIC, and that is not an oversight —
+   it is what the three best monochrome systems on the web all do:
+     · on LIGHT, depth is stacked micro-shadows plus an always-on inset
+       hairline ring (Vercel: "never a single heavy drop-shadow");
+     · on DARK, depth is the surface ladder plus a hairline, and there
+       is NO drop shadow at all (Raycast has none; Linear "resists drop
+       shadows on dark almost entirely"). A shadow on a near-black
+       ground is invisible, so the ladder does the work instead.
+   Both live in --lift-*, which re-points with the polarity.
+
+   PRIOR MEASURED EDITS, still standing:
+     1. muted text darkened for AA on every light surface (see 2)
+     2. --grain-opacity 0.42 -> 0.14 (white stayed white)
+     3. grain SVG gained feColorMatrix (neutral, not RGB)
+   Rationale in REDESIGN.md section 3.
    ============================================================ */
 
 :root {
 
-  /* ---------- 1. COLOUR · raw ---------- */
-  --white:        #FFFFFF;
-  --mist:         #F4F6F7;   /* raised surface, alternating sections */
-  --silver:       #DDE3E7;   /* hairlines, borders, dividers */
-  /* was #6E767C: 4.62:1 on white (AA) but only 4.26:1 on --mist,
-     which fails AA for body text. Since --surface-raised IS mist,
-     muted text on any alternating section was failing. #687076 is
-     the smallest darkening that clears 4.5 on both (5.04 / 4.65)
-     and is visually indistinguishable from the original. */
-  --graphite:     #687076;   /* muted text · 5.04:1 white, 4.65:1 mist — AA on both */
-  --ink:          #15171A;   /* primary text · 16.5:1 on white */
-  --ice:          #7FA8C9;   /* THE accent. Light, glow, rim, object tint */
-  --ice-soft:     #DCE8F1;   /* accent tint for large fills only */
-  --ice-deep:     #2E5F8A;   /* accent when it must carry text · 6.1:1 */
+  /* ---------- 1. COLOUR · THE RAMP ----------
+     One continuous cool-neutral ramp, paper at n-0 to void at n-11.
+     Both polarities pick their surfaces and their type out of THIS
+     list and nothing else. Twelve steps is not decoration: the dark
+     ladder needs four (canvas, three lifts) and the light ladder needs
+     four, plus the type steps between them.
 
-  /* ---------- 2. COLOUR · roles ----------
-     Always use the role, never the raw value, in components. */
-  --surface:            var(--white);
-  --surface-raised:     var(--mist);
-  --hairline:           var(--silver);
-  --text:               var(--ink);
-  --text-muted:         var(--graphite);
-  --text-accent:        var(--ice-deep);
-  --accent:             var(--ice);
-  --accent-wash:        var(--ice-soft);
-  --focus-ring:         var(--ice-deep);
+     Cool-neutral rather than warm: noir shadows are cool, and it keeps
+     the aurora from reading as a mismatched blue against warm greys.
+
+     NEITHER END IS ABSOLUTE — n-0 is not #FFFFFF and n-11 is not
+     #000000 (user direction, and the universal rule in every reference
+     system: pure values kill depth). n-11 sits a touch above true black
+     so the noise texture in the photography has somewhere to live.
+
+     Step deltas were measured, not eyeballed: n-11 -> n-10 is a 1.09
+     contrast ratio, which is exactly Raycast's canvas -> surface step.
+     Visible as a lift, invisible as a colour change. */
+  --n-0:   #FBFCFC;   /* light: raised surface / card / glass ground */
+  --n-1:   #F4F6F6;   /* light: THE page canvas */
+  --n-2:   #EBEEEF;   /* light: inset region, pressed, track */
+  --n-3:   #DDE2E3;   /* light: hairline */
+  --n-4:   #C4CACD;   /* dark: body text */
+  --n-5:   #A2AAAE;   /* dark: muted text */
+  --n-6:   #7C8388;   /* light: faint text (AA-large only) · dark: faint */
+  --n-7:   #5A6165;   /* light: THE muted text — AA on n-0/n-1/n-2 */
+  --n-8:   #3A4144;   /* dark: strong hairline, borders only, never a text ground */
+  --n-9:   #252A2C;   /* dark: lift 3 */
+  --n-10:  #161A1B;   /* dark: lift 2 */
+  --n-11:  #0D1012;   /* dark: THE page void */
+
+  /* Ink sits between n-11 and n-10 and is kept as its own name because
+     it is the established text value (16.6:1 on the light canvas) and
+     has consumers. It is TYPE on light grounds, never a dark ground:
+     the void is a separate, deeper, cooler step so photography and the
+     aurora have room underneath them. */
+  --ink:   #15171A;
+
+  /* THE AURORA RESERVE. Not a role. Not UI. One stop in section 6's
+     shader, and the object's rim light. Anywhere else is a bug. */
+  --ice-deep: #2E5F8A;
+
+  /* RETIRED ACCENT — stubs, not roles. --ice, --ice-soft, --accent,
+     --accent-wash and --text-accent all left the system with the pivot.
+     These exist so that anything still naming them renders a neutral
+     instead of falling back to an inherited colour or currentColor,
+     which is how an undefined custom property fails. The live call
+     sites in this repo were migrated with the pivot; these cover the
+     two standalone docs/*.html files, which read this token file
+     directly and are updated on their own pass. Do not reach for these
+     in new work. */
+  --ice:          var(--n-5);
+  --ice-soft:     var(--n-3);
+  --accent:       var(--n-5);
+  --accent-wash:  var(--n-2);
+  --text-accent:  var(--n-7);
+
+  /* LEGACY ALIASES — the pre-pivot raw names, re-pointed onto the ramp
+     so the ~15 direct consumers keep rendering while sections migrate
+     to roles one at a time. These are FIXED to the light polarity and
+     therefore DO NOT INVERT: a component still reading --graphite will
+     stay dark-grey on a dark ground. That is the migration signal.
+     Each disappears as its section is reworked. */
+  --white:     var(--n-0);
+  --mist:      var(--n-2);
+  --silver:    var(--n-3);
+  --graphite:  var(--n-7);
+
+  /* ---------- 2. COLOUR · ROLES ----------
+     Always use the role, never a ramp step, in components. The roles
+     are the ONLY things the polarity flips, so a component written
+     against roles inverts for free and one written against --n-4 does
+     not. This is the whole mechanism.
+
+     LIGHT POLARITY is the default and lives here; .k-dark below carries
+     the same names pointed at the other end of the ramp.
+
+     Text contrast, measured (AA body needs 4.5):
+       text   on canvas 16.56 · on surface 17.47   AAA
+       muted  on canvas  5.81 · on surface  6.13 · on inset 5.40   AA
+       faint  on canvas  3.55                      AA-LARGE ONLY
+     --text-faint is deliberately sub-AA at body size and is legal ONLY
+     at 18px+/bold or for non-essential text. --text-muted is the one
+     that carries paragraphs, and it is darker than the old --graphite
+     for the same reason that value was darkened in the first place. */
+  --surface:         var(--n-1);   /* the page ground */
+  --surface-raised:  var(--n-0);   /* a card ON the ground — BRIGHTER, not darker */
+  --surface-inset:   var(--n-2);   /* a well cut INTO the ground */
+  --hairline:        var(--n-3);
+  --hairline-strong: var(--n-4);
+  --text:            var(--ink);
+  --text-muted:      var(--n-7);
+  --text-faint:      var(--n-6);
+  --text-invert:     var(--n-0);   /* type on an inverted chip inside this polarity */
+  --focus-ring:      var(--ink);
+
+  /* The glass edge, per polarity. See 11. */
+  --glass-tint:     255 255 255;  /* the rgb triplet every glass layer is mixed from */
+  --glass-fill-hi:  0.55;         /* gradient start, the lit corner */
+  --glass-fill-lo:  0.14;         /* gradient end, the shaded corner */
+  --glass-edge:     0.34;         /* the outer 1px stroke */
+  --glass-catch:    0.55;         /* the top-edge highlight — the load-bearing layer */
+  --glass-inner:    0.16;         /* the second stroke, inset 1px, that makes the edge read thick */
+  --glass-shadow:   0 18px 60px rgba(13, 16, 18, 0.16);
 
   /* ---------- 3. TYPE ---------- */
   /* var(--font-manrope) is injected by next/font in app/layout.tsx, which
@@ -60,7 +172,15 @@
      in the app and standalone in docs/design-system.html, which loads Manrope
      from Google Fonts by name. */
   --font-sans: var(--font-manrope, "Manrope"), system-ui, -apple-system, sans-serif;
-  /* One family only. No mono, no second face. */
+  /* One family only. No mono, no second face.
+
+     Held through the pivot, deliberately. "Agentic" is the one word in
+     the new direction that pulls toward a mono/label layer, and the
+     anti-slop register bans by name almost every artifact of that
+     instinct: section-number eyebrows, version stamps, decorative status
+     dots, mono micro-labels, dot separators, locale strips, scroll cues.
+     Agentic here is BEHAVIOUR and MATERIAL — instruments that respond,
+     measure and draw themselves — not terminal furniture. */
 
   /* six sizes, fluid. Do not add a seventh without removing one.
      There is deliberately no label or eyebrow size. Sections are
@@ -110,10 +230,17 @@
   --page-pad:       clamp(1.25rem, 4vw, 3.5rem);
   --section-y:      clamp(6rem, 12vw, 12.5rem);
 
-  /* ---------- 6. RADIUS & LINE ---------- */
+  /* ---------- 6. RADIUS & LINE ----------
+     ONE radius system, and it is now closed at both ends. --r-lg was
+     added in the pivot because the peel lands section 2's card at a
+     hand-written 24px while the scale stopped at 10px — a shape
+     inconsistency the register calls out by name. Cards and panels are
+     --r-md, framed media and landed sheets are --r-lg, chips are --r-sm,
+     pills are --r-full. Nothing on this page invents a fifth radius. */
   --r-none:  0;
   --r-sm:    4px;
   --r-md:    10px;
+  --r-lg:    24px;
   --r-full:  999px;
   --hair:    1px;
 
@@ -144,30 +271,63 @@
   --stagger:   80ms;
 
   /* ---------- 8. SIGNATURE · refraction ----------
-     The one property the whole identity rests on. */
+     The one property the whole identity rests on. The fringe went
+     MONOCHROME with the pivot: it was --ice, which was the accent
+     appearing as chrome. It is now the polarity's own bright end, so
+     the refraction reads as light rather than as a colour.
+
+     NOTE: the WebGL fluid carries its own copy of these values in
+     components/v4/fluid/FluidEffect.ts and shaders.ts. Those are the
+     one place in the system where a token is duplicated into JS, and
+     they still hold the pre-pivot ice — they change with the fluid's
+     own pass, not here. */
   --lens-size:       230px;   /* cursor lens diameter */
   --lens-scale:      1.06;    /* magnification. Subtle. Never above 1.12 */
-  --lens-fringe:     var(--ice);
-  --lens-fringe-a:   0.42;    /* fringe opacity. Single tone, cool only */
+  --lens-fringe:     var(--n-0);
+  --lens-fringe-a:   0.42;    /* fringe opacity */
   --reveal-blur:     14px;    /* blur type resolves from on scroll reveal */
   --reveal-shift:    18px;    /* displacement distance on reveal */
 
-  /* ---------- 9. GRAIN ---------- */
-  /* was 0.42. Measured in-browser: at 0.42 the effective coverage is
+  /* ---------- 9. GRAIN ----------
+     was 0.42. Measured in-browser: at 0.42 the effective coverage is
      0.105, so #FFFFFF composites to #F8F8F8 — a 7.3-level grey cast
-     across every white surface, on a direction called Whiteout. The
-     page read grey next to a true-white reference. 0.14 keeps the
-     texture and gives the white back. Surface separation is
-     unaffected either way (white-vs-mist gap 9.35 -> 8.35 at 0.42). */
+     across every white surface, on a direction called Whiteout. 0.14
+     keeps the texture and gives the white back.
+
+     The constraint that forced 0.14 is a LIGHT-GROUND constraint, and
+     the pivot half-lifts it: noise carries further on a near-black
+     ground than on paper, and tech noir wants it to. So the value is
+     now per-polarity — .k-dark raises it. Still ONE fixed,
+     pointer-events-none layer at the root and never a per-element
+     overlay on a scrolling container: six scrolling noise layers is a
+     per-frame GPU repaint on exactly the machines that can least
+     afford it. Image noise is a different layer entirely and belongs
+     baked into the asset or into the shader that already samples it. */
   --grain-opacity: 0.14;
   --grain-tile:    180px;
 
   /* ---------- 10. ELEVATION ----------
-     On white, shadow is light falling off, never a drop shadow. */
-  --lift-1: 0 1px 2px rgba(21, 23, 26, 0.04);
-  --lift-2: 0 8px 24px -10px rgba(21, 23, 26, 0.10);
-  --lift-3: 0 24px 60px -20px rgba(21, 23, 26, 0.14);
-  --lift-ice: 0 20px 50px -18px rgba(127, 168, 201, 0.55);
+     LIGHT POLARITY. Stacked micro-offsets plus an always-on inset
+     hairline ring — never one heavy drop. The ring is what keeps a
+     card's edge crisp on a ground only two ramp steps away from it;
+     the stack is what fakes real light falloff. See the header note
+     for why the dark polarity does something completely different. */
+  --ring:   inset 0 0 0 1px rgba(21, 23, 26, 0.07);
+  --lift-1: var(--ring);
+  --lift-2: 0 1px 1px rgba(21, 23, 26, 0.02),
+            0 2px 2px rgba(21, 23, 26, 0.04),
+            var(--ring);
+  --lift-3: 0 2px 2px rgba(21, 23, 26, 0.04),
+            0 8px 8px -8px rgba(21, 23, 26, 0.06),
+            var(--ring);
+  --lift-4: 0 2px 2px rgba(21, 23, 26, 0.04),
+            0 8px 16px -4px rgba(21, 23, 26, 0.06),
+            var(--ring);
+  --lift-5: 0 1px 1px rgba(21, 23, 26, 0.03),
+            0 8px 16px -4px rgba(21, 23, 26, 0.05),
+            0 24px 32px -8px rgba(21, 23, 26, 0.09),
+            var(--ring);
+  /* --lift-ice is GONE with the accent. It had no consumers. */
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -175,6 +335,214 @@
     --d-base: 1ms; --d-slow: 1ms; --d-cinema: 1ms; --d-quick: 1ms;
     --reveal-blur: 0px; --reveal-shift: 0px;
   }
+}
+
+/* ============================================================
+   THE POLARITY SCOPE — how a section flips ground.
+   ------------------------------------------------------------
+   This is the mechanism the whole pivot rests on, and it is
+   deliberately eight lines of variables rather than a theme
+   system: a section that wants a dark ground adds `k-dark`, and
+   every component inside it that was written against ROLES
+   inverts for free. Nothing else happens.
+
+   THREE THINGS IT DELIBERATELY DOES NOT DO:
+
+   1. It does not set a background. Several dark passages on this
+      page are dark because of a PHOTOGRAPH (section 3's backdrop,
+      section 6's stage), not because of a fill, and a scope that
+      painted its own ground would fight them. The section decides:
+      `background: var(--surface)` where it wants the flat void.
+
+   2. It does not create a stacking context. Only custom
+      properties, `color` and `color-scheme` are set — no opacity,
+      transform, filter or isolation. That is load-bearing, not
+      incidental: section 2's landing pad and section 4's seam both
+      depend on their ancestors NOT being stacking contexts, and a
+      theme wrapper is exactly the kind of thing that silently
+      becomes one.
+
+   3. It does not cascade one-way. `.k-light` restates the same
+      names so a light card can sit inside a dark section without
+      hand-written overrides — which is the case section 4 will hit
+      the moment its cards land on a dark ground.
+
+   POLARITY FOLLOWS THE GROUND, NOT THE SECTION. This is the rule that
+   makes the scope usable rather than merely present. A glass panel
+   floating over a dark photograph inside an otherwise light section
+   takes `k-dark`, because the thing underneath it is dark; the section
+   it happens to live in is irrelevant. Getting this backwards produces
+   exactly one symptom, and it is easy to spot: ink type on a dark bed.
+
+   WHAT DOES NOT INVERT, and it is on purpose: the legacy raw
+   aliases (--white, --mist, --silver, --graphite) are pinned to
+   the light end of the ramp. A component still reading them keeps
+   its light-polarity colour on a dark ground, which is a visible
+   bug rather than a silent one. That is the migration signal, and
+   there are about fifteen of them left.
+   ============================================================ */
+
+:root { color-scheme: light; }
+
+.k-dark {
+  color-scheme: dark;
+
+  /* the ladder, climbing out of the void. n-8 is a BORDER step and
+     never a text ground — muted type on it measures 4.40, just under
+     AA, which is why the ladder for surfaces stops at n-9. */
+  --surface:         var(--n-11);
+  --surface-raised:  var(--n-10);
+  --surface-inset:   var(--n-9);
+  --hairline:        var(--n-9);
+  --hairline-strong: var(--n-8);
+
+  /* measured on the void: text 18.57 · body 11.52 · muted 8.09 ·
+     faint 4.96. The dark polarity has far more headroom than the
+     light one, which is why body and muted can sit two steps apart
+     here and only one apart on paper. */
+  --text:            var(--n-0);
+  --text-muted:      var(--n-5);
+  --text-faint:      var(--n-6);
+  --text-invert:     var(--ink);
+  --focus-ring:      var(--n-0);
+
+  /* ELEVATION, DARK. No drop shadow at any level — a shadow on a
+     near-black ground is invisible, and the two best dark systems on
+     the web (Raycast, Linear) ship none at all. Depth is the surface
+     ladder plus a hairline ring, and the top-edge catch is what makes
+     a panel read as lifted rather than as a flat patch of lighter
+     grey. Same token names, completely different grammar. */
+  --ring:   inset 0 0 0 1px rgb(255 255 255 / 0.07);
+  --catch:  inset 0 1px 0 rgb(255 255 255 / 0.10);
+  --lift-1: var(--ring);
+  --lift-2: var(--ring), var(--catch);
+  --lift-3: var(--ring), inset 0 1px 0 rgb(255 255 255 / 0.14);
+  --lift-4: inset 0 0 0 1px rgb(255 255 255 / 0.10),
+            inset 0 1px 0 rgb(255 255 255 / 0.18);
+  --lift-5: inset 0 0 0 1px rgb(255 255 255 / 0.12),
+            inset 0 1px 0 rgb(255 255 255 / 0.22),
+            0 24px 64px rgb(0 0 0 / 0.55);
+
+  /* GLASS, DARK. Fainter fill, fainter strokes, and NO outer shadow —
+     the drop is a light-polarity device. Numbers sit where Linear's
+     lifted panels sit. */
+  --glass-fill-hi:  0.16;
+  --glass-fill-lo:  0.04;
+  --glass-edge:     0.18;
+  --glass-catch:    0.22;
+  --glass-inner:    0.10;
+  --glass-shadow:   0 0 0 0 rgb(0 0 0 / 0);
+
+  /* Noise carries further on a near-black ground, and tech noir wants
+     it to. DECLARED BUT NOT YET LIVE: `.k-grain` is one fixed layer at
+     the root, outside every section, so it cannot see a section-scoped
+     value. Flipping it needs a driver that marks the root while a dark
+     section owns the viewport. Deferred to the section that first
+     wants it; the value is here so that driver has something to read. */
+  --grain-opacity: 0.26;
+
+  color: var(--text);
+}
+
+/* The way back up. Restates every name the dark scope touched, so a
+   light card inside a dark section needs no per-component overrides. */
+.k-light {
+  color-scheme: light;
+  --surface:         var(--n-1);
+  --surface-raised:  var(--n-0);
+  --surface-inset:   var(--n-2);
+  --hairline:        var(--n-3);
+  --hairline-strong: var(--n-4);
+  --text:            var(--ink);
+  --text-muted:      var(--n-7);
+  --text-faint:      var(--n-6);
+  --text-invert:     var(--n-0);
+  --focus-ring:      var(--ink);
+  --ring:   inset 0 0 0 1px rgba(21, 23, 26, 0.07);
+  --lift-1: var(--ring);
+  --lift-2: 0 1px 1px rgba(21, 23, 26, 0.02),
+            0 2px 2px rgba(21, 23, 26, 0.04),
+            var(--ring);
+  --lift-3: 0 2px 2px rgba(21, 23, 26, 0.04),
+            0 8px 8px -8px rgba(21, 23, 26, 0.06),
+            var(--ring);
+  --lift-4: 0 2px 2px rgba(21, 23, 26, 0.04),
+            0 8px 16px -4px rgba(21, 23, 26, 0.06),
+            var(--ring);
+  --lift-5: 0 1px 1px rgba(21, 23, 26, 0.03),
+            0 8px 16px -4px rgba(21, 23, 26, 0.05),
+            0 24px 32px -8px rgba(21, 23, 26, 0.09),
+            var(--ring);
+  --glass-fill-hi:  0.55;
+  --glass-fill-lo:  0.14;
+  --glass-edge:     0.34;
+  --glass-catch:    0.55;
+  --glass-inner:    0.16;
+  --glass-shadow:   0 18px 60px rgba(13, 16, 18, 0.16);
+  --grain-opacity:  0.14;
+  color: var(--text);
+}
+
+/* ============================================================
+   GLASS — the recipe, and why there is no blur in it.
+   ------------------------------------------------------------
+   `backdrop-filter` is NOT used here, and that is a standing
+   decision with a history: it re-rasterises the WebGL fluid out
+   of existence, and it has been built and removed three times
+   (the refracting lens, the nav, the interlude card). The cost is
+   a per-frame GPU pass on every large element for a picture we
+   can draw with four static layers instead.
+
+   The four layers, in the order that matters:
+     1. a 135deg gradient fill, bright corner to faint corner
+     2. an outer 1px stroke
+     3. THE TOP-EDGE CATCH — an inset highlight along the top edge
+        only. This is the load-bearing one. It is the single detail
+        that makes a dark panel read as glass rather than as a
+        lighter rectangle, and it is what Linear means by "a subtle
+        white edge highlight on the top edge of lifted panels".
+     4. a SECOND stroke, inset by 1px, on ::after. Two strokes a
+        pixel apart is what gives an edge apparent thickness; one
+        stroke reads as a border, two read as a bevel.
+
+   Opt-in, not automatic. Glass on everything is the generic
+   move the register warns about; this is for panels that are
+   genuinely floating over something.
+   ============================================================ */
+.k-glass {
+  position: relative;
+  border-radius: var(--r-md);
+  background: linear-gradient(
+    135deg,
+    rgb(var(--glass-tint) / var(--glass-fill-hi)),
+    rgb(var(--glass-tint) / var(--glass-fill-lo))
+  );
+  box-shadow:
+    0 0 0 1px rgb(var(--glass-tint) / var(--glass-edge)),
+    inset 0 1px 0 rgb(var(--glass-tint) / var(--glass-catch)),
+    var(--glass-shadow);
+}
+.k-glass::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  border: 1px solid rgb(var(--glass-tint) / var(--glass-inner));
+  pointer-events: none;
+}
+
+/* The accessibility case the pre-pivot system never had to answer,
+   because it had no glass. A viewer who has asked for less
+   transparency gets the opaque surface instead of the pane, with the
+   edges kept so the shape survives. Support is uneven; the design has
+   to hold without it either way, which is why the strokes carry the
+   form and the fill only carries the material. */
+@media (prefers-reduced-transparency: reduce) {
+  .k-glass {
+    background: var(--surface-raised);
+    box-shadow: var(--lift-2);
+  }
+  .k-glass::after { border-color: var(--hairline); }
 }
 
 /* ============================================================
@@ -373,15 +741,22 @@ html:has(.k-root)::-webkit-scrollbar {
    longer crosses into CSS — the roll is on --d-base and lands first,
    the flood second (FLOOD, 0.8 of the draw), the line closes last.
 
-   The line is --ice-deep: 6.1:1 on the page, where --ice would be
-   2.52:1. Mid-flood it is the only thing separating an ever-whiter
-   fill from the white page, so it cannot get lighter than this. */
+   The line is --text: the polarity's own type colour. It was --ice-deep,
+   which was the accent showing up as chrome; monochrome, the button is
+   simply the ramp's two ends against each other. Mid-flood the line is
+   the only thing separating an ever-paler fill from the page, so it can
+   never be lighter than the type it is drawn from.
+
+   AND IT INVERTS FOR FREE. Because the fill is --text and the letters
+   are --text-invert, k-dark turns the same rule into a paper pill with
+   ink letters — which is what Raycast ships on dark and Vercel ships on
+   light. One declaration, both polarities, no variant. */
 .k-btn {
   --k-btn-bw: 3px;   /* the white band the line is held off by */
   /* what the flood floods to, and what the letters flip to inside it.
      The ghost variant inverts the pair. */
   --k-btn-flood: var(--surface);
-  --k-btn-flood-ink: var(--ice-deep);
+  --k-btn-flood-ink: var(--text);
   position: relative;
   display: inline-flex; align-items: center; gap: var(--s-3);
   padding: var(--s-4) var(--s-6);
@@ -390,7 +765,7 @@ html:has(.k-root)::-webkit-scrollbar {
      shows whatever ground the button sits on — identical on white pages. */
   border: var(--k-btn-bw) solid transparent;
   border-radius: var(--r-full);
-  background: var(--ice-deep); color: var(--white);
+  background: var(--text); color: var(--text-invert);
   /* stop the fill at the padding edge — the same geometry the flood
      covers. Left to paint under the border, the fill's antialiased rim
      peeks past the flood as a faint dotted ice-deep ring once the disc
@@ -426,7 +801,7 @@ html:has(.k-root)::-webkit-scrollbar {
   pointer-events: none; overflow: visible;
 }
 .k-btn__edge path {
-  fill: none; stroke: var(--ice-deep); stroke-width: 2;
+  fill: none; stroke: var(--text); stroke-width: 2;
   vector-effect: non-scaling-stroke;
   transition: opacity var(--d-instant) var(--e-settle);
 }
@@ -488,13 +863,13 @@ html:has(.k-root)::-webkit-scrollbar {
 
 /* button · ghost. No dark fill to hold the line off, so it keeps a
    hairline border and takes the same drawn edge just outside it.
-   Its flood runs the other way: ink-on-page at rest, white-on-ice-deep
+   Its flood runs the other way: type-on-page at rest, page-on-type
    under the disc — the same inversion, approached from the page side. */
 .k-btn-ghost {
   --k-btn-bw: var(--hair);
-  --k-btn-flood: var(--ice-deep);
-  --k-btn-flood-ink: var(--white);
-  background: transparent; color: var(--ink); border-color: var(--hairline);
+  --k-btn-flood: var(--text);
+  --k-btn-flood-ink: var(--text-invert);
+  background: transparent; color: var(--text); border-color: var(--hairline);
 }
 
 /* THE ROLL, written twice on purpose. :hover has to sit inside
@@ -550,12 +925,13 @@ html:has(.k-root)::-webkit-scrollbar {
 }
 .k-arrow-link:hover::after,
 .k-arrow-link:focus-visible::after { transform: scaleX(1); }
-/* The label reinforces the state; ice is 2.52:1 on white, so the hairline
-   alone is not a perceivable hover indicator. The icon CAN now carry it on
-   its own — line to arrow is a genuinely different picture, where the old
-   east-to-north-east wrap ended in the same one — but shape plus colour
-   beats shape alone at 16px, and colour is the one thing the system lets
-   move fast (--d-instant). Kept for that reason, not by inheritance. */
+/* The label reinforces the state. This paragraph used to argue that ice at
+   2.52:1 was too faint to be a hover indicator on its own; monochrome the
+   hairline is drawn in --text and has no such problem, but the pairing is
+   kept anyway. The icon CAN carry the state alone — line to arrow is a
+   genuinely different picture, where the old east-to-north-east wrap ended
+   in the same one — but shape plus value beats shape alone at 16px, and
+   value is the one thing the system lets move fast (--d-instant). */
 .k-arrow-link:hover,
 .k-arrow-link:focus-visible { color: var(--text-accent); }
 

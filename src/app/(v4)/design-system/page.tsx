@@ -18,15 +18,34 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-const SWATCHES = [
-  ['--white', '#FFFFFF', 'surface'],
-  ['--mist', '#F4F6F7', 'surface-raised'],
-  ['--silver', '#DDE3E7', 'hairline'],
-  ['--graphite', '#687076', 'text-muted · 5.04:1'],
-  ['--ink', '#15171A', 'text · 17.96:1'],
-  ['--ice', '#7FA8C9', 'accent · light + rim only'],
-  ['--ice-soft', '#DCE8F1', 'accent-wash'],
-  ['--ice-deep', '#2E5F8A', 'text-accent · 6.73:1'],
+/* THE RAMP. Chips paint from the token itself, never from the hex beside
+   them, so any drift between this page and tokens.css shows up here first. */
+const RAMP: [string, string][] = [
+  ['--n-0', 'light surface-raised'],
+  ['--n-1', 'light surface'],
+  ['--n-2', 'light surface-inset'],
+  ['--n-3', 'light hairline'],
+  ['--n-4', 'dark body · light hairline-strong'],
+  ['--n-5', 'dark text-muted'],
+  ['--n-6', 'text-faint, both poles'],
+  ['--n-7', 'light text-muted'],
+  ['--n-8', 'dark hairline-strong'],
+  ['--n-9', 'dark hairline + inset'],
+  ['--n-10', 'dark surface-raised'],
+  ['--n-11', 'dark surface'],
+]
+
+/* The roles, and the measured contrast each one carries against the ground
+   of its own polarity. These are what components reference. */
+const ROLES: [string, string, string][] = [
+  ['surface', 'n-1', 'n-11'],
+  ['surface-raised', 'n-0', 'n-10'],
+  ['surface-inset', 'n-2', 'n-9'],
+  ['hairline', 'n-3', 'n-9'],
+  ['text', 'ink · 16.56:1', 'n-0 · 18.57:1'],
+  ['text-muted', 'n-7 · 5.81:1', 'n-5 · 8.09:1'],
+  ['text-faint', 'n-6 · 3.55:1 large only', 'n-6 · 4.96:1'],
+  ['focus-ring', 'ink', 'n-0'],
 ]
 
 const SCALE: [string, string, string][] = [
@@ -97,17 +116,67 @@ export default function DesignSystemPage() {
         {/* -------------------------------------------------------- colour */}
         <Section
           n="01 · Colour"
-          title={<>Eight values, seven <em>roles</em></>}
-          lede="Components reference a role, never a raw value, so the whole site retunes by editing three lines. Ice is 2.52:1 on white — it can carry light, rim and object tint, never text. When the accent must be readable, that is ice-deep."
+          title={<>One ramp, twelve <em>steps</em></>}
+          lede="Monochrome tech noir. Every ground and every piece of type on the site is drawn from this one cool-neutral ramp, paper at one end and void at the other, and neither end is absolute. Colour survives in exactly one place: as emitted light in the aurora. It is never a surface and never type."
         >
-          <div className="ds-swatches">
-            {SWATCHES.map(([name, hex, role], i) => (
+          <div className="ds-ramp">
+            {RAMP.map(([name, role], i) => (
               <Reveal key={name} index={Math.min(i, 3)}>
-                <span className="ds-chip" style={{ background: hex }} />
+                <span className="ds-chip" style={{ background: `var(${name})` }} />
                 <b>{name.replace('--', '')}</b>
-                <code>{hex}</code>
                 <span>{role}</span>
               </Reveal>
+            ))}
+          </div>
+        </Section>
+
+        {/* ------------------------------------------------------ polarity */}
+        <Section
+          n="01b · Polarity"
+          title={<>The same section, <em>flipped</em></>}
+          lede="A dark section is not a second theme. It is k-dark, which re-points the role tokens at the other end of the ramp and does nothing else: no background, no stacking context. Anything written against roles inverts for free. Both panels below are the identical markup."
+        >
+          <div className="ds-poles">
+            {(['k-light', 'k-dark'] as const).map((pole) => (
+              <div key={pole} className={`ds-pole ${pole}`}>
+                <p className="ds-pole-h">{pole}</p>
+
+                <div className="ds-card">
+                  <b className="t-h3">Elevation</b>
+                  <p className="ds-card-p">
+                    {pole === 'k-dark'
+                      ? 'On dark: the surface ladder plus a hairline ring and a top-edge catch. No drop shadow at any level, because a shadow on a near-black ground is invisible.'
+                      : 'On light: stacked micro-offsets plus an always-on inset hairline ring. Never one heavy drop.'}
+                  </p>
+                  <div className="ds-lifts">
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <i key={n} style={{ boxShadow: `var(--lift-${n})` }}>{n}</i>
+                    ))}
+                  </div>
+                </div>
+
+                {/* k-dark, and NOT because the section is dark: this bed IS a
+                    dark ground, so the type on it takes the dark polarity even
+                    inside k-light. Polarity follows the GROUND, not the section. */}
+                <div className="ds-glassbed k-dark">
+                  <div className="ds-card k-glass">
+                    <b className="t-h3">Glass</b>
+                    <p className="ds-card-p">
+                      Gradient fill, outer stroke, top-edge catch, and a second
+                      stroke inset by one pixel. No backdrop-filter.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="ds-roles">
+                  {ROLES.map(([role, light, dark]) => (
+                    <div key={role} className="ds-role">
+                      <b>{role}</b>
+                      <span>{pole === 'k-dark' ? dark : light}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </Section>

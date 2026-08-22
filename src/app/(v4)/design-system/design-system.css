@@ -43,24 +43,82 @@
 }
 .ds-stage { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-5); }
 
-/* colour */
-.ds-swatches {
+/* colour — the ramp */
+.ds-ramp {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: var(--s-5);
 }
-.ds-swatches > * { display: block; }
+.ds-ramp > * { display: block; }
 .ds-chip {
   display: block; height: 92px;
   border-radius: var(--r-sm);
   border: var(--hair) solid var(--hairline);
   margin-bottom: var(--s-3);
 }
-.ds-swatches b { display: block; font-size: var(--t-small); font-weight: var(--w-medium); }
-.ds-swatches code,
-.ds-swatches span:not(.ds-chip) {
+.ds-ramp b { display: block; font-size: var(--t-small); font-weight: var(--w-medium); }
+.ds-ramp span:not(.ds-chip) {
   display: block; font-size: 12px; line-height: 1.5; color: var(--text-muted);
 }
+
+/* polarity — the same markup twice, once per pole */
+.ds-poles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-6);
+}
+/* the pole paints its own ground: k-dark deliberately does NOT, because most
+   dark passages on the real page are dark because of a photograph */
+.ds-pole {
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  padding: var(--s-6);
+  display: grid;
+  gap: var(--s-5);
+  align-content: start;
+}
+.ds-pole-h {
+  margin: 0; font-size: 12px; letter-spacing: 0.02em;
+  color: var(--text-faint);
+}
+.ds-card {
+  background: var(--surface-raised);
+  border-radius: var(--r-md);
+  padding: var(--s-5);
+  box-shadow: var(--lift-3);
+}
+.ds-card b { display: block; margin-bottom: var(--s-2); color: var(--text); }
+.ds-card-p {
+  margin: 0; font-size: 12px; line-height: 1.6; color: var(--text-muted);
+  max-width: none;
+}
+.ds-lifts {
+  display: flex; gap: var(--s-3); margin-top: var(--s-5);
+}
+.ds-lifts i {
+  flex: 1; height: 44px; border-radius: var(--r-sm);
+  background: var(--surface-raised);
+  display: grid; place-items: center;
+  font-style: normal; font-size: 11px; color: var(--text-faint);
+}
+/* glass needs something behind it or there is nothing to be glass ABOUT */
+.ds-glassbed {
+  border-radius: var(--r-md);
+  padding: var(--s-5);
+  background:
+    radial-gradient(120% 90% at 18% 0%, var(--n-5), transparent 62%),
+    linear-gradient(135deg, var(--n-7), var(--n-9));
+}
+.ds-glassbed .ds-card { background: none; box-shadow: none; }
+.ds-roles { display: grid; gap: 0; }
+.ds-role {
+  display: flex; justify-content: space-between; gap: var(--s-4);
+  padding: var(--s-2) 0;
+  border-bottom: var(--hair) solid var(--hairline);
+  font-size: 12px;
+}
+.ds-role b { font-weight: var(--w-medium); color: var(--text); }
+.ds-role span { color: var(--text-muted); }
 
 /* type scale */
 .ds-scale { display: grid; gap: var(--s-7); }
@@ -83,6 +141,7 @@
 
 @media (max-width: 60rem) {
   .ds-two, .ds-tiles { grid-template-columns: minmax(0, 1fr); }
-  .ds-swatches { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ds-ramp { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ds-poles { grid-template-columns: minmax(0, 1fr); }
   .ds-scale-row { grid-template-columns: minmax(0, 1fr); gap: var(--s-2); }
 }

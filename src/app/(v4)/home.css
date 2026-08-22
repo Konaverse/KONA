@@ -809,9 +809,10 @@
 .wa-item.is-open .wa-title [style*='--i'] {
   color: #f6fafd;
 }
-/* the ice-deep focus ring drowns on the dark image — lift it to ice */
+/* the focus ring has to survive a dark photographic ground, so it
+   takes the ramp's bright end rather than the page default */
 .wa-item.is-open .wa-head-btn:focus-visible {
-  outline-color: var(--ice);
+  outline-color: var(--n-0);
 }
 
 /* ---------- the body / the room ---------- */
@@ -1197,7 +1198,7 @@
   top: 50%;
   height: 3px;
   margin-top: -1.5px;
-  background: var(--ice-deep);
+  background: var(--n-0);
   box-shadow:
     0 0 18px rgba(127, 168, 201, 0.95),
     0 0 64px rgba(127, 168, 201, 0.55);
@@ -1380,7 +1381,7 @@
   stroke: rgba(255, 255, 255, 0.1);
 }
 .iv-ring-val {
-  stroke: var(--ice);
+  stroke: var(--n-0);
   stroke-linecap: round;
   stroke-dasharray: 100;
   filter: drop-shadow(0 0 6px rgba(127, 168, 201, 0.65));
@@ -1533,13 +1534,13 @@
   width: 7px;
   height: 7px;
   border-radius: var(--r-full);
-  background: var(--ice-deep);
+  background: var(--text);
   transform: scale(0);
   transition: transform var(--d-base) var(--e-settle);
 }
 /* the arrival: the drawing head has reached this node */
 .pr-node.is-lit {
-  border-color: var(--accent);
+  border-color: var(--text);
 }
 .pr-node.is-lit i {
   transform: scale(1);
@@ -1562,7 +1563,7 @@
   vector-effect: non-scaling-stroke;
 }
 .pr-head {
-  fill: var(--ice-deep);
+  fill: var(--text);
   opacity: 0;
   filter: drop-shadow(0 0 7px rgba(127, 168, 201, 0.9));
 }
@@ -1828,7 +1829,7 @@
   inset: 0;
   transform: scaleX(0);
   transform-origin: 0 50%;
-  background: var(--ice-deep);
+  background: var(--text);
 }
 
 /* ---------- below the membrane ---------- */
@@ -1892,7 +1893,7 @@
 .wt-q-rule {
   display: block;
   height: var(--hair);
-  background: var(--ice-deep);
+  background: var(--text);
   transform: scaleX(0);
   transform-origin: 0 50%;
   transition: transform var(--d-base) var(--e-settle);
