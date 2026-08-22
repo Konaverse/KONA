@@ -306,7 +306,123 @@
   place-items: center;
   padding: clamp(5.5rem, 12vh, 7.5rem) var(--page-pad) var(--s-7);
   overflow: clip;
-  background: linear-gradient(180deg, #fbfdfe 0%, #f3f7fa 100%);
+  /* flat paper. The vertical gradient this used to carry was doing the
+     atmosphere's job with a hand-mixed near-white; the light rig below does
+     it now, out of the ramp. */
+  background: var(--surface);
+}
+
+/* ---------- THE KEY LIGHT ----------
+   Replaces the three ice blobs (monochrome pivot, 2026-08-22). Not a
+   desaturation of them: three drifting circles are wallpaper, and the ask
+   was a ground with a reason. So this is a LIGHT SOURCE, and it has the
+   three parts a light source has -- a raking key from the upper left, the
+   fall-off it implies in the opposite corner, and a faint fluting in the
+   beam that rhymes with the fluted glass the portrait is shot through.
+   Nothing here is a filter: the softness is baked into the gradient stops,
+   so the layer costs three composited transforms and nothing else. */
+/* EVERY LAYER BELOW IS SCOPED UNDER .hw-light, and that is not tidiness.
+   The beam originally shipped as a bare `.hw-key`, which is ALREADY the
+   headline's emphasis voice -- the word "that" -- so a 128vw white radial on
+   a rotate(-14deg) loop was applied to a word in the h1. It tilted "that",
+   threw the rest of the sentence a thousand pixels down the page, and painted
+   its own gradient over the portrait, which read as three unrelated bugs.
+   The hw- namespace is shared by the hero and the headline; scope, or collide. */
+.hw-light {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.hw-light i {
+  position: absolute;
+  display: block;
+  will-change: transform;
+}
+
+/* THE KEY. Wide and shallow, not round: a beam has a direction and a blob
+   does not. The rotation is baked into the keyframes because the drift
+   writes the same transform channel. */
+.hw-light .hw-beam {
+  width: 128vw;
+  height: 92vh;
+  top: -30vh;
+  left: -30vw;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgba(255, 255, 255, 0.95),
+    rgba(255, 255, 255, 0.40) 48%,
+    transparent 76%
+  );
+  animation: hw-beam-drift 47s ease-in-out infinite alternate;
+}
+
+/* THE FLUTING. The light arrives through the same ribbed glass the portrait
+   is behind. Masked to the beam so it can never read as stripes on bare
+   paper, and kept far under the threshold where it would: this is texture in
+   the light, not a pattern on the page. */
+.hw-light .hw-flute {
+  width: 128vw;
+  height: 92vh;
+  top: -30vh;
+  left: -30vw;
+  /* FAR under where it would read as a pattern. The first cut ran at 0.55
+     with a 0.028 ink line and showed as visible banding across bare paper,
+     which is the one thing this must never do -- it is texture in the beam,
+     not stripes on the page. */
+  opacity: 0.16;
+  background: repeating-linear-gradient(
+    99deg,
+    rgba(255, 255, 255, 0.60) 0 1px,
+    transparent 1px 26px
+  );
+  -webkit-mask-image: radial-gradient(closest-side, #000 4%, transparent 52%);
+  mask-image: radial-gradient(closest-side, #000 4%, transparent 52%);
+  animation: hw-flute-drift 61s ease-in-out infinite alternate;
+}
+
+/* THE FALL-OFF. What makes the ground read as LIT rather than merely bright:
+   paper opposite a key light is not the same paper. Ink at very low alpha,
+   never a grey fill, so it darkens whatever it lies over. */
+.hw-light .hw-fall {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    124% 96% at 106% 102%,
+    rgba(21, 23, 26, 0.11),
+    transparent 56%
+  );
+  animation: hw-fall-drift 73s ease-in-out infinite alternate;
+}
+
+/* the hero still hands the claim a clean ground */
+.hw-light::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 24vh;
+  background: linear-gradient(to bottom, transparent, var(--surface));
+}
+
+@keyframes hw-beam-drift {
+  from { transform: rotate(-14deg) translate(0, 0) scale(1); }
+  to   { transform: rotate(-10.5deg) translate(6vw, 5vh) scale(1.09); }
+}
+@keyframes hw-flute-drift {
+  from { transform: rotate(-14deg) translate(0, 0) scale(1.02); }
+  to   { transform: rotate(-11.5deg) translate(4vw, 6vh) scale(1.12); }
+}
+@keyframes hw-fall-drift {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(-3vw, -2vh) scale(1.06); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hw-light i { animation: none; }
 }
 
 .hw-comp {
@@ -324,6 +440,53 @@
   width: 100%;
   height: 100%;
   display: block;
+  /* NO z-index. The staircase, the headline and the side block are all
+     positioned with z-index auto, so they paint in DOM order and the type
+     lands on top. Giving this a z-index raised it into its own painting
+     level and put the picture OVER the headline -- caught on film. */
+}
+
+/* ---------- seating the staircase ----------
+   The portrait used to be a hard clip straight into the page: a hole, not an
+   object. These two give it the light-polarity elevation grammar -- the
+   stacked drop below, the lit edge on top.
+
+   THE DROP lives on its own static SVG rather than on .hw-shape, and that is
+   the whole reason this element exists. A filter over animating content is
+   re-rasterised every frame, and .hw-shape contains a 26s ken-burns. Here the
+   content never changes, so the browser rasterises the shadow once.
+
+   drop-shadow, not box-shadow: the staircase is not a rectangle, and
+   box-shadow would draw the shadow of its bounding box. Two offsets, matching
+   --lift-4 -- the house rule is a stack of small drops, never one heavy one. */
+.hw-shadow {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  /* first in DOM, z-index auto: it paints under the picture without needing
+     a layer of its own. Same reason as .hw-shape above. */
+  /* Two offsets, not one heavy drop -- but pitched for a HERO-scale object
+     rather than a card. --lift-4's alphas are tuned for something the size of
+     a service tile; the same numbers under a shape this large read as nothing
+     at all, and the house note is to build for presence and dial back. */
+  filter:
+    drop-shadow(0 2px 3px rgba(21, 23, 26, 0.06))
+    drop-shadow(0 14px 26px rgba(21, 23, 26, 0.10));
+}
+.hw-shadow path { fill: var(--surface-raised); }
+
+/* THE CATCH. `inset 0 1px 0` gives a rectangle its lit top edge; a staircase
+   with concave fillets needs the same read on an arbitrary silhouette, so the
+   stroke itself carries a vertical gradient -- bright where the shape faces
+   the key, gone by a third of the way down. Painted outside the clip group so
+   it traces the true outline. */
+.hw-edge {
+  fill: none;
+  stroke: url(#hw-catch);
+  stroke-width: 1.25;
+  vector-effect: non-scaling-stroke;
 }
 /* the picture breathes inside a still window */
 .hw-img {
@@ -376,8 +539,11 @@
 }
 .hw-w { margin-right: 0.26em; }
 /* the voices (user-directed 2026-08-18): grey words are LIGHT grey and LIGHT
-   weight — deliberately paler than --text-muted, display type only */
-.hw-grey { color: #9aa6ae; }
+   weight — deliberately paler than --text-muted, display type only.
+   Was a hand-mixed #9aa6ae; the pivot puts it on the ramp at n-5, which is
+   the same value to the eye and inverts with the polarity instead of
+   sitting outside the system. */
+.hw-grey { color: var(--n-5); }
 .hw-ink  { color: var(--text); }
 .hw-key  { color: var(--text); font-weight: var(--w-semi); }
 
@@ -498,14 +664,22 @@
 @media (max-width: 57.5rem) {
   .hw-hero { place-items: start; }
   .hw-comp { aspect-ratio: auto; width: 100%; }
-  .hw-shape { display: none; }
+  /* the staircase and its seating go together: the drop is a shadow OF that
+     silhouette, and this layout does not have it. Left behind, .hw-shadow
+     renders as a near-white staircase floating over the stacked mobile page. */
+  .hw-shape,
+  .hw-shadow { display: none; }
   .hw-mimg {
     display: block;
     width: 100%;
     aspect-ratio: 4 / 3;
     object-fit: cover;
     object-position: 50% 35%; /* face height in the distorted-light shot */
-    border-radius: 20px;
+    /* was a hand-written 20px, which is not on the radius scale. The mobile
+       crop IS a rectangle, so unlike the staircase it can take the elevation
+       token directly rather than needing a drop-shadow of its silhouette. */
+    border-radius: var(--r-lg);
+    box-shadow: var(--lift-4);
     margin: var(--s-6) 0 0;
   }
   /* the flow still re-wraps here — it just does it in a narrower box
@@ -554,7 +728,11 @@
    silent — the SVG stays for the live rect — and the claim's white sheet
    opens so the landed GL sheet IS its background. Never applies to no-JS /
    reduced motion / mobile, which keep the plain DOM forms. */
-.hm-glhero .hw-shape .hw-img {
+.hm-glhero .hw-shape .hw-img,
+/* the seating goes with the picture: once GL owns the sheet, a DOM shadow
+   and a DOM lit edge would still be sitting in the hero's old footprint */
+.hm-glhero .hw-edge,
+.hm-glhero .hw-shadow {
   opacity: 0;
 }
 .hm-glhero .hm-claim {
@@ -565,10 +743,10 @@
    only ever happens while §2 is below the fold, so it is never seen
    switching. */
 .hm-glhero .hm-claim-line {
-  color: #f4f8fb;
+  color: var(--n-0);
 }
 .hm-glhero .hm-claim-body {
-  color: rgba(244, 248, 251, 0.66);
+  color: var(--n-4);
 }
 
 /* ============================================================

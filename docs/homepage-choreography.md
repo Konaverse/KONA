@@ -170,6 +170,49 @@ The consequences, section by section below: **section 3 states problems as text 
 
 ## Section 1 — Arrival
 
+> **MONOCHROME PASS — 2026-08-22, user-approved. The hero STAYS LIGHT.** The polarity was
+> the one real decision here and it went to paper, for two reasons: paper against a
+> near-black photograph *is* tech noir (high key against low key is the grammar; all-dark is
+> just dark), and §3 is already dark, so a dark hero would have opened the page dark → light
+> card → dark, which is exactly the tonal stutter the "no flip without a seam" rule exists
+> to stop. Light hero → light claim → dark §3 is one clean descent.
+>
+> - **THE KEY LIGHT replaces the three atmosphere blobs** (`.hw-light`, was `.hm-atmo`).
+>   Not a desaturation of them: three drifting circles are wallpaper, and the standing note
+>   is that the ground needs a reason. So it is a light SOURCE with the three parts one has
+>   — a raking beam from the upper left, the fall-off it implies in the opposite corner, and
+>   a faint fluting in the beam that rhymes with the ribbed glass the portrait is shot
+>   through. Transform-only loops, no filter. The fluting shipped once at 0.55 and read as
+>   banding on bare paper; it runs at 0.16 with a tighter mask, which is texture in the
+>   light rather than stripes on the page.
+> - **THE STAIRCASE IS SEATED.** It was a hard clip straight into the page — a hole, not an
+>   object. It now carries the light polarity's elevation: a stacked drop below
+>   (`.hw-shadow`) and a lit top edge above (`.hw-edge`). Two details matter. The drop is
+>   `drop-shadow`, not `box-shadow`, because the staircase is not a rectangle and box-shadow
+>   would draw its bounding box; and it lives on its OWN static SVG, because `.hw-shape`
+>   runs a 26s ken-burns and a filter over animating content is re-rasterised every frame.
+>   The catch is a *gradient along the stroke* — bright where the silhouette faces the key,
+>   gone a third of the way down — which is `inset 0 1px 0` for a shape that is not a
+>   rectangle. Alphas are pitched above `--lift-4`: those are tuned for a card, and under a
+>   shape this large they read as nothing.
+> - **The headline's grey joins the ramp** (`--n-5`, was a hand-mixed `#9aa6ae`), and the
+>   hero ground drops its hand-mixed gradient for flat `var(--surface)` — the light rig does
+>   that job now, out of the ramp.
+> - **The peel's back-face grade goes neutral.** The folded-over side was tinted COOL, the
+>   last colour left in the peel; it now dims and pulls toward its own luminance, so the
+>   reverse reads as unlit stock.
+> - Mobile keeps the plain crop, which — being a rectangle — takes `--lift-4` directly; its
+>   hand-written 20px radius became `--r-lg`.
+>
+> **A NAMESPACE COLLISION worth recording, because it cost a full debug cycle.** The beam
+> shipped as a bare `.hw-key`, which is ALREADY the headline's emphasis voice (the word
+> "that"). A 128vw white radial on a `rotate(-14deg)` loop was applied to a word in the h1:
+> it tilted "that", threw the rest of the sentence a thousand pixels down the page, and
+> painted its own gradient over the portrait. That read as three unrelated bugs. Every light
+> layer is now scoped under `.hw-light`. **The `hw-` namespace is shared by the hero and the
+> headline: scope, or collide.**
+
+
 > **VARIANT B — "the staircase" — LIVE ON `/` since 2026-08-18 night, from the user's own
 > wireframe** (`image.png`, second one that day). A trial WITHOUT the 3D object — the user:
 > *"maybe the choice was bad from the beginning … I just want to try one without the 3d

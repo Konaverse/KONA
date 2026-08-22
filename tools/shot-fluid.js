@@ -40,6 +40,11 @@ const H = 900
   await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 })
   await new Promise((r) => setTimeout(r, 3000))
 
+  // ad-hoc CSS for bisecting a visual bug: INJECT_CSS='.foo{display:none}'
+  if (process.env.INJECT_CSS) {
+    await page.addStyleTag({ content: process.env.INJECT_CSS })
+    await new Promise((r) => setTimeout(r, 250))
+  }
   if (process.env.PREVIEW_GRADE === '1') {
     const { PREVIEW_GRADE } = require('./preview-grade')
     await page.addStyleTag({ content: PREVIEW_GRADE })

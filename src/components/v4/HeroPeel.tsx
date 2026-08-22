@@ -201,9 +201,13 @@ void main() {
   vec2 uv = mix(uvA, uvB, smoothstep(0.68, 0.9, uShow));
 
   vec3 col = texture2D(uTex, uv).rgb;
-  /* the folded-over part shows its back: dimmed and cooled a touch, so
-     the mirror reads as the reverse of the sheet, not a second front */
-  col = mix(col, col * vec3(0.88, 0.93, 1.0) * 0.8, vBack);
+  /* the folded-over part shows its back: dimmed, and pulled most of the way
+     to its own luminance, so the reverse reads as unlit stock rather than a
+     second front. It was tinted COOL here before the monochrome pivot -- a
+     hue on the back of a sheet is precisely the kind of colour the direction
+     took out, and it was the last one left in the peel. */
+  float back = dot(col, vec3(0.2126, 0.7152, 0.0722));
+  col = mix(col, mix(col, vec3(back), 0.6) * 0.74, vBack);
   /* the landing grade: as the sheet becomes a BACKGROUND it recedes —
      darkened enough that §2's light type always reads, even over the
      figure's bright passages */

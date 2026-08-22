@@ -73,7 +73,7 @@ export default function HeroPortrait() {
 
     const tl = gsap.timeline({ defaults: { ease: EASE.glass } })
     tl.fromTo(
-      ['.hw-shape', '.hw-mimg'],
+      ['.hw-shape', '.hw-shadow', '.hw-mimg'],
       { opacity: 0, y: 30, scale: 0.985 },
       { opacity: 1, y: 0, scale: 1, duration: 1.05 },
       0,
@@ -94,13 +94,28 @@ export default function HeroPortrait() {
 
   return (
     <section ref={rootRef} className="hw-hero">
-      <div className="hm-atmo" aria-hidden="true">
-        <i className="hm-atmo-a" />
-        <i className="hm-atmo-b" />
-        <i className="hm-atmo-c" />
+      {/* the key light: beam, fluting, fall-off. See .hw-light in home.css --
+          it replaced three drifting ice blobs, which were wallpaper rather
+          than a lit ground. */}
+      <div className="hw-light" aria-hidden="true">
+        <i className="hw-beam" />
+        <i className="hw-flute" />
+        <i className="hw-fall" />
       </div>
 
       <div className="hw-comp">
+        {/* THE DROP, on its own static SVG. .hw-shape below runs a ken-burns,
+            and a filter over animating content is re-rasterised every frame;
+            this one never changes, so it is rasterised once. */}
+        <svg
+          className="hw-shadow hw-ent"
+          viewBox="0 0 815 375"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d={SHAPE_PATH} />
+        </svg>
+
         {/* the staircase window */}
         <svg
           className="hw-shape hw-ent"
@@ -112,6 +127,14 @@ export default function HeroPortrait() {
             <clipPath id="hw-clip">
               <path d={SHAPE_PATH} />
             </clipPath>
+            {/* the lit edge, as a gradient along the stroke: bright where the
+                silhouette faces the key light, gone a third of the way down.
+                This is `inset 0 1px 0` for a shape that is not a rectangle. */}
+            <linearGradient id="hw-catch" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#ffffff" stopOpacity="0.85" />
+              <stop offset="0.34" stopColor="#ffffff" stopOpacity="0.12" />
+              <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
+            </linearGradient>
           </defs>
           {/* clip on the GROUP, ken-burns on the image: the picture breathes
               inside a still window (a clip on the image itself would breathe
@@ -133,6 +156,10 @@ export default function HeroPortrait() {
               />
             </g>
           </g>
+
+          {/* outside the clip group on purpose, so the stroke traces the true
+              outline instead of being halved by its own clip */}
+          <path className="hw-edge" d={SHAPE_PATH} />
         </svg>
 
         <HeroTitle />
