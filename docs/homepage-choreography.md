@@ -185,16 +185,20 @@ The consequences, section by section below: **section 3 states problems as text 
 >   through. Transform-only loops, no filter. The fluting shipped once at 0.55 and read as
 >   banding on bare paper; it runs at 0.16 with a tighter mask, which is texture in the
 >   light rather than stripes on the page.
-> - **THE STAIRCASE IS SEATED.** It was a hard clip straight into the page — a hole, not an
->   object. It now carries the light polarity's elevation: a stacked drop below
->   (`.hw-shadow`) and a lit top edge above (`.hw-edge`). Two details matter. The drop is
->   `drop-shadow`, not `box-shadow`, because the staircase is not a rectangle and box-shadow
->   would draw its bounding box; and it lives on its OWN static SVG, because `.hw-shape`
->   runs a 26s ken-burns and a filter over animating content is re-rasterised every frame.
->   The catch is a *gradient along the stroke* — bright where the silhouette faces the key,
->   gone a third of the way down — which is `inset 0 1px 0` for a shape that is not a
->   rectangle. Alphas are pitched above `--lift-4`: those are tuned for a card, and under a
->   shape this large they read as nothing.
+> - **THE STAIRCASE GETS A LIT EDGE, AND NO SHADOW.** A stacked drop shadow was built here
+>   and **REMOVED the same day, user call after watching it scroll: "it reads like unsticking
+>   a sticker."** The diagnosis is worth keeping, because the mistake was not the shadow's
+>   weight — it was that a shadow and the peel tell contradictory stories. A drop shadow says
+>   *this object sits on top of the page*; the peel says *this IS the page*, then lifts it by
+>   the corner. Both on one shape, and the fold reads as a sticker being picked off. The
+>   original brief this was answering — that the clip was "a hole, not an object" — had the
+>   wrong target: **a hole is correct here.** The staircase is a WINDOW.
+>   What survives is `.hw-edge`, the half that supports the window reading: light catching
+>   the edge of an aperture. It is a *gradient along the stroke*, bright where the silhouette
+>   faces the key and gone a third of the way down — `inset 0 1px 0` for a shape that is not
+>   a rectangle. The mobile crop's lift came off with it: the same reading applies to a
+>   floating rounded rectangle, and the two presentations must not disagree about what this
+>   image is.
 > - **The headline's grey joins the ramp** (`--n-5`, was a hand-mixed `#9aa6ae`), and the
 >   hero ground drops its hand-mixed gradient for flat `var(--surface)` — the light rig does
 >   that job now, out of the ramp.

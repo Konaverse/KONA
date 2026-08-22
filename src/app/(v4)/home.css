@@ -447,37 +447,23 @@
 }
 
 /* ---------- seating the staircase ----------
-   The portrait used to be a hard clip straight into the page: a hole, not an
-   object. These two give it the light-polarity elevation grammar -- the
-   stacked drop below, the lit edge on top.
+   THE DROP SHADOW WAS BUILT AND REMOVED, 2026-08-22, on the user's call after
+   watching it scroll: "it reads like unsticking a sticker."
+   
+   That is the right diagnosis and it is worth keeping, because the mistake was
+   not the shadow's weight -- it was that the shadow and the peel tell
+   contradictory stories. A drop shadow says THIS OBJECT SITS ON TOP OF THE
+   PAGE. The peel says THIS IS THE PAGE, and then lifts it by the corner. Put
+   both on the same shape and the fold reads as a sticker being picked off.
 
-   THE DROP lives on its own static SVG rather than on .hw-shape, and that is
-   the whole reason this element exists. A filter over animating content is
-   re-rasterised every frame, and .hw-shape contains a 26s ken-burns. Here the
-   content never changes, so the browser rasterises the shadow once.
+   So the staircase is a WINDOW, not an object on a surface, and the catch
+   below is the half that supports that reading: light catching the edge of an
+   aperture. The original complaint this was answering -- that the clip was "a
+   hole, not an object" -- was itself the wrong target. A hole is correct here.
 
-   drop-shadow, not box-shadow: the staircase is not a rectangle, and
-   box-shadow would draw the shadow of its bounding box. Two offsets, matching
-   --lift-4 -- the house rule is a stack of small drops, never one heavy one. */
-.hw-shadow {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  /* first in DOM, z-index auto: it paints under the picture without needing
-     a layer of its own. Same reason as .hw-shape above. */
-  /* Two offsets, not one heavy drop -- but pitched for a HERO-scale object
-     rather than a card. --lift-4's alphas are tuned for something the size of
-     a service tile; the same numbers under a shape this large read as nothing
-     at all, and the house note is to build for presence and dial back. */
-  filter:
-    drop-shadow(0 2px 3px rgba(21, 23, 26, 0.06))
-    drop-shadow(0 14px 26px rgba(21, 23, 26, 0.10));
-}
-.hw-shadow path { fill: var(--surface-raised); }
+   Reinstating it is one element in HeroPortrait plus this block; git has it.
 
-/* THE CATCH. `inset 0 1px 0` gives a rectangle its lit top edge; a staircase
+   THE CATCH. `inset 0 1px 0` gives a rectangle its lit top edge; a staircase
    with concave fillets needs the same read on an arbitrary silhouette, so the
    stroke itself carries a vertical gradient -- bright where the shape faces
    the key, gone by a third of the way down. Painted outside the clip group so
@@ -664,22 +650,18 @@
 @media (max-width: 57.5rem) {
   .hw-hero { place-items: start; }
   .hw-comp { aspect-ratio: auto; width: 100%; }
-  /* the staircase and its seating go together: the drop is a shadow OF that
-     silhouette, and this layout does not have it. Left behind, .hw-shadow
-     renders as a near-white staircase floating over the stacked mobile page. */
-  .hw-shape,
-  .hw-shadow { display: none; }
+  .hw-shape { display: none; }
   .hw-mimg {
     display: block;
     width: 100%;
     aspect-ratio: 4 / 3;
     object-fit: cover;
     object-position: 50% 35%; /* face height in the distorted-light shot */
-    /* was a hand-written 20px, which is not on the radius scale. The mobile
-       crop IS a rectangle, so unlike the staircase it can take the elevation
-       token directly rather than needing a drop-shadow of its silhouette. */
+    /* was a hand-written 20px, which is not on the radius scale. The lift
+       that briefly sat here came off with the staircase's drop shadow: the
+       same "sticker on paper" reading applies to a floating rounded crop, and
+       the two presentations should not disagree about what this image is. */
     border-radius: var(--r-lg);
-    box-shadow: var(--lift-4);
     margin: var(--s-6) 0 0;
   }
   /* the flow still re-wraps here — it just does it in a narrower box
@@ -729,10 +711,9 @@
    opens so the landed GL sheet IS its background. Never applies to no-JS /
    reduced motion / mobile, which keep the plain DOM forms. */
 .hm-glhero .hw-shape .hw-img,
-/* the seating goes with the picture: once GL owns the sheet, a DOM shadow
-   and a DOM lit edge would still be sitting in the hero's old footprint */
-.hm-glhero .hw-edge,
-.hm-glhero .hw-shadow {
+/* the catch goes with the picture: once GL owns the sheet, a DOM lit edge
+   would still be sitting in the hero's old footprint */
+.hm-glhero .hw-edge {
   opacity: 0;
 }
 .hm-glhero .hm-claim {

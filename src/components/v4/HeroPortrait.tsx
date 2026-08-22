@@ -73,7 +73,7 @@ export default function HeroPortrait() {
 
     const tl = gsap.timeline({ defaults: { ease: EASE.glass } })
     tl.fromTo(
-      ['.hw-shape', '.hw-shadow', '.hw-mimg'],
+      ['.hw-shape', '.hw-mimg'],
       { opacity: 0, y: 30, scale: 0.985 },
       { opacity: 1, y: 0, scale: 1, duration: 1.05 },
       0,
@@ -104,19 +104,10 @@ export default function HeroPortrait() {
       </div>
 
       <div className="hw-comp">
-        {/* THE DROP, on its own static SVG. .hw-shape below runs a ken-burns,
-            and a filter over animating content is re-rasterised every frame;
-            this one never changes, so it is rasterised once. */}
-        <svg
-          className="hw-shadow hw-ent"
-          viewBox="0 0 815 375"
-          aria-hidden="true"
-          focusable="false"
-        >
-          <path d={SHAPE_PATH} />
-        </svg>
-
-        {/* the staircase window */}
+        {/* the staircase window. NO drop shadow: one was built here and
+            removed the same day -- a shadow says the shape sits ON the page,
+            the peel says the shape IS the page, and the fold then read as a
+            sticker being picked off. See home.css. */}
         <svg
           className="hw-shape hw-ent"
           viewBox="0 0 815 375"
