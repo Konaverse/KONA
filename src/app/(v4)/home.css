@@ -719,16 +719,21 @@
 .hm-glhero .hm-claim {
   background: transparent;
 }
-/* the landed sheet is DARK (the portrait, graded down in the shader), so
-   the claim flips to the light voice while the GL owns the card. The flip
-   only ever happens while §2 is below the fold, so it is never seen
-   switching. */
-.hm-glhero .hm-claim-line {
-  color: var(--n-0);
-}
-.hm-glhero .hm-claim-body {
-  color: var(--n-4);
-}
+/* THE CLAIM'S DARK VOICE IS NOT WRITTEN HERE ANY MORE.
+   The landed sheet is dark (the portrait, graded down in the shader), so the
+   type on it has to be light -- and that used to be two hand-written colour
+   rules, one per element, which meant every element added to this card later
+   would need a third and a fourth.
+
+   It is the polarity scope instead: HeroPeel puts `k-dark` on .hm-claim-land
+   at the same moment it takes the sheet, so the card declares its ground once
+   and every role inside it follows -- type, muted type, hairlines, focus
+   rings, anything added later. This is the page's FIRST ground flip and the
+   seam is the peel itself, which is exactly the case the scope was built for.
+
+   The flip only ever happens while §2 is below the fold, so it is never seen
+   switching. Marking the card also feeds GrainField: `.k-dark` is the one
+   signal, so the grain thickens over this card without a second annotation. */
 
 /* ============================================================
    §2 — THE CLAIM: the landed container carries the statement.

@@ -1,6 +1,7 @@
 import ApertureMenu from '@/components/v4/ApertureMenu'
 import SmoothScroll from '@/components/v4/SmoothScroll'
 import FluidCursor from '@/components/v4/FluidCursor'
+import GrainField from '@/components/v4/GrainField'
 import PageTransition from '@/components/v4/PageTransition'
 import '@/styles/tokens.css'
 
@@ -33,6 +34,10 @@ export default function V4Layout({ children }: { children: React.ReactNode }) {
       </noscript>
 
       <div className="k-grain" />
+      {/* the grain layer is fixed at the root and cannot see a section-scoped
+          --grain-opacity; this lerps the root value by how much dark ground is
+          on screen, so the texture thickens over the dark passages. */}
+      <GrainField />
       <ApertureMenu />
       <FluidCursor />
 

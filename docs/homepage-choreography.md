@@ -404,6 +404,36 @@ plain statement; reduced motion never dims. Paragraph keeps the standard reveal,
 > strokes, draws with the pathLength/dashoffset idiom; lettering unfinished) for
 > wherever a written signature lands next.
 
+> **MONOCHROME PASS — 2026-08-23, user-approved. Small section, mostly coherence.**
+> The stripped shape holds: one viewport, no pin, the statement inside the landed card.
+> Nothing was added, because this is the section where the page stops performing.
+>
+> - **THE FLIP IS A REAL POLARITY NOW.** §2's dark state was two hand-written colour rules
+>   under `.hm-glhero`, one per element — which meant every element added to this card later
+>   needed another. HeroPeel puts **`k-dark` on `.hm-claim-land`** with the same switch that
+>   takes the sheet, so the card declares its ground once and every role follows. This is the
+>   page's FIRST ground flip and the seam is the peel itself: the case the scope was built
+>   for. Without GL there is no dark ground and no `k-dark`, so every fallback keeps paper
+>   and ink.
+> - **THE CATCH IS DRAWN IN GL.** Every glass surface on the page carries a lit top edge; the
+>   landed card is the one pane rendered in a shader rather than in CSS, and without it, it
+>   would be the one pane missing the signature — which is how a WebGL element starts reading
+>   as a foreign object in the layout. Nearly free: `d`, the signed distance to the outline,
+>   already exists for the mask, so the edge is one smoothstep on it, weighted toward the top
+>   so it reads as light landing ON the pane rather than an outline drawn AROUND it. Gated on
+>   the landing and off the reverse face.
+> - **GRAIN THICKENS OVER THE DARK CARD** (`GrainField.tsx`). The dark polarity has its own
+>   grain value, but `.k-grain` is one fixed root layer that cannot see a section-scoped
+>   property. This lerps the root value by **how much of the viewport is currently dark
+>   ground**, and the signal is `.k-dark` itself — no second annotation to keep in sync.
+>   A scrub, not a toggle: a threshold would pop the texture a full step mid-scroll.
+>   Measured: 0.14 at rest, **0.238** with the card filling the screen against a 0.26
+>   ceiling — the shortfall is the card's own paper margins, which are not dark ground.
+> - The landed radius stops being a bare `24.0` in the shader and is named for `--r-lg`.
+>
+> **Shader note, learned the hard way:** the fragment is a template literal. A backtick in a
+> GLSL comment closes the string, and the parse error lands nowhere near the comment.
+
 **3D.** Absent.
 
 ---

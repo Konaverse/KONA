@@ -156,6 +156,11 @@ varying float vBack;
 const vec4 RA = vec4(520.0 / 815.0, 0.0, 295.0 / 815.0, 190.0 / 375.0);
 const vec4 RB = vec4(0.0, 155.0 / 375.0, 545.0 / 815.0, 220.0 / 375.0);
 
+/* --r-lg, the token the landed card's corner comes from. It cannot be read
+   from CSS in here, so it is named rather than left as a bare 24.0 sitting in
+   the middle of a mix() -- the radius scale is closed and this is on it. */
+const float R_LG = 24.0;
+
 float sdRoundRect(vec2 p, vec2 c, vec2 half_, float r) {
   vec2 q = abs(p - c) - (half_ - vec2(r));
   return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;
@@ -183,7 +188,7 @@ void main() {
   /* corners stay rounded for the whole flight, and the LANDED form keeps
      a container radius too — it is an inset card now, not a full-bleed
      cover (landing redesign, 2026-08-19) */
-  float r = mix((28.0 / 815.0) * vRectWH.x, 24.0, exG);
+  float r = mix((28.0 / 815.0) * vRectWH.x, R_LG, exG);
   float k = max((30.0 / 815.0) * vRectWH.x * (1.0 - m), 0.001);
   float dA = sdRoundRect(px, (ra.xy + ra.zw * 0.5) * vRectWH, ra.zw * 0.5 * vRectWH, r);
   float dB = sdRoundRect(px, (rb.xy + rb.zw * 0.5) * vRectWH, rb.zw * 0.5 * vRectWH, r);
@@ -212,6 +217,31 @@ void main() {
      darkened enough that §2's light type always reads, even over the
      figure's bright passages */
   col *= mix(1.0, 0.58, smoothstep(0.7, 1.0, uShow));
+
+  /* THE CATCH, drawn here because this pane is drawn here.
+     Every glass surface in the DOM carries a lit top edge -- .k-glass's
+     inset 0 1px 0, the staircase's gradient stroke. The landed card is the
+     one pane on this page rendered in GL rather than CSS, and without this it
+     would be the one pane without the signature, which is how a WebGL element
+     starts reading as a foreign object dropped into the layout.
+
+     It is nearly free: d is already the signed distance to the sheet's
+     outline, computed for the mask, so the edge band is one smoothstep on a
+     value we have. Weighted toward the top (up) so it reads as light landing
+     ON the pane rather than as an outline drawn AROUND it, gated on the
+     landing (exG) so it never appears mid-fold, and off the reverse side
+     (vBack) because the back of a sheet does not catch the key.
+
+     NOTE FOR ANYONE EDITING THIS SHADER: it is a template literal. A backtick
+     in a GLSL comment closes the string, and the parse error lands nowhere
+     near the comment that caused it. This block cost one build to learn.
+
+     Added AFTER the landing grade: this is light, not a lit part of the
+     photograph, so the grade must not darken it. */
+  float edge = 1.0 - smoothstep(0.0, 1.6, abs(d));
+  float up = smoothstep(0.62, 0.0, vUv.y);
+  col += vec3(1.0) * edge * up * exG * (1.0 - vBack) * 0.5;
+
   gl_FragColor = vec4(col * mask, mask); /* premultiplied */
 }
 `
@@ -408,6 +438,13 @@ export default function HeroPeel() {
       if (live === v) return
       live = v
       main.classList.toggle('hm-glhero', v)
+      /* the card's GROUND changes the instant GL takes the sheet -- the
+         portrait is dark where the page was paper -- so its polarity changes
+         with it. One class, and the type, the muted type and every role
+         inside §2 follow; GrainField reads the same class and thickens the
+         grain over it. Without GL there is no dark ground and no k-dark:
+         the fallback screen stays paper with ink type, which is correct. */
+      land?.classList.toggle('k-dark', v)
       if (!v) gl?.clear()
     }
 
@@ -490,6 +527,7 @@ export default function HeroPeel() {
       cancelAnimationFrame(rafId)
       gsap.ticker.remove(tick)
       main.classList.remove('hm-glhero')
+      land?.classList.remove('k-dark')
       heropin.classList.remove('is-run')
     }
   }, [])

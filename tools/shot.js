@@ -15,6 +15,22 @@ const sel = process.argv[4] || null
   const page = await browser.newPage()
   await page.setViewport({ width: 1440, height: 1000, deviceScaleFactor: 1 })
   await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 })
+  // SHOT_WHEEL=<px>: real wheel events, in steps. window.scrollTo and
+  // scrollIntoView are the wrong tools on this page -- Lenis owns the scroll
+  // and smooths it, and the scroll-scrubbed work (the peel, the page-turn,
+  // the interlude) is driven off the smoothed position, not the raw one.
+  if (process.env.SHOT_WHEEL) {
+    const total = Number(process.env.SHOT_WHEEL)
+    const steps = Number(process.env.SHOT_WHEEL_STEPS || 40)
+    await page.mouse.move(700, 500)
+    for (let i = 0; i < steps; i++) {
+      await page.mouse.wheel({ deltaY: total / steps })
+      await new Promise((r) => setTimeout(r, 16))
+    }
+    // let the inertia settle, or every scrubbed value is read mid-flight
+    await new Promise((r) => setTimeout(r, 1200))
+  }
+
   // ad-hoc CSS for bisecting a visual bug: INJECT_CSS='.foo{display:none}'
   if (process.env.INJECT_CSS) {
     await page.addStyleTag({ content: process.env.INJECT_CSS })
