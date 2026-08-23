@@ -1634,7 +1634,15 @@
 .sc-card {
   position: relative;
   isolation: isolate;
-  overflow: hidden;
+  /* NOT `overflow: hidden`, for the same reason the plate is not: an opened
+     object climbs out of its plate, and the plate's top sits only --sc-pad
+     below this edge — so overflow here would guillotine it 27px up. Nothing
+     else needed the clipping (every layer inside carries `border-radius:
+     inherit` and rounds itself), so this opens the same way: a little at the
+     top, shut everywhere else. Kept SMALL on purpose — the grid gutter is
+     about 17px, and a lower row's object rising further than that would
+     start climbing over the card above it. */
+  clip-path: inset(-8% 0 0 0);
   height: 100%;
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto;
@@ -1725,7 +1733,14 @@
 .sc-media {
   position: relative;
   z-index: 4;
-  overflow: hidden;
+  /* NOT `overflow: hidden`. Opened, the object has to stand PROUD of this
+     plate at the top and be CUT by it at the bottom — it climbs out of the
+     well toward you rather than merely getting bigger — and overflow is all
+     four sides or none. A negative top inset opens the clip upward; the
+     bottom stops a hairline short of the edge so the plate's own bottom rule
+     stays visible IN FRONT of the object, which is the whole point of the
+     asymmetry. */
+  clip-path: inset(-24% 0 var(--hair) 0);
   border-radius: calc(var(--sc-r) - 6px);
   /* THE PLATE HAS TO READ AS A LIT SURFACE, NOT A HOLE. It is pure black
      under the sheen — darker than the card, which is right for a well cut
@@ -1902,9 +1917,14 @@
   position: absolute;
   inset: 0;
 }
-/* THE FLOAT'S OWN ELEMENT. The timeline writes transforms to the pieces; the
-   idle drift writes y here. Two nodes, so neither can overwrite the other. */
-.fx-float {
+/* ONE PROPERTY PER ELEMENT. Two tweens writing the same property to the same
+   node overwrite each other every frame, so the hover open, the idle drift
+   and the hover turn each get their own — and the pieces keep their own
+   transforms underneath all three. Merging any two buys a bug that only
+   appears when both happen to run at once. */
+.fx-lift,
+.fx-float,
+.fx-spin {
   position: absolute;
   inset: 0;
   pointer-events: none;
@@ -1952,14 +1972,6 @@
   background: radial-gradient(closest-side, rgb(214 232 244 / 0.42), transparent 72%);
   opacity: 0.1;
   transform: scale(0.8);
-  pointer-events: none;
-}
-/* the click of assembly */
-.fx-flash {
-  position: absolute;
-  inset: 0;
-  background: #fff;
-  opacity: 0;
   pointer-events: none;
 }
 /* PROTOTYPE ONLY — the cut figure drawn over the assembled picture, so the

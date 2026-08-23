@@ -56,6 +56,16 @@ export type Fracture = {
       `cover`. Lives here rather than in CSS so a second contained object
       does not need a second hard-coded rule. */
   aspect: number
+  /**
+   * Seconds for ONE revolution while hovered. Per object because the right
+   * speed is a property of the thing turning, not of the interaction: a knot
+   * is symmetrical and reads well moving, a browser window is a rectangle
+   * with a top and a bottom and the same speed on it looks like a mistake.
+   */
+  spin: number
+  /** how far it opens out of its plate once whole. It escapes upward only —
+   *  the plate's clip-path is what makes that asymmetric, not this number. */
+  expand: number
   pieces: Piece[]
 }
 
@@ -121,7 +131,14 @@ export const GLASS_SCREEN: Fracture = {
   src: '/services/3d-websites/glass-screen.webp',
   pivot: 'piece',
   fit: 'contain',
-  aspect: 1600 / 900,
+  /* the mockup was re-rendered with a transparent ground and trimmed at
+     export, so this is the WINDOW's own box rather than a 16:9 frame with
+     the window floating somewhere inside it */
+  aspect: 1200 / 1059,
+  /* slow. It is a rectangle with a top and a bottom: at the knot's speed it
+     stops reading as a floating object and starts reading as a spinning one */
+  spin: 34,
+  expand: 1.14,
   pieces: [
     { pts: [[54, 44], [40, 24], [62, 20], [78, 38]], push: 7, rot: 1.8 },
     { pts: [[54, 44], [78, 38], [72, 62], [50, 70]], push: 6, rot: -2.4 },
@@ -170,6 +187,10 @@ export const CHROME_KNOT: Fracture = {
      object's own box: the knot fills its frame and the plate sizes to the
      knot rather than to the empty space around it */
   aspect: 1100 / 1059,
+  /* symmetrical enough to turn properly, and turning is most of what sells
+     it as an OBJECT rather than as a picture of one */
+  spin: 15,
+  expand: 1.2,
   pieces: [
     /* the hub: the crossing, which holds. It still drifts a hair — a core
        that is perfectly still reads as a separate object sitting on top. */

@@ -35,7 +35,8 @@
 .ps-plate {
   position: relative;
   border-radius: calc(var(--r-lg) - 10px);
-  overflow: hidden;
+  /* opens upward, shut everywhere else — see the note on .sc-media */
+  clip-path: inset(-24% 0 1px 0);
   /* both objects were rendered on pure black, so the plate meets them
      seamlessly and the cuts read as gaps in the thing rather than holes */
   background: #000;
@@ -65,9 +66,14 @@
   position: absolute;
   inset: 0;
 }
-/* THE FLOAT'S OWN ELEMENT. The timeline writes transforms to the pieces; the
-   idle drift writes y here. Two nodes, so neither can overwrite the other. */
-.fx-float {
+/* ONE PROPERTY PER ELEMENT. Two tweens writing the same property to the same
+   node overwrite each other every frame, so the hover open, the idle drift
+   and the hover turn each get their own — and the pieces keep their own
+   transforms underneath all three. Merging any two buys a bug that only
+   appears when both happen to run at once. */
+.fx-lift,
+.fx-float,
+.fx-spin {
   position: absolute;
   inset: 0;
   pointer-events: none;
@@ -137,14 +143,6 @@
   transform: scale(0.994);
 }
 
-/* the click of assembly */
-.fx-flash {
-  position: absolute;
-  inset: 0;
-  background: #fff;
-  opacity: 0;
-  pointer-events: none;
-}
 
 /* REDUCED MOTION gets the assembled object and nothing else — the component
    returns before any timeline exists, so these have to be the FINAL pose
