@@ -1,21 +1,22 @@
 import type { Metadata } from 'next'
-import ShatterStage from '@/components/v4/ShatterStage'
+import FractureStage from '@/components/v4/FractureStage'
+import { CHROME_KNOT, GLASS_SCREEN } from '@/components/v4/fractures'
 import './proto-shatter.css'
 
 /**
- * GLASS-SHATTER VALIDATION PAGE — never linked, never indexed.
+ * FRACTURE VALIDATION PAGE — never linked, never indexed.
  *
- * The 3D Websites card's media, judged on its own before §4 is touched
- * (user call, 2026-08-23: "build the 3D card alone first"). The card around
- * it is a stand-in — enough of the dark ground and glass pane that the media
- * can be read in context, not a rebuild of the section.
+ * §4's house move, judged on its own before the section is touched. Two
+ * objects, because the point is that ONE component does both and they break
+ * differently: the screen shatters like a pane, the knot comes apart along
+ * its own curve. See fractures.ts for why that needed two pivots.
  *
- * The scrubber exists because hover plays the assembly at one speed and the
- * thing that needs judging is the shape of it: where the pieces are at 40%,
- * whether the knot surfaces too early, whether the flash lands on the meet.
+ * The scrubber exists because hover plays the assembly at one speed and what
+ * needs judging is the shape of it — where the pieces are at 40%, whether
+ * the flash lands on the meet.
  */
 export const metadata: Metadata = {
-  title: 'Glass shatter prototype',
+  title: 'Fracture prototype',
   robots: { index: false, follow: false },
 }
 
@@ -23,14 +24,26 @@ export default function ProtoShatterPage() {
   return (
     <div className="ps k-dark">
       <div className="ps-head">
-        <h1 className="t-h2">The screen assembles.</h1>
+        <h1 className="t-h2">The objects arrive broken.</h1>
         <p className="t-body">
-          It rests broken. Hover the card and the shards converge from the outside in, the
-          chrome surfaces as they close, and a breath of light marks the moment they meet.
-          Leave, and it comes apart again at 1.4×. Drag the scrubber to hold any frame.
+          Each card&rsquo;s object rests in pieces and assembles under the pointer, closing
+          last at the point it came apart. Leave, and it opens again at 1.4&times;. One
+          component, one image per object, N clip-paths &mdash; the screen shatters like a
+          pane, the knot unwinds along its own curve. Drag a scrubber to hold any frame.
         </p>
       </div>
-      <ShatterStage />
+      <div className="ps-grid">
+        <FractureStage
+          art={CHROME_KNOT}
+          name="3D Websites"
+          copy="Real dimension for brands that need presence felt rather than described."
+        />
+        <FractureStage
+          art={GLASS_SCREEN}
+          name="Web Development"
+          copy="Engineering where performance is a feature: clean semantics and instant loads."
+        />
+      </div>
     </div>
   )
 }

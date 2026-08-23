@@ -1,5 +1,5 @@
 /* PROTOTYPE STYLES — the page chrome (ps-*) is throwaway, the component's
-   own rules (gs-*) are not: if the shatter graduates to §4 the gs- block
+   own rules (fx-*) are not: when the fracture graduates to §4 the fx- block
    moves to home.css with it, unchanged. */
 
 .ps {
@@ -14,11 +14,17 @@
 .ps-head h1 { margin: 0 0 var(--s-4); }
 .ps-head p { margin: 0; color: var(--text-muted); }
 
-/* the stand-in card: dark ground, glass pane, the plate inside it — enough
-   of §4's future shape to judge the media against, not a rebuild of it */
-.ps-stage {
-  max-width: 46rem;
+/* two stand-in cards side by side: enough of §4's future shape to read the
+   objects in context and against each other, not a rebuild of the section */
+.ps-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 2vw, 2rem);
+  max-width: 72rem;
   margin: 0 auto;
+}
+@media (max-width: 57.5rem) {
+  .ps-grid { grid-template-columns: minmax(0, 1fr); }
 }
 .ps-card {
   border-radius: var(--r-lg);
@@ -30,18 +36,13 @@
   position: relative;
   border-radius: calc(var(--r-lg) - 10px);
   overflow: hidden;
-  /* the art's own ground is pure black, so the plate meets it seamlessly and
-     the gaps between displaced shards read as cracks rather than as holes */
+  /* both objects were rendered on pure black, so the plate meets them
+     seamlessly and the cuts read as gaps in the thing rather than holes */
   background: #000;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 16 / 10;
 }
-.ps-meta {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--s-4);
-  padding: var(--s-5) var(--s-2) var(--s-2);
-}
-.ps-meta h2 { margin: 0; font-size: var(--t-h3); font-weight: var(--w-medium); }
+.ps-meta { padding: var(--s-5) var(--s-2) var(--s-2); }
+.ps-meta h2 { margin: 0 0 var(--s-3); font-size: var(--t-h3); font-weight: var(--w-medium); }
 .ps-meta p { margin: 0; font-size: var(--t-small); color: var(--text-muted); }
 
 /* the scrubber, so the timeline can be judged frame by frame instead of
@@ -50,88 +51,77 @@
   display: flex;
   align-items: center;
   gap: var(--s-4);
-  max-width: 46rem;
-  margin: var(--s-6) auto 0;
+  margin-top: var(--s-4);
   font-size: var(--t-small);
   color: var(--text-muted);
 }
-.ps-scrub input { flex: 1; }
+.ps-scrub input { flex: 1; min-width: 0; }
 .ps-scrub output { font-variant-numeric: tabular-nums; min-width: 4ch; }
 
 /* ============================================================
-   THE COMPONENT — everything below travels with GlassShatter.
+   THE FRACTURE — everything below travels with Fractured.tsx.
    ============================================================ */
-.gs {
+.fx {
   position: absolute;
   inset: 0;
 }
-.gs-glass {
+/* THE FLOAT'S OWN ELEMENT. The timeline writes transforms to the pieces; the
+   idle drift writes y here. Two nodes, so neither can overwrite the other. */
+.fx-float {
   position: absolute;
   inset: 0;
+  pointer-events: none;
 }
-/* Nine of these, one decoded image between them. No will-change here: the
-   timeline adds it on start and takes it off when it settles, so nine
-   promoted layers never sit on the GPU at rest. */
-.gs-shard {
+/* N of these, one decoded image between them. No will-change here: the
+   timeline adds it on start and takes it off when it settles, so N promoted
+   layers never sit on the GPU at rest. */
+.fx-piece {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  /* a displaced shard leaves the frame at the edges; the plate clips it,
-     which reads as a piece slid out of shot rather than a missing one */
   user-select: none;
   -webkit-user-drag: none;
 }
 
-/* NOT A DROP SHADOW, and the substitution is deliberate: the spec asked for
-   one, but this art's ground is pure black, so a black shadow on it is
-   invisible by construction — there is nothing darker to cast onto. The
-   honest equivalent on black glass is the opposite: a bloom, the chrome
-   catching the screen's own light. It grounds the knot the same way, and it
-   is the same cheap trick — a pre-painted radial that is only ever SCALED
-   and faded, never re-blurred. */
-.gs-bloom {
+/* COVER — the picture IS the plate (the glass screen). Pieces displaced past
+   the edge are clipped by the plate, which reads as a shard slid out of shot
+   rather than a missing one. */
+.fx-cover .fx-piece { object-fit: cover; }
+
+/* CONTAIN — the object FLOATS on the plate (the chrome knot). The box is cut
+   to the art's own aspect and centred, so the wedge polygons land on the
+   picture rather than on empty letterbox. GSAP never touches `.fx` itself,
+   so a transform here is safe — unlike on anything it animates. */
+.fx-contain {
+  inset: 7% auto;
+  left: 50%;
+  aspect-ratio: 1200 / 1285;
+  transform: translateX(-50%);
+}
+.fx-contain .fx-piece { object-fit: contain; }
+
+/* NOT A DROP SHADOW, and the substitution is deliberate: these objects are
+   rendered on pure black, so a black shadow on them is invisible by
+   construction — there is nothing darker to cast onto. The honest equivalent
+   is the opposite, a bloom: the chrome catching the light it is lit by. It
+   grounds the object the same way, and it is the cheap kind — a pre-painted
+   radial that is only ever scaled and faded, never re-blurred. */
+.fx-bloom {
   position: absolute;
-  left: 27%;
-  top: 31%;
-  width: 42%;
-  height: 42%;
+  left: 12%;
+  top: 12%;
+  width: 76%;
+  height: 76%;
   border-radius: 50%;
-  background: radial-gradient(closest-side, rgb(214 232 244 / 0.5), transparent 72%);
+  background: radial-gradient(closest-side, rgb(214 232 244 / 0.42), transparent 72%);
   opacity: 0.1;
   transform: scale(0.8);
   pointer-events: none;
 }
 
-/* THE FLOAT'S OWN ELEMENT. The timeline writes y and scale to .gs-knot; the
-   idle drift writes y here. Two nodes, so neither can overwrite the other. */
-.gs-float {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-/* CENTRED BY POSITION, NEVER BY `translate`. GSAP's CSSPlugin clears the
-   independent transform properties (translate / rotate / scale) when it
-   takes over an element's `transform`, so a `translate: -50% -50%` used for
-   centring is silently dropped the first time the timeline runs — the knot
-   jumps a half-width right and stays there. Cost one round of screenshots.
-   The box is placed outright instead, and `transform` belongs to GSAP alone.
-   Both numbers are half the width off the target centre (48%, 52%) — the
-   mockup's optical centre, low and left of frame centre so the knot clears
-   the browser's right edge instead of straddling it. */
-.gs-knot {
-  position: absolute;
-  left: 31%;
-  top: 35%;
-  width: 34%;
-  /* the REST pose, also the no-JS pose: lower, smaller, dimmer */
-  transform: translateY(22px) scale(0.85);
-  opacity: 0.9;
-}
-
 /* the click of assembly */
-.gs-flash {
+.fx-flash {
   position: absolute;
   inset: 0;
   background: #fff;
@@ -139,11 +129,10 @@
   pointer-events: none;
 }
 
-/* REDUCED MOTION gets the assembled picture and nothing else — the component
-   returns early before any timeline exists, so these have to be the final
-   pose rather than the rest one. */
+/* REDUCED MOTION gets the assembled object and nothing else — the component
+   returns before any timeline exists, so these have to be the FINAL pose
+   rather than the rest one. */
 @media (prefers-reduced-motion: reduce) {
-  .gs-shard { transform: none !important; }
-  .gs-knot { transform: none; opacity: 1; }
-  .gs-bloom { opacity: 0.3; transform: scale(1); }
+  .fx-piece { transform: none !important; }
+  .fx-bloom { opacity: 0.3; transform: scale(1); }
 }
