@@ -45,8 +45,17 @@ export type Fracture = {
   src: string
   /** what a piece turns around — see the note above; this is not cosmetic */
   pivot: 'piece' | 'picture'
-  /** `cover` fills the plate (the screen IS the plate); `contain` floats */
+  /** `cover` fills the plate; `contain` sizes the box to the art's own
+      aspect and centres it in the plate. CONTAIN IS THE DEFAULT CHOICE and
+      cover is the exception: a card's plate is about 2.2:1 at 1440 and the
+      objects are not, so cover crops a recognisable silhouette — the browser
+      mockup lost its own edges to it. Contain also lets a displaced piece fly
+      out into the plate's margin instead of being cut off at the art's edge. */
   fit: 'cover' | 'contain'
+  /** the art's width ÷ height. Sizes the box under `contain`; ignored by
+      `cover`. Lives here rather than in CSS so a second contained object
+      does not need a second hard-coded rule. */
+  aspect: number
   pieces: Piece[]
 }
 
@@ -111,7 +120,8 @@ const CORNERS: [number, [number, number]][] = [
 export const GLASS_SCREEN: Fracture = {
   src: '/services/3d-websites/glass-screen.webp',
   pivot: 'piece',
-  fit: 'cover',
+  fit: 'contain',
+  aspect: 1600 / 900,
   pieces: [
     { pts: [[54, 44], [40, 24], [62, 20], [78, 38]], push: 7, rot: 1.8 },
     { pts: [[54, 44], [78, 38], [72, 62], [50, 70]], push: 6, rot: -2.4 },
@@ -156,6 +166,10 @@ export const CHROME_KNOT: Fracture = {
   src: '/services/3d-websites/knot.webp',
   pivot: 'picture',
   fit: 'contain',
+  /* the render's transparent margin is TRIMMED at export, so this is the
+     object's own box: the knot fills its frame and the plate sizes to the
+     knot rather than to the empty space around it */
+  aspect: 1100 / 1059,
   pieces: [
     /* the hub: the crossing, which holds. It still drifts a hair — a core
        that is perfectly still reads as a separate object sitting on top. */

@@ -192,7 +192,13 @@ export default function Fractured({
   }, [art])
 
   return (
-    <div className={`fx fx-${art.fit} ${className}`} ref={rootRef}>
+    <div
+      className={`fx fx-${art.fit} ${className}`}
+      ref={rootRef}
+      /* the box's shape is the ART's, not a rule in the stylesheet, so a new
+         contained object needs no new CSS. GSAP never touches this element. */
+      style={art.fit === 'contain' ? { aspectRatio: String(art.aspect) } : undefined}
+    >
       <i className="fx-bloom" aria-hidden="true" />
       <div className="fx-float">
         {pieces.map((p, i) => (

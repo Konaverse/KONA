@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { SERVICES, Letters } from '@/components/v4/services-data'
+import { SERVICES } from '@/components/v4/services-data'
+import Fractured from '@/components/v4/Fractured'
 import { gsap } from '@/lib/motion-v4'
 
 /**
@@ -331,7 +332,7 @@ export default function ServiceCards() {
   }, [])
 
   return (
-    <section className="sc" ref={rootRef} aria-labelledby="sc-h">
+    <section className="sc k-dark" ref={rootRef} aria-labelledby="sc-h">
       <div className="sc-page">
         <header className="sc-head">
           <h2 className="t-h2 sc-title" id="sc-h">
@@ -350,44 +351,29 @@ export default function ServiceCards() {
               style={
                 {
                   '--i': i,
-                  '--c1': s.tint.c1,
-                  '--c2': s.tint.c2,
-                  '--cd': s.tint.deep,
+                  /* the service's own key light — what replaced the tints */
+                  '--lx': s.light[0],
+                  '--ly': s.light[1],
                 } as React.CSSProperties
               }
             >
-              <a className="sc-card" href={`/services#${s.slug}`}>
-                <span className="sc-blob" aria-hidden="true" />
+              {/* data-fx-host: Fractured takes its hover from the nearest one
+                  of these, so the WHOLE card assembles the object, not just
+                  the plate the object happens to sit in. */}
+              <a className="sc-card" href={`/services#${s.slug}`} data-fx-host>
                 <span className="sc-glass" aria-hidden="true" />
                 <span className="sc-spot" aria-hidden="true" />
-                <span className="sc-ring" aria-hidden="true" />
 
-                {/* the plate: sized for a photograph, holding the drawing
-                    until one is supplied. `media` in services-data.tsx is
-                    the switch, one word per card. */}
+                {/* THE PLATE IS A SLOT. A service names its object in
+                    services-data.tsx or names none at all; with none it
+                    stays a lit black surface, which is what the four cards
+                    whose objects are still being made look like. */}
                 <span className="sc-media" aria-hidden="true">
-                  {s.media === 'photo' ? (
-                    <img
-                      className="sc-photo"
-                      src={s.image}
-                      alt=""
-                      width={s.w}
-                      height={s.h}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  ) : (
-                    <span className="sc-drawing">{s.glyph}</span>
-                  )}
+                  {s.object ? <Fractured art={s.object} /> : null}
                 </span>
 
                 <span className="sc-body">
-                  <h3 className="sc-name">
-                    {/* Letters() paints an aria-hidden letter-split copy for
-                        the ink sweep; this is the readable one */}
-                    <span className="sr-only">{s.name}</span>
-                    <Letters text={s.name} />
-                  </h3>
+                  <h3 className="sc-name">{s.name}</h3>
 
                   <span className="sc-chip" aria-hidden="true">
                     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">

@@ -94,10 +94,10 @@
    picture rather than on empty letterbox. GSAP never touches `.fx` itself,
    so a transform here is safe — unlike on anything it animates. */
 .fx-contain {
-  inset: 7% auto;
+  inset: 4% auto;
   left: 50%;
-  aspect-ratio: 1200 / 1285;
   transform: translateX(-50%);
+  /* aspect-ratio is written inline from the fracture's own `aspect` */
 }
 .fx-contain .fx-piece { object-fit: contain; }
 
