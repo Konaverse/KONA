@@ -2038,3 +2038,84 @@
   .fx-piece { transform: none !important; }
   .fx-bloom { opacity: 0.3; transform: scale(1); }
 }
+
+/* ============================================================
+   THE ORBIT — the second thing a plate can hold: a mockup with
+   props circling it in real depth. See Orbit.tsx; the 3D is
+   genuine, and these rules are load-bearing for it.
+   ============================================================ */
+.ob {
+  position: absolute;
+  inset: 5% auto;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.ob-lift {
+  position: absolute;
+  inset: 0;
+}
+/* the scene. Perspective is written from JS as a share of the measured width,
+   because a fixed one is right at exactly one card size. */
+.ob-stage {
+  position: absolute;
+  inset: 0;
+  perspective: var(--ob-persp, 900px);
+  transform-style: preserve-3d;
+}
+/* NOTHING IN THIS CHAIN MAY FLATTEN. `overflow` other than visible, a filter,
+   an opacity below 1 or a clip-path on .ob-stage, .ob-ring or .ob-slot
+   collapses the 3D context, and the depth sort silently degrades to paint
+   order — props stop being hidden behind the mockup and the whole move is
+   gone with no error anywhere. The plate's clip-path is outside all of this
+   and is fine; nothing may be added between. */
+.ob-ring,
+.ob-slot,
+.ob-arm,
+.ob-face {
+  transform-style: preserve-3d;
+}
+.ob-ring {
+  position: absolute;
+  inset: 0;
+}
+/* THE SPOKE, AND THE WALK ALONG IT — two elements on purpose. An orbit is
+   rotateY(angle) then translateZ(radius), and GSAP composes translation
+   BEFORE rotation, so one element asked for both parks every prop at the same
+   depth spinning on the spot. The slot's rotation is therefore static CSS and
+   the arm's push-out is GSAP, which puts them in the only order that orbits.
+   Both are zero-size anchors: the face hangs off the arm's point. */
+.ob-slot,
+.ob-arm {
+  position: absolute;
+  left: 50%;
+  width: 0;
+  height: 0;
+}
+.ob-arm { left: 0; top: 0; }
+.ob-face {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.ob-face img {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* a prop is lit from the scene's own key light, not from the page's */
+  filter: drop-shadow(0 10px 22px rgb(0 0 0 / 0.55));
+}
+/* the still centre. Opaque art, which is what makes the occlusion read: a
+   transparent mockup would show the props straight through it. */
+.ob-main {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* the composition is the whole treatment: parked at four angles that were
+     chosen to read as a still in the first place */
+  .ob-lift { transform: none !important; }
+}

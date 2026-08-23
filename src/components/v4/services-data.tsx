@@ -1,4 +1,18 @@
 import { CHROME_KNOT, GLASS_SCREEN, type Fracture } from '@/components/v4/fractures'
+import { WEB_DESIGN, type OrbitArt } from '@/components/v4/Orbit'
+
+/**
+ * WHAT A PLATE CAN HOLD. It began as one thing — an object that rests in
+ * pieces and assembles — and the web design card broke that: a mockup with
+ * props circling it is not a thing that comes apart. So the plate takes a
+ * KIND, and adding a third needs a branch in ServiceCards and nothing else.
+ * The contract every kind keeps is the one the section is built on: still at
+ * rest, alive under the pointer, and climbing out of the top of its plate as
+ * it opens.
+ */
+export type PlateMedia =
+  | { kind: 'fracture'; art: Fracture }
+  | { kind: 'orbit'; art: OrbitArt }
 
 /**
  * THE SERVICE SET — the six services, their copy, and the object each one's
@@ -49,12 +63,11 @@ export type Service = {
    */
   light: [string, string]
   /**
-   * What fills the card's media plate: an object that rests deconstructed
-   * and assembles under the pointer (see fractures.ts). Omitted while the
-   * object is still being made — the plate then holds nothing and reads as
-   * a lit surface waiting, which is honest and looks composed.
+   * What fills the card's media plate. Omitted while the object is still
+   * being made — the plate then holds nothing and reads as a lit surface
+   * waiting, which is honest and looks composed.
    */
-  object?: Fracture
+  media?: PlateMedia
   /**
    * A short abstract shader render that plays behind the object, in the
    * plate. Built by tools/boomerang.js into a forwards-then-backwards loop —
@@ -76,7 +89,7 @@ export const SERVICES: Service[] = [
       'Premium on every device, not just yours',
     ],
     light: ['18%', '8%'],
-    object: CHROME_KNOT,
+    media: { kind: 'fracture', art: CHROME_KNOT },
     loop: { src: '/services/loops/3d-websites.mp4', poster: '/services/loops/3d-websites.webp' },
   },
   {
@@ -89,6 +102,7 @@ export const SERVICES: Service[] = [
       'Motion designed with the page, not after it',
     ],
     light: ['80%', '12%'],
+    media: { kind: 'orbit', art: WEB_DESIGN },
   },
   {
     slug: 'web-development',
@@ -100,7 +114,7 @@ export const SERVICES: Service[] = [
       'Built to be maintained, not just shipped',
     ],
     light: ['50%', '-4%'],
-    object: GLASS_SCREEN,
+    media: { kind: 'fracture', art: GLASS_SCREEN },
   },
   {
     slug: 'one-page-websites',
