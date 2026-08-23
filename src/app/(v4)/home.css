@@ -2119,3 +2119,53 @@
      chosen to read as a still in the first place */
   .ob-lift { transform: none !important; }
 }
+
+/* ============================================================
+   THE SOLO — §4's third plate kind: one object that opens out
+   of the top of its plate and, if its shape has no up, turns.
+   See Solo.tsx. Same three wrappers as the fracture, for the
+   same reason: one property each.
+   ============================================================ */
+.so {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  /* `inset` and `aspect-ratio` are written inline from the art, so a new
+     solo object needs no new rule here */
+}
+.so-lift,
+.so-float,
+.so-spin {
+  position: absolute;
+  inset: 0;
+}
+.so-spin img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+/* the same bloom the fracture uses, and for the same reason: these objects
+   are rendered on pure black, so a drop shadow has nothing darker to cast
+   onto. The light it catches is what grounds it. */
+.so-bloom {
+  position: absolute;
+  left: 10%;
+  top: 10%;
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(214 232 244 / 0.42), transparent 72%);
+  opacity: 0.1;
+  transform: scale(0.8);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* the object, still — which is the whole treatment, and a complete one */
+  .so-lift,
+  .so-float,
+  .so-spin { transform: none !important; }
+}

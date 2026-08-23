@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 import { SERVICES } from '@/components/v4/services-data'
 import Fractured from '@/components/v4/Fractured'
 import Orbit from '@/components/v4/Orbit'
+import Solo from '@/components/v4/Solo'
 import PlateLoop from '@/components/v4/PlateLoop'
 import { gsap } from '@/lib/motion-v4'
 
@@ -374,6 +375,7 @@ export default function ServiceCards() {
                   {s.loop ? <PlateLoop src={s.loop.src} poster={s.loop.poster} /> : null}
                   {s.media?.kind === 'fracture' ? <Fractured art={s.media.art} /> : null}
                   {s.media?.kind === 'orbit' ? <Orbit art={s.media.art} /> : null}
+                  {s.media?.kind === 'solo' ? <Solo art={s.media.art} /> : null}
                 </span>
 
                 <span className="sc-body">

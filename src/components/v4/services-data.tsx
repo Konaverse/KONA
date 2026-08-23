@@ -1,5 +1,11 @@
 import { CHROME_KNOT, GLASS_SCREEN, type Fracture } from '@/components/v4/fractures'
 import { WEB_DESIGN, type OrbitArt } from '@/components/v4/Orbit'
+import {
+  ONE_PAGE_MOCKUP,
+  REDESIGN_ARROW,
+  SEO_SPHERE,
+  type SoloArt,
+} from '@/components/v4/Solo'
 
 /**
  * WHAT A PLATE CAN HOLD. It began as one thing — an object that rests in
@@ -13,6 +19,7 @@ import { WEB_DESIGN, type OrbitArt } from '@/components/v4/Orbit'
 export type PlateMedia =
   | { kind: 'fracture'; art: Fracture }
   | { kind: 'orbit'; art: OrbitArt }
+  | { kind: 'solo'; art: SoloArt }
 
 /**
  * THE SERVICE SET — the six services, their copy, and the object each one's
@@ -69,8 +76,14 @@ export type Service = {
    */
   media?: PlateMedia
   /**
-   * A short abstract shader render that plays behind the object, in the
-   * plate. Built by tools/boomerang.js into a forwards-then-backwards loop —
+   * PARKED, NOT DELETED (2026-08-23). A short abstract render that plays
+   * behind the object, in the plate. No card carries one: six playing at
+   * once measured 33.3ms a frame with 88% over budget — back to where §4 was
+   * before it was rebuilt — and one card alone was never the idea. The
+   * machinery stays because the shaders that would replace it benchmarked
+   * free at six (/proto-shaders) and are only waiting on the layering
+   * question, and because the boomerang tooling is the expensive part to
+   * rediscover. Built by tools/boomerang.js into a forwards-then-backwards loop —
    * these are randomised renders whose last frame has nothing to do with
    * their first, so a plain loop cuts hard once a cycle. Poster is its first
    * frame, and is the whole treatment under reduced motion.
@@ -90,7 +103,6 @@ export const SERVICES: Service[] = [
     ],
     light: ['18%', '8%'],
     media: { kind: 'fracture', art: CHROME_KNOT },
-    loop: { src: '/services/loops/3d-websites.mp4', poster: '/services/loops/3d-websites.webp' },
   },
   {
     slug: 'web-design',
@@ -126,6 +138,7 @@ export const SERVICES: Service[] = [
       'Everything earns its scroll',
     ],
     light: ['92%', '44%'],
+    media: { kind: 'solo', art: ONE_PAGE_MOCKUP },
   },
   {
     slug: 'website-redesign',
@@ -137,6 +150,7 @@ export const SERVICES: Service[] = [
       'A system your team can extend',
     ],
     light: ['8%', '48%'],
+    media: { kind: 'solo', art: REDESIGN_ARROW },
   },
   {
     slug: 'seo',
@@ -148,5 +162,6 @@ export const SERVICES: Service[] = [
       'Visible to AI engines, not just Google',
     ],
     light: ['62%', '96%'],
+    media: { kind: 'solo', art: SEO_SPHERE },
   },
 ]
