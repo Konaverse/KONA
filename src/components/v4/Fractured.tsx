@@ -27,10 +27,12 @@ import { build, type Fracture, type Built } from '@/components/v4/fractures'
  * so the arrival sweeps INWARD and the object closes last at the point it
  * broke.
  *
- * THEN, and only once it is whole: it OPENS (a scale, `art.expand`) and
- * begins to TURN (`art.spin` seconds a revolution, linear, forever). Opening
- * is what pushes it past the top of its plate — see ESCAPING THE FRAME.
- * Turning is the reward for staying.
+ * THEN, and only once it is whole: it OPENS (a scale, `art.expand`) and, if
+ * the object is one that should turn, begins to TURN (`art.spin` seconds a
+ * revolution, linear, forever — or 0 for objects that only open). Opening is
+ * what pushes it past the top of its plate; see ESCAPING THE FRAME. Turning
+ * is the reward for staying, and it is not for everything: a shape with an up
+ * ends up on its head eventually, however slowly it goes.
  *
  * ON LEAVE it unwinds to square FORWARD — to the next whole revolution, never
  * backwards to zero, which would rewind however far it had got in half a
@@ -142,7 +144,11 @@ export default function Fractured({
       drift = gsap.to(float, { y: -6, duration: 4.6, ease: 'sine.inOut', yoyo: true, repeat: -1 })
       gsap.to(lift, { scale: art.expand, duration: OPEN_DUR, ease: 'power2.out' })
       turn?.kill()
-      turn = gsap.to(spin, { rotation: '+=360', duration: art.spin, ease: 'none', repeat: -1 })
+      /* `spin: 0` means this object does not turn — see fractures.ts. It
+         still opens; it just has an up worth respecting. */
+      turn = art.spin
+        ? gsap.to(spin, { rotation: '+=360', duration: art.spin, ease: 'none', repeat: -1 })
+        : null
     }
 
     /** it is coming apart: stop everything, and land the turn square */

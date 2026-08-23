@@ -57,10 +57,15 @@ export type Fracture = {
       does not need a second hard-coded rule. */
   aspect: number
   /**
-   * Seconds for ONE revolution while hovered. Per object because the right
-   * speed is a property of the thing turning, not of the interaction: a knot
-   * is symmetrical and reads well moving, a browser window is a rectangle
-   * with a top and a bottom and the same speed on it looks like a mistake.
+   * Seconds for ONE revolution while hovered, or **0 for an object that does
+   * not turn at all** — it only opens.
+   *
+   * Per object because turning is a property of the THING, not of the
+   * interaction. A knot is symmetrical: it reads as an object the moment it
+   * moves, and every angle it passes through is a good one. A browser window
+   * is a rectangle with a top and a bottom, and there is no speed slow enough
+   * to stop a full revolution eventually standing it on its head — so it
+   * takes 0. Slowing it down only postpones the frame where it looks broken.
    */
   spin: number
   /** how far it opens out of its plate once whole. It escapes upward only —
@@ -135,9 +140,10 @@ export const GLASS_SCREEN: Fracture = {
      export, so this is the WINDOW's own box rather than a 16:9 frame with
      the window floating somewhere inside it */
   aspect: 1200 / 1059,
-  /* slow. It is a rectangle with a top and a bottom: at the knot's speed it
-     stops reading as a floating object and starts reading as a spinning one */
-  spin: 34,
+  /* IT DOES NOT TURN. A window has an up: any full revolution eventually
+     shows it upside down, and slowing that down only postpones the bad
+     frame. It opens, and opening is enough. */
+  spin: 0,
   expand: 1.14,
   pieces: [
     { pts: [[54, 44], [40, 24], [62, 20], [78, 38]], push: 7, rot: 1.8 },
