@@ -92,7 +92,7 @@ export type OrbitArt = {
 }
 
 export const WEB_DESIGN: OrbitArt = {
-  main: { src: '/services/web-design/main.webp', aspect: 1200 / 876 },
+  main: { src: '/services/web-design/main.webp', aspect: 1200 / 877 },
   /* Angles picked so the still reads before anything moves: one prop in front
      and low, one leaving right, one behind the mockup, one arriving left.
      `lift` keeps all four off the ring's exact equator, which also stops any
