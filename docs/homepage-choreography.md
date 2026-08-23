@@ -481,6 +481,56 @@ plain statement; reduced motion never dims. Paragraph keeps the standard reveal,
 > scatter; all copy is server-rendered DOM text (view-source verified). Copy is
 > PLACEHOLDER except the doc's own example line.
 
+> **NOIR PASS 2026-08-23 — the grade, and the measures.** The section is now `k-dark`,
+> which is the entire colour change: the roles re-point, so the two hand-written
+> `rgba(255,255,255,…)` type colours became `--text` and the ramp, `#060a10` became
+> `--n-11`, and GrainField picks the section up with no second annotation (measured:
+> 0.14 at rest → 0.26 across the whole passage). The Bosra plate — warm gold sandstone
+> against a saturated blue sky, the loudest colour left on the page — is graded to
+> monochrome by a CSS filter on `.sv-img`. **That filter is interim** and comes out the
+> day the already-graded asset lands; it is also the only filter that ships on this page,
+> and it is safe only because it sits on the IMG, never on an ancestor of the fluid canvas.
+> The scrim became two: a radial that holds the frame's centre open so the plate reads as
+> lit rather than evenly dimmed, under the old vertical wash, now mixed from the void and
+> lighter because the grade already took the brightness out.
+>
+> **The text was restructured, the scatter was not** (user call, same day: the hand-picked
+> offsets stay). The defect was the measure. `.sv-item` capped BOTH the question and the
+> answer at `34ch` of the ROOT font — 332px — so a 42px headline took about three words a
+> line and the four questions wrapped to two, three and FOUR lines depending on the
+> sentence, with the answer in the identical column beneath. Now:
+>
+> - The question owns a measure in `em` **of itself** (10.8em), the only unit that holds
+>   the wrap where it was put when the size clamp moves. Verified across every desktop
+>   width 930→1760: **all four questions land on exactly two lines**, so the items read as
+>   one family instead of four accidents.
+> - It is also sized up — `clamp(2rem, 3.4vw, 3rem)`, between h2 and h1. This is the
+>   page's first full-bleed dark passage and the credits are the only thing in it.
+> - The answer is deliberately NARROWER than the question above it (34ch ≈ 330px against
+>   the question's ~518px), so a block has a silhouette rather than being a rectangle with
+>   two type sizes in it. That width difference is most of the hierarchy here, because
+>   neither element gets a container to be told apart by. Gap `--s-4` → `--s-5`.
+> - Its colour is `--n-4`, not `--text-muted`: the dark polarity's muted step is measured
+>   against the void, and the credits sit on a photograph whose lit stone is several rungs
+>   up the ramp, so that headroom is not there. Both question and answer carry a wide soft
+>   text-shadow — the scrims are global and cannot know where the credits are; this can.
+>
+> **THE INVARIANT THIS COST, AND HOW IT WAS PAID.** "Adjacent items are kept in different
+> columns, so differential drift can never collide them" held for free at 34ch. A question
+> that reaches ~518px does not clear its neighbours, and measured against the ticker's own
+> maths the pairs closed to **−125px** (2–3) and **−131px** (3–4) while both were on
+> screen: real text-over-text. Restored two ways, without moving a single `margin-left` —
+> item 3 gets `max-width: min(10.8em, 47%)`, capping it by the room before item 4's column
+> at narrow widths, and its `margin-top` opens 18svh → 34svh, which is why that is now the
+> big gap. On MOBILE neither trick exists (one column, everything overlaps horizontally),
+> so the gaps carry it alone: 18/22/16svh → 34/38/32svh, sized off the worst convergence
+> the 0.72–1.16 speed spread can produce, ~11% of viewport height per pair. Re-measured
+> clear at 390/430/768/900 wide.
+>
+> **STILL OPEN: the plate is 3736×4672 at ~6.8MB, eager-loaded.** Re-encoding measured:
+> 2.83MB at native/q78, 1.42MB at 2560w/q80, 1.01MB at 1920w/q84. Not done — the file is
+> the user's, at the resolution and quality they chose.
+
 **Job.** Catch the visitor who has a symptom rather than a solution, and carry the problem cluster.
 
 **On screen.** Three or four problem statements, stacked vertically, each one line of `h2` with two lines of `body` beneath. Written as the client would say it, not as you would categorise it. "Your site looks like everyone else's." "Visitors leave before they understand what you do."

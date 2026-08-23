@@ -7,11 +7,22 @@ import { gsap } from '@/lib/motion-v4'
 /**
  * SECTION 3 — WHAT WE SOLVE: the credit roll (user-directed 2026-08-18).
  *
- * The page's first dark passage. The blue refracted-glass portrait is the
- * whole section's background — a sticky 100svh frame inside a ~240svh
- * section — and the problems are thrown into the scene as loose text, no
- * containers: one left, one past centre, scattered, each rolling at its own
- * speed like end credits with depth.
+ * The page's first dark passage. A single photograph is the whole section's
+ * background — a sticky 100svh frame inside a ~240svh section — and the
+ * problems are thrown into the scene as loose text, no containers: one left,
+ * one past centre, scattered, each rolling at its own speed like end credits
+ * with depth.
+ *
+ * NOIR PASS 2026-08-23. The section is `k-dark`, and that is the whole
+ * colour change: the roles re-point, so the two hand-written
+ * rgba(255,255,255,…) type colours became --text and --text-muted, and
+ * GrainField picks the section up for free (it scrubs the root grain by how
+ * much of the viewport is .k-dark ground, with no second annotation). The
+ * plate is graded to monochrome in CSS; that filter is INTERIM and comes out
+ * the day the already-graded asset lands. The scatter is UNCHANGED and
+ * deliberately so (user call, 2026-08-23) — what was wrong with the text was
+ * never where it sat but how wide it was: see the measure note over .sv-q in
+ * home.css.
  *
  * TWO PARALLAX SYSTEMS, ONE TICKER:
  *
@@ -124,7 +135,7 @@ export default function SolveCredits() {
   }, [])
 
   return (
-    <section ref={rootRef} className="sv">
+    <section ref={rootRef} className="sv k-dark">
       <div className="sv-frame" aria-hidden="true">
         {/* decorative — the content is the text riding over it. Eager on
             purpose: it sits exactly one viewport below the fold (the −100svh

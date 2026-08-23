@@ -793,9 +793,13 @@
      transparent under .hm-glhero so the peel's landed container shows
      through it with WHITE margins — anything underlapping would bleed
      through those margins. §3 arrives after the claim, plainly. */
-  /* the image's own deep blue-black, for any sliver the cover crop
-     or the drift could ever expose */
-  background: #060a10;
+  /* the void, for any sliver the cover crop or the drift could ever
+     expose. Was a hand-mixed blue-black (#060a10) matched to the old
+     stand-in portrait; on the noir direction the ramp owns it, and the
+     plate is graded to meet it (see .sv-img). The section carries
+     `k-dark` in SolveCredits.tsx, which is what re-points the roles
+     below AND what GrainField reads to thicken the grain. */
+  background: var(--n-11);
   /* NO overflow on this element: it would become the sticky frame's
      scroll container and the frame would stop sticking */
 }
@@ -822,6 +826,20 @@
   width: 100%;
   height: calc(100% + 126vh);
   object-fit: cover;
+  /* THE GRADE — INTERIM, and the one place a filter ships on this page.
+     The Bosra plate is warm gold sandstone against a saturated blue sky:
+     two hues, in the section that is meant to be the page's first proper
+     void. Monochrome plus a contrast lift and a hard darkening is the
+     cheap version of the grade the real asset will arrive already
+     carrying (user edits imagery outside this repo) — this holds the
+     section to the direction until it does, and comes out in one line.
+     Pushed harder than tools/preview-grade.js's generic media pass
+     because sandstone in full sun sits far brighter than the portrait
+     that recipe was tuned on, and the credits have to live on top of it.
+     SAFE HERE: a filter builds a stacking context on the IMG only. It
+     must never move up to .k-root or a wrapper — that is what silently
+     kills the fluid cursor's difference blend (see FluidCursor.tsx). */
+  filter: grayscale(1) contrast(1.22) brightness(0.72);
   /* the ticker owns this the whole time the section is on screen */
   will-change: transform;
 }
@@ -831,12 +849,29 @@
 .sv-shade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(4, 7, 12, 0.34) 0%,
-    rgba(4, 7, 12, 0.10) 34%,
-    rgba(4, 7, 12, 0.44) 100%
-  );
+  /* Two scrims, because one cannot do both jobs. The VERTICAL one is
+     the old legibility wash, now mixed from the void instead of a
+     hand-picked blue-black, and lighter than it was — the grade above
+     already took most of the brightness out, and stacking the old
+     values on top of it flattened the stone to mud. The RADIAL one is
+     new: it holds the frame's centre open and lets the edges fall away,
+     so the plate reads as lit rather than as evenly dimmed, and the
+     credits — which live out at the margins, never in the middle —
+     always cross the darker part of the frame. Neither knows where the
+     text is; that last bit is the type's own shadow, below. */
+  background:
+    radial-gradient(
+      118% 82% at 50% 42%,
+      rgb(13 16 18 / 0) 0%,
+      rgb(13 16 18 / 0.18) 58%,
+      rgb(13 16 18 / 0.52) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgb(13 16 18 / 0.30) 0%,
+      rgb(13 16 18 / 0.06) 34%,
+      rgb(13 16 18 / 0.38) 100%
+    );
 }
 
 .sv-list {
@@ -855,32 +890,95 @@
      frame stays pinned through the whole cover. */
   padding: 20svh var(--page-pad) 122svh;
 }
+/* NO measure on the item. It carried `max-width: 34ch` — 34ch of the
+   ROOT font, 332px — which capped the question and the answer at the
+   SAME width. A 42px headline in a 332px column takes about three words
+   a line, so the four questions wrapped to two, three and FOUR lines
+   depending on the sentence, and every item read as one squat paragraph
+   block with a big first sentence. Question and answer now own their
+   own measures, and they are deliberately different widths: that width
+   difference is most of the hierarchy here, since neither one gets a
+   container to be told apart by. */
 .sv-item {
-  max-width: 34ch;
   will-change: transform;
 }
-.sv-q {
+/* THE QUESTION. Measure in `em` OF ITSELF, not in root ch: it is the
+   only unit that keeps the wrap where it was put when the clamp above
+   resizes the type, which is the whole reason the old 34ch drifted. At
+   12em every question lands on two lines at every width — the shortest
+   is too long for one, the longest too short for three — so the four
+   items read as one family instead of four accidents.
+   Sized between --t-h2 and --t-h1: this is the page's first full-bleed
+   dark passage and the credits are the only thing in it, so the old h2
+   was under-scaled for the job. The offsets in the scatter below are
+   what bound the right-hand items, so this cap cannot grow much. */
+.sv .sv-q {
   margin: 0;
-  color: rgba(255, 255, 255, 0.96);
+  font-size: clamp(2rem, 3.4vw, 3rem);
+  max-width: 10.8em;
+  color: var(--text);
+  /* The scrims are global and cannot know where the credits are; this
+     can. Wide, soft and low — it never reads as a shape, it just keeps
+     white type off the carved stone the third item lands on. */
+  text-shadow: 0 1px 26px rgb(13 16 18 / 0.62), 0 1px 3px rgb(13 16 18 / 0.34);
 }
-.sv-a {
-  margin: var(--s-4) 0 0;
-  color: rgba(255, 255, 255, 0.72);
+/* THE ANSWER, deliberately NARROWER than the question it sits under —
+   the question runs to 12em, this to 34ch (~330px), so the block has a
+   silhouette instead of being a rectangle with two type sizes in it.
+   The gap goes to --s-5: 16px under a two-line 48px headline read as a
+   wrap, not as a new voice. */
+.sv .sv-a {
+  margin: var(--s-5) 0 0;
+  max-width: 34ch;
+  /* NOT --text-muted, and this is the one place on the page that is
+     allowed to say so. The dark polarity's muted step is measured
+     against the VOID (8.09:1) and the credits are not on the void —
+     they are on a photograph whose lit stone sits several rungs up the
+     ramp, so that headroom is not there and the paragraphs went thin.
+     --n-4 is the step the ramp itself labels "dark: body text"; there
+     is no role pointing at it because no other dark surface on the page
+     needs one. If a --text-body role is ever added, this becomes it. */
+  color: var(--n-4);
+  text-shadow: 0 1px 20px rgb(13 16 18 / 0.72), 0 1px 2px rgb(13 16 18 / 0.40);
 }
 /* the scatter — abstract placement, not a grid: left, past centre,
    left of centre, right. Vertical gaps deliberately uneven. */
 .sv-item-1 { margin-left: 4%; }
 .sv-item-2 { margin-left: 48%; margin-top: 14svh; }
-.sv-item-3 { margin-left: 16%; margin-top: 18svh; }
+.sv-item-3 { margin-left: 16%; margin-top: 34svh; }
 .sv-item-4 { margin-left: 56%; margin-top: 14svh; }
+/* THE ONE CONSTRAINT THE SCATTER PUTS ON THE MEASURE. Item 3 is the only
+   one with a neighbour to its RIGHT (item 4 at 56%), and the credits drift
+   at different speeds, so two blocks that share horizontal space WILL pass
+   through each other — the invariant the choreography doc states as
+   'adjacent items are kept in different columns'. At 34ch nothing came
+   close; an 11em question reaches far enough that item 3 can brush item 4
+   at the narrow end of the desktop range. So item 3's question is capped by
+   whichever is smaller: its em measure, or the room before the next column.
+   Item 3 against item 2 (to its LEFT) is solved the other way — that
+   margin-top was opened to 34svh, which is why it is the big gap now. */
+.sv-item-3 .sv-q { max-width: min(10.8em, 47%); }
 
 @media (max-width: 57.5rem) {
   .sv-list { padding: 94svh var(--page-pad) 18svh; }
-  /* the scatter survives, gentler — phone columns have no room for 48% */
+  /* The scatter survives, gentler — phone columns have no room for 48%.
+     The GAPS, though, have to be much bigger than the desktop ones and
+     it is not a taste call: down here every item is effectively in the
+     same column, so horizontal separation — the thing that keeps the
+     differential drift from putting two credits on top of each other up
+     there — is simply not available. The only lever left is vertical
+     room, and it has to cover the worst convergence the speed spread
+     (0.72 vs 1.16) can produce over one viewport, which measures ~11%
+     of viewport height between any adjacent pair. Hence ~+16svh on each
+     gap over what the 34ch blocks used to need. */
   .sv-item-1 { margin-left: 0; }
-  .sv-item-2 { margin-left: 10%; margin-top: 18svh; }
-  .sv-item-3 { margin-left: 0; margin-top: 22svh; }
-  .sv-item-4 { margin-left: 12%; margin-top: 16svh; }
+  .sv-item-2 { margin-left: 10%; margin-top: 34svh; }
+  .sv-item-3 { margin-left: 0; margin-top: 38svh; }
+  .sv-item-4 { margin-left: 12%; margin-top: 32svh; }
+  /* the neighbour-column cap is a DESKTOP constraint: down here the
+     scatter collapses to one column, so 47% of it would set item 3's
+     question at half the width of its siblings for no reason. */
+  .sv-item-3 .sv-q { max-width: 10.8em; }
 }
 
 /* ============================================================
