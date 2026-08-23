@@ -1771,6 +1771,47 @@
   }
 }
 
+/* THE LOOP — the plate's ground when a service has one. Sits under
+   everything; the plate's own black stays behind it as the fallback and as
+   what shows while `preload="none"` waits for the element to come on screen. */
+.sc-loop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+/* A SCRIM OVER THE LOOP, and it is not optional. The objects are chrome and
+   glass with their own speculars; a bright moving shader immediately behind
+   them competes for exactly the same highlights and the object stops reading.
+   So the light is knocked back at the centre, where the object is, and left
+   alone at the edges where it is the only thing happening — with the card's
+   own key light laid back over the top so the loop does not erase the one
+   thing that tells the six cards apart. */
+.sc-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      120% 90% at var(--lx) var(--ly),
+      rgb(226 238 246 / 0.1) 0%,
+      rgb(226 238 246 / 0) 62%
+    ),
+    radial-gradient(
+      86% 76% at 50% 52%,
+      rgb(6 8 9 / 0.62) 0%,
+      rgb(6 8 9 / 0.3) 58%,
+      rgb(6 8 9 / 0.08) 100%
+    );
+}
+/* the object rides above both */
+.sc-media .fx { z-index: 2; }
+
 /* ---------- the type ----------
    Name and chip on one line, description under it. The description does not
    hide: six cards this size have the room, and a card whose copy only exists

@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import { SERVICES } from '@/components/v4/services-data'
 import Fractured from '@/components/v4/Fractured'
+import PlateLoop from '@/components/v4/PlateLoop'
 import { gsap } from '@/lib/motion-v4'
 
 /**
@@ -369,6 +370,7 @@ export default function ServiceCards() {
                     stays a lit black surface, which is what the four cards
                     whose objects are still being made look like. */}
                 <span className="sc-media" aria-hidden="true">
+                  {s.loop ? <PlateLoop src={s.loop.src} poster={s.loop.poster} /> : null}
                   {s.object ? <Fractured art={s.object} /> : null}
                 </span>
 

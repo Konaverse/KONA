@@ -55,6 +55,14 @@ export type Service = {
    * a lit surface waiting, which is honest and looks composed.
    */
   object?: Fracture
+  /**
+   * A short abstract shader render that plays behind the object, in the
+   * plate. Built by tools/boomerang.js into a forwards-then-backwards loop —
+   * these are randomised renders whose last frame has nothing to do with
+   * their first, so a plain loop cuts hard once a cycle. Poster is its first
+   * frame, and is the whole treatment under reduced motion.
+   */
+  loop?: { src: string; poster: string }
 }
 
 export const SERVICES: Service[] = [
@@ -69,6 +77,7 @@ export const SERVICES: Service[] = [
     ],
     light: ['18%', '8%'],
     object: CHROME_KNOT,
+    loop: { src: '/services/loops/3d-websites.mp4', poster: '/services/loops/3d-websites.webp' },
   },
   {
     slug: 'web-design',
