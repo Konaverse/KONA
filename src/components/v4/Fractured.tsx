@@ -70,11 +70,17 @@ export default function Fractured({
   art,
   className = '',
   alt = '',
+  showCuts = false,
 }: {
   art: Fracture
   /** sizes and places the picture's box inside the plate; CSS owns geometry */
   className?: string
   alt?: string
+  /** PROTOTYPE ONLY — draw the cut lines over the whole picture. The art is
+      segmented now (user call, 2026-08-23), so a cut has to land on a seam
+      the render already has; eyeballing that against a dark chrome object is
+      hopeless, and this makes it a two-minute job per card. */
+  showCuts?: boolean
 }) {
   const rootRef = useRef<HTMLDivElement | null>(null)
   const pieces = piecesOf(art)
@@ -209,6 +215,13 @@ export default function Fractured({
         ))}
       </div>
       <i className="fx-flash" aria-hidden="true" />
+      {showCuts && (
+        <div className="fx-cuts" aria-hidden="true">
+          {pieces.map((p, i) => (
+            <i key={i} style={{ clipPath: p.clip }} />
+          ))}
+        </div>
+      )}
     </div>
   )
 }

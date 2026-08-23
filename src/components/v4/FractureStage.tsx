@@ -23,6 +23,7 @@ export default function FractureStage({
 }) {
   const cardRef = useRef<HTMLDivElement | null>(null)
   const [p, setP] = useState(0)
+  const [cuts, setCuts] = useState(false)
 
   const scrub = (v: number) => {
     setP(v)
@@ -37,13 +38,17 @@ export default function FractureStage({
     <div>
       <div className="ps-card k-glass" ref={cardRef} data-fx-host>
         <div className="ps-plate">
-          <Fractured art={art} alt="" />
+          <Fractured art={art} alt="" showCuts={cuts} />
         </div>
         <div className="ps-meta">
           <h2>{name}</h2>
           <p>{copy}</p>
         </div>
       </div>
+      <label className="ps-scrub">
+        <input type="checkbox" checked={cuts} onChange={(e) => setCuts(e.target.checked)} />
+        <span>cuts</span>
+      </label>
       <label className="ps-scrub">
         <span>timeline</span>
         <input

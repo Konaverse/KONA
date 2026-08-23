@@ -55,7 +55,7 @@
   font-size: var(--t-small);
   color: var(--text-muted);
 }
-.ps-scrub input { flex: 1; min-width: 0; }
+.ps-scrub input[type="range"] { flex: 1; min-width: 0; }
 .ps-scrub output { font-variant-numeric: tabular-nums; min-width: 4ch; }
 
 /* ============================================================
@@ -118,6 +118,23 @@
   opacity: 0.1;
   transform: scale(0.8);
   pointer-events: none;
+}
+
+/* PROTOTYPE ONLY — the cut figure, drawn over the assembled picture. Each
+   piece is filled faintly and inset by a hair against its neighbours, so
+   every seam shows as a line and the polygons can be walked onto the seams
+   the art itself has. Never shipped: Fractured only renders it on request. */
+.fx-cuts {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: difference;
+}
+.fx-cuts i {
+  position: absolute;
+  inset: 0;
+  background: rgb(70 150 255 / 0.55);
+  transform: scale(0.994);
 }
 
 /* the click of assembly */
