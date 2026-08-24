@@ -189,14 +189,8 @@ export default function SiteFooter() {
         </div>
 
         <div className="ft-foot">
-          <p className="ft-word" aria-label={WORD}>
-            {WORD.split('').map((ch, j) => (
-              <span className="ft-lbox" key={j} aria-hidden="true">
-                <span className="ft-l">{ch}</span>
-              </span>
-            ))}
-          </p>
-
+          {/* the bar rides ABOVE the hairline; the wordmark is the floor
+              itself, sunk a little past the bottom edge (user call) */}
           <div className="k-page ft-bar">
             <p className="ft-fine t-small">
               &copy; {new Date().getFullYear()} Konaverse. All rights reserved.
@@ -215,6 +209,14 @@ export default function SiteFooter() {
               </span>
             </a>
           </div>
+
+          <p className="ft-word" aria-label={WORD}>
+            {WORD.split('').map((ch, j) => (
+              <span className="ft-lbox" key={j} aria-hidden="true">
+                <span className="ft-l">{ch}</span>
+              </span>
+            ))}
+          </p>
         </div>
       </div>
     </footer>

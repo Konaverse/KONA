@@ -2025,7 +2025,10 @@ html.lenis, html.lenis body { height: auto; }
 .ft-word {
   display: flex;
   justify-content: space-between;
-  margin: 0;
+  /* the floor: below the hairline, and sunk a LITTLE past the footer's
+     bottom edge — .ft's overflow clip is what does the cropping. The
+     letters' own rise still happens inside this box's overflow. */
+  margin: var(--s-5) 0 -0.11em;
   padding: 0 var(--page-pad);
   overflow: hidden; /* the crop edge the letters rise out of — a real one */
   font-size: clamp(4rem, 13.2vw, 13rem);
@@ -2054,8 +2057,8 @@ html.lenis, html.lenis body { height: auto; }
   align-items: center;
   gap: var(--s-6);
   padding-block: var(--s-6);
-  margin-top: var(--s-6);
-  border-top: var(--hair) solid var(--hairline-strong);
+  /* the hairline now sits UNDER the bar — the wordmark lives below it */
+  border-bottom: var(--hair) solid var(--hairline-strong);
 }
 .ft-fine {
   margin: 0;

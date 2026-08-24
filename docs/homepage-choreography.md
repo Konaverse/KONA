@@ -886,12 +886,14 @@ the content slides over a held sky: the depth cue. CSS lives in tokens.css
 padding-top ~23svh the WHOLE stack is visible at rest): logo + tagline and the full site
 map (Pages / Socials / Legal, every URL, quiet) · the address at `h2` — biased a little
 below the sky's midpoint (margin auto + 5svh) — with the same drawn underline as §9's ·
-the **KONAVERSE** wordmark, ALL CAPS (text-transform only; the aria-label stays
-"Konaverse"), each letter rising out of the word's own crop edge across the last viewport
-of approach, scrubbed and staggered left to right · the bar: copyright, and bottom-right
-THE NEXT-PAGE ARROW to /about — a ringed arrow whose glyph exits right and re-enters from
-the left on hover, the one element with this move; same 16-box arrow geometry as
-ArrowLink.
+the bar — copyright, and bottom-right THE NEXT-PAGE ARROW to /about (a ringed arrow whose
+glyph exits right and re-enters from the left on hover, the one element with this move;
+same 16-box arrow geometry as ArrowLink) — riding ABOVE the hairline · and THE FLOOR
+(reordered same day, user call): the **KONAVERSE** wordmark, ALL CAPS (text-transform
+only; the aria-label stays "Konaverse"), each letter rising out of the word's own crop
+edge across the last viewport of approach, scrubbed and staggered left to right, the
+whole word sunk a LITTLE past the footer's bottom edge (−0.11em margin; `.ft`'s overflow
+clip does the cropping).
 
 **The sky.** Aurora.tsx (monochrome, --ice-deep at the curtains' feet) at 0.75 opacity
 over its own void, under a top scrim so the sitemap band never sits on the hot centre.
