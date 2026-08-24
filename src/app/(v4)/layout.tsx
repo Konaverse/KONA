@@ -3,6 +3,7 @@ import SmoothScroll from '@/components/v4/SmoothScroll'
 import FluidCursor from '@/components/v4/FluidCursor'
 import GrainField from '@/components/v4/GrainField'
 import PageTransition from '@/components/v4/PageTransition'
+import SiteFooter from '@/components/v4/SiteFooter'
 import '@/styles/tokens.css'
 
 /**
@@ -30,7 +31,7 @@ export default function V4Layout({ children }: { children: React.ReactNode }) {
           aperture menu already takes this stance (it renders OPEN without JS);
           the reveal has to as well. */}
       <noscript>
-        <style>{`.k-reveal{opacity:1!important;filter:none!important;transform:none!important}`}</style>
+        <style>{`.k-reveal{opacity:1!important;filter:none!important;transform:none!important}.ft-l{transform:none!important}`}</style>
       </noscript>
 
       <div className="k-grain" />
@@ -42,7 +43,13 @@ export default function V4Layout({ children }: { children: React.ReactNode }) {
       <FluidCursor />
 
       <SmoothScroll>
-        <PageTransition>{children}</PageTransition>
+        <PageTransition>
+          {children}
+          {/* the footer is part of the page, so it rides the transition
+              sheet with it; the under-reveal is self-contained (see
+              SiteFooter.tsx), so no page root needs to know it is here */}
+          <SiteFooter />
+        </PageTransition>
       </SmoothScroll>
     </div>
   )

@@ -1885,3 +1885,237 @@ html.lenis, html.lenis body { height: auto; }
   /* No roll; the link-level colour transition still carries hover. */
   .k-navlink__line--b { display: none; }
 }
+
+/* ============================================================
+   THE FOOTER — dark, the aurora as its sky, revealed from
+   behind the page (SiteFooter.tsx; 2026-08-24).
+   ------------------------------------------------------------
+   Lives HERE, not in a route stylesheet, because the footer is
+   mounted in the (v4) layout on every route — same lesson .au
+   already carries.
+
+   THE UNDER-REVEAL is self-contained: .ft-inner is counter-
+   translated up by 0.45× of the remaining travel, and .ft's
+   `overflow: clip` cuts it at the seam — so no page above needs
+   a z-raise for this to hold. The sky does NOT move: the
+   content slides over a held aurora, which is the depth cue.
+   ============================================================ */
+.ft {
+  position: relative;
+  min-height: 150svh;
+  background: var(--surface);
+  color: var(--text);
+  overflow: clip;
+}
+.ft-sky {
+  position: absolute;
+  inset: 0;
+  /* the no-WebGL / no-JS ground: still a field with a light in it.
+     The same two washes the aurora paints, as flat gradients. */
+  background:
+    radial-gradient(120% 80% at 38% 96%, rgb(46 95 138 / 0.20), transparent 62%),
+    radial-gradient(90% 70% at 62% 4%, rgb(162 170 174 / 0.08), transparent 60%),
+    var(--n-11);
+}
+.ft-sky .au {
+  position: absolute;
+  inset: 0;
+  /* dimmed toward the void it already renders — one compositor multiply,
+     and what keeps the wordmark legible over the curtains' hot centre */
+  opacity: 0.75;
+}
+/* the sitemap band may never sit on the aurora's bright field */
+.ft-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgb(13 16 18 / 0.88),
+    rgb(13 16 18 / 0.42) 36%,
+    transparent 64%
+  );
+}
+
+.ft-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 150svh;
+  padding-top: clamp(var(--s-9), 12vh, var(--s-11));
+}
+
+/* ---------- identity + the site map ---------- */
+.ft-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--s-8);
+  width: 100%;
+}
+.ft-logo {
+  display: block;
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+.ft-tagline {
+  margin: var(--s-5) 0 0;
+  max-width: 30ch;
+  color: var(--text-muted);
+}
+.ft-cols {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(8rem, auto));
+  gap: var(--s-6) clamp(var(--s-7), 6vw, var(--s-10));
+}
+.ft-col {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+.ft-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--d-instant) var(--e-settle);
+}
+.ft-link:hover {
+  color: var(--text);
+}
+
+/* ---------- the address — same drawn underline as §9's ---------- */
+/* the two autos split the leftover sky between them, which is what pushes
+   the address BELOW the rest-state crop line (the footer shows its last
+   100svh at page end; content in the first 50svh is transit-only, and a
+   line straddling the seam arrives half-cut) */
+.ft-mid {
+  margin-top: auto;
+}
+.ft-mail {
+  display: inline-block;
+  color: var(--text);
+  font-weight: var(--w-light);
+  text-decoration: none;
+  padding-bottom: 4px;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 0% var(--hair);
+  transition: background-size var(--d-base) var(--e-settle);
+}
+.ft-mail:hover {
+  background-size: 100% var(--hair);
+}
+
+/* ---------- the wordmark + the bar ---------- */
+.ft-foot {
+  margin-top: auto; /* pinned to the footer's floor */
+}
+.ft-word {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0 var(--page-pad);
+  overflow: hidden; /* the crop edge the letters rise out of — a real one */
+  font-size: clamp(4rem, 13.2vw, 13rem);
+  line-height: 0.98;
+  font-weight: var(--w-light);
+  letter-spacing: -0.02em;
+  user-select: none;
+}
+.ft-lbox {
+  display: block;
+}
+.ft-l {
+  display: block;
+  transform: translateY(108%); /* parked below the crop; the scrub raises it */
+}
+@media (prefers-reduced-motion: reduce), (scripting: none) {
+  .ft-l {
+    transform: none;
+  }
+}
+
+.ft-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--s-6);
+  padding-block: var(--s-6);
+  margin-top: var(--s-6);
+  border-top: var(--hair) solid var(--hairline-strong);
+}
+.ft-fine {
+  margin: 0;
+  color: var(--text-faint);
+}
+
+/* the next-page arrow: the glyph leaves right and re-enters from the
+   left — the one element on the page with this move. Same 16-box arrow
+   as ArrowLink, so it is the same arrow. */
+.ft-next {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-4);
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--d-instant) var(--e-settle);
+}
+.ft-next:hover {
+  color: var(--text);
+}
+.ft-next-ring {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--r-full);
+  border: var(--hair) solid var(--hairline-strong);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  transition:
+    border-color var(--d-quick) var(--e-settle),
+    transform var(--d-quick) var(--e-settle);
+}
+.ft-next:hover .ft-next-ring {
+  border-color: var(--text);
+  transform: scale(1.06);
+}
+.ft-next-a {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  transition: transform var(--d-base) var(--e-settle);
+}
+.ft-next-a2 {
+  transform: translateX(-220%);
+}
+.ft-next:hover .ft-next-a1 {
+  transform: translateX(220%);
+}
+.ft-next:hover .ft-next-a2 {
+  transform: translateX(0);
+}
+
+@media (max-width: 57.5rem) {
+  .ft,
+  .ft-inner {
+    min-height: 0;
+  }
+  .ft-top {
+    flex-direction: column;
+    gap: var(--s-7);
+  }
+  .ft-cols {
+    grid-template-columns: repeat(2, minmax(8rem, auto));
+  }
+  .ft-mail {
+    font-size: var(--t-h3);
+  }
+  .ft-word {
+    font-size: clamp(2.6rem, 12vw, 5rem);
+  }
+}
