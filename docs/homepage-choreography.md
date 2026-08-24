@@ -870,26 +870,28 @@ plain row under 57.5rem.
 
 ---
 
-## Footer *(BUILT 2026-08-24, user-directed: ~150vh, dark, the aurora as its sky, revealed from behind at a slower speed)* — SiteFooter.tsx, mounted in the (v4) layout on every route
+## Footer *(BUILT 2026-08-24, user-directed; RETIMED + CUT TO 120svh same day)* — SiteFooter.tsx, mounted in the (v4) layout on every route
 
-**The under-reveal.** The footer sits BEHIND the page: `.ft-inner` is counter-translated
-−0.45× of the remaining travel (e = rect.bottom − vh), so the content moves at 0.55× hand
-speed and is already partway up when the section above scrolls off it. Self-contained:
-`.ft`'s `overflow: clip` cuts the pre-shifted content at the seam, so no page root needs a
+**The under-reveal, and its TIMING CONTRACT (user call):** the content's top edge meets
+the viewport's top edge EXACTLY as the section above fully leaves the viewport. That pins
+the formula: **y = −0.45 × max(0, rect.top)** — dragged at 0.55× hand speed through the
+reveal, flush at the connect moment, then hand speed through the remaining 20svh to page
+end (so the bar at the floor is always reachable). Self-contained: `.ft`'s
+`overflow: clip` cuts the pre-shifted content at the seam, so no page root needs a
 z-raise. **The aurora does NOT translate** — it lives in `.ft-sky` outside the mover, so
-the content slides over a held sky: the depth cue. Same maths family as §5's burial,
-run in reverse. CSS lives in tokens.css (layout-mounted → a route stylesheet would 2×2
-the canvas — the .au lesson).
+the content slides over a held sky: the depth cue. CSS lives in tokens.css
+(layout-mounted → a route stylesheet would 2×2 the canvas — the .au lesson).
 
-**On screen, top to bottom** (150svh; the first ~50svh is transit-only — content there is
-seen during the reveal, and the two `margin-top: auto`s keep the address BELOW the
-rest-state crop line): logo + tagline and the full site map (Pages / Socials / Legal,
-every URL, quiet) · the address at `h2` with the same drawn underline as §9's · the
-KONAVERSE wordmark at ~13vw, each letter rising out of the word's own crop edge across
-the last viewport of approach, scrubbed and staggered left to right · the bar: copyright,
-and bottom-right THE NEXT-PAGE ARROW to /about — a ringed arrow whose glyph exits right
-and re-enters from the left on hover, the one element with this move; same 16-box arrow
-geometry as ArrowLink.
+**On screen, top to bottom** (120svh; rest-state crop is the last 100svh, so with
+padding-top ~23svh the WHOLE stack is visible at rest): logo + tagline and the full site
+map (Pages / Socials / Legal, every URL, quiet) · the address at `h2` — biased a little
+below the sky's midpoint (margin auto + 5svh) — with the same drawn underline as §9's ·
+the **KONAVERSE** wordmark, ALL CAPS (text-transform only; the aria-label stays
+"Konaverse"), each letter rising out of the word's own crop edge across the last viewport
+of approach, scrubbed and staggered left to right · the bar: copyright, and bottom-right
+THE NEXT-PAGE ARROW to /about — a ringed arrow whose glyph exits right and re-enters from
+the left on hover, the one element with this move; same 16-box arrow geometry as
+ArrowLink.
 
 **The sky.** Aurora.tsx (monochrome, --ice-deep at the curtains' feet) at 0.75 opacity
 over its own void, under a top scrim so the sitemap band never sits on the hot centre.

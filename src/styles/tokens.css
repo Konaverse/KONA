@@ -1895,14 +1895,18 @@ html.lenis, html.lenis body { height: auto; }
    already carries.
 
    THE UNDER-REVEAL is self-contained: .ft-inner is counter-
-   translated up by 0.45× of the remaining travel, and .ft's
-   `overflow: clip` cuts it at the seam — so no page above needs
+   translated by −0.45 × max(0, rect.top) — dragged through the
+   reveal, FLUSH the instant the section above has fully left
+   (the timing contract; see SiteFooter.tsx) — and .ft's
+   `overflow: clip` cuts it at the seam, so no page above needs
    a z-raise for this to hold. The sky does NOT move: the
    content slides over a held aurora, which is the depth cue.
+   At rest the footer shows its last 100svh; only the first
+   20svh is transit-flavoured now, so the whole stack sits low.
    ============================================================ */
 .ft {
   position: relative;
-  min-height: 150svh;
+  min-height: 120svh;
   background: var(--surface);
   color: var(--text);
   overflow: clip;
@@ -1941,8 +1945,10 @@ html.lenis, html.lenis body { height: auto; }
   z-index: 1;
   display: flex;
   flex-direction: column;
-  min-height: 150svh;
-  padding-top: clamp(var(--s-9), 12vh, var(--s-11));
+  min-height: 120svh;
+  /* deep enough that the identity and the site map clear the 20svh
+     rest-state crop — the "pushed down" the 120svh cut asked for */
+  padding-top: clamp(8rem, 23svh, 15rem);
 }
 
 /* ---------- identity + the site map ---------- */
@@ -1993,6 +1999,8 @@ html.lenis, html.lenis body { height: auto; }
    line straddling the seam arrives half-cut) */
 .ft-mid {
   margin-top: auto;
+  /* biased a little below the sky's midpoint (user call) */
+  padding-top: 5svh;
 }
 .ft-mail {
   display: inline-block;
@@ -2024,6 +2032,7 @@ html.lenis, html.lenis body { height: auto; }
   line-height: 0.98;
   font-weight: var(--w-light);
   letter-spacing: -0.02em;
+  text-transform: uppercase; /* display form only — aria-label stays "Konaverse" */
   user-select: none;
 }
 .ft-lbox {

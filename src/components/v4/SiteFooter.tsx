@@ -10,17 +10,19 @@ import { gsap } from '@/lib/motion-v4'
  * Konaverse entering letter by letter, and a bottom-right arrow to the
  * next page).
  *
- * THE UNDER-REVEAL. The footer sits behind the page: `.ft-inner` is
- * counter-translated by −0.45× of the container's remaining travel
- * (e = rect.bottom − vh), so the content moves at 0.55× hand speed and is
- * ALREADY partway up when the section above scrolls off it. The content
- * this pushes above the container's top edge hides behind the page,
- * which is why `.hm` (and any v4 page root) carries `z-index: 1` and an
- * opaque ground — without that the pre-revealed footer pokes through the
- * last section. The AURORA does not translate: it lives in `.ft-sky`,
- * outside the mover, so the sky holds still while the content slides
- * over it — one more depth cue for free. Same maths family as §5's
- * burial, run in reverse.
+ * THE UNDER-REVEAL, and its TIMING CONTRACT (user call 2026-08-24): the
+ * content's top edge meets the viewport's top edge EXACTLY as the section
+ * above fully leaves the viewport. That pins the formula:
+ * y = −0.45 × max(0, rect.top) — while the container's top is still below
+ * the viewport top (the reveal), the content rides 45% behind the hand,
+ * already partway up when the section above scrolls off it and landing
+ * flush at rect.top = 0; from the connect moment on, y is 0 and the
+ * footer scrolls at hand speed through its remaining 20svh to the page
+ * end, so the bar at its floor is always reachable. `.ft`'s overflow clip
+ * swallows what the shift pushes past the seam. The AURORA does not
+ * translate: it lives in `.ft-sky`, outside the mover, so the sky holds
+ * still while the content slides over it — one more depth cue for free.
+ * Same maths family as §5's burial, run in reverse.
  *
  * THE WORDMARK. KONAVERSE at ~13vw, each letter rising out of a real
  * crop edge (the word's own overflow) across the LAST viewport of
@@ -68,7 +70,7 @@ const LEGAL = [
 
 const WORD = 'Konaverse'
 
-/** Content moves at (1 − DRAG) of hand speed. */
+/** Content moves at (1 − DRAG) of hand speed during the reveal. */
 const DRAG = 0.45
 /** Letters assemble across this fraction of the last viewport of travel. */
 const WORD_SPAN = 0.9
@@ -96,9 +98,11 @@ export default function SiteFooter() {
       const r = root.getBoundingClientRect()
       const vh = window.innerHeight
       if (r.top > vh + 100) return
-      /* remaining travel: 0 at page end, container-height at entry */
+      /* the timing contract: dragged only while the seam is still coming
+         up the viewport; flush the instant the section above is gone */
+      gsap.set(inner, { y: -DRAG * Math.max(0, r.top) })
+      /* remaining travel: 0 at page end — the wordmark's clock */
       const e = Math.max(0, r.bottom - vh)
-      gsap.set(inner, { y: -DRAG * e })
 
       /* the wordmark, scrubbed across the last viewport of approach */
       const q = 1 - clamp01(e / (vh * WORD_SPAN))
