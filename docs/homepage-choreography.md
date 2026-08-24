@@ -854,9 +854,11 @@ the page's one address, so it takes the one flourish. No form on the homepage.
 **The plates.** Two framed stills (the /work pair the featured set doesn't use,
 PLACEHOLDER until B1; interim CSS grayscale on the IMG, same status as §3's grade) at
 `--r-lg` with `--lift-4`, drifting at −64px/vh and +42px/vh as the section travels —
-one behind the page, one ahead of it, so the parallax reads as depth. Plate A bleeds
-off the TOP edge, plate B off the BOTTOM-RIGHT; nothing photographic may sit under the
-button. gsap.ticker + rect math, transform-only, aria-hidden.
+one behind the page, one ahead of it, so the parallax reads as depth. **Both sit WHOLE**
+(amended 2026-08-24, user call — the bleed composition read as cropping): the section is
+taller (padding 28vh) and each plate keeps more margin than its drift can spend, with the
+overflow clip kept only as the safety net. Nothing photographic may sit under the button.
+gsap.ticker + rect math, transform-only, aria-hidden.
 
 **The social rail.** Instagram · Facebook · LinkedIn vertically up the right edge,
 reading bottom-to-top like a book spine; muted, ink on hover. Lies back down into a

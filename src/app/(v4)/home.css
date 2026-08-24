@@ -1983,8 +1983,11 @@
 .inv {
   position: relative;
   background: var(--surface);
-  padding-block: clamp(10rem, 22vh, 16rem);
-  overflow: clip; /* the plates drift past the section's edges */
+  /* tall enough that both plates sit WHOLE (user call 2026-08-24 — the
+     bleed-off-the-edge composition read as cropping); the clip stays as
+     the safety net for the drift, not as a framing device */
+  padding-block: clamp(13rem, 28vh, 22rem);
+  overflow: clip;
 }
 .inv-body {
   position: relative;
@@ -2045,16 +2048,19 @@
   filter: grayscale(1) contrast(1.04);
 }
 .inv-plate-a {
-  /* bleeds off the top edge — it reads as arriving from the section above */
-  top: -5%;
+  /* whole, with margin the drift cannot spend: at −64px/vh the plate
+     rises ≤ ~85px while its edge is on screen, and 6% of this taller
+     section is more than that */
+  top: 6%;
   right: 4%;
   width: clamp(190px, 21vw, 300px);
   aspect-ratio: 4 / 5;
 }
 .inv-plate-b {
-  /* opposite corner, bleeding off the bottom — the action row owns the
-     bottom-LEFT, so nothing photographic may sit under the button */
-  bottom: -7%;
+  /* opposite corner, same rule against its own +42px/vh — and the action
+     row owns the bottom-LEFT, so nothing photographic may sit under the
+     button */
+  bottom: 8%;
   right: 17%;
   width: clamp(150px, 16vw, 240px);
   aspect-ratio: 1 / 1;
@@ -2106,7 +2112,7 @@
     display: none;
   }
   .inv-plate-a {
-    top: -2%;
+    top: 3%;
     right: 4%;
     width: clamp(120px, 30vw, 200px);
     opacity: 0.85;
