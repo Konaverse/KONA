@@ -5,7 +5,7 @@ import ClaimEntrance from '@/components/v4/ClaimEntrance'
 import SolveCredits from '@/components/v4/SolveCredits'
 import ServiceCards from '@/components/v4/ServiceCards'
 import ProjectSheets, { type SheetProject } from '@/components/v4/ProjectSheets'
-import Process from '@/components/v4/Process'
+import ArrowLink from '@/components/v4/ArrowLink'
 import Invitation from '@/components/v4/Invitation'
 import './home.css'
 
@@ -108,14 +108,21 @@ export default function HomePage() {
           the tree, unimported, for comparison. */}
       <ServiceCards />
 
-      {/* §5 — the page-turn. Full bleed, pins itself. `buried` and §7's own
-          overlap are a PAIR: §7 turns in over the last sheet as an opaque
-          light sheet while this stage drifts up at 0.45× under it. The "All
-          projects" hub link now rides the top of §7's rising sheet. */}
-      <ProjectSheets projects={FEATURED} buried />
+      {/* §5 — the page-turn. Full bleed, pins itself. NOTE: `buried` is off
+          while §7 is unmounted — the tail viewport and the 0.45× drift only
+          exist to be climbed over, and §7 is the thing that climbs. */}
+      <ProjectSheets projects={FEATURED} />
 
-      {/* §7 — how we work: the pinned steps */}
-      <Process />
+      {/* §7 (Process) is UNMOUNTED for a user experiment (2026-08-24) — not
+          deleted. To restore: re-import Process, mount it here, put `buried`
+          back on ProjectSheets, and remove the workfoot below (the "All
+          projects" hub link rides §7's rising sheet when it is mounted). */}
+
+      {/* the hub link the choreography specifies alongside the three tile
+          links — four links out of §5, no more */}
+      <div className="k-section k-page hm-workfoot">
+        <ArrowLink href="/work">All projects</ArrowLink>
+      </div>
 
       {/* §9 — the invitation: the line, the button, the address */}
       <Invitation />
