@@ -8,15 +8,18 @@ import { gsap } from '@/lib/motion-v4'
 /**
  * SECTION 7 — HOW WE WORK: the thread (user-directed 2026-08-19).
  *
- * THE ARRIVAL, and it is the reason this section exists in this form: §7 is
- * an opaque white sheet with `margin-top: -100svh` that rises OVER §6's
- * pinned dark stage and buries it — the same grammar §4 uses on §3. §6 keeps
- * its pin, and gains one extra viewport of runway at the end (Interlude's
- * `buried` prop) whose only job is this burial: through it the interlude's
- * frame DRIFTS UP at 0.45× scroll while this sheet climbs at hand speed. It
- * is not frozen and it is not travelling with the page; it is moving slower,
- * which is the whole depth effect. The two are a pair — `buried` on the
- * Interlude and this section's `is-over` are set together in page.tsx.
+ * THE ARRIVAL IS GONE, and it was the reason this section existed in this
+ * form. §7 used to be an opaque white sheet with `margin-top: -100svh` that
+ * rose OVER §6's pinned dark stage and buried it — the same grammar §4 uses
+ * on §3 — while the stage drifted up at 0.45× underneath. That was a PAIR
+ * with the Interlude's `buried` prop, and §6 was deleted 2026-08-24, so both
+ * halves came out together: an overlap with nothing beneath it would simply
+ * eat a viewport of the page and cover §5's link out.
+ *
+ * SO THIS SECTION CURRENTLY ARRIVES PLAINLY, and that is a placeholder, not
+ * a decision. §7 is being REDESIGNED ENTIRELY (user call, same day); its new
+ * arrival gets decided with it. Everything below describes the outgoing
+ * design and is kept only until that lands.
  *
  * ON SCREEN. Four moves in an asymmetric left/right stagger, connected by ONE
  * hairline THREAD that draws itself as you scroll: an SVG rebuilt from the
@@ -39,7 +42,7 @@ import { gsap } from '@/lib/motion-v4'
  * SEO/no-JS: every move, body and deliverable is server-rendered. Without JS
  * the thread is replaced by a plain CSS spine (`.pr-phases` loses `is-live`),
  * nothing is hidden, and the section reads as four stacked blocks. Reduced
- * motion: thread fully drawn, all nodes lit, no head, no burial overlap.
+ * motion: thread fully drawn, all nodes lit, no head.
  * Copy is PLACEHOLDER — the user writes the real lines (checklist 6.6).
  */
 
@@ -138,10 +141,8 @@ export default function Process() {
       return () => ro.disconnect()
     }
 
-    /* §6's burial: this sheet climbs over the pinned interlude. Paired with
-       `buried` on <Interlude> in page.tsx — one sets the overlap, the other
-       the 0.45× drift underneath it. */
-    root.classList.add('is-over')
+    /* the burial used to be armed here (`is-over`); it went with §6 on
+       2026-08-24 — see the header. */
 
     const lit = nodes.map(() => false)
 

@@ -661,6 +661,32 @@ html:has(.k-root)::-webkit-scrollbar {
 }
 
 /* ============================================================
+   THE AURORA CANVAS — Aurora.tsx's sizing contract.
+   ------------------------------------------------------------
+   All that survives of §6, which was deleted 2026-08-24; the
+   shader is held for the footer. Mechanism and palette live in
+   Aurora.tsx.
+
+   IT LIVES HERE, NOT IN home.css, and that is the whole point:
+   a route-scoped stylesheet only loads on its own route, so the
+   canvas came up 2x2 the first time it was mounted anywhere else
+   (a canvas with no client box clamps its backing store and
+   draws nothing). The footer is going to be global, so its one
+   sizing rule has to be global too.
+
+   The HOST owns the box and the ground. This canvas has no
+   colour of its own: with no WebGL it hides itself, and with no
+   JS it is an undrawn canvas, which is transparent. So whatever
+   the host paints underneath is the fallback, and the host must
+   paint something.
+   ============================================================ */
+.au {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ============================================================
    THE REVEAL — the signature. Refraction, never a fade.
    ------------------------------------------------------------
    Two expressions of ONE idea, not two signatures. The crop edge

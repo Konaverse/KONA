@@ -6,7 +6,6 @@ import SolveCredits from '@/components/v4/SolveCredits'
 import ServiceCards from '@/components/v4/ServiceCards'
 import ProjectSheets, { type SheetProject } from '@/components/v4/ProjectSheets'
 import ArrowLink from '@/components/v4/ArrowLink'
-import Interlude from '@/components/v4/Interlude'
 import Process from '@/components/v4/Process'
 import './home.css'
 
@@ -117,12 +116,6 @@ export default function HomePage() {
       <div className="k-section k-page hm-workfoot">
         <ArrowLink href="/work">All projects</ArrowLink>
       </div>
-
-      {/* §6 — the interlude: CRT turn-on, aurora stage, the ultra card.
-          `buried` and §7's own overlap are a PAIR: §7 climbs over this
-          section as an opaque sheet while the frame below drifts at 0.45×.
-          Changing one without the other breaks the handoff. */}
-      <Interlude buried />
 
       {/* §7 — how we work: the thread, drawn on scroll */}
       <Process />

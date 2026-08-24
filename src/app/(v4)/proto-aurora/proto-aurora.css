@@ -1,0 +1,54 @@
+/* AURORA HARNESS — throwaway chrome. What graduates to the footer is
+   Aurora.tsx and nothing in this file. */
+
+.pa {
+  background: var(--n-11);
+  min-height: 100svh;
+  padding-bottom: 6rem;
+}
+
+/* Both hosts paint their own ground, per the .au contract: with no WebGL
+   the canvas hides itself and this is what shows. A layered gradient, not a
+   flat fill — the fallback should still read as a field with a light in it. */
+.pa-full,
+.pa-band {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 80% at 38% 92%, rgb(46 95 138 / 0.20), transparent 62%),
+    radial-gradient(90% 70% at 62% 8%, rgb(162 170 174 / 0.10), transparent 60%),
+    var(--n-11);
+}
+.pa-full {
+  height: 100svh;
+}
+/* a plausible footer: tall enough for real links, nowhere near a viewport */
+.pa-band {
+  height: 46svh;
+  margin-top: 4rem;
+}
+
+.pa-cap {
+  position: absolute;
+  left: var(--page-pad);
+  bottom: clamp(2rem, 6vh, 4rem);
+  max-width: 52ch;
+}
+.pa-cap h1 {
+  margin: 0 0 var(--s-4);
+}
+.pa-cap p {
+  margin: 0;
+  color: var(--text-muted);
+}
+.pa-cap code {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.9em;
+  color: var(--text);
+}
+
+.pa-note {
+  margin: var(--s-4) 0 0;
+  padding: 0 var(--page-pad);
+  color: var(--text-muted);
+}
