@@ -891,8 +891,10 @@ glyph exits right and re-enters from the left on hover, the one element with thi
 same 16-box arrow geometry as ArrowLink) — riding ABOVE the hairline · and THE FLOOR
 (reordered same day, user call): the **KONAVERSE** wordmark, ALL CAPS (text-transform
 only; the aria-label stays "Konaverse"), each letter rising out of the word's own crop
-edge across the last viewport of approach, scrubbed and staggered left to right, the
-whole word sunk a LITTLE past the footer's bottom edge (−0.11em margin; `.ft`'s overflow
+edge across the last ~quarter viewport of approach (WORD_SPAN 0.26 — retimed when the
+word moved to the floor: it only clears the bottom edge late, and the old 0.9 window
+arrived assembled), scrubbed and staggered left to right, the whole word sunk a LITTLE
+past the footer's bottom edge (−0.11em margin; `.ft`'s overflow
 clip does the cropping).
 
 **The sky.** Aurora.tsx (monochrome, --ice-deep at the curtains' feet) at 0.75 opacity

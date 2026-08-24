@@ -72,8 +72,12 @@ const WORD = 'Konaverse'
 
 /** Content moves at (1 − DRAG) of hand speed during the reveal. */
 const DRAG = 0.45
-/** Letters assemble across this fraction of the last viewport of travel. */
-const WORD_SPAN = 0.9
+/** Letters assemble across this fraction of the last viewport of travel.
+ *  Tuned DOWN from 0.9 when the word moved to the floor (user call): it
+ *  only clears the bottom edge in roughly the last fifth of the travel,
+ *  so a wider window meant arriving assembled. This starts the rise just
+ *  as the word comes into view and lands the last letter at page end. */
+const WORD_SPAN = 0.26
 
 const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
 const smooth = (v: number) => {
