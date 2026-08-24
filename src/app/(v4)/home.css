@@ -474,18 +474,14 @@
   stroke-width: 1.25;
   vector-effect: non-scaling-stroke;
 }
-/* the picture breathes inside a still window */
-.hw-img {
-  transform-box: fill-box;
-  transform-origin: 50% 40%;
-  animation: hw-ken 26s ease-in-out infinite alternate;
-}
-@keyframes hw-ken {
-  from { transform: scale(1); }
-  to   { transform: scale(1.06); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .hw-img { animation: none; }
+/* the picture is a looping video (2026-08-24) — the footage breathes on
+   its own, so the ken-burns keyframes that used to live here are gone.
+   The foreignObject is the authored 1208x680 plate; the video covers it. */
+.hw-vid {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .hw-mimg { display: none; }
@@ -710,7 +706,7 @@
    silent — the SVG stays for the live rect — and the claim's white sheet
    opens so the landed GL sheet IS its background. Never applies to no-JS /
    reduced motion / mobile, which keep the plain DOM forms. */
-.hm-glhero .hw-shape .hw-img,
+.hm-glhero .hw-shape .hw-vidbox,
 /* the catch goes with the picture: once GL owns the sheet, a DOM lit edge
    would still be sitting in the hero's old footprint */
 .hm-glhero .hw-edge {
@@ -826,20 +822,15 @@
   width: 100%;
   height: calc(100% + 126vh);
   object-fit: cover;
-  /* THE GRADE — INTERIM, and the one place a filter ships on this page.
-     The Bosra plate is warm gold sandstone against a saturated blue sky:
-     two hues, in the section that is meant to be the page's first proper
-     void. Monochrome plus a contrast lift and a hard darkening is the
-     cheap version of the grade the real asset will arrive already
-     carrying (user edits imagery outside this repo) — this holds the
-     section to the direction until it does, and comes out in one line.
-     Pushed harder than tools/preview-grade.js's generic media pass
-     because sandstone in full sun sits far brighter than the portrait
-     that recipe was tuned on, and the credits have to live on top of it.
-     SAFE HERE: a filter builds a stacking context on the IMG only. It
-     must never move up to .k-root or a wrapper — that is what silently
-     kills the fluid cursor's difference blend (see FluidCursor.tsx). */
-  filter: grayscale(1) contrast(1.22) brightness(0.72);
+  /* THE GRADE IS BAKED INTO THE ASSET (2026-08-24). The interim CSS
+     filter that graded the Bosra plate live — grayscale(1)
+     contrast(1.22) brightness(0.72) — is now burned into bosra.webp
+     itself, exact same recipe, exact same look. It came off because it
+     was half of the section's arrival hitch: a live filter re-rasterizes
+     a 17-megapixel layer the ticker is also translating. (The other
+     half, the deferred first decode, is warmed at mount — see
+     SolveCredits.) If the plate is ever swapped, re-bake the grade or
+     the section falls out of the noir direction. */
   /* the ticker owns this the whole time the section is on screen */
   will-change: transform;
 }

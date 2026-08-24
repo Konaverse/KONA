@@ -355,8 +355,11 @@ export default function HeroTitle() {
     // ---- entrance: the words arrive as pure text, then the pills sew in.
     // The arrival keeps its quick spirit but breathes (user, third pass:
     // "like now but smoother"): a longer rise and a real stagger, settled
-    // by ~0.94s — just inside SEW, so the boxes only ever push still text. ----
-    const intro = gsap.timeline()
+    // by ~0.94s — just inside SEW, so the boxes only ever push still text.
+    // PAUSED until the peel's cover is up (the opening gate, 2026-08-24):
+    // the words live UNDER the full-page sheet, and the sew this timeline
+    // fires is what launches the container's carve — one clock, from arm. ----
+    const intro = gsap.timeline({ paused: true })
     intro.fromTo(
       words,
       { yPercent: 70, filter: 'blur(12px)', opacity: 0 },
@@ -379,6 +382,11 @@ export default function HeroTitle() {
       gsap.killTweensOf(words)
       gsap.set(items, { clearProps: 'transform,filter,opacity' })
       comp = HOME
+      /* the CLOCK SIGNAL (2026-08-24, user): the container's opening carve
+         (HeroPeel's uMorph) launches on this event, same duration, same
+         ease — the boxes expanding and the sheet giving way are one motion,
+         so the pills read as PUSHING the container into its shape */
+      window.dispatchEvent(new Event('k-hero-sew'))
       morph(
         () => {
           flow.classList.remove('is-pre')
@@ -411,7 +419,20 @@ export default function HeroTitle() {
       comp = pick()
       morph(() => applyComp(comp))
     }
-    timer = setTimeout(tick, SEW * 1000 + HOLD_MIN)
+
+    /* the opening gate: everything above waits for the peel's cover
+       ('k-peel-armed'), with a timeout fallback for the no-GL paths —
+       mobile, no WebGL, a failed video — where the headline must still
+       arrive on its own clock */
+    let begun = false
+    const begin = () => {
+      if (begun || !live) return
+      begun = true
+      intro.play()
+      timer = setTimeout(tick, SEW * 1000 + HOLD_MIN)
+    }
+    window.addEventListener('k-peel-armed', begin, { once: true })
+    const fallback = setTimeout(begin, 1200)
 
     // a headline that re-lays-out every few seconds forever is not free — it
     // holds still while it is off screen
@@ -425,6 +446,8 @@ export default function HeroTitle() {
 
     return () => {
       live = false
+      window.removeEventListener('k-peel-armed', begin)
+      clearTimeout(fallback)
       if (timer) clearTimeout(timer)
       io?.disconnect()
       intro.kill()

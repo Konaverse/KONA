@@ -1567,6 +1567,15 @@ html.lenis, html.lenis body { height: auto; }
   overflow: hidden;
   background: var(--surface-raised);
   padding: var(--s-5) var(--page-pad) 0;
+  /* Hidden at REST BY CSS, not only by the layout effect (2026-08-24).
+     The overlay is server-rendered OPEN so that no-JS degrades to a
+     visible sitemap — but once the burger owned every width, desktop
+     painted that open state for the beat between first paint and
+     hydration (the refresh flash the user caught). Default hidden kills
+     the flash; ApertureMenu's <noscript> style restores visibility for
+     the no-JS sitemap, and GSAP's inline visibility owns open/close at
+     runtime exactly as before. */
+  visibility: hidden;
 }
 .k-aperture__bar {
   display: flex; align-items: center; justify-content: space-between;

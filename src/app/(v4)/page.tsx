@@ -10,36 +10,38 @@ import Invitation from '@/components/v4/Invitation'
 import './home.css'
 
 /**
- * §5's three featured projects. PLACEHOLDER project data and stand-in
- * artwork (the moody-blue design/images set, converted to public/work/) —
- * both replaced when real case studies and recordings land (B1). The same
+ * §5's three featured projects — REAL WORK as of 2026-08-24 (user-supplied
+ * links). Artwork is each live site's own hero, captured at 1440x1000@2x
+ * (tools/shot.js's sibling recipe) and encoded to public/work/. The same
  * component runs on /work with the full set; these three are the featured
  * subset, per the choreography's "three projects, one sheet each".
  *
- * hrefs point at the work hub until case-study routes exist — the
- * choreography wants each sheet linking to its own case study.
+ * hrefs point at the LIVE sites until case-study routes exist — the
+ * choreography wants each sheet linking to its own case study eventually.
+ * YEARS: Lumière states 2026 in its own footer; the other two are the
+ * user's to confirm (marked provisional, not scraped).
  */
 const FEATURED: SheetProject[] = [
   {
-    title: 'Meridian',
-    line: 'A brand and site built as one continuous story.',
+    title: 'Dimitris Tzankatian',
+    line: 'A videographer’s site that opens like his showreel — every frame with a purpose.',
+    year: '2025', // provisional — user to confirm
+    href: 'https://dtzankatian.com',
+    image: '/work/tzankatian.webp',
+  },
+  {
+    title: 'Los Santos Barbershop',
+    line: 'Nicosia’s barbershop set in type as sharp as the fades.',
+    year: '2024', // provisional — user to confirm
+    href: 'https://lossantosbarbers.com',
+    image: '/work/lossantos.webp',
+  },
+  {
+    title: 'Lumière Éclat',
+    line: 'A scroll-driven story of light and steel.',
     year: '2026',
-    href: '/work',
-    image: '/work/fog.webp',
-  },
-  {
-    title: 'Atlas Freight',
-    line: 'A logistics platform that reads like a dashboard should.',
-    year: '2025',
-    href: '/work',
-    image: '/work/city.webp',
-  },
-  {
-    title: 'Nord Studio',
-    line: 'One page, one argument, no scroll wasted.',
-    year: '2025',
-    href: '/work',
-    image: '/work/hall.webp',
+    href: 'https://watchweb.vercel.app',
+    image: '/work/lumiere.webp',
   },
 ]
 

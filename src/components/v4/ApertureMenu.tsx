@@ -300,6 +300,13 @@ export default function ApertureMenu({
 
   return (
     <div ref={rootRef} className="k-nav-root">
+      {/* the no-JS sitemap: tokens.css hides the overlay at rest (killing
+          the pre-hydration flash of the server-rendered OPEN state); with
+          scripts off, this restores it so the menu still degrades to a
+          visible sitemap */}
+      <noscript>
+        <style>{`.k-aperture{visibility:visible!important}`}</style>
+      </noscript>
       {/* ---- persistent chrome. Contact never hides behind the burger. ---- */}
       <div ref={barRef} className="k-nav-bar">
         <a href="/" className="k-nav-brand">{brand}</a>

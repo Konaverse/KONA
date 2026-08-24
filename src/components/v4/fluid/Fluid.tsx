@@ -132,8 +132,22 @@ export default function Fluid({
 
   /* -------------------------------------------------------------- materials */
   const materials = useMemo(() => {
+    /* the vertex shader ships IN the constructor — it used to be patched on
+       in the useEffect below, but that effect is passive (runs after paint)
+       and this memo re-runs on every resize, so R3F could draw a fresh
+       material one frame BEFORE the patch landed. Three then compiled it
+       with its default vertex shader — no vL/vR/vT/vB — and the neighbour-
+       sampling fragments failed to link ("FRAGMENT varying vL does not
+       match any VERTEX varying", 2026-08-24). Constructed complete, the
+       race has nothing to race. */
     const mk = (fragmentShader: string, uniforms: Record<string, { value: unknown }>) =>
-      new ShaderMaterial({ uniforms: { ...uniforms, texelSize: { value: new Vector2() } }, fragmentShader })
+      new ShaderMaterial({
+        uniforms: { ...uniforms, texelSize: { value: new Vector2() } },
+        vertexShader: BASE_VERT,
+        fragmentShader,
+        depthTest: false,
+        depthWrite: false,
+      })
 
     return {
       advection: mk(ADVECTION_FRAG, {
@@ -166,9 +180,6 @@ export default function Fluid({
     const aspect = size.width / (size.height + 400)
     Object.values(materials).forEach((m) => {
       ;(m.uniforms.texelSize.value as Vector2).set(1 / (O.simRes * aspect), 1 / O.simRes)
-      m.vertexShader = BASE_VERT
-      m.depthTest = false
-      m.depthWrite = false
     })
     return () => Object.values(materials).forEach((m) => m.dispose())
   }, [materials, size, O.simRes])

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { gsap } from '@/lib/motion-v4'
+import { gsap, EASE, DUR } from '@/lib/motion-v4'
 
 /**
  * THE HERO PEEL (2026-08-19) — our own move, built on the Lusion mechanic.
@@ -37,12 +37,14 @@ import { gsap } from '@/lib/motion-v4'
  * - CONTINUITY: at rest (uShow ~ 0) the DOM staircase stays visible and the
  *   GL draws nothing — so the page-transition clone (which cannot clone
  *   canvas pixels) always carries a real image. At the first scrolled pixel
- *   the driver flips `hm-glhero` on and draws the sheet in the DOM image's
+ *   the driver flips `hm-glhero` on and draws the sheet in the DOM video's
  *   exact place: same rect (getBoundingClientRect carries the entrance
- *   transform), same opacity (mirrored from computed style), same ken-burns
- *   (read live off the CSS animation's computed matrix) and same parallax
- *   (read live via gsap.getProperty off .hw-pan) — the swap is invisible.
- *   Ken-burns and parallax damp away as the sheet becomes a background.
+ *   transform), same opacity (mirrored from computed style), the SAME VIDEO
+ *   ELEMENT as the texture (2026-08-24 — its current frame re-uploaded every
+ *   draw, so the loop keeps playing inside the fold and can never drift from
+ *   the DOM), and same parallax (read live via gsap.getProperty off .hw-pan)
+ *   — the swap is invisible. Parallax damps away as the sheet becomes a
+ *   background; the old ken-burns left when the footage arrived.
  *
  * LAYERING: canvas fixed, z-index 2, mounted BETWEEN the hero and §2 in the
  * DOM. Hero (z2, earlier) paints under it — the sheet covers the DOM image's
@@ -143,6 +145,7 @@ const FRAG = `
 precision highp float;
 uniform sampler2D uTex;
 uniform float uShow;
+uniform float uMorph; /* the OPENING: 1 = full container, 0 = the staircase */
 uniform float uAlpha;
 uniform vec2 uTexA;      /* authored SVG framing as an affine map: */
 uniform vec2 uTexB;      /*   uv = vUv * uTexA + uTexB (kb+parallax baked) */
@@ -177,8 +180,12 @@ void main() {
      original shape"); it irons out into one rectangle only as the landing
      expansion runs. Safe now: the bounded drag keeps the sheet coherent —
      the early iron-out existed to stop the old unbounded stagger from
-     stretching the notch into a tear (wave take 2 filmed that). */
-  float m = smoothstep(0.68, 0.9, uShow);
+     stretching the notch into a tear (wave take 2 filmed that).
+     uMorph is THE OPENING (2026-08-24, user): the same morph, run at page
+     load in the other direction — the sheet is born the FULL container
+     (m=1) and carves itself down to the staircase, uncovering the text
+     that was laid out beneath it all along. One shape system, both doors. */
+  float m = max(smoothstep(0.68, 0.9, uShow), uMorph);
   float exG = smoothstep(0.7, 0.94, uShow); /* the landing expansion, uniform */
   vec4 full_ = vec4(0.0, 0.0, 1.0, 1.0);
   vec4 ra = mix(RA, full_, m);
@@ -187,8 +194,10 @@ void main() {
   vec2 px = vUv * vRectWH;
   /* corners stay rounded for the whole flight, and the LANDED form keeps
      a container radius too — it is an inset card now, not a full-bleed
-     cover (landing redesign, 2026-08-19) */
-  float r = mix((28.0 / 815.0) * vRectWH.x, R_LG, exG);
+     cover (landing redesign, 2026-08-19). During the OPENING the radius
+     scales away with uMorph: a full-page sheet has no corners to round,
+     and they grow in as it becomes a container. */
+  float r = mix((28.0 / 815.0) * vRectWH.x, R_LG, exG) * (1.0 - uMorph);
   float k = max((30.0 / 815.0) * vRectWH.x * (1.0 - m), 0.001);
   float dA = sdRoundRect(px, (ra.xy + ra.zw * 0.5) * vRectWH, ra.zw * 0.5 * vRectWH, r);
   float dB = sdRoundRect(px, (rb.xy + rb.zw * 0.5) * vRectWH, rb.zw * 0.5 * vRectWH, r);
@@ -203,7 +212,10 @@ void main() {
     ? vec2(1.0, uImgAspect / planeAspect)
     : vec2(planeAspect / uImgAspect, 1.0);
   vec2 uvB = (vUv - 0.5) * cf + 0.5;
-  vec2 uv = mix(uvA, uvB, smoothstep(0.68, 0.9, uShow));
+  /* m, not the raw uShow window: the OPENING's full-page state needs the
+     cover-fit too — the video fills the viewport honestly, and eases into
+     the authored staircase crop as the container closes down */
+  vec2 uv = mix(uvA, uvB, m);
 
   vec3 col = texture2D(uTex, uv).rgb;
   /* the folded-over part shows its back: dimmed, and pulled most of the way
@@ -246,20 +258,23 @@ void main() {
 }
 `
 
+type Rect = { left: number; top: number; width: number; height: number }
+
 type PeelGL = {
   draw: (
-    from: DOMRect,
-    to: DOMRect,
+    from: Rect,
+    to: Rect,
     show: number,
     alpha: number,
     dy: number,
     texA: [number, number],
     texB: [number, number],
+    morph: number,
   ) => void
   clear: () => void
 }
 
-function createGL(canvas: HTMLCanvasElement, img: HTMLImageElement): PeelGL | null {
+function createGL(canvas: HTMLCanvasElement, video: HTMLVideoElement): PeelGL | null {
   const gl = canvas.getContext('webgl', {
     alpha: true,
     antialias: false,
@@ -335,13 +350,19 @@ function createGL(canvas: HTMLCanvasElement, img: HTMLImageElement): PeelGL | nu
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibuf)
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, idx, gl.STATIC_DRAW)
 
+  /* the texture is the LIVE hero video (2026-08-24): this upload is only
+     the first frame — draw() re-uploads the element's current frame every
+     tick, so the loop keeps playing inside the folding sheet, in perfect
+     sync with the DOM element it took over from. The texture stays bound
+     on unit 0 for the program's whole life, which is what makes the
+     per-frame texImage2D a one-liner. */
   const tex = gl.createTexture()
   gl.bindTexture(gl.TEXTURE_2D, tex)
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img)
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, video)
 
   gl.enable(gl.BLEND)
   gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA)
@@ -356,8 +377,9 @@ function createGL(canvas: HTMLCanvasElement, img: HTMLImageElement): PeelGL | nu
   const uDy = U('uDy')
   const uTexA = U('uTexA')
   const uTexB = U('uTexB')
+  const uMorph = U('uMorph')
   gl.uniform1i(U('uTex'), 0)
-  gl.uniform1f(U('uImgAspect'), img.naturalWidth / img.naturalHeight)
+  gl.uniform1f(U('uImgAspect'), video.videoWidth / video.videoHeight)
 
   const resize = () => {
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
@@ -371,8 +393,13 @@ function createGL(canvas: HTMLCanvasElement, img: HTMLImageElement): PeelGL | nu
   }
 
   return {
-    draw(from, to, show, alpha, dy, texA, texB) {
+    draw(from, to, show, alpha, dy, texA, texB, morph) {
       resize()
+      /* the current video frame, every draw — the loop plays inside the fold */
+      if (video.readyState >= 2) {
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, video)
+      }
+      gl.uniform1f(uMorph, morph)
       gl.uniform4f(uFrom, from.left, from.top, Math.max(1, from.width), Math.max(1, from.height))
       gl.uniform4f(uTo, to.left, to.top, Math.max(1, to.width), Math.max(1, to.height))
       gl.uniform1f(uShow, show)
@@ -390,12 +417,12 @@ function createGL(canvas: HTMLCanvasElement, img: HTMLImageElement): PeelGL | nu
   }
 }
 
-/* the SVG's authored image placement, from HeroPortrait.tsx: <image
-   x=-213 y=-6 width=1208 height=680> in viewBox 815x375, ken-burns
-   transform-origin 50% 40% of the image's own box (fill-box) */
+/* the SVG's authored plate placement, from HeroPortrait.tsx: the
+   <foreignObject x=-213 y=-6 width=1208 height=680> carrying the looping
+   video, in viewBox 815x375. (The ken-burns origin that lived here left
+   with the ken-burns, 2026-08-24 — the footage moves on its own.) */
 const VB = { w: 815, h: 375 }
 const IMG = { x: -213, y: -6, w: 1208, h: 680 }
-const KB_ORIGIN = { x: IMG.x + IMG.w * 0.5, y: IMG.y + IMG.h * 0.4 }
 
 export default function HeroPeel() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -409,28 +436,76 @@ export default function HeroPeel() {
     const heropin = document.querySelector<HTMLElement>('.hm-heropin')
     const shape = document.querySelector<SVGSVGElement>('.hw-hero .hw-shape')
     const pan = document.querySelector<SVGGElement>('.hw-hero .hw-pan')
-    const kbImg = document.querySelector<SVGImageElement>('.hw-hero .hw-img')
+    const vid = document.querySelector<HTMLVideoElement>('.hw-hero .hw-vid')
     const claim = document.querySelector<HTMLElement>('.hm-claim')
     const land = document.querySelector<HTMLElement>('.hm-claim-land')
-    if (!main || !heropin || !shape || !pan || !kbImg || !claim || !land) return
+    if (!main || !heropin || !shape || !pan || !vid || !claim || !land) return
     /* mobile swaps the staircase out entirely — nothing to peel */
     if (getComputedStyle(shape).display === 'none') return
 
     let gl: PeelGL | null = null
     let dead = false
-    const img = new Image()
-    img.src = '/home/portrait-distorted.webp'
-    img.decode().then(
-      () => {
-        if (dead) return
-        gl = createGL(canvas, img)
-        /* the runway engages only when GL actually runs — and stays for
-           the page's life (see the CSS note: toggling it would shift
-           everything below by 70svh mid-page) */
-        if (gl) heropin.classList.add('is-run')
-      },
-      () => {},
-    )
+
+    /* THE OPENING (2026-08-24, user; full-page rev the same day): the
+       sheet is born as THE WHOLE PAGE — a full-viewport, cover-fit frame
+       of the video, headline and copy laid out invisibly beneath — and
+       shrinks-and-carves down to the resting staircase in one eased move,
+       uncovering them. It is the landing's shape morph run backwards
+       through the same uniform (uMorph 1 -> 0), with the draw rect lerped
+       viewport -> staircase box on the same value, so the opening and the
+       landing can never drift apart in shape language. The short delay
+       lets the full-bleed frame (fading in with the DOM entrance's
+       mirrored alpha) read first: arrive, then open. */
+    const intro = { m: 1 }
+    let introTween: gsap.core.Tween | null = null
+    let introStarted = false
+    let introHurried = false
+    let sewFired = false
+    let sewFallback: ReturnType<typeof setTimeout> | null = null
+
+    /* SYNCHRONIZED TO THE HEADLINE (2026-08-24, user): the carve launches
+       on HeroTitle's `k-hero-sew` event — the instant its three pills
+       begin expanding — with the SAME duration and the SAME ease as their
+       width push (settle, cinema), offset by the sew's own LOCK beat
+       (0.1s). One clock, one gesture: the boxes swell and the container
+       gives way, which is what makes them read as the CAUSE of its shape.
+       The fallback timer only exists for a sew that never fires (it
+       cannot on this page today) — the page must not sit full-bleed
+       forever if the headline changes out from under this. */
+    const startIntro = () => {
+      if (dead || introStarted || !gl) return
+      introStarted = true
+      if (sewFallback) clearTimeout(sewFallback)
+      introTween = gsap.to(intro, { m: 0, duration: DUR.cinema, ease: EASE.settle, delay: 0.1 })
+    }
+    const onSew = () => {
+      sewFired = true
+      startIntro()
+    }
+    window.addEventListener('k-hero-sew', onSew, { once: true })
+
+    /* the texture source is the DOM's OWN looping video element — one
+       decode, one clock, so the sheet and the staircase can never show
+       different frames. GL arms once the first frame is decodable. */
+    const arm = () => {
+      if (dead || gl) return
+      gl = createGL(canvas, vid)
+      /* the runway engages only when GL actually runs — and stays for
+         the page's life (see the CSS note: toggling it would shift
+         everything below mid-page) */
+      if (gl) {
+        heropin.classList.add('is-run')
+        /* the page's cue: the full-page cover can draw from this moment,
+           so the hero's held entrances (HeroPortrait, HeroTitle) may
+           begin — they wait on this so the resting hero can never flash
+           behind a cover whose video is still loading */
+        window.dispatchEvent(new Event('k-peel-armed'))
+        if (sewFired) startIntro()
+        else sewFallback = setTimeout(startIntro, 3000)
+      }
+    }
+    if (vid.readyState >= 2) arm()
+    else vid.addEventListener('loadeddata', arm, { once: true })
 
     let show = 0
     let live = false // hm-glhero: DOM image hidden, GL owns the pixels
@@ -475,10 +550,24 @@ export default function HeroPeel() {
       show += (target - show) * 0.16
       if (Math.abs(target - show) < 0.0005) show = target
 
+      /* a scroll interrupts the opening: the fold must play on the
+         staircase, so a still-open morph is hurried shut rather than
+         letting the sheet fold as a full slab — including when the carve
+         has not even launched yet (scroll before the sew fires) */
+      if (target > 0.02 && intro.m > 0 && !introHurried) {
+        introHurried = true
+        introStarted = true
+        if (sewFallback) clearTimeout(sewFallback)
+        introTween?.kill()
+        introTween = null
+        gsap.to(intro, { m: 0, duration: 0.25, ease: 'none' })
+      }
+
       /* at true rest the DOM staircase owns the pixels (so route-transition
          clones never carry a blank canvas); GL takes over at the first
-         scrolled pixel, in the DOM's exact place */
-      if (show < 0.01 && target < 0.01) {
+         scrolled pixel, in the DOM's exact place — but not while the
+         opening still holds the full container */
+      if (show < 0.01 && target < 0.01 && intro.m < 0.001) {
         setLive(false)
         return
       }
@@ -492,30 +581,42 @@ export default function HeroPeel() {
       const dy = Math.max(0, window.scrollY)
       const alpha = parseFloat(getComputedStyle(shape).opacity) || 1
 
-      /* mirror ken-burns (CSS animation, computed matrix) + parallax (gsap
-         channels on .hw-pan), damped away as the sheet leaves the hero —
-         both exact at handoff, gone by mid-flight */
+      /* mirror the pointer parallax (gsap channels on .hw-pan), damped away
+         as the sheet leaves the hero — exact at handoff, gone by mid-flight.
+         (Ken-burns mirroring left with the ken-burns: the video is the
+         motion now, and it rides along in the texture itself.) */
       const damp = 1 - gsap.utils.clamp(0, 1, (show - 0.05) / 0.45)
-      let kb = 1
-      const t = getComputedStyle(kbImg).transform
-      if (t && t !== 'none') kb = new DOMMatrix(t).a
-      kb = 1 + (kb - 1) * damp
       const panX = ((gsap.getProperty(pan, 'x') as number) || 0) * damp
       const panY = ((gsap.getProperty(pan, 'y') as number) || 0) * damp
 
       /* authored framing as an affine map vUv -> texture uv, all in viewBox
-         units: image box scaled about the kb origin, then panned */
-      const iw = IMG.w * kb
-      const ih = IMG.h * kb
-      const ix = KB_ORIGIN.x + (IMG.x - KB_ORIGIN.x) * kb + panX
-      const iy = KB_ORIGIN.y + (IMG.y - KB_ORIGIN.y) * kb + panY
+         units: the video plate's box, panned */
+      const iw = IMG.w
+      const ih = IMG.h
+      const ix = IMG.x + panX
+      const iy = IMG.y + panY
       const texA: [number, number] = [VB.w / iw, VB.h / ih]
       const texB: [number, number] = [-ix / iw, -iy / ih]
 
       /* timing rides the SECTION's rect (rTo, above — the choreography is
          untouched); the sheet lands on the inset PAD's rect — a contained
          card with margin all around, not a full-bleed cover */
-      gl.draw(rFrom, land.getBoundingClientRect(), show, alpha, dy, texA, texB)
+      /* THE OPENING RECT: at m=1 the sheet IS the page. The rect lerps
+         from the full viewport down to the staircase's own box on the
+         same eased value that drives the carve — one gesture, two
+         dimensions of it. (intro.m is 0 for the page's whole life after
+         the opening, so this is rFrom verbatim from then on.) */
+      const im = intro.m
+      const rectFrom: Rect =
+        im > 0
+          ? {
+              left: rFrom.left * (1 - im),
+              top: rFrom.top * (1 - im),
+              width: rFrom.width + (window.innerWidth - rFrom.width) * im,
+              height: rFrom.height + (vh - rFrom.height) * im,
+            }
+          : rFrom
+      gl.draw(rectFrom, land.getBoundingClientRect(), show, alpha, dy, texA, texB, im)
     }
     /* one frame late ON PURPOSE — after Lenis's ticker callback, so the
        rects are current-frame (the MediaPeel lesson: adding here directly
@@ -524,6 +625,11 @@ export default function HeroPeel() {
 
     return () => {
       dead = true
+      vid.removeEventListener('loadeddata', arm)
+      window.removeEventListener('k-hero-sew', onSew)
+      if (sewFallback) clearTimeout(sewFallback)
+      introTween?.kill()
+      gsap.killTweensOf(intro)
       cancelAnimationFrame(rafId)
       gsap.ticker.remove(tick)
       main.classList.remove('hm-glhero')

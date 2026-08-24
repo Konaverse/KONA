@@ -86,6 +86,11 @@ export default function SolveCredits() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
     const img = root.querySelector<HTMLElement>('.sv-img')
+    /* warm the decode at mount: the plate is 17MP, and browsers defer
+       decoding an offscreen image until it first paints — which used to
+       land as a one-time hitch the moment the section scrolled in. This
+       moves that work to idle time right after load. */
+    if (img instanceof HTMLImageElement) img.decode().catch(() => {})
     const items = Array.from(root.querySelectorAll<HTMLElement>('.sv-item')).map((el) => ({
       el,
       speed: Number(el.dataset.speed) || 1,
@@ -130,8 +135,18 @@ export default function SolveCredits() {
       }
     }
 
-    gsap.ticker.add(tick)
-    return () => gsap.ticker.remove(tick)
+    /* one frame late ON PURPOSE — the MediaPeel/HeroPeel lesson: this
+       effect mounts before SmoothScroll's, so a direct add() lands BEFORE
+       Lenis in the ticker order and reads every rect from the previous
+       frame — the drift then trails the scroll by one frame, which is
+       exactly the "kind of lag" it showed (user, 2026-08-24). Deferring
+       the add by one rAF puts this tick after Lenis: current-frame rects,
+       parallax locked to the scroll. */
+    const rafId = requestAnimationFrame(() => gsap.ticker.add(tick))
+    return () => {
+      cancelAnimationFrame(rafId)
+      gsap.ticker.remove(tick)
+    }
   }, [])
 
   return (

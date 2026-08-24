@@ -13,11 +13,12 @@ import { gsap, EASE, DUR } from '@/lib/motion-v4'
  *
  * THE CONTAINER IS THE TRICK. Two overlapping rounded rectangles — a tall
  * block top-right, a wide block bottom-left — union into a staircase with
- * concave fillets at the junction, and ONE portrait flows through both. It
+ * concave fillets at the junction, and ONE picture flows through both. It
  * is drawn once as an SVG path (viewBox 0 0 815 375) used as a clipPath, so
- * it scales losslessly at any width, fillets included. The image lives
- * inside a <g> that carries the clip while the <image> itself runs a slow
- * ken-burns — the picture breathes inside a still window.
+ * it scales losslessly at any width, fillets included. Since 2026-08-24 the
+ * picture is a LOOPING VIDEO in a clipped <foreignObject> (user call) — the
+ * footage supplies the life the old ken-burns used to fake, so the ken-burns
+ * is gone.
  *
  * The empty quadrants carry the content: top-left the headline —
  * HeroTitle's breathing sentence, whose inline image pills swell and shrink
@@ -71,7 +72,20 @@ export default function HeroPortrait() {
     root.addEventListener('pointermove', onMove)
     gsap.ticker.add(panTick)
 
-    const tl = gsap.timeline({ defaults: { ease: EASE.glass } })
+    // the loop must actually loop: autoplay of muted inline video is allowed
+    // everywhere, but a nudge covers the browsers that defer it anyway
+    root.querySelectorAll('video').forEach((v) => v.play().catch(() => {}))
+
+    /* THE OPENING GATE (2026-08-24, user): the entrance holds, paused,
+       until HeroPeel's full-page cover is actually drawing
+       ('k-peel-armed') — otherwise a slow video let the resting hero
+       play first and then the cover popped in OVER it, which read as
+       "another section in the back". Pre-gate the hero is just beams
+       and nav (every entrance element rests at opacity 0), which reads
+       as a quiet first paint, not a flash. The timeout is the no-GL
+       fallback — mobile, no WebGL, a failed video — where the hero must
+       still arrive on its own. */
+    const tl = gsap.timeline({ paused: true, defaults: { ease: EASE.glass } })
     tl.fromTo(
       ['.hw-shape', '.hw-mimg'],
       { opacity: 0, y: 30, scale: 0.985 },
@@ -82,11 +96,25 @@ export default function HeroPortrait() {
       qa('.hw-para, .hw-btn'),
       { y: 18, filter: 'blur(14px)', opacity: 0 },
       { y: 0, filter: 'blur(0px)', opacity: 1, duration: DUR.slow, stagger: 0.1 },
-      0.8,
+      /* rides the OPENING (HeroPeel's uMorph): the full container starts
+         carving with the headline's sew and has largely cleared this
+         quadrant by 1s — the copy rises into just-revealed ground */
+      1.0,
     )
+
+    let begun = false
+    const begin = () => {
+      if (begun) return
+      begun = true
+      tl.play()
+    }
+    window.addEventListener('k-peel-armed', begin, { once: true })
+    const fallback = setTimeout(begin, 1200)
 
     return () => {
       root.removeEventListener('pointermove', onMove)
+      window.removeEventListener('k-peel-armed', begin)
+      clearTimeout(fallback)
       gsap.ticker.remove(panTick)
       tl.kill()
     }
@@ -127,24 +155,34 @@ export default function HeroPortrait() {
               <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
             </linearGradient>
           </defs>
-          {/* clip on the GROUP, ken-burns on the image: the picture breathes
-              inside a still window (a clip on the image itself would breathe
-              with it). 1208x680 keeps the source's 16:9 aspect, oversized and
-              offset so the eyes land just below the step junction in the
-              lower-left block and the arm arch textures the top-right one —
-              the slack also means pan/ken-burns never expose the clip edge. */}
+          {/* clip on the GROUP, the LIVE VIDEO inside (2026-08-24, user):
+              the still portrait became a looping clip — the motion the
+              ken-burns used to fake, the footage now supplies, so the
+              ken-burns is gone. Same 1208x680 box in the same spot, so the
+              peel's texture mapping (HeroPeel's IMG constants) is untouched
+              and pan slack still never exposes the clip edge. The video is
+              muted+playsinline+loop: it autoplays everywhere, and HeroPeel
+              re-uploads THIS element's current frame as the GL texture each
+              tick — DOM and folding sheet can never drift apart. */}
           <g clipPath="url(#hw-clip)">
-            {/* pointer parallax pans this group; ken-burns lives on the
-                image itself — two elements, no transform channel fights */}
+            {/* pointer parallax pans this group — the one transform here */}
             <g className="hw-pan">
-              <image
-                className="hw-img"
-                href="/home/portrait-distorted.webp"
+              <foreignObject
+                className="hw-vidbox"
                 x="-213"
                 y="-6"
                 width="1208"
                 height="680"
-              />
+              >
+                <video
+                  className="hw-vid"
+                  src="/home/hero-loop.mp4"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                />
+              </foreignObject>
             </g>
           </g>
 
@@ -156,12 +194,14 @@ export default function HeroPortrait() {
         <HeroTitle />
 
         {/* mobile swaps the staircase for a plain rounded crop; sits after
-            the headline in flow, hidden on desktop */}
-        <img
+            the headline in flow, hidden on desktop. Same looping clip. */}
+        <video
           className="hw-mimg hw-ent"
-          src="/home/portrait-distorted.webp"
-          alt=""
-          loading="eager"
+          src="/home/hero-loop.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
         />
 
         <div className="hw-side">
