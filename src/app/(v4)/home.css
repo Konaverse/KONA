@@ -1975,6 +1975,15 @@
   .so-spin { transform: none !important; }
 }
 
+/* the workfoot: §5's hub link, a tight landing strip after the last
+   sheet — pushed high with little below (user call 2026-08-24) */
+.hm-workfoot {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: clamp(2rem, 4.5vh, 3.5rem);
+  padding-bottom: clamp(1rem, 2.5vh, 2rem);
+}
+
 /* ============================================================
    §9 — THE INVITATION (2026-08-24). The line, the button, the
    address, two drifting plates, and the social rail. Mechanism
@@ -1985,8 +1994,9 @@
   background: var(--surface);
   /* tall enough that both plates sit WHOLE (user call 2026-08-24 — the
      bleed-off-the-edge composition read as cropping); the clip stays as
-     the safety net for the drift, not as a framing device */
-  padding-block: clamp(13rem, 28vh, 22rem);
+     the safety net for the drift. The TOP padding is the shorter side
+     (same day): the approach from §5 was reading as dead air. */
+  padding-block: clamp(9rem, 18vh, 14rem) clamp(13rem, 28vh, 22rem);
   overflow: clip;
 }
 .inv-body {
@@ -2049,9 +2059,10 @@
 }
 .inv-plate-a {
   /* whole, with margin the drift cannot spend: at −64px/vh the plate
-     rises ≤ ~85px while its edge is on screen, and 6% of this taller
-     section is more than that */
-  top: 6%;
+     rises ≤ ~85px while its edge is on screen — 9% because the section
+     got SHORTER when its top padding came down, and 6% of the new
+     height no longer cleared that */
+  top: 9%;
   right: 4%;
   width: clamp(190px, 21vw, 300px);
   aspect-ratio: 4 / 5;

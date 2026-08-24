@@ -119,8 +119,10 @@ export default function HomePage() {
           projects" hub link rides §7's rising sheet when it is mounted). */}
 
       {/* the hub link the choreography specifies alongside the three tile
-          links — four links out of §5, no more */}
-      <div className="k-section k-page hm-workfoot">
+          links — four links out of §5, no more. A tight band, not a
+          k-section: it is a landing strip between two big sections, and
+          section-scale padding here read as dead air (user call). */}
+      <div className="k-page hm-workfoot">
         <ArrowLink href="/work">All projects</ArrowLink>
       </div>
 
