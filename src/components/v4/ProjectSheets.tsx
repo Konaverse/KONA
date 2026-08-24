@@ -53,7 +53,20 @@ export interface SheetProject {
   image?: string
 }
 
-export default function ProjectSheets({ projects }: { projects: SheetProject[] }) {
+export default function ProjectSheets({
+  projects,
+  buried = false,
+}: {
+  projects: SheetProject[]
+  /** §7 rises over the last sheet as an opaque light sheet (`.pr.is-over`,
+   *  −100svh) while that sheet drifts up at 0.45× underneath — the same
+   *  burial grammar §4 uses on §3. This costs the pin ONE extra viewport of
+   *  runway the scrub does not consume: the last turn finishes exactly as
+   *  the burial begins, then holds while it is covered. The two are a PAIR,
+   *  set together in page.tsx — an overlap with no tail eats the last sheet,
+   *  a tail with no overlap is a dead viewport. */
+  buried?: boolean
+}) {
   const rootRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
@@ -64,8 +77,10 @@ export default function ProjectSheets({ projects }: { projects: SheetProject[] }
     const sheets = Array.from(root.querySelectorAll<HTMLElement>('.k-sheet'))
     if (sheets.length < 2) return
 
+    const stage = root.querySelector<HTMLElement>('.k-sheets__stage')
+
     root.classList.add('is-scrub')
-    root.style.height = `${(sheets.length - 1) * TURN_VH + 100}vh`
+    root.style.height = `${(sheets.length - 1) * TURN_VH + 100 + (buried ? 100 : 0)}vh`
 
     /* The mini window — the giats stacking-parallax mechanic, studied and
      * kept honest: the images inside NEVER move. Each layer is stationary,
@@ -163,11 +178,25 @@ export default function ProjectSheets({ projects }: { projects: SheetProject[] }
 
     const update = () => {
       const rect = root.getBoundingClientRect()
-      const span = rect.height - window.innerHeight
+      const vh = window.innerHeight
+      /* the burial tail is excluded from the denominator, so the turns pace
+         identically whether or not §7 is there to bury the last sheet */
+      const tail = buried ? vh : 0
+      const span = rect.height - vh - tail
       if (span <= 0) return
       const p = gsap.utils.clamp(0, 1, -rect.top / span)
       tl.progress(p)
       setMinis(p)
+      /* THE BURIAL — §7's top edge is at rect.bottom − vh (it overlaps by
+         −100svh): it enters the viewport bottom at rect.bottom = 2vh and
+         covers this stage completely at rect.bottom = vh. Across exactly
+         that window the stage drifts up at 0.45× — slower than the sheet
+         climbing over it, which is the whole depth effect, and 0.45 always
+         loses to §7's 1.0 so no bare ground can open between them. */
+      if (buried && stage) {
+        const d = gsap.utils.clamp(0, vh, 2 * vh - rect.bottom)
+        gsap.set(stage, { y: -0.45 * d })
+      }
     }
     update()
     gsap.ticker.add(update)
@@ -177,6 +206,7 @@ export default function ProjectSheets({ projects }: { projects: SheetProject[] }
       tl.kill()
       root.classList.remove('is-scrub')
       root.style.height = ''
+      if (stage) gsap.set(stage, { clearProps: 'transform' })
       sheets.forEach((s) => gsap.set(s, { clearProps: 'all' }))
       minis.forEach((m) => {
         m.style.clipPath = ''
@@ -184,7 +214,7 @@ export default function ProjectSheets({ projects }: { projects: SheetProject[] }
         if (shade) shade.style.opacity = ''
       })
     }
-  }, [projects.length])
+  }, [projects.length, buried])
 
   return (
     <section ref={rootRef} className="k-sheets" aria-label="Selected work">

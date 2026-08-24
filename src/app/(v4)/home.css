@@ -982,209 +982,187 @@
 }
 
 /* ============================================================
-   §7 — HOW WE WORK: the thread (2026-08-19).
-   BEING REDESIGNED ENTIRELY (user call 2026-08-24) — what is
-   here is the outgoing design, kept until the new one lands.
+   §7 — HOW WE WORK: the pinned steps (2026-08-24, second
+   design; the thread is in git).
    ------------------------------------------------------------
-   The arrival is GONE. This was an opaque white sheet that rose
-   OVER §6's pinned dark stage and buried it (`.pr.is-over`,
-   margin-top −100svh) while that stage drifted up at 0.45×.
-   §6 was deleted the same day and both halves of the pair came
-   out with it — an overlap with nothing under it just eats a
-   viewport and covers §5's link out. The section now arrives
-   plainly; its real arrival is part of the redesign.
+   ARRIVES AS ONE MORE PAGE-TURN: an opaque light sheet rising
+   over §5's last project sheet, carrying the page-turn's own
+   seam shadow, while the buried stage drifts up at 0.45×
+   (`buried` on ProjectSheets — the two are a pair). The "All
+   projects" hub link rides the top of this sheet.
 
-   Four moves in a left/right stagger joined by ONE hairline
-   thread that draws with scroll, a lit dot riding its head, and
-   each node filling to ice as the head arrives. Hover is a
-   reading focus across the group, never a link affordance.
-   Mechanism notes in Process.tsx.
+   INSIDE: six steps under one pin. Giant numeral in the page's
+   one gradient-text (ink dissolving downward to nothing), name,
+   body, deliverables under a hairline that draws itself. The
+   scrub writes ONLY transform/opacity, from Process.tsx's
+   ticker — nothing here paints on a schedule.
    ============================================================ */
 .pr {
   position: relative;
   background: var(--surface);
 }
+/* JS-only, deliberately: the overlap is meaningless unless §5 is pinned,
+   and §5 only pins under JS with motion allowed. */
+.pr.is-over {
+  z-index: 2;
+  margin-top: -100svh;
+}
+/* the page-turn's seam, cast up onto the sheet being buried — the same
+   140px and 0.13 black as .k-sheet::before, because it is the same event */
+.pr.is-over::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  height: 140px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.13), rgba(0, 0, 0, 0));
+  pointer-events: none;
+}
+
+.pr-workline {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: var(--s-6);
+}
+
+.pr-head {
+  padding-top: clamp(var(--s-8), 10vh, var(--s-10));
+  padding-bottom: clamp(var(--s-8), 12vh, var(--s-11));
+}
 .pr-title {
   margin: 0;
-  max-width: 20ch;
+  max-width: 14ch;
   font-weight: var(--w-light);
+}
+.pr-title em {
+  font-style: normal;
+  font-weight: var(--w-semi);
 }
 .pr-lede {
   margin: var(--s-5) 0 0;
+  max-width: 44ch;
   color: var(--text-muted);
-  max-width: 54ch;
 }
 
-/* ---------- the stagger ----------
-   Four rows, alternating sides, with uneven spans and an extra drop on the
-   right-hand pair: the asymmetry is designed, and it is what gives the
-   thread something to travel across. */
-.pr-phases {
+/* ---------- the steps ----------
+   AT REST (no JS, reduced motion, under 57.5rem): six panels stacked in
+   flow, everything readable. The driver adds .is-scrub, which pins the
+   view and stacks the panels for the crossfade. */
+.pr-steps {
   position: relative;
+}
+.pr-view {
+  position: relative;
+}
+.pr-steps.is-scrub .pr-view {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: clip; /* the drift pushes copy past the edge mid-swap */
+}
+
+.pr-panel {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  margin-top: clamp(var(--s-9), 12vh, var(--s-11));
+  gap: var(--grid-gutter);
+  align-items: center;
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding-inline: var(--page-pad);
+  padding-block: clamp(var(--s-8), 10vh, var(--s-10));
 }
-/* Rows are EXPLICIT. Left to auto-placement, moves 1 and 2 would pack into
-   the same row (their columns do not collide) and the thread would run as a
-   Z across a 2x2 block instead of a snake down the page. */
-.pr-move {
-  position: relative;
-  transition: opacity var(--d-base) var(--e-settle);
-}
-.pr-m1 { grid-row: 1; grid-column: 1 / span 5; }
-.pr-m2 { grid-row: 2; grid-column: 8 / span 5; }
-.pr-m3 { grid-row: 3; grid-column: 2 / span 5; }
-.pr-m4 { grid-row: 4; grid-column: 7 / span 6; }
-/* uneven drops: the rhythm is composed, not metronomic */
-.pr-m2 { margin-top: clamp(3.5rem, 10vh, 9rem); }
-.pr-m3 { margin-top: clamp(5rem, 14vh, 12rem); }
-.pr-m4 { margin-top: clamp(3.5rem, 10vh, 9rem); }
-/* the node hangs off the block's INNER edge, in this padding */
-.pr-move--l { padding-right: var(--s-7); }
-.pr-move--r { padding-left: var(--s-7); }
-
-.pr-name {
-  margin: 0;
-  font-size: var(--t-h2);
-  font-weight: var(--w-regular);
-  letter-spacing: var(--ls-h2);
-  line-height: var(--lh-tight);
-  color: var(--text);
-}
-.pr-body {
-  margin: var(--s-4) 0 0;
-  max-width: 40ch;
-  color: var(--text-muted);
-}
-/* the deliverable. Never hidden behind the hover — it is the line a buyer
-   is actually shopping for. */
-.pr-get {
-  margin: var(--s-4) 0 0;
-  max-width: 38ch;
-  padding-top: var(--s-4);
-  border-top: var(--hair) solid var(--hairline);
-  font-size: var(--t-small);
-  line-height: 1.55;
-  color: var(--text);
-}
-
-/* ---------- the node ---------- */
-.pr-node {
-  position: absolute;
-  top: 0.42em;
-  display: grid;
-  place-items: center;
-  width: 15px;
-  height: 15px;
-  border-radius: var(--r-full);
-  border: var(--hair) solid var(--hairline);
-  background: var(--surface);
-  transition:
-    border-color var(--d-base) var(--e-settle),
-    transform var(--d-base) var(--e-settle);
-}
-.pr-move--l .pr-node { right: 0; }
-.pr-move--r .pr-node { left: 0; }
-.pr-node i {
-  display: block;
-  width: 7px;
-  height: 7px;
-  border-radius: var(--r-full);
-  background: var(--text);
-  transform: scale(0);
-  transition: transform var(--d-base) var(--e-settle);
-}
-/* the arrival: the drawing head has reached this node */
-.pr-node.is-lit {
-  border-color: var(--text);
-}
-.pr-node.is-lit i {
-  transform: scale(1);
-}
-
-/* ---------- the thread ---------- */
-.pr-thread {
+.pr-steps.is-scrub .pr-panel {
   position: absolute;
   inset: 0;
   width: 100%;
-  height: 100%;
-  overflow: visible;
+  padding-block: 0;
+  /* parked until the scrub places it — the ticker's first write lands
+     before paint, but a resize back above the gate must not flash six
+     stacked panels */
+  opacity: 0;
   pointer-events: none;
 }
-.pr-seg {
-  fill: none;
-  stroke: var(--hairline);
-  stroke-width: 1.25;
-  stroke-linecap: round;
-  vector-effect: non-scaling-stroke;
-}
-.pr-head {
-  fill: var(--text);
-  opacity: 0;
-  filter: drop-shadow(0 0 7px rgba(127, 168, 201, 0.9));
-}
-/* the no-JS spine: a plain centre hairline where the thread would run */
-.pr-phases::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: var(--hair);
-  background: var(--hairline);
-}
-.pr-phases.is-live::before {
-  display: none;
+.pr-steps.is-scrub .pr-panel.is-live {
+  pointer-events: auto;
 }
 
-/* ---------- the hover: one focus, expressed across the group ----------
-   The hovered move comes to full ink and the others recede. These blocks
-   navigate nowhere, so nothing here may read as a link: no lift, no chip,
-   no cursor change. Contrast alone. */
+/* THE NUMERAL — the user-directed move: display scale, fading out
+   downward. This is the page's ONE gradient text; the gradient runs to
+   transparent so the digit dissolves into the ground rather than into a
+   second colour, and it is var(--text) so the whole thing inverts if the
+   ground ever flips. */
+.pr-num {
+  grid-column: 1 / span 5;
+  margin: 0;
+  font-size: clamp(11rem, 38vh, 23rem);
+  font-weight: var(--w-light);
+  line-height: 0.8;
+  letter-spacing: -0.06em;
+  background: linear-gradient(178deg, var(--text) 4%, transparent 82%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  user-select: none;
+}
+
+.pr-copy {
+  grid-column: 7 / span 6;
+}
+.pr-name {
+  margin: 0;
+  font-weight: var(--w-semi);
+}
+.pr-text {
+  margin: var(--s-5) 0 0;
+  max-width: 42ch;
+  color: var(--text-muted);
+}
+
+/* the deliverables: a hairline that draws with the step, then the rows.
+   The rule is scaleX'd by the ticker — transform, never width. */
+.pr-gets {
+  margin-top: clamp(var(--s-6), 5vh, var(--s-8));
+  max-width: 42ch;
+}
+.pr-rule {
+  display: block;
+  height: var(--hair);
+  background: var(--hairline-strong);
+  transform-origin: left center;
+}
+.pr-get {
+  margin: var(--s-4) 0 0;
+  color: var(--text);
+  transition: opacity var(--d-instant) var(--e-settle);
+}
+
+/* the house reading-focus move, scoped to the deliverables: the hovered
+   row at full ink, its siblings receding. These rows navigate nowhere,
+   so nothing here may read as a link — contrast alone. */
 @media (hover: hover) {
-  .pr-phases:hover .pr-move {
+  .pr-gets:hover .pr-get {
     opacity: 0.38;
   }
-  .pr-phases:hover .pr-move:hover {
+  .pr-gets .pr-get:hover {
     opacity: 1;
   }
-  .pr-phases:hover .pr-move:hover .pr-node {
-    transform: scale(1.3);
-  }
 }
 
-.pr-foot {
-  margin-top: clamp(var(--s-9), 13vh, var(--s-11));
-}
-
-/* ---------- mobile: one column, the thread runs down the rail ---------- */
+/* ---------- mobile / stacked: the pin is a desktop composition ---------- */
 @media (max-width: 57.5rem) {
-  .pr-phases {
+  .pr-panel {
     grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    padding-block: clamp(var(--s-7), 8vh, var(--s-9));
   }
-  .pr-m1,
-  .pr-m2,
-  .pr-m3,
-  .pr-m4 {
+  .pr-num {
     grid-column: 1 / -1;
-    margin-top: var(--s-9);
-    padding-left: var(--s-7);
-    padding-right: 0;
+    font-size: clamp(6rem, 24vw, 10rem);
   }
-  .pr-m1 {
-    margin-top: 0;
-  }
-  .pr-move--l .pr-node,
-  .pr-move--r .pr-node {
-    left: 0;
-    right: auto;
-  }
-  .pr-phases::before {
-    left: 7px;
-  }
-  .pr-name {
-    font-size: var(--t-h3);
+  .pr-copy {
+    grid-column: 1 / -1;
+    margin-top: var(--s-5);
   }
 }
 

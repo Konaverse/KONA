@@ -708,8 +708,9 @@ An image with a project name under it reads as a link whether or not it is one, 
 lens is gone and a full-bleed sheet has nowhere to lift to. The hover is the arrow-link's
 language: a hairline draws toward ice under the project name (amended 2026-08-17).
 
-**Handoff.** The last sheet holds through its dwell, then the pin releases and the page
-scrolls on. The earlier mist-darkening handoff belongs to section 6's design pass.
+**Handoff — AMENDED 2026-08-24.** The pin gains one extra viewport of runway (`buried`)
+through which §7 turns in over the last sheet while the stage drifts up at 0.45×. See §7's
+Arrival. The hub link moved onto §7's rising sheet.
 
 **3D.** Absent. Deliberately. The work has to stand on its own or it is not proof.
 
@@ -776,15 +777,34 @@ reduced-motion fallback is a static grid or stack of the same images.
 
 ---
 
-## Section 7 — How we work
+## Section 7 — How we work *(SECOND DESIGN 2026-08-24, user-directed: "pinned, agentic and premium, big letters or numbers with a fade out gradient". The thread-and-nodes first build is in git. §6 was deleted the same day.)*
 
 **Job.** Reduce the perceived risk of spending four thousand euro with a small studio.
 
-**On screen.** Three or four steps, horizontal on desktop, stacked on mobile. Each: a short title at `h3` and two lines at `body`. Honest about timelines.
+**Arrival — one more page-turn.** §7 rises over §5's LAST project sheet as an untilted
+opaque light sheet carrying the page-turn's own seam shadow (140px, 0.13 black), while the
+buried stage drifts up at 0.45× underneath. `buried` on ProjectSheets (one tail viewport,
+excluded from the scrub's denominator) and `.pr.is-over` (−100svh overlap) are a PAIR, set
+together in page.tsx. Because what it buries is the page-turn itself, it reads as the turn
+after the work. The **"All projects" hub link rides the top of this sheet** — DOM-wise it
+lives in Process.tsx now, but it is §5's fourth link.
 
-**Entrance.** Steps reveal left to right, 100ms apart, so the sequence itself reads as a process.
+**On screen.** Title + lede, then SIX steps under one pin (~70svh of scroll each):
+Understand · Scope · References · System · Homepage · Launch. Each step is a stacked
+panel — a giant numeral at ~38vh in the page's ONE gradient text (ink dissolving downward
+to transparent, `var(--text)` so it inverts), name at `h2`, two lines of body, and
+deliverable lines under a hairline that DRAWS as the step arrives. Panels crossfade
+(13% of each segment per side) with a 40px drift; the numeral moves at 0.4× the copy's
+drift, which is what makes the swap read as depth. Driven off gsap.ticker + rect math,
+transform/opacity only — nothing paints on a schedule.
 
-**Handoff.** Vertical space.
+**Hover.** The reading-focus move, scoped to the deliverables: hovered row full ink,
+siblings recede. The rows navigate nowhere, so contrast alone — nothing may read as a link.
+
+**Fallbacks.** Scrub gated on 57.5rem + motion allowed (same as §4's entrance); below the
+gate, no-JS, and reduced motion get the stacked panels in flow, everything server-rendered.
+
+**Handoff.** The pin releases after the last step; vertical space into §9.
 
 **3D.** Absent.
 

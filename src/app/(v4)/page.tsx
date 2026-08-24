@@ -5,7 +5,6 @@ import ClaimEntrance from '@/components/v4/ClaimEntrance'
 import SolveCredits from '@/components/v4/SolveCredits'
 import ServiceCards from '@/components/v4/ServiceCards'
 import ProjectSheets, { type SheetProject } from '@/components/v4/ProjectSheets'
-import ArrowLink from '@/components/v4/ArrowLink'
 import Process from '@/components/v4/Process'
 import './home.css'
 
@@ -108,16 +107,13 @@ export default function HomePage() {
           the tree, unimported, for comparison. */}
       <ServiceCards />
 
-      {/* §5 — the page-turn. Full bleed, pins itself. */}
-      <ProjectSheets projects={FEATURED} />
+      {/* §5 — the page-turn. Full bleed, pins itself. `buried` and §7's own
+          overlap are a PAIR: §7 turns in over the last sheet as an opaque
+          light sheet while this stage drifts up at 0.45× under it. The "All
+          projects" hub link now rides the top of §7's rising sheet. */}
+      <ProjectSheets projects={FEATURED} buried />
 
-      {/* the hub link the choreography specifies alongside the three
-          tile links — four links out of this section, no more */}
-      <div className="k-section k-page hm-workfoot">
-        <ArrowLink href="/work">All projects</ArrowLink>
-      </div>
-
-      {/* §7 — how we work: the thread, drawn on scroll */}
+      {/* §7 — how we work: the pinned steps */}
       <Process />
     </main>
   )

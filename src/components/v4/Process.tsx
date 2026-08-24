@@ -1,75 +1,105 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import ArrowLink from '@/components/v4/ArrowLink'
 import Reveal from '@/components/v4/Reveal'
-import Button from '@/components/v4/Button'
 import { gsap } from '@/lib/motion-v4'
 
 /**
- * SECTION 7 — HOW WE WORK: the thread (user-directed 2026-08-19).
+ * SECTION 7 — HOW WE WORK. Second design (user-directed 2026-08-24:
+ * "pinned, agentic and premium, big letters or numbers with a fade out
+ * gradient"); the thread-and-nodes design it replaces is in git.
  *
- * THE ARRIVAL IS GONE, and it was the reason this section existed in this
- * form. §7 used to be an opaque white sheet with `margin-top: -100svh` that
- * rose OVER §6's pinned dark stage and buried it — the same grammar §4 uses
- * on §3 — while the stage drifted up at 0.45× underneath. That was a PAIR
- * with the Interlude's `buried` prop, and §6 was deleted 2026-08-24, so both
- * halves came out together: an overlap with nothing beneath it would simply
- * eat a viewport of the page and cover §5's link out.
+ * THE ARRIVAL IS ONE MORE PAGE-TURN. This section rises over §5's LAST
+ * project sheet as an untilted opaque light sheet carrying the page-turn's
+ * own seam shadow — same 140px, same 0.13 black — while the buried sheet
+ * drifts up at 0.45× underneath (`buried` on <ProjectSheets>). It is the
+ * §4-over-§3 burial pair again, but because what it buries is the page-turn
+ * itself, it reads as the turn after the work: the process chapter turns in
+ * over the projects. The pair: `buried` sets §5's tail viewport and the
+ * drift; `is-over` here sets the −100svh overlap. Set together, or neither.
+ * The "All projects" link rides the TOP of this sheet, so the work
+ * chapter's exit is the first thing the turn reveals — DOM-wise it now
+ * lives here, but it is §5's hub link (choreography: four links out).
  *
- * SO THIS SECTION CURRENTLY ARRIVES PLAINLY, and that is a placeholder, not
- * a decision. §7 is being REDESIGNED ENTIRELY (user call, same day); its new
- * arrival gets decided with it. Everything below describes the outgoing
- * design and is kept only until that lands.
+ * THE PIN. Six steps, one pinned viewport, scroll owns the playhead
+ * (gsap.ticker + rect math — the house pattern, no scroll listeners, no
+ * ScrollTrigger). Each step is a full stacked panel: a giant numeral at
+ * ~34vh in the fade-out gradient (ink dissolving to nothing — the one
+ * gradient-text on the page, user-directed), name, two lines of body, and
+ * the deliverables under a hairline that DRAWS as the step arrives. Panels
+ * crossfade with a short drift; the numeral moves at 0.4× the copy's
+ * drift, which is what makes the swap read as depth rather than a slide.
+ * Everything is a RESPONSE to scroll — nothing paints on a schedule (§4's
+ * rule) — and everything written per-frame is transform/opacity.
  *
- * ON SCREEN. Four moves in an asymmetric left/right stagger, connected by ONE
- * hairline THREAD that draws itself as you scroll: an SVG rebuilt from the
- * real node positions, so it genuinely joins them at any width. A lit dot
- * rides the drawing head, and each node fills to ice as the head reaches it.
- * The thread is scrubbed, so it stops the instant you stop — rest is still.
+ * THE HOVER is the house reading-focus move, scoped to the deliverables:
+ * hovering one brings it to full ink and recedes its siblings. These rows
+ * navigate nowhere, so nothing may read as a link — contrast alone.
  *
- * THE HOVER is one gesture expressed across the whole group: hovering any
- * move brings it to full ink and RECEDES the other three. It is a reading
- * focus, not a link affordance — these blocks navigate nowhere, and the
- * house rule is that nothing may imply a click it does not provide. The one
- * link out is the button at the foot.
- *
- * MEASUREMENT NOTE: the nodes sit OUTSIDE the revealed copy on purpose. The
- * reveal signature carries an 18px transform, and a transform would move the
- * node's measured rect and hang the thread off its anchors. Only `.pr-copy`
- * is revealed; `.pr-node` is untransformed, so geometry read at mount is
- * true.
- *
- * SEO/no-JS: every move, body and deliverable is server-rendered. Without JS
- * the thread is replaced by a plain CSS spine (`.pr-phases` loses `is-live`),
- * nothing is hidden, and the section reads as four stacked blocks. Reduced
- * motion: thread fully drawn, all nodes lit, no head.
- * Copy is PLACEHOLDER — the user writes the real lines (checklist 6.6).
+ * FALLBACKS. The scrub is gated on 57.5rem + motion allowed, same as §4's
+ * paper entrance. Below the gate, no-JS, and reduced motion all get the
+ * server-rendered form: the six panels stacked in flow, numerals smaller,
+ * everything readable. SEO: every name, body and deliverable is real DOM
+ * text. Copy is PLACEHOLDER — the user writes the real lines (6.6).
  */
 
-type Move = { name: string; body: string; get: string }
+type Step = { no: string; name: string; body: string; gets: string[] }
 
-const MOVES: Move[] = [
+const STEPS: Step[] = [
   {
-    name: 'Frame',
-    body: 'We agree on what the site has to do, who it is for, and what winning looks like, before anything gets designed.',
-    get: 'A written brief, a sitemap, and a shared definition of done.',
+    no: '01',
+    name: 'Understand',
+    body: 'Every project starts with your business, not a moodboard: what the site has to do, who it has to convince, and what winning looks like.',
+    gets: ['A written brief', 'Goals we can measure'],
   },
   {
-    name: 'Draw',
-    body: 'Type, space, motion and layout designed as one system, so every page built later already has its rules.',
-    get: 'A design system and the key pages, drawn in full.',
+    no: '02',
+    name: 'Scope',
+    body: 'The brief becomes a concrete plan: pages, features, content, timeline. The price becomes a number, not a conversation.',
+    gets: ['A sitemap', 'A fixed quote and timeline'],
   },
   {
-    name: 'Build',
-    body: 'Engineered server-first: real HTML, real speed, and motion that never costs a frame.',
-    get: 'The site on your stack, with a CMS your team will actually use.',
+    no: '03',
+    name: 'References',
+    body: 'We collect references together and agree the direction before anything is drawn. Taste gets settled early, on purpose.',
+    gets: ['A reference board', 'An agreed direction'],
   },
   {
+    no: '04',
+    name: 'System',
+    body: 'Type, colour, space and motion designed as one system, so every screen that follows already has its rules.',
+    gets: ['A design system', 'Rules every page inherits'],
+  },
+  {
+    no: '05',
+    name: 'Homepage',
+    body: 'The homepage is designed first to set the tone for everything else, and revised with you until it is right.',
+    gets: ['The homepage, in full', 'Revisions until it lands'],
+  },
+  {
+    no: '06',
     name: 'Launch',
-    body: 'Redirects mapped, analytics wired, and the numbers watched through the first month.',
-    get: 'A live site and a measured report, not a handover email.',
+    body: 'Engineered server-first and measured before it ships: real HTML, real speed, redirects mapped, analytics wired.',
+    gets: ['The site, live', 'A measured report'],
   },
 ]
+
+/** Scroll length of one step, in viewport-heights. */
+const STEP_VH = 70
+/** Fraction of a step's segment spent crossfading at each end. */
+const FADE = 0.13
+/** The crossfade drift, px. The numeral moves at NUM_DRIFT of this. */
+const DRIFT = 40
+const NUM_DRIFT = 0.4
+
+const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
+/* the hand supplies the pacing through Lenis; this only rounds the ends
+   of each fade window so a panel never pops */
+const smooth = (v: number) => {
+  const t = clamp01(v)
+  return t * t * (3 - 2 * t)
+}
 
 export default function Process() {
   const rootRef = useRef<HTMLElement | null>(null)
@@ -77,166 +107,146 @@ export default function Process() {
   useEffect(() => {
     const root = rootRef.current
     if (!root) return
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
-    const phases = root.querySelector<HTMLElement>('.pr-phases')
-    const svg = root.querySelector<SVGSVGElement>('.pr-thread')
-    const head = root.querySelector<SVGCircleElement>('.pr-head')
-    if (!phases || !svg || !head) return
-    const segs = Array.from(svg.querySelectorAll<SVGPathElement>('.pr-seg'))
-    const nodes = Array.from(root.querySelectorAll<HTMLElement>('.pr-node'))
-    if (segs.length === 0 || nodes.length !== segs.length + 1) return
+    /* the burial — paired with `buried` on <ProjectSheets> in page.tsx.
+       Armed whenever §5's scrub is (reduced motion is the only gate there). */
+    root.classList.add('is-over')
 
-    /* the CSS fallback spine is for the no-JS page only */
-    phases.classList.add('is-live')
+    const steps = root.querySelector<HTMLElement>('.pr-steps')
+    const view = root.querySelector<HTMLElement>('.pr-view')
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('.pr-panel'))
+    if (!steps || !view || panels.length < 2) return
 
-    /* geometry, rebuilt from the REAL node centres so the thread joins them
-       at any width. Nodes are untransformed (see the header note), so these
-       reads are true even while the copy is still revealing. */
-    let lens: number[] = []
-    let cum: number[] = []
-    let nodeAt: number[] = []
-    let L = 0
-
-    const build = () => {
-      const pr = phases.getBoundingClientRect()
-      if (pr.width < 2 || pr.height < 2) return
-      svg.setAttribute('viewBox', `0 0 ${pr.width} ${pr.height}`)
-      const pts = nodes.map((n) => {
-        const r = n.getBoundingClientRect()
-        return { x: r.left - pr.left + r.width / 2, y: r.top - pr.top + r.height / 2 }
-      })
-      lens = []
-      cum = []
-      nodeAt = [0]
-      L = 0
-      segs.forEach((s, i) => {
-        const a = pts[i]
-        const b = pts[i + 1]
-        /* an S between the two anchors: control points pulled along Y only,
-           so the thread leaves and arrives vertically and the sideways
-           travel happens in the middle of the run */
-        const dy = (b.y - a.y) * 0.55
-        s.setAttribute('d', `M ${a.x} ${a.y} C ${a.x} ${a.y + dy} ${b.x} ${b.y - dy} ${b.x} ${b.y}`)
-        const len = s.getTotalLength()
-        cum.push(L)
-        lens.push(len)
-        L += len
-        nodeAt.push(L)
-        s.style.strokeDasharray = String(len)
-        s.style.strokeDashoffset = String(reduced ? 0 : len)
-      })
-    }
-    build()
-
-    const ro = new ResizeObserver(build)
-    ro.observe(phases)
-    /* a late webfont can reflow the copy without changing the container's
-       height, which a ResizeObserver would never see */
-    document.fonts?.ready.then(build).catch(() => {})
-
-    if (reduced) {
-      nodes.forEach((n) => n.classList.add('is-lit'))
-      head.style.opacity = '0'
-      return () => ro.disconnect()
+    /* same gate as §4's paper entrance: the pin is a desktop composition */
+    if (!window.matchMedia('(min-width: 57.5rem)').matches) {
+      return () => root.classList.remove('is-over')
     }
 
-    /* the burial used to be armed here (`is-over`); it went with §6 on
-       2026-08-24 — see the header. */
+    const N = panels.length
+    steps.classList.add('is-scrub')
+    steps.style.height = `${N * STEP_VH + 100}svh`
 
-    const lit = nodes.map(() => false)
+    const nums = panels.map((p) => p.querySelector<HTMLElement>('.pr-num'))
+    const copies = panels.map((p) => p.querySelector<HTMLElement>('.pr-copy'))
+    const rules = panels.map((p) => p.querySelector<HTMLElement>('.pr-rule'))
+    const gets = panels.map((p) => Array.from(p.querySelectorAll<HTMLElement>('.pr-get')))
+
+    let lastLive = -1
 
     const tick = () => {
-      const r = phases.getBoundingClientRect()
+      const r = steps.getBoundingClientRect()
       const vh = window.innerHeight
-      if (r.bottom < -200 || r.top > vh + 200) return
-      /* p 0 when the block's top passes 78% of the viewport, 1 when its
-         bottom passes 62% — the thread draws across the reading zone */
-      const start = vh * 0.78
-      const end = vh * 0.62
-      const p = gsap.utils.clamp(0, 1, (start - r.top) / Math.max(start - end + r.height, 1))
-      const drawn = p * L
+      if (r.bottom < -100 || r.top > vh + 100) return
+      const p = clamp01(-r.top / Math.max(r.height - vh, 1))
+      const x = p * N
 
-      let hx = 0
-      let hy = 0
-      let onHead = false
-      segs.forEach((s, i) => {
-        const d = gsap.utils.clamp(0, lens[i], drawn - cum[i])
-        s.style.strokeDashoffset = String(lens[i] - d)
-        if (d > 0.5 && d < lens[i] - 0.5) {
-          const pt = s.getPointAtLength(d)
-          hx = pt.x
-          hy = pt.y
-          onHead = true
+      for (let i = 0; i < N; i++) {
+        const t = x - i // <0 waiting · 0..1 its segment · >1 buried
+        /* the first panel is already on screen when the pin starts and the
+           last holds to the end — neither fades at its outer edge */
+        const inO = i === 0 ? 1 : smooth(t / FADE)
+        const outO = i === N - 1 ? 1 : 1 - smooth((t - (1 - FADE)) / FADE)
+        const o = Math.min(inO, outO)
+        const el = panels[i]
+        if (o <= 0) {
+          if (el.style.visibility !== 'hidden') {
+            el.style.visibility = 'hidden'
+            el.style.opacity = '0'
+          }
+          continue
         }
-      })
-      head.style.opacity = onHead ? '1' : '0'
-      if (onHead) {
-        head.setAttribute('cx', String(hx))
-        head.setAttribute('cy', String(hy))
+        el.style.visibility = ''
+        el.style.opacity = o.toFixed(3)
+        /* incoming rises, outgoing keeps rising — one direction of travel,
+           so the swap reads as the next step pushing up through */
+        const y = (1 - inO) * DRIFT - (1 - outO) * DRIFT
+        const copy = copies[i]
+        const num = nums[i]
+        if (copy) copy.style.transform = `translateY(${y.toFixed(2)}px)`
+        if (num) num.style.transform = `translateY(${(y * NUM_DRIFT).toFixed(2)}px)`
+
+        /* inner choreography, off the step's own clock: the hairline draws,
+           then the deliverables resolve under it, staggered */
+        const rule = rules[i]
+        if (rule) rule.style.transform = `scaleX(${smooth((t - 0.04) / 0.22).toFixed(3)})`
+        gets[i].forEach((g, j) => {
+          const gg = smooth((t - 0.1 - j * 0.07) / 0.2)
+          g.style.opacity = (0.3 + 0.7 * gg).toFixed(3)
+          g.style.transform = `translateY(${((1 - gg) * 14).toFixed(2)}px)`
+        })
       }
 
-      /* each node fills as the drawing head reaches it, and empties again on
-         the way back up — the thread owns them in both directions */
-      nodes.forEach((n, i) => {
-        const on = drawn >= nodeAt[i] - 0.5 && p > 0
-        if (on !== lit[i]) {
-          lit[i] = on
-          n.classList.toggle('is-lit', on)
-        }
-      })
+      /* only the live panel takes the pointer, so the hover move can never
+         land on an invisible stack above it */
+      const live = Math.min(N - 1, Math.floor(x))
+      if (live !== lastLive) {
+        panels.forEach((el, i) => el.classList.toggle('is-live', i === live))
+        lastLive = live
+      }
     }
+    tick()
     gsap.ticker.add(tick)
 
     return () => {
       gsap.ticker.remove(tick)
-      ro.disconnect()
+      root.classList.remove('is-over')
+      steps.classList.remove('is-scrub')
+      steps.style.height = ''
+      panels.forEach((el) => {
+        el.style.opacity = ''
+        el.style.visibility = ''
+        el.classList.remove('is-live')
+      })
+      ;[...nums, ...copies, ...rules, ...gets.flat()].forEach((el) => {
+        if (el) {
+          el.style.transform = ''
+          el.style.opacity = ''
+        }
+      })
     }
   }, [])
 
   return (
-    <section ref={rootRef} className="pr k-section">
-      <div className="k-page">
+    <section ref={rootRef} className="pr" aria-label="How we work">
+      {/* §5's hub link, riding the top of the rising sheet — the work
+          chapter's exit is the first thing the turn reveals */}
+      <div className="pr-workline k-page">
+        <ArrowLink href="/work">All projects</ArrowLink>
+      </div>
+
+      <header className="pr-head k-page">
         <Reveal as="h2" className="t-h1 pr-title">
-          Four moves, from the first call to <em>launch day</em>.
+          How we <em>work.</em>
         </Reveal>
         <Reveal as="p" className="t-body pr-lede" index={1}>
-          No mystery phases and no black box. You always know what is happening,
-          what we need from you, and what lands at the end of it.
+          Six steps, no black box. You always know where the project stands,
+          what we need from you, and what lands next.
         </Reveal>
+      </header>
 
-        <div className="pr-phases">
-          {/* the thread. Rebuilt from the node positions on mount and on every
-              resize; aria-hidden because it draws what the list already says. */}
-          <svg className="pr-thread" aria-hidden="true" focusable="false" preserveAspectRatio="none">
-            {MOVES.slice(1).map((m) => (
-              <path className="pr-seg" key={m.name} />
-            ))}
-            <circle className="pr-head" r="4.5" cx="0" cy="0" />
-          </svg>
-
-          {MOVES.map((m, i) => (
-            <div
-              key={m.name}
-              className={`pr-move pr-m${i + 1} ${i % 2 === 0 ? 'pr-move--l' : 'pr-move--r'}`}
-            >
-              <span className="pr-node" aria-hidden="true">
-                <i />
-              </span>
-              <Reveal className="pr-copy" index={i}>
-                <h3 className="pr-name">{m.name}</h3>
-                <p className="pr-body">{m.body}</p>
-                <p className="pr-get">{m.get}</p>
-              </Reveal>
-            </div>
+      <div className="pr-steps">
+        <div className="pr-view">
+          {STEPS.map((s) => (
+            <article className="pr-panel" key={s.name}>
+              <p className="pr-num" aria-hidden="true">
+                {s.no}
+              </p>
+              <div className="pr-copy">
+                <h3 className="pr-name t-h2">{s.name}</h3>
+                <p className="pr-text t-body">{s.body}</p>
+                <div className="pr-gets">
+                  <i className="pr-rule" aria-hidden="true" />
+                  {s.gets.map((g) => (
+                    <p className="pr-get t-body" key={g}>
+                      {g}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </article>
           ))}
         </div>
-
-        <Reveal as="div" className="pr-foot" index={1}>
-          <Button href="/contact" hoverLabel="Say hello">
-            Start a project
-          </Button>
-        </Reveal>
       </div>
     </section>
   )
