@@ -1885,3 +1885,141 @@
   .so-float,
   .so-spin { transform: none !important; }
 }
+
+/* ============================================================
+   §9 — THE INVITATION (2026-08-24). The line, the button, the
+   address, two drifting plates, and the social rail. Mechanism
+   notes in Invitation.tsx.
+   ============================================================ */
+.inv {
+  position: relative;
+  background: var(--surface);
+  padding-block: clamp(10rem, 22vh, 16rem);
+  overflow: clip; /* the plates drift past the section's edges */
+}
+.inv-body {
+  position: relative;
+  z-index: 1; /* the line rides over a plate where they cross */
+}
+.inv-line {
+  margin: 0;
+  max-width: 14ch;
+  font-weight: var(--w-light);
+}
+.inv-act {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s-6) var(--s-7);
+  margin-top: clamp(var(--s-8), 9vh, var(--s-10));
+}
+/* the address: real text, quiet, with a drawn underline on hover — the
+   only place this page writes an email, so it may take one flourish */
+.inv-mail {
+  color: var(--text-muted);
+  text-decoration: none;
+  padding-bottom: 2px;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 0% var(--hair);
+  transition:
+    background-size var(--d-base) var(--e-settle),
+    color var(--d-instant) var(--e-settle);
+}
+.inv-mail:hover {
+  color: var(--text);
+  background-size: 100% var(--hair);
+}
+
+/* ---------- the plates ---------- */
+.inv-plates {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.inv-plate {
+  position: absolute;
+  margin: 0;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--lift-4);
+}
+.inv-plate img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* INTERIM monochrome grade, same status as §3's plate: out when graded
+     assets land (B1). Safe ONLY because it is on the IMG — a filter on any
+     ancestor of the fluid canvas kills the difference blend. */
+  filter: grayscale(1) contrast(1.04);
+}
+.inv-plate-a {
+  /* bleeds off the top edge — it reads as arriving from the section above */
+  top: -5%;
+  right: 4%;
+  width: clamp(190px, 21vw, 300px);
+  aspect-ratio: 4 / 5;
+}
+.inv-plate-b {
+  /* opposite corner, bleeding off the bottom — the action row owns the
+     bottom-LEFT, so nothing photographic may sit under the button */
+  bottom: -7%;
+  right: 17%;
+  width: clamp(150px, 16vw, 240px);
+  aspect-ratio: 1 / 1;
+}
+
+/* ---------- the social rail: sideways, reading bottom-to-top ---------- */
+.inv-social {
+  position: absolute;
+  z-index: 1;
+  right: calc(var(--page-pad) / 2);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-6);
+}
+.inv-soc {
+  writing-mode: vertical-rl;
+  rotate: 180deg; /* bottom-to-top, the way a book spine reads */
+  color: var(--text-muted);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  transition: color var(--d-instant) var(--e-settle);
+}
+.inv-soc:hover {
+  color: var(--text);
+}
+
+@media (max-width: 57.5rem) {
+  .inv {
+    padding-block: clamp(7rem, 16vh, 10rem);
+  }
+  /* the rail lies back down into a row, and the plates step out of the
+     copy's way: one small still keeps the atmosphere, the second goes */
+  .inv-social {
+    position: static;
+    transform: none;
+    flex-direction: row;
+    gap: var(--s-6);
+    margin-top: var(--s-8);
+    padding-inline: var(--page-pad);
+  }
+  .inv-soc {
+    writing-mode: horizontal-tb;
+    rotate: none;
+  }
+  .inv-plate-b {
+    display: none;
+  }
+  .inv-plate-a {
+    top: -2%;
+    right: 4%;
+    width: clamp(120px, 30vw, 200px);
+    opacity: 0.85;
+  }
+}

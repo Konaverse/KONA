@@ -6,6 +6,7 @@ import SolveCredits from '@/components/v4/SolveCredits'
 import ServiceCards from '@/components/v4/ServiceCards'
 import ProjectSheets, { type SheetProject } from '@/components/v4/ProjectSheets'
 import Process from '@/components/v4/Process'
+import Invitation from '@/components/v4/Invitation'
 import './home.css'
 
 /**
@@ -115,6 +116,9 @@ export default function HomePage() {
 
       {/* §7 — how we work: the pinned steps */}
       <Process />
+
+      {/* §9 — the invitation: the line, the button, the address */}
+      <Invitation />
     </main>
   )
 }

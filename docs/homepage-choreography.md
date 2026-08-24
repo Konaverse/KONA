@@ -830,13 +830,27 @@ Pricing is one of the two things people already ask on WhatsApp (architecture §
 
 ---
 
-## Section 9 — The invitation
+## Section 9 — The invitation *(BUILT 2026-08-24, user-directed: scroll-driven, kind of parallax, light, with imagery; socials sideways)*
 
 **Job.** Make contact feel like the obvious next move rather than a form.
 
-**On screen.** One line at `display` size. One button. An email address as real text. Nothing else. No form on the homepage, forms belong on `/contact`.
+**On screen.** One line at `display` size, filling letter by letter on scroll
+(ScrollFillText — the same aliveness as §2's claim). One button: **Start a project →
+/contact**. The email as REAL text (info@kona-verse.com) with a drawn-underline hover —
+the page's one address, so it takes the one flourish. No form on the homepage.
 
-**Entrance.** The line resolves slowly, at the very slow end of `--d-slow`. This is the last thing anyone reads and it can afford to take its time.
+**The plates.** Two framed stills (the /work pair the featured set doesn't use,
+PLACEHOLDER until B1; interim CSS grayscale on the IMG, same status as §3's grade) at
+`--r-lg` with `--lift-4`, drifting at −64px/vh and +42px/vh as the section travels —
+one behind the page, one ahead of it, so the parallax reads as depth. Plate A bleeds
+off the TOP edge, plate B off the BOTTOM-RIGHT; nothing photographic may sit under the
+button. gsap.ticker + rect math, transform-only, aria-hidden.
+
+**The social rail.** Instagram · Facebook · LinkedIn vertically up the right edge,
+reading bottom-to-top like a book spine; muted, ink on hover. Lies back down into a
+plain row under 57.5rem.
+
+**Entrance.** The line's fill IS the entrance; button and email take the house reveal.
 
 **3D.** Absent.
 
