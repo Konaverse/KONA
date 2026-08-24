@@ -790,13 +790,18 @@ after the work. The **"All projects" hub link rides the top of this sheet** — 
 lives in Process.tsx now, but it is §5's fourth link.
 
 **On screen.** Title + lede, then SIX steps under one pin (~70svh of scroll each):
-Understand · Scope · References · System · Homepage · Launch. Each step is a stacked
-panel — a giant numeral at ~38vh in the page's ONE gradient text (ink dissolving downward
-to transparent, `var(--text)` so it inverts), name at `h2`, two lines of body, and
-deliverable lines under a hairline that DRAWS as the step arrives. Panels crossfade
-(13% of each segment per side) with a 40px drift; the numeral moves at 0.4× the copy's
-drift, which is what makes the swap read as depth. Driven off gsap.ticker + rect math,
-transform/opacity only — nothing paints on a schedule.
+Understand · Scope · References · System · Homepage · Launch. LEFT: **the RAIL**
+(amended same day, user call) — all six numerals stacked and always visible, each in the
+page's ONE gradient text (ink dissolving downward to transparent, `var(--text)` so it
+inverts). The ACTIVE number sits at full ink inside a black SVG rounded-rect that DRAWS
+itself around the number as it takes over (rect with `pathLength=100`, stroke-dashoffset
+100→0 on a CSS transition over `--d-slow`/`--e-glass` — a response to the scrub's state,
+never a loop) and un-draws on handoff; the rest hold at 0.24, faded but legible, so the
+rail reads as a map. RIGHT: the copy panels — name at `h2`, two lines of body,
+deliverables under a hairline that DRAWS — crossfade (13% of each segment per side) with
+a 40px drift. Driven off gsap.ticker + rect math, transform/opacity only — nothing paints
+on a schedule. The rail renders only under the pin; the stacked fallback keeps per-panel
+numerals (exactly one of the two is ever displayed).
 
 **Hover.** The reading-focus move, scoped to the deliverables: hovered row full ink,
 siblings recede. The rows navigate nowhere, so contrast alone — nothing may read as a link.

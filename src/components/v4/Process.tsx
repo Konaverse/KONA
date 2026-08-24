@@ -24,14 +24,19 @@ import { gsap } from '@/lib/motion-v4'
  *
  * THE PIN. Six steps, one pinned viewport, scroll owns the playhead
  * (gsap.ticker + rect math — the house pattern, no scroll listeners, no
- * ScrollTrigger). Each step is a full stacked panel: a giant numeral at
- * ~34vh in the fade-out gradient (ink dissolving to nothing — the one
- * gradient-text on the page, user-directed), name, two lines of body, and
- * the deliverables under a hairline that DRAWS as the step arrives. Panels
- * crossfade with a short drift; the numeral moves at 0.4× the copy's
- * drift, which is what makes the swap read as depth rather than a slide.
- * Everything is a RESPONSE to scroll — nothing paints on a schedule (§4's
- * rule) — and everything written per-frame is transform/opacity.
+ * ScrollTrigger). LEFT: the RAIL (amended 2026-08-24, user call) — all six
+ * numerals stacked and always on screen, each in the fade-out gradient
+ * (the one gradient-text on the page). The ACTIVE one sits at full ink
+ * with a black SVG border that DRAWS itself around the number as it takes
+ * over (stroke-dashoffset under a CSS transition — a response to the
+ * scrub's state, not a loop) and un-draws as it hands off; the rest hold
+ * faded but legible, so the rail reads as a map of where you are. RIGHT:
+ * the copy panels crossfade with a short drift, the hairline draws, the
+ * deliverables stagger in. Everything is a RESPONSE to scroll — nothing
+ * paints on a schedule (§4's rule) — and everything written per-frame is
+ * transform/opacity. The rail exists only under the pin; the stacked
+ * fallback keeps its per-panel numerals instead (one of the two is always
+ * display:none, so no double numeral is ever read).
  *
  * THE HOVER is the house reading-focus move, scoped to the deliverables:
  * hovering one brings it to full ink and recedes its siblings. These rows
@@ -89,9 +94,8 @@ const STEPS: Step[] = [
 const STEP_VH = 70
 /** Fraction of a step's segment spent crossfading at each end. */
 const FADE = 0.13
-/** The crossfade drift, px. The numeral moves at NUM_DRIFT of this. */
+/** The crossfade drift, px. */
 const DRIFT = 40
-const NUM_DRIFT = 0.4
 
 const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
 /* the hand supplies the pacing through Lenis; this only rounds the ends
@@ -127,7 +131,7 @@ export default function Process() {
     steps.classList.add('is-scrub')
     steps.style.height = `${N * STEP_VH + 100}svh`
 
-    const nums = panels.map((p) => p.querySelector<HTMLElement>('.pr-num'))
+    const rail = Array.from(root.querySelectorAll<HTMLElement>('.pr-ri'))
     const copies = panels.map((p) => p.querySelector<HTMLElement>('.pr-copy'))
     const rules = panels.map((p) => p.querySelector<HTMLElement>('.pr-rule'))
     const gets = panels.map((p) => Array.from(p.querySelectorAll<HTMLElement>('.pr-get')))
@@ -162,9 +166,7 @@ export default function Process() {
            so the swap reads as the next step pushing up through */
         const y = (1 - inO) * DRIFT - (1 - outO) * DRIFT
         const copy = copies[i]
-        const num = nums[i]
         if (copy) copy.style.transform = `translateY(${y.toFixed(2)}px)`
-        if (num) num.style.transform = `translateY(${(y * NUM_DRIFT).toFixed(2)}px)`
 
         /* inner choreography, off the step's own clock: the hairline draws,
            then the deliverables resolve under it, staggered */
@@ -178,10 +180,13 @@ export default function Process() {
       }
 
       /* only the live panel takes the pointer, so the hover move can never
-         land on an invisible stack above it */
+         land on an invisible stack above it — and the rail follows the same
+         clock: the class flips here, the CSS transitions do the darkening
+         and the border draw, in BOTH scroll directions */
       const live = Math.min(N - 1, Math.floor(x))
       if (live !== lastLive) {
         panels.forEach((el, i) => el.classList.toggle('is-live', i === live))
+        rail.forEach((el, i) => el.classList.toggle('is-on', i === live))
         lastLive = live
       }
     }
@@ -198,7 +203,8 @@ export default function Process() {
         el.style.visibility = ''
         el.classList.remove('is-live')
       })
-      ;[...nums, ...copies, ...rules, ...gets.flat()].forEach((el) => {
+      rail.forEach((el) => el.classList.remove('is-on'))
+      ;[...copies, ...rules, ...gets.flat()].forEach((el) => {
         if (el) {
           el.style.transform = ''
           el.style.opacity = ''
@@ -227,6 +233,21 @@ export default function Process() {
 
       <div className="pr-steps">
         <div className="pr-view">
+          {/* the rail — the pin's map. aria-hidden: the panels already say
+              everything it shows, and its numerals are decoration */}
+          <div className="pr-rail" aria-hidden="true">
+            {STEPS.map((s) => (
+              <span className="pr-ri" key={s.no}>
+                <svg className="pr-ring" aria-hidden="true" focusable="false">
+                  {/* geometry via CSS (SVG2), pathLength normalises the dash
+                      so one dasharray fits every box size */}
+                  <rect pathLength={100} />
+                </svg>
+                <span className="pr-rno">{s.no}</span>
+              </span>
+            ))}
+          </div>
+
           {STEPS.map((s) => (
             <article className="pr-panel" key={s.name}>
               <p className="pr-num" aria-hidden="true">
