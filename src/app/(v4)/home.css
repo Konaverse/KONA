@@ -1114,67 +1114,85 @@
   display: none;
 }
 
-/* ---------- THE RAIL — the pin's map (amended 2026-08-24) ----------
-   All six numerals stacked and always visible; the active one at full
-   ink inside a black border that draws itself, the rest faded but
-   legible. Scrub-only by construction: outside .is-scrub it never
-   renders, so the stacked fallback keeps its per-panel numerals. */
+/* ---------- THE RAIL — the sliding stack (second cut, 2026-08-24) ----
+   Giant outline numerals centred in the left column, one stride per
+   handoff. The active one sits level with the copy at full ink with the
+   comet running its edges; the next waits below, faded but legible.
+   Scrub-only by construction: outside .is-scrub it never renders, so
+   the stacked fallback keeps its per-panel DOM-text numerals. */
 .pr-rail {
   display: none;
+  /* ONE home for the carousel geometry — the driver strides in these */
+  --pr-slot: 32svh;
+  --pr-gap: 6svh;
 }
 .pr-steps.is-scrub .pr-rail {
+  display: block;
   position: absolute;
   top: 0;
   bottom: 0;
   left: var(--page-pad);
+  right: 58%;
+}
+.pr-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+/* the mover: numeral 1 sits centred when the stack is untranslated; the
+   driver slides it up by (slot+gap) per crossed boundary */
+.pr-stack {
+  position: absolute;
+  top: calc(50% - var(--pr-slot) / 2);
+  left: 0;
+  right: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 1.6vh;
+  align-items: center;
+  gap: var(--pr-gap);
 }
 .pr-ri {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  padding: 0.6vh 2vh;
-  opacity: 0.24;
+  display: flex;
+  justify-content: center;
+  height: var(--pr-slot);
+  opacity: 0.22;
   transition: opacity var(--d-base) var(--e-settle);
 }
 .pr-ri.is-on {
   opacity: 1;
 }
-.pr-rno {
-  font-size: clamp(2.8rem, 9.6vh, 6.75rem);
-  line-height: 0.9;
-}
-/* the border: one rounded rect, geometry from CSS (SVG2) so the same
-   markup fits every box; pathLength=100 on the rect normalises the dash.
-   Drawn on --e-glass when the number takes over, un-drawn as it hands
-   off — both directions come free from the transition. */
-.pr-ring {
-  position: absolute;
-  inset: 0;
-  width: 100%;
+.pr-rsvg {
   height: 100%;
+  width: auto;
   overflow: visible;
-  pointer-events: none;
+  color: var(--text); /* the gradient's currentColor, and the comet's ink */
 }
-.pr-ring rect {
-  x: 0.7px;
-  y: 0.7px;
-  width: calc(100% - 1.4px);
-  height: calc(100% - 1.4px);
-  rx: var(--r-md);
+/* the glyph: the same fade-out gradient as the DOM numerals, drawn by
+   the one shared <linearGradient> */
+.pr-glyph {
+  fill: url(#pr-fade);
+}
+/* the comet: three dash layers per digit, all ending on one travelling
+   head — driven by the scrub (Process.tsx), parked when the hand stops.
+   Hidden off the active numeral; the fade is the handoff. */
+.pr-c {
   fill: none;
-  stroke: var(--text);
-  stroke-width: 1.4;
-  stroke-dasharray: 100;
-  stroke-dashoffset: 100;
-  transition: stroke-dashoffset var(--d-slow) var(--e-glass);
+  stroke: currentColor;
+  /* USER units (viewBox height 1600 over ~32svh): ~1.6px on a laptop, and
+     it scales with the numeral, which is what a drawn edge should do */
+  stroke-width: 8;
+  stroke-linecap: round;
+  opacity: 0;
+  transition: opacity var(--d-base) var(--e-settle);
 }
-.pr-ri.is-on .pr-ring rect {
-  stroke-dashoffset: 0;
+.pr-ri.is-on .pr-c1 {
+  opacity: 1;
+}
+.pr-ri.is-on .pr-c2 {
+  opacity: 0.35;
+}
+.pr-ri.is-on .pr-c3 {
+  opacity: 0.12;
 }
 
 .pr-copy {

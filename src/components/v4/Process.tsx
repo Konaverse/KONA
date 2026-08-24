@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import ArrowLink from '@/components/v4/ArrowLink'
 import Reveal from '@/components/v4/Reveal'
+import { DIGITS, UPEM } from '@/components/v4/digit-paths'
 import { gsap } from '@/lib/motion-v4'
 
 /**
@@ -24,19 +25,30 @@ import { gsap } from '@/lib/motion-v4'
  *
  * THE PIN. Six steps, one pinned viewport, scroll owns the playhead
  * (gsap.ticker + rect math — the house pattern, no scroll listeners, no
- * ScrollTrigger). LEFT: the RAIL (amended 2026-08-24, user call) — all six
- * numerals stacked and always on screen, each in the fade-out gradient
- * (the one gradient-text on the page). The ACTIVE one sits at full ink
- * with a black SVG border that DRAWS itself around the number as it takes
- * over (stroke-dashoffset under a CSS transition — a response to the
- * scrub's state, not a loop) and un-draws as it hands off; the rest hold
- * faded but legible, so the rail reads as a map of where you are. RIGHT:
- * the copy panels crossfade with a short drift, the hairline draws, the
- * deliverables stagger in. Everything is a RESPONSE to scroll — nothing
- * paints on a schedule (§4's rule) — and everything written per-frame is
- * transform/opacity. The rail exists only under the pin; the stacked
- * fallback keeps its per-panel numerals instead (one of the two is always
- * display:none, so no double numeral is ever read).
+ * ScrollTrigger). LEFT: the RAIL (second cut 2026-08-24, user-directed) —
+ * a sliding stack of GIANT numerals, centred in the left column. The
+ * active one sits level with the copy at full ink; the next waits below,
+ * faded but legible; at each handoff the stack slides up one stride,
+ * through the same window the copy crossfades in, so the two swaps read
+ * as one event. The numerals are SVG OUTLINES of Manrope ExtraLight's own
+ * digits (digit-paths.ts — "flattened", because the comet needs edges),
+ * filled with the fade-out gradient (the page's one gradient text, via
+ * one shared <linearGradient> in currentColor so it inverts with the
+ * polarity).
+ *
+ * THE COMET (user-directed): a short black line that runs along the
+ * active digits' own contours — head at full ink, tail fading behind it.
+ * Three stacked dash strokes per digit (8/18/30 of a pathLength-100
+ * lap) sharing one head position: the union reads as a comet with a
+ * fading tail. The head is DRIVEN BY SCROLL — one full lap per step, so
+ * it flows when the hand moves and PARKS when the hand stops. Not a
+ * loop: nothing here paints on a schedule (§4's rule).
+ *
+ * RIGHT: the copy panels crossfade with a short drift, the hairline
+ * draws, the deliverables stagger in. Everything written per-frame is
+ * transform/opacity/dashoffset, all of it a response to scroll. The rail
+ * exists only under the pin; the stacked fallback keeps its per-panel
+ * DOM-text numerals instead (one of the two is always display:none).
  *
  * THE HOVER is the house reading-focus move, scoped to the deliverables:
  * hovering one brings it to full ink and recedes its siblings. These rows
@@ -105,6 +117,53 @@ const smooth = (v: number) => {
   return t * t * (3 - 2 * t)
 }
 
+/* the comet's three layers: segment length (of a pathLength-100 lap) and
+   weight. All three END on the same travelling head; the union reads as a
+   dark head with a fading tail. */
+const COMET = [
+  { len: 8, cls: 'pr-c pr-c1' },
+  { len: 18, cls: 'pr-c pr-c2' },
+  { len: 30, cls: 'pr-c pr-c3' },
+]
+
+/** tracking between the two digits, in em — the DOM numerals' -0.06em */
+const TRACK = -0.06
+
+/**
+ * One rail numeral: Manrope's own digit outlines, filled with the shared
+ * fade gradient and overlaid with the comet strokes. The viewBox brackets
+ * the digits' real ink (y 480–2080 in font units, baseline 2000) so the
+ * glyphs fill the box edge to edge.
+ */
+function RailNumeral({ no }: { no: string }) {
+  const chars = no.split('')
+  let x = 0
+  const placed = chars.map((ch) => {
+    const g = DIGITS[ch]
+    const at = x
+    x += (g.advance + TRACK) * UPEM
+    return { ch, g, at }
+  })
+  const w = x - TRACK * UPEM // no tracking after the last digit
+  return (
+    <svg className="pr-rsvg" viewBox={`0 480 ${Math.round(w)} 1600`} aria-hidden="true" focusable="false">
+      {placed.map(({ ch, g, at }, i) => (
+        <g key={i} transform={`translate(${Math.round(at)} 0)`}>
+          <path className="pr-glyph" d={g.d} />
+          {/* dash geometry is set by the driver in MEASURED units —
+              pathLength normalisation is off the table because Chromium
+              ignores it under non-scaling-stroke, and screen-space dashes
+              turn the comet into confetti. data-len is the segment's share
+              of one lap, in % of the contour. */}
+          {COMET.map((c) => (
+            <path key={c.cls} className={c.cls} d={g.d} data-len={c.len} />
+          ))}
+        </g>
+      ))}
+    </svg>
+  )
+}
+
 export default function Process() {
   const rootRef = useRef<HTMLElement | null>(null)
 
@@ -132,6 +191,18 @@ export default function Process() {
     steps.style.height = `${N * STEP_VH + 100}svh`
 
     const rail = Array.from(root.querySelectorAll<HTMLElement>('.pr-ri'))
+    const stack = root.querySelector<HTMLElement>('.pr-stack')
+    /* the comet strokes, grouped per numeral — only the live one is written.
+       Dash lengths are set ONCE here from each contour's measured length
+       (getTotalLength is geometry, not layout — safe whenever), so the
+       per-frame write is a single offset. */
+    const comets = rail.map((ri) => Array.from(ri.querySelectorAll<SVGPathElement>('.pr-c')))
+    comets.flat().forEach((c) => {
+      const L = c.getTotalLength()
+      const f = Number(c.dataset.len) / 100
+      c.dataset.total = String(L)
+      c.style.strokeDasharray = `${(f * L).toFixed(1)} ${((1 - f) * L).toFixed(1)}`
+    })
     const copies = panels.map((p) => p.querySelector<HTMLElement>('.pr-copy'))
     const rules = panels.map((p) => p.querySelector<HTMLElement>('.pr-rule'))
     const gets = panels.map((p) => Array.from(p.querySelectorAll<HTMLElement>('.pr-get')))
@@ -181,14 +252,38 @@ export default function Process() {
 
       /* only the live panel takes the pointer, so the hover move can never
          land on an invisible stack above it — and the rail follows the same
-         clock: the class flips here, the CSS transitions do the darkening
-         and the border draw, in BOTH scroll directions */
+         clock: the class flips here, the CSS transitions do the fades in
+         BOTH scroll directions */
       const live = Math.min(N - 1, Math.floor(x))
       if (live !== lastLive) {
         panels.forEach((el, i) => el.classList.toggle('is-live', i === live))
         rail.forEach((el, i) => el.classList.toggle('is-on', i === live))
         lastLive = live
       }
+
+      /* THE STACK SLIDE: one stride per handoff, eased through the same
+         2×FADE window the copy crossfades in — s counts how many
+         boundaries have been crossed, fractionally inside a window */
+      if (stack) {
+        let slid = 0
+        for (let k = 0; k < N - 1; k++) {
+          slid += smooth((x - (k + 1 - FADE)) / (2 * FADE))
+        }
+        /* one STRIDE per unit — slot + gap, read from the CSS vars so the
+           geometry has exactly one home */
+        stack.style.transform = `translateY(calc(${(-slid).toFixed(4)} * (var(--pr-slot) + var(--pr-gap))))`
+      }
+
+      /* THE COMET: head position = one lap per step, written only to the
+         live numeral's strokes. Each layer's dashoffset keeps its segment
+         END on the shared head (offset = len − head; dashes tile, so the
+         wrap at 100 comes free). */
+      const head = (x - live) * 100
+      comets[live]?.forEach((c) => {
+        const L = Number(c.dataset.total)
+        const len = Number(c.dataset.len)
+        c.style.strokeDashoffset = (((len - head) / 100) * L).toFixed(1)
+      })
     }
     tick()
     gsap.ticker.add(tick)
@@ -204,6 +299,8 @@ export default function Process() {
         el.classList.remove('is-live')
       })
       rail.forEach((el) => el.classList.remove('is-on'))
+      if (stack) stack.style.transform = ''
+      comets.flat().forEach((c) => (c.style.strokeDashoffset = ''))
       ;[...copies, ...rules, ...gets.flat()].forEach((el) => {
         if (el) {
           el.style.transform = ''
@@ -234,18 +331,25 @@ export default function Process() {
       <div className="pr-steps">
         <div className="pr-view">
           {/* the rail — the pin's map. aria-hidden: the panels already say
-              everything it shows, and its numerals are decoration */}
+              everything it shows, and its numerals are decoration. The
+              gradient is defined ONCE and shared by every glyph; its stops
+              are currentColor, so the fill follows the polarity's ink. */}
           <div className="pr-rail" aria-hidden="true">
-            {STEPS.map((s) => (
-              <span className="pr-ri" key={s.no}>
-                <svg className="pr-ring" aria-hidden="true" focusable="false">
-                  {/* geometry via CSS (SVG2), pathLength normalises the dash
-                      so one dasharray fits every box size */}
-                  <rect pathLength={100} />
-                </svg>
-                <span className="pr-rno">{s.no}</span>
-              </span>
-            ))}
+            <svg className="pr-defs" aria-hidden="true" focusable="false">
+              <defs>
+                <linearGradient id="pr-fade" gradientUnits="userSpaceOnUse" x1="0" y1="480" x2="0" y2="2080">
+                  <stop offset="0.04" stopColor="currentColor" stopOpacity="1" />
+                  <stop offset="0.82" stopColor="currentColor" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div className="pr-stack">
+              {STEPS.map((s) => (
+                <span className="pr-ri" key={s.no}>
+                  <RailNumeral no={s.no} />
+                </span>
+              ))}
+            </div>
           </div>
 
           {STEPS.map((s) => (
