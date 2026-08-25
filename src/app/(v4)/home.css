@@ -203,8 +203,8 @@
 }
 .hm-dot {
   display: block;
-  width: 9px;
-  height: 9px;
+  width: 0.5625rem;
+  height: 0.5625rem;
   border-radius: var(--r-full);
   border: var(--hair) solid var(--graphite);
   background: var(--surface);
@@ -215,8 +215,8 @@
   position: absolute;
   left: 47%;
   top: 12.5%;
-  width: 22px;
-  height: 22px;
+  width: 1.375rem;
+  height: 1.375rem;
   fill: var(--ink);
   z-index: 3;
   animation: hm-twinkle 6s ease-in-out infinite;
@@ -273,7 +273,7 @@
   .hm-li3 { padding-left: 0; }
   .hm-objpos {
     position: static;
-    width: min(68vw, 340px);
+    width: min(68vw, 21.25rem);
     margin: var(--s-7) auto;
     transform: none;
   }
@@ -376,7 +376,7 @@
   background: repeating-linear-gradient(
     99deg,
     rgba(255, 255, 255, 0.60) 0 1px,
-    transparent 1px 26px
+    transparent 1px 1.625rem
   );
   -webkit-mask-image: radial-gradient(closest-side, #000 4%, transparent 52%);
   mask-image: radial-gradient(closest-side, #000 4%, transparent 52%);
@@ -427,7 +427,7 @@
 
 .hw-comp {
   position: relative;
-  width: min(100%, 1440px);
+  width: min(100%, 90rem);
   aspect-ratio: 815 / 375;
   /* the headline sizes off THIS box (cqi), not the viewport — its wrap
      points are tuned in em and must not drift with window width */
@@ -551,7 +551,7 @@
      the page's ink, never black */
   box-shadow:
     inset 0 0 0 1px rgb(24 40 51 / 0.07),
-    0 10px 24px -16px rgb(24 40 51 / 0.45);
+    0 0.625rem 1.5rem -1rem rgb(24 40 51 / 0.45);
 }
 /* THE PLATE. A fixed 13.5em picture pinned left, so growing the pill UNVEILS
    more of it instead of un-squashing it — the pill opens like an aperture.
@@ -637,6 +637,21 @@
   line-height: 1.62;
 }
 .hw-btn { margin-top: var(--s-6); }
+
+/* THE PICTURE at 21:9 (2026-08-25). The comp is width-proportional like
+   everything else, but its 815/375 box plus the hero's padding needs
+   ~0.6 of the width in height: a 16:9 screen has it, a 3440x1440
+   ultrawide does not, and the CTA fell off the bottom edge. Inside this
+   gate — true ultrawides only; a 16:9 monitor with browser chrome is 2.02
+   and stays exactly as signed off — the comp is bounded by the HEIGHT the
+   hero actually has (100svh minus its padding) and centres, and the
+   paragraph sizes off the comp like the headline does (0.9845cqi is
+   --t-small at the reference frame), so the hero shrinks as ONE picture
+   rather than the headline alone. */
+@media (min-width: 57.5rem) and (min-aspect-ratio: 21/10) {
+  .hw-comp { width: min(100%, 90rem, calc((100svh - 12rem) * 815 / 375)); }
+  .hw-para { font-size: 0.9845cqi; }
+}
 
 /* entrance initial state — opacity ONLY (a CSS transform here would poison
    GSAP's percent channels; see the hm- gotcha above) */
@@ -911,7 +926,7 @@
   /* The scrims are global and cannot know where the credits are; this
      can. Wide, soft and low — it never reads as a shape, it just keeps
      white type off the carved stone the third item lands on. */
-  text-shadow: 0 1px 26px rgb(13 16 18 / 0.62), 0 1px 3px rgb(13 16 18 / 0.34);
+  text-shadow: 0 1px 1.625rem rgb(13 16 18 / 0.62), 0 1px 0.1875rem rgb(13 16 18 / 0.34);
 }
 /* THE ANSWER, deliberately NARROWER than the question it sits under —
    the question runs to 12em, this to 34ch (~330px), so the block has a
@@ -930,7 +945,7 @@
      is no role pointing at it because no other dark surface on the page
      needs one. If a --text-body role is ever added, this becomes it. */
   color: var(--n-4);
-  text-shadow: 0 1px 20px rgb(13 16 18 / 0.72), 0 1px 2px rgb(13 16 18 / 0.40);
+  text-shadow: 0 1px 1.25rem rgb(13 16 18 / 0.72), 0 1px 0.125rem rgb(13 16 18 / 0.40);
 }
 /* the scatter — abstract placement, not a grid: left, past centre,
    left of centre, right. Vertical gaps deliberately uneven. */
@@ -1006,7 +1021,7 @@
   bottom: 100%;
   left: 0;
   right: 0;
-  height: 140px;
+  height: 8.75rem;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.13), rgba(0, 0, 0, 0));
   pointer-events: none;
 }
@@ -1292,7 +1307,7 @@
 .sc {
   /* ONE radius, and one inner radius derived from it. Cards use the first,
      the media plate the second, the chip is the only pill (shape lock). */
-  --sc-r: clamp(16px, 1.2vw, 22px);
+  --sc-r: clamp(1rem, 1.2vw, 1.375rem);
   --sc-pad: clamp(1.3rem, 1.9vw, 2.1rem);
   --sc-gap: clamp(0.9rem, 1.2vw, 1.5rem);
   position: relative;
@@ -1330,7 +1345,7 @@
   bottom: 100%;
   left: 0;
   right: 0;
-  height: 128px;
+  height: 8rem;
   background: linear-gradient(to top, rgb(226 238 246 / 0.15), rgb(226 238 246 / 0));
   pointer-events: none;
 }
@@ -1344,7 +1359,7 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 190px;
+  height: 11.875rem;
   background: linear-gradient(to bottom, rgb(226 238 246 / 0.055), rgb(226 238 246 / 0));
   pointer-events: none;
 }
@@ -1354,7 +1369,7 @@
 .sc-page {
   position: relative;
   z-index: 1;
-  max-width: 1560px;
+  max-width: 97.5rem;
   margin-inline: auto;
   padding-inline: var(--page-pad);
   /* the top clears the seam by a viewport-relative beat, so the heading
@@ -1404,7 +1419,7 @@
   /* the house reveal, and the fallback: this is what runs with no JS, under
      reduced motion, and anywhere narrower than two columns */
   opacity: 0;
-  transform: translateY(26px);
+  transform: translateY(1.625rem);
   transition:
     opacity var(--d-slow) var(--e-glass),
     transform var(--d-slow) var(--e-glass);
@@ -1457,7 +1472,7 @@
 }
 @media (hover: hover) {
   .sc-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-0.3125rem);
     /* NO drop shadow, on the dark polarity's own rule: a shadow on a
        near-black ground is invisible, and depth here is the surface ladder
        plus a brighter ring and a stronger top-edge catch */
@@ -1468,7 +1483,7 @@
   outline: 2px solid var(--focus-ring);
   outline-offset: 3px;
 }
-.sc-card:active { transform: translateY(-2px); }
+.sc-card:active { transform: translateY(-0.125rem); }
 
 /* ---------- 1 · THE PANE ----------
    The card's material, and the card's identity. The specular is oriented to
@@ -1537,7 +1552,7 @@
      stays visible IN FRONT of the object, which is the whole point of the
      asymmetry. */
   clip-path: inset(-24% 0 var(--hair) 0);
-  border-radius: calc(var(--sc-r) - 6px);
+  border-radius: calc(var(--sc-r) - 0.375rem);
   /* THE PLATE HAS TO READ AS A LIT SURFACE, NOT A HOLE. It is pure black
      under the sheen — darker than the card, which is right for a well cut
      into a panel — and at a whisper of light it simply read as a missing
@@ -1678,7 +1693,7 @@
   .sc-card:hover .sc-chip-head,
   .sc-card:focus-visible .sc-chip-head { transform: scale(1); }
   .sc-card:hover .sc-chip svg,
-  .sc-card:focus-visible .sc-chip svg { transform: translateX(3px); }
+  .sc-card:focus-visible .sc-chip svg { transform: translateX(0.1875rem); }
   .sc-card:hover .sc-chip,
   .sc-card:focus-visible .sc-chip {
     color: var(--text);
@@ -1855,7 +1870,7 @@
 .ob-stage {
   position: absolute;
   inset: 0;
-  perspective: var(--ob-persp, 900px);
+  perspective: var(--ob-persp, 56.25rem);
   transform-style: preserve-3d;
 }
 /* NOTHING IN THIS CHAIN MAY FLATTEN. `overflow` other than visible, a filter,
@@ -1898,7 +1913,7 @@
   width: 100%;
   height: auto;
   /* a prop is lit from the scene's own key light, not from the page's */
-  filter: drop-shadow(0 10px 22px rgb(0 0 0 / 0.55));
+  filter: drop-shadow(0 0.625rem 1.375rem rgb(0 0 0 / 0.55));
 }
 /* the still centre. Opaque art, which is what makes the occlusion read: a
    transparent mockup would show the props straight through it. */
@@ -2002,7 +2017,7 @@
 .inv-mail {
   color: var(--text-muted);
   text-decoration: none;
-  padding-bottom: 2px;
+  padding-bottom: 0.125rem;
   background-image: linear-gradient(currentColor, currentColor);
   background-repeat: no-repeat;
   background-position: left bottom;
@@ -2046,7 +2061,7 @@
      height no longer cleared that */
   top: 9%;
   right: 4%;
-  width: clamp(190px, 21vw, 300px);
+  width: clamp(11.875rem, 21vw, 18.75rem);
   aspect-ratio: 4 / 5;
 }
 .inv-plate-b {
@@ -2055,7 +2070,7 @@
      button */
   bottom: 8%;
   right: 17%;
-  width: clamp(150px, 16vw, 240px);
+  width: clamp(9.375rem, 16vw, 15rem);
   aspect-ratio: 1 / 1;
 }
 
@@ -2107,7 +2122,7 @@
   .inv-plate-a {
     top: 3%;
     right: 4%;
-    width: clamp(120px, 30vw, 200px);
+    width: clamp(7.5rem, 30vw, 12.5rem);
     opacity: 0.85;
   }
 }

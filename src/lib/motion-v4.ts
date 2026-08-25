@@ -54,7 +54,21 @@ export const DUR = {
   page:    1.0,
 } as const
 
-/** --reveal-blur / --reveal-shift / --stagger. */
+/**
+ * The picture's scale factor: root font-size over 16. The desktop root
+ * follows the viewport width (tokens.css, "THE PICTURE"), so any JS number
+ * that is a CSS-pixel LENGTH of the composition — a reveal shift, a blur
+ * radius, a parallax rate — multiplies by this to stay proportional.
+ * Percent, vh/vw fractions and measured rects need nothing. 1 on the server
+ * and below the desktop breakpoint.
+ */
+export const rem = () =>
+  typeof window === 'undefined'
+    ? 1
+    : parseFloat(getComputedStyle(document.documentElement).fontSize) / 16
+
+/** --reveal-blur / --reveal-shift / --stagger — at the 16px root; scale
+ *  by rem() at the use site. */
 export const REVEAL = {
   blur:    14,
   shift:   18,

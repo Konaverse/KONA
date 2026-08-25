@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { gsap, EASE, DUR } from '@/lib/motion-v4'
+import { gsap, EASE, DUR, rem } from '@/lib/motion-v4'
 
 /**
  * THE HERO TITLE — "the breathing headline" (2026-08-19, user reference set:
@@ -194,7 +194,7 @@ export default function HeroTitle() {
       return items.map((el) => {
         const r = el.getBoundingClientRect()
         const mid = (r.top + r.bottom) / 2
-        let row = tops.findIndex((t) => Math.abs(t - mid) < 12)
+        let row = tops.findIndex((t) => Math.abs(t - mid) < 12 * rem())
         if (row < 0) row = tops.push(mid) - 1
         return row
       })

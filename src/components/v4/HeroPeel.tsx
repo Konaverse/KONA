@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { gsap, EASE, DUR } from '@/lib/motion-v4'
+import { gsap, EASE, DUR, rem } from '@/lib/motion-v4'
 
 /**
  * THE HERO PEEL (2026-08-19) — our own move, built on the Lusion mechanic.
@@ -150,6 +150,7 @@ uniform float uAlpha;
 uniform vec2 uTexA;      /* authored SVG framing as an affine map: */
 uniform vec2 uTexB;      /*   uv = vUv * uTexA + uTexB (kb+parallax baked) */
 uniform float uImgAspect;
+uniform float uRem;   /* root font-size / 16 — the picture's scale (tokens.css) */
 varying vec2 vUv;
 varying vec2 vRectWH;
 varying float vBack;
@@ -197,7 +198,7 @@ void main() {
      cover (landing redesign, 2026-08-19). During the OPENING the radius
      scales away with uMorph: a full-page sheet has no corners to round,
      and they grow in as it becomes a container. */
-  float r = mix((28.0 / 815.0) * vRectWH.x, R_LG, exG) * (1.0 - uMorph);
+  float r = mix((28.0 / 815.0) * vRectWH.x, R_LG * uRem, exG) * (1.0 - uMorph);
   float k = max((30.0 / 815.0) * vRectWH.x * (1.0 - m), 0.001);
   float dA = sdRoundRect(px, (ra.xy + ra.zw * 0.5) * vRectWH, ra.zw * 0.5 * vRectWH, r);
   float dB = sdRoundRect(px, (rb.xy + rb.zw * 0.5) * vRectWH, rb.zw * 0.5 * vRectWH, r);
@@ -378,6 +379,7 @@ function createGL(canvas: HTMLCanvasElement, video: HTMLVideoElement): PeelGL | 
   const uTexA = U('uTexA')
   const uTexB = U('uTexB')
   const uMorph = U('uMorph')
+  const uRem = U('uRem')
   gl.uniform1i(U('uTex'), 0)
   gl.uniform1f(U('uImgAspect'), video.videoWidth / video.videoHeight)
 
@@ -406,6 +408,7 @@ function createGL(canvas: HTMLCanvasElement, video: HTMLVideoElement): PeelGL | 
       gl.uniform1f(uAlpha, alpha)
       gl.uniform1f(uDy, dy)
       gl.uniform2f(uVp, canvas.clientWidth, canvas.clientHeight)
+      gl.uniform1f(uRem, rem())
       gl.uniform2f(uTexA, texA[0], texA[1])
       gl.uniform2f(uTexB, texB[0], texB[1])
       gl.clear(gl.COLOR_BUFFER_BIT)

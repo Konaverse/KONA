@@ -159,7 +159,7 @@
   --glass-edge:     0.34;         /* the outer 1px stroke */
   --glass-catch:    0.55;         /* the top-edge highlight — the load-bearing layer */
   --glass-inner:    0.16;         /* the second stroke, inset 1px, that makes the edge read thick */
-  --glass-shadow:   0 18px 60px rgba(13, 16, 18, 0.16);
+  --glass-shadow:   0 1.125rem 3.75rem rgba(13, 16, 18, 0.16);
 
   /* ---------- 3. TYPE ---------- */
   /* var(--font-manrope) is injected by next/font in app/layout.tsx, which
@@ -238,9 +238,9 @@
      --r-md, framed media and landed sheets are --r-lg, chips are --r-sm,
      pills are --r-full. Nothing on this page invents a fifth radius. */
   --r-none:  0;
-  --r-sm:    4px;
-  --r-md:    10px;
-  --r-lg:    24px;
+  --r-sm:    0.25rem;
+  --r-md:    0.625rem;
+  --r-lg:    1.5rem;
   --r-full:  999px;
   --hair:    1px;
 
@@ -281,12 +281,12 @@
      one place in the system where a token is duplicated into JS, and
      they still hold the pre-pivot ice — they change with the fluid's
      own pass, not here. */
-  --lens-size:       230px;   /* cursor lens diameter */
+  --lens-size:       14.375rem;   /* cursor lens diameter */
   --lens-scale:      1.06;    /* magnification. Subtle. Never above 1.12 */
   --lens-fringe:     var(--n-0);
   --lens-fringe-a:   0.42;    /* fringe opacity */
-  --reveal-blur:     14px;    /* blur type resolves from on scroll reveal */
-  --reveal-shift:    18px;    /* displacement distance on reveal */
+  --reveal-blur:     0.875rem;    /* blur type resolves from on scroll reveal */
+  --reveal-shift:    1.125rem;    /* displacement distance on reveal */
 
   /* ---------- 9. GRAIN ----------
      was 0.42. Measured in-browser: at 0.42 the effective coverage is
@@ -315,17 +315,17 @@
   --ring:   inset 0 0 0 1px rgba(21, 23, 26, 0.07);
   --lift-1: var(--ring);
   --lift-2: 0 1px 1px rgba(21, 23, 26, 0.02),
-            0 2px 2px rgba(21, 23, 26, 0.04),
+            0 0.125rem 0.125rem rgba(21, 23, 26, 0.04),
             var(--ring);
-  --lift-3: 0 2px 2px rgba(21, 23, 26, 0.04),
-            0 8px 8px -8px rgba(21, 23, 26, 0.06),
+  --lift-3: 0 0.125rem 0.125rem rgba(21, 23, 26, 0.04),
+            0 0.5rem 0.5rem -0.5rem rgba(21, 23, 26, 0.06),
             var(--ring);
-  --lift-4: 0 2px 2px rgba(21, 23, 26, 0.04),
-            0 8px 16px -4px rgba(21, 23, 26, 0.06),
+  --lift-4: 0 0.125rem 0.125rem rgba(21, 23, 26, 0.04),
+            0 0.5rem 1rem -0.25rem rgba(21, 23, 26, 0.06),
             var(--ring);
   --lift-5: 0 1px 1px rgba(21, 23, 26, 0.03),
-            0 8px 16px -4px rgba(21, 23, 26, 0.05),
-            0 24px 32px -8px rgba(21, 23, 26, 0.09),
+            0 0.5rem 1rem -0.25rem rgba(21, 23, 26, 0.05),
+            0 1.5rem 2rem -0.5rem rgba(21, 23, 26, 0.09),
             var(--ring);
   /* --lift-ice is GONE with the accent. It had no consumers. */
 }
@@ -421,7 +421,7 @@
             inset 0 1px 0 rgb(255 255 255 / 0.18);
   --lift-5: inset 0 0 0 1px rgb(255 255 255 / 0.12),
             inset 0 1px 0 rgb(255 255 255 / 0.22),
-            0 24px 64px rgb(0 0 0 / 0.55);
+            0 1.5rem 4rem rgb(0 0 0 / 0.55);
 
   /* GLASS, DARK. Fainter fill, fainter strokes, and NO outer shadow —
      the drop is a light-polarity device. Numbers sit where Linear's
@@ -461,24 +461,24 @@
   --ring:   inset 0 0 0 1px rgba(21, 23, 26, 0.07);
   --lift-1: var(--ring);
   --lift-2: 0 1px 1px rgba(21, 23, 26, 0.02),
-            0 2px 2px rgba(21, 23, 26, 0.04),
+            0 0.125rem 0.125rem rgba(21, 23, 26, 0.04),
             var(--ring);
-  --lift-3: 0 2px 2px rgba(21, 23, 26, 0.04),
-            0 8px 8px -8px rgba(21, 23, 26, 0.06),
+  --lift-3: 0 0.125rem 0.125rem rgba(21, 23, 26, 0.04),
+            0 0.5rem 0.5rem -0.5rem rgba(21, 23, 26, 0.06),
             var(--ring);
-  --lift-4: 0 2px 2px rgba(21, 23, 26, 0.04),
-            0 8px 16px -4px rgba(21, 23, 26, 0.06),
+  --lift-4: 0 0.125rem 0.125rem rgba(21, 23, 26, 0.04),
+            0 0.5rem 1rem -0.25rem rgba(21, 23, 26, 0.06),
             var(--ring);
   --lift-5: 0 1px 1px rgba(21, 23, 26, 0.03),
-            0 8px 16px -4px rgba(21, 23, 26, 0.05),
-            0 24px 32px -8px rgba(21, 23, 26, 0.09),
+            0 0.5rem 1rem -0.25rem rgba(21, 23, 26, 0.05),
+            0 1.5rem 2rem -0.5rem rgba(21, 23, 26, 0.09),
             var(--ring);
   --glass-fill-hi:  0.55;
   --glass-fill-lo:  0.14;
   --glass-edge:     0.34;
   --glass-catch:    0.55;
   --glass-inner:    0.16;
-  --glass-shadow:   0 18px 60px rgba(13, 16, 18, 0.16);
+  --glass-shadow:   0 1.125rem 3.75rem rgba(13, 16, 18, 0.16);
   --grain-opacity:  0.14;
   color: var(--text);
 }
@@ -550,6 +550,22 @@
    ============================================================ */
 
 html { -webkit-text-size-adjust: 100%; }
+
+/* THE PICTURE (2026-08-25, user rule — docs/launch-plan.md §2). On any
+   desktop the page is ONE picture: a bigger screen shows it bigger, nothing
+   caps, nothing closes toward the centre. The whole mechanism is this rule:
+   the root font-size follows the viewport width, 16px at the reference frame
+   (the user's laptop, 1534 wide), and every length below is in rem, so the
+   page scales as a whole — 3440 wide = 35.9px root = 2.24x the picture.
+   What stays px ON PURPOSE: 1px hairlines and catches (a 2.2px hairline is a
+   different thing), focus outlines, SVG user-unit origins, the grain tile
+   (texture, not composition), the parked 3D object's native-res cap.
+   Rem MEDIA QUERIES ARE UNAFFECTED — they resolve against the initial 16px
+   by spec — so the 57.5rem breakpoint holds and the mobile branch keeps a
+   16px root. Scoped by :has() so the legacy (site) pages are untouched. */
+@media (min-width: 57.5rem) {
+  html:has(.k-root) { font-size: calc(100vw * 16 / 1534); }
+}
 
 /* This was a bare `body` rule. In Next every CSS import is global, so the
    moment this file was imported anywhere it would have repainted the whole
@@ -778,7 +794,7 @@ html:has(.k-root)::-webkit-scrollbar {
    ink letters — which is what Raycast ships on dark and Vercel ships on
    light. One declaration, both polarities, no variant. */
 .k-btn {
-  --k-btn-bw: 3px;   /* the white band the line is held off by */
+  --k-btn-bw: 0.1875rem;   /* the white band the line is held off by */
   /* what the flood floods to, and what the letters flip to inside it.
      The ghost variant inverts the pair. */
   --k-btn-flood: var(--surface);
@@ -1077,7 +1093,7 @@ html:has(.k-root)::-webkit-scrollbar {
    accent the tile is allowed, and it borrows the arrow-link's language */
 .k-card__media::after {
   content: ""; position: absolute; left: 0; right: 0; bottom: 0;
-  height: 2px; background: var(--accent);
+  height: 0.125rem; background: var(--accent);
   transform: scaleX(0); transform-origin: left center;
   transition: transform var(--d-base) var(--e-settle);
 }
@@ -1159,7 +1175,7 @@ html:has(.k-root)::-webkit-scrollbar {
   bottom: 100%;
   left: -10%;
   right: -10%;
-  height: 140px;
+  height: 8.75rem;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.13), rgba(0, 0, 0, 0));
   pointer-events: none;
   opacity: var(--seam, 0);
@@ -1231,8 +1247,8 @@ html:has(.k-root)::-webkit-scrollbar {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -6px;
-  height: 2px;
+  bottom: -0.375rem;
+  height: 0.125rem;
   background: var(--accent);
   transform: scaleX(0);
   transform-origin: left center;
@@ -1275,12 +1291,12 @@ html:has(.k-root)::-webkit-scrollbar {
   left: 75%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: max(320px, 36vw);
+  width: max(20rem, 36vw);
   aspect-ratio: 16 / 9;
   overflow: hidden;
   border-radius: var(--r-sm);
   /* lifted off the artwork: a whisper of depth, not a card frame */
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 1.5rem 3.75rem rgba(0, 0, 0, 0.28);
 }
 .k-sheets__mini-item {
   position: absolute;
@@ -1421,13 +1437,13 @@ html:has(.k-root)::-webkit-scrollbar {
   box-shadow: var(--lift-3);
   font-family: var(--font-sans);
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(0.75rem);
   transition:
     opacity var(--d-base) var(--e-glass),
     transform var(--d-base) var(--e-glass);
 }
 .k-cookie.is-in { opacity: 1; transform: none; }
-.k-cookie.is-leaving { opacity: 0; transform: translateY(12px); }
+.k-cookie.is-leaving { opacity: 0; transform: translateY(0.75rem); }
 @media (max-width: 640px) {
   .k-cookie {
     left: var(--s-4);
@@ -1462,7 +1478,7 @@ html:has(.k-root)::-webkit-scrollbar {
   font-size: var(--t-small);
   color: var(--text-muted);
   text-decoration: underline;
-  text-underline-offset: 3px;
+  text-underline-offset: 0.1875rem;
   transition: color var(--d-instant) var(--e-settle);
 }
 .k-cookie__policy:hover,
@@ -1511,8 +1527,8 @@ html.lenis, html.lenis body { height: auto; }
    hover the short rule extends to meet the long one: the aperture
    implied before it opens. */
 .k-burger {
-  display: flex; flex-direction: column; justify-content: center; gap: 5px;
-  width: 44px; height: 44px; padding: 0 11px;
+  display: flex; flex-direction: column; justify-content: center; gap: 0.3125rem;
+  width: 2.75rem; height: 2.75rem; padding: 0 0.6875rem;
   border: var(--hair) solid var(--hairline); border-radius: var(--r-full);
   background: none; cursor: pointer;
   transition: border-color var(--d-base) var(--e-settle),
@@ -1591,11 +1607,11 @@ html.lenis, html.lenis body { height: auto; }
 .k-aperture__close:hover { color: var(--text); }
 .k-aperture__x {
   display: flex; align-items: center; justify-content: center;
-  width: 38px; height: 38px; border-radius: var(--r-full);
+  width: 2.375rem; height: 2.375rem; border-radius: var(--r-full);
   border: var(--hair) solid var(--hairline); color: var(--text);
   transition: background var(--d-base) var(--e-settle), color var(--d-base) var(--e-settle);
 }
-.k-aperture__x svg { width: 12px; height: 12px; }
+.k-aperture__x svg { width: 0.75rem; height: 0.75rem; }
 .k-aperture__close:hover .k-aperture__x { background: var(--text); color: var(--surface); }
 
 .k-aperture__main {
@@ -1632,7 +1648,7 @@ html.lenis, html.lenis body { height: auto; }
 .k-aperture__row {
   display: grid; grid-template-columns: auto 1fr auto;
   align-items: center; gap: clamp(var(--s-3), 1.6vw, var(--s-5));
-  padding: clamp(var(--s-4), 3vh, var(--s-6)) 2px;
+  padding: clamp(var(--s-4), 3vh, var(--s-6)) 0.125rem;
   color: var(--text-muted); text-decoration: none;
   transition: color var(--d-base) var(--e-settle);
 }
@@ -1649,18 +1665,18 @@ html.lenis, html.lenis body { height: auto; }
 .k-aperture__chipwrap { display: block; will-change: transform; }
 .k-aperture__chip {
   display: flex; align-items: center; justify-content: center;
-  width: clamp(42px, 4vw, 54px); aspect-ratio: 1; border-radius: var(--r-full);
+  width: clamp(2.625rem, 4vw, 3.375rem); aspect-ratio: 1; border-radius: var(--r-full);
   border: var(--hair) solid var(--hairline); color: var(--text);
   transition: background var(--d-base) var(--e-settle),
               border-color var(--d-base) var(--e-settle),
               color var(--d-base) var(--e-settle);
 }
-.k-aperture__chip svg { width: 16px; height: 16px; transition: transform var(--d-base) var(--e-settle); }
+.k-aperture__chip svg { width: 1rem; height: 1rem; transition: transform var(--d-base) var(--e-settle); }
 .k-aperture__row:hover .k-aperture__chip,
 .k-aperture__row:focus-visible .k-aperture__chip {
   background: var(--text); border-color: var(--text); color: var(--surface);
 }
-.k-aperture__row:hover .k-aperture__chip svg { transform: translateX(3px); }
+.k-aperture__row:hover .k-aperture__chip svg { transform: translateX(0.1875rem); }
 
 /* Sunk by a static transform so most of the cap height sits below the crop —
    only the shoulders of the glyphs show. Three layers on purpose: this wrap
@@ -1768,7 +1784,7 @@ html.lenis, html.lenis body { height: auto; }
   bottom: 100%;
   left: -10%;
   right: -10%;
-  height: 140px;
+  height: 8.75rem;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.13), rgba(0, 0, 0, 0));
   pointer-events: none;
   /* Defaults to 0 so the band is invisible during the pre-commit hold —
@@ -1970,8 +1986,8 @@ html.lenis, html.lenis body { height: auto; }
 }
 .ft-logo {
   display: block;
-  width: 44px;
-  height: 44px;
+  width: 2.75rem;
+  height: 2.75rem;
   object-fit: contain;
 }
 .ft-tagline {
@@ -2016,7 +2032,7 @@ html.lenis, html.lenis body { height: auto; }
   color: var(--text);
   font-weight: var(--w-light);
   text-decoration: none;
-  padding-bottom: 4px;
+  padding-bottom: 0.25rem;
   background-image: linear-gradient(currentColor, currentColor);
   background-repeat: no-repeat;
   background-position: left bottom;
@@ -2090,8 +2106,8 @@ html.lenis, html.lenis body { height: auto; }
 }
 .ft-next-ring {
   position: relative;
-  width: 52px;
-  height: 52px;
+  width: 3.25rem;
+  height: 3.25rem;
   border-radius: var(--r-full);
   border: var(--hair) solid var(--hairline-strong);
   overflow: hidden;
@@ -2107,8 +2123,8 @@ html.lenis, html.lenis body { height: auto; }
 }
 .ft-next-a {
   position: absolute;
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   transition: transform var(--d-base) var(--e-settle);
 }
 .ft-next-a2 {

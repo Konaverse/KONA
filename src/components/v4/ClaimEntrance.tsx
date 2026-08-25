@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { gsap } from '@/lib/motion-v4'
+import { gsap, rem } from '@/lib/motion-v4'
 
 /**
  * §2 — the claim's entrance, and nothing else. The statement lives INSIDE
@@ -47,6 +47,9 @@ export default function ClaimEntrance() {
       const vh = window.innerHeight
       const r = sec.getBoundingClientRect()
       if (r.bottom < -120 || r.top > vh + 120) return
+      /* the shift and blur are lengths of the composition (the tokens'
+         --reveal-shift / --reveal-blur) and scale with the picture */
+      const k = rem()
 
       const pe = gsap.utils.clamp(0, 1, (vh * 0.34 - r.top) / (vh * 0.3))
       if (pe === lastPe) return
@@ -63,8 +66,8 @@ export default function ClaimEntrance() {
           w.style.filter = ''
         } else {
           w.style.opacity = t.toFixed(3)
-          w.style.transform = `translateY(${(18 * (1 - t)).toFixed(1)}px)`
-          w.style.filter = `blur(${(14 * (1 - t)).toFixed(1)}px)`
+          w.style.transform = `translateY(${(18 * k * (1 - t)).toFixed(1)}px)`
+          w.style.filter = `blur(${(14 * k * (1 - t)).toFixed(1)}px)`
         }
       }
       if (body) {
@@ -75,8 +78,8 @@ export default function ClaimEntrance() {
           body.style.filter = ''
         } else {
           body.style.opacity = tb.toFixed(3)
-          body.style.transform = `translateY(${(18 * (1 - tb)).toFixed(1)}px)`
-          body.style.filter = `blur(${(10 * (1 - tb)).toFixed(1)}px)`
+          body.style.transform = `translateY(${(18 * k * (1 - tb)).toFixed(1)}px)`
+          body.style.filter = `blur(${(10 * k * (1 - tb)).toFixed(1)}px)`
         }
       }
     }

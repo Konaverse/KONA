@@ -34,7 +34,7 @@
  */
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { gsap, EASE, DUR, REVEAL } from '@/lib/motion-v4'
+import { gsap, EASE, DUR, REVEAL, rem } from '@/lib/motion-v4'
 import { SECTIONS } from '@/lib/site'
 
 /** useLayoutEffect warns when it runs during SSR; swap it out on the server. */
@@ -120,6 +120,9 @@ export default function ApertureMenu({
       const from = `circle(0vmax at ${x}px ${y}px)`
       const to = `circle(142vmax at ${x}px ${y}px)`
       const d = DUR.cinema
+      // the reveal lengths at this viewport's scale (tokens.css, THE PICTURE)
+      const k = rem()
+      const blur = `blur(${REVEAL.blur * k}px)`
 
       const tl = gsap.timeline({
         defaults: { ease: EASE.glass },
@@ -141,13 +144,13 @@ export default function ApertureMenu({
       // display type — masked rise AND blur, the combined signature
       tl.fromTo(
         '[data-k-title]',
-        { yPercent: 110, filter: `blur(${REVEAL.blur}px)`, opacity: 0 },
+        { yPercent: 110, filter: blur, opacity: 0 },
         { yPercent: 0, filter: 'blur(0px)', opacity: 1, duration: DUR.slow },
         d * 0.3,
       )
       tl.fromTo(
         '[data-k-row-label]',
-        { yPercent: 110, filter: `blur(${REVEAL.blur}px)`, opacity: 0 },
+        { yPercent: 110, filter: blur, opacity: 0 },
         { yPercent: 0, filter: 'blur(0px)', opacity: 1, duration: DUR.slow, stagger: REVEAL.stagger },
         d * 0.42,
       )
@@ -158,7 +161,7 @@ export default function ApertureMenu({
       // plain refraction for the blocks that have no crop edge
       tl.fromTo(
         '[data-k-soft]',
-        { y: REVEAL.shift, filter: `blur(${REVEAL.blur}px)`, opacity: 0 },
+        { y: REVEAL.shift * k, filter: blur, opacity: 0 },
         { y: 0, filter: 'blur(0px)', opacity: 1, duration: DUR.slow, stagger: REVEAL.stagger },
         d * 0.46,
       )
@@ -249,6 +252,11 @@ export default function ApertureMenu({
     let lastY = window.scrollY
     let hidden = false
     let grounded = false
+    /* the free zone is a length of the composition (the hero headline's
+       height), so it scales with the picture; re-read on resize only */
+    let free = 160 * rem()
+    const onResize = () => { free = 160 * rem() }
+    window.addEventListener('resize', onResize)
 
     const update = () => {
       const y = window.scrollY
@@ -263,7 +271,7 @@ export default function ApertureMenu({
           hidden = false
           bar.classList.remove('is-hidden')
         }
-        if (openRef.current || y < 160) {
+        if (openRef.current || y < free) {
           if (hidden) show()
         } else if (dy > 2 && !hidden) {
           hidden = true
@@ -276,7 +284,10 @@ export default function ApertureMenu({
     }
 
     gsap.ticker.add(update)
-    return () => gsap.ticker.remove(update)
+    return () => {
+      gsap.ticker.remove(update)
+      window.removeEventListener('resize', onResize)
+    }
   }, [])
 
   const Arrow = () => (

@@ -7,8 +7,8 @@
  * meeting on the spot (user call, 2026-08-25).
  */
 
-/** REPLACE with the real booking link — the user supplies it. */
-export const CALENDLY_URL = 'https://calendly.com/konaverse'
+/** The studio's booking link (user, 2026-08-25). */
+export const CALENDLY_URL = 'https://calendly.com/kona-verse/30min'
 
 /** The homepage's landmarks. Keys are the menu labels, values the ids. */
 export const SECTIONS = {

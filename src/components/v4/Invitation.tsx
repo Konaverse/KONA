@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 import Button from '@/components/v4/Button'
 import Reveal from '@/components/v4/Reveal'
 import ScrollFillText from '@/components/v4/ScrollFillText'
-import { gsap } from '@/lib/motion-v4'
+import { gsap, rem } from '@/lib/motion-v4'
 import { CALENDLY_URL } from '@/lib/site'
 
 /**
@@ -61,8 +61,11 @@ export default function Invitation() {
       /* the section's centre relative to the viewport's, in viewport-heights:
          0 when centred, ±~1 at the edges of its travel */
       const c = (r.top + r.height / 2 - vh / 2) / vh
+      /* the rates are px/vh AT THE 16px ROOT; scaled with the picture the
+         plates keep the same margin-to-drift ratio at every width */
+      const k = rem()
       plates.forEach((el, i) => {
-        el.style.transform = `translateY(${(c * rates[i]).toFixed(2)}px)`
+        el.style.transform = `translateY(${(c * rates[i] * k).toFixed(2)}px)`
       })
     }
     tick()

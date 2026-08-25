@@ -70,7 +70,35 @@ three live project sites, socials, mailto, and legal.
   + JS-off acceptance on `/` (anchors must work without JS — they do, they
   are plain `href="#id"`).
 
-## 2 · Proportional desktop scaling — "the digital picture"
+## 2 · Proportional desktop scaling — "the digital picture" — DONE 2026-08-25
+
+What shipped, and what was learned:
+- The mechanism is ONE rule in tokens.css: `@media (min-width: 57.5rem) {
+  html:has(.k-root) { font-size: calc(100vw * 16 / 1534) } }`. Once rem
+  scales with width, every `clamp(rem, vw, rem)` is ALREADY proportional
+  (both terms are linear in width), so the audit was simply raw px → rem
+  (35 declarations in home.css, ~70 in tokens.css) plus the JS lengths via
+  `rem()` in motion-v4.ts (aperture reveal blur/shift + nav free zone,
+  ClaimEntrance shift/blur, Invitation parallax rates, HeroTitle row
+  tolerance, HeroPeel's landed radius as a `uRem` uniform).
+- KEPT px on purpose: 1px hairlines/catches, focus outlines, SVG
+  user-unit transform-origins, `--grain-tile` (texture), `--r-full`, the
+  parked 3D object's native-res cap.
+- PROOF (`scratchpad/proportion.js` recipe: rects ÷ viewport width): at
+  1280/1534/1920/2560/3440 the root is exactly 16·W/1534 and every
+  measured rect is identical to 0.1‰; the page is 6.49 widths tall at
+  all of them. 1534 shots before/after are pixel-identical.
+- THE ASPECT TRAP, as predicted: at 3440x1440 (21:9) the hero's CTA fell
+  off the bottom — `.hw-comp` (815/375) plus padding needs ~0.6W of
+  height. Fix is gated to `(min-aspect-ratio: 21/10)` — true ultrawides
+  only; a 16:9 monitor with browser chrome is 2.02 and is untouched —
+  where the comp is bounded by `(100svh − 12rem)·815/375` and centres,
+  and `.hw-para` sizes off the comp (0.9845cqi) so the hero shrinks as
+  one picture. Every other pin (§2, §3, §4, §5, §9, footer) checked at
+  3440x1440: fits.
+- `tools/shot.js` takes `SHOT_W` / `SHOT_H`.
+- STILL OPEN (goes with step 4): §5's captures are 2880 wide → recapture
+  at 3440 for ultrawide sharpness.
 
 **The user's rule:** on any desktop, the page is the SAME picture; a bigger
 monitor shows it bigger. No caps, no max-widths, nothing "closing to the

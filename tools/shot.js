@@ -13,7 +13,13 @@ const sel = process.argv[4] || null
     args: ['--no-sandbox', '--force-device-scale-factor=1', '--hide-scrollbars'],
   })
   const page = await browser.newPage()
-  await page.setViewport({ width: 1440, height: 1000, deviceScaleFactor: 1 })
+  // SHOT_W / SHOT_H: the viewport. The default is the old 1440x1000; the
+  // page's reference frame is the user's laptop, 1534x864 (launch-plan §2).
+  await page.setViewport({
+    width: Number(process.env.SHOT_W || 1440),
+    height: Number(process.env.SHOT_H || 1000),
+    deviceScaleFactor: 1,
+  })
   await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 })
   // SHOT_WHEEL=<px>: real wheel events, in steps. window.scrollTo and
   // scrollIntoView are the wrong tools on this page -- Lenis owns the scroll
