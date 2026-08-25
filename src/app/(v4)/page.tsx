@@ -5,7 +5,6 @@ import ClaimEntrance from '@/components/v4/ClaimEntrance'
 import SolveCredits from '@/components/v4/SolveCredits'
 import ServiceCards from '@/components/v4/ServiceCards'
 import ProjectSheets, { type SheetProject } from '@/components/v4/ProjectSheets'
-import ArrowLink from '@/components/v4/ArrowLink'
 import Invitation from '@/components/v4/Invitation'
 import './home.css'
 
@@ -81,7 +80,7 @@ export default function HomePage() {
           pinned shrink/dark-turn scene built the same day was removed).
           z-raised over the fixed GL canvas (z2) so the text rides ON the
           landed sheet. */}
-      <section className="hm-claim">
+      <section className="hm-claim" id="studio">
         <div className="hm-claim-land">
           <h2 className="t-h1 hm-claim-line" aria-label={CLAIM_LINE}>
             <span aria-hidden="true">
@@ -120,13 +119,10 @@ export default function HomePage() {
           back on ProjectSheets, and remove the workfoot below (the "All
           projects" hub link rides §7's rising sheet when it is mounted). */}
 
-      {/* the hub link the choreography specifies alongside the three tile
-          links — four links out of §5, no more. A tight band, not a
-          k-section: it is a landing strip between two big sections, and
-          section-scale padding here read as dead air (user call). */}
-      <div className="k-page hm-workfoot">
-        <ArrowLink href="/work">All projects</ArrowLink>
-      </div>
+      {/* The "All projects" hub band that sat here is OUT for the one-page
+          launch (/work redirects home). It returns with the /work page:
+          a `k-page hm-workfoot` div holding an ArrowLink to /work, CSS in
+          git (5da89b2). */}
 
       {/* §9 — the invitation: the line, the button, the address */}
       <Invitation />

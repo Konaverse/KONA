@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 import Button from '@/components/v4/Button'
 import HeroTitle from '@/components/v4/HeroTitle'
 import { gsap, EASE, DUR } from '@/lib/motion-v4'
+import { CALENDLY_URL } from '@/lib/site'
 
 /**
  * SECTION 1 — ARRIVAL, VARIANT B ("the staircase"), 2026-08-18 night.
@@ -213,7 +214,7 @@ export default function HeroPortrait() {
             template.
           </p>
           <div className="hw-btn hw-ent">
-            <Button ghost href="/contact" hoverLabel="Say hello">
+            <Button ghost href={CALENDLY_URL} external hoverLabel="Book a call">
               Start a project
             </Button>
           </div>

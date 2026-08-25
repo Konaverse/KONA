@@ -5,6 +5,7 @@ import Button from '@/components/v4/Button'
 import Reveal from '@/components/v4/Reveal'
 import ScrollFillText from '@/components/v4/ScrollFillText'
 import { gsap } from '@/lib/motion-v4'
+import { CALENDLY_URL } from '@/lib/site'
 
 /**
  * SECTION 9 — THE INVITATION (built 2026-08-24, user-directed: "scroll-driven
@@ -74,7 +75,7 @@ export default function Invitation() {
   }, [])
 
   return (
-    <section ref={rootRef} className="inv" aria-label="Start a project">
+    <section ref={rootRef} className="inv" id="contact" aria-label="Start a project">
       {/* the drifting plates — atmosphere, not content */}
       <div className="inv-plates" aria-hidden="true">
         <figure className="inv-plate inv-plate-a" data-drift="-64">
@@ -93,7 +94,7 @@ export default function Invitation() {
         />
 
         <Reveal className="inv-act" index={1}>
-          <Button href="/contact" hoverLabel="Say hello">
+          <Button href={CALENDLY_URL} external hoverLabel="Book a call">
             Start a project
           </Button>
           <a className="inv-mail t-body" href="mailto:info@kona-verse.com">

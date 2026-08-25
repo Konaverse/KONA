@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import Aurora from '@/components/v4/Aurora'
 import { gsap } from '@/lib/motion-v4'
+import { CALENDLY_URL, SECTIONS } from '@/lib/site'
 
 /**
  * THE FOOTER (built 2026-08-24, user-directed: ~150vh, dark, the aurora as
@@ -46,14 +47,17 @@ import { gsap } from '@/lib/motion-v4'
  * text (the letters are aria-hidden under one aria-label).
  */
 
-const PAGES = [
+/**
+ * ONE-PAGE LAUNCH (2026-08-25): in-page anchors, Pricing/Journal dropped,
+ * and Contact opens CALENDLY in a new tab — an interested visitor books a
+ * meeting on the spot (user call). Routes return with the inner pages.
+ */
+const PAGES: { label: string; href: string; external?: boolean }[] = [
   { label: 'Home', href: '/' },
-  { label: 'Work', href: '/work' },
-  { label: 'Services', href: '/services' },
-  { label: 'Studio', href: '/about' },
-  { label: 'Pricing', href: '/pricing' },
-  { label: 'Journal', href: '/blog' },
-  { label: 'Contact', href: '/contact' },
+  { label: 'Work', href: SECTIONS.work },
+  { label: 'Services', href: SECTIONS.services },
+  { label: 'Studio', href: SECTIONS.studio },
+  { label: 'Contact', href: CALENDLY_URL, external: true },
 ]
 
 const SOCIALS = [
@@ -154,7 +158,12 @@ export default function SiteFooter() {
             <ul className="ft-col">
               {PAGES.map((l) => (
                 <li key={l.href}>
-                  <a className="ft-link t-body" href={l.href}>
+                  <a
+                    className="ft-link t-body"
+                    href={l.href}
+                    target={l.external ? '_blank' : undefined}
+                    rel={l.external ? 'noopener noreferrer' : undefined}
+                  >
                     {l.label}
                   </a>
                 </li>
@@ -199,7 +208,7 @@ export default function SiteFooter() {
             <p className="ft-fine t-small">
               &copy; {new Date().getFullYear()} Konaverse. All rights reserved.
             </p>
-            <a className="ft-next" href="/about">
+            <a className="ft-next" href={SECTIONS.studio}>
               <span className="t-small">The studio</span>
               <span className="ft-next-ring" aria-hidden="true">
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" className="ft-next-a ft-next-a1">

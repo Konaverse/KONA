@@ -335,7 +335,7 @@ export default function ServiceCards() {
   }, [])
 
   return (
-    <section className="sc k-dark" ref={rootRef} aria-labelledby="sc-h">
+    <section className="sc k-dark" id="services" ref={rootRef} aria-labelledby="sc-h">
       <div className="sc-page">
         <header className="sc-head">
           <h2 className="t-h2 sc-title" id="sc-h">
@@ -363,7 +363,10 @@ export default function ServiceCards() {
               {/* data-fx-host: Fractured takes its hover from the nearest one
                   of these, so the WHOLE card assembles the object, not just
                   the plate the object happens to sit in. */}
-              <a className="sc-card" href={`/services#${s.slug}`} data-fx-host>
+              {/* ONE-PAGE LAUNCH: the card linked to /services#slug; with
+                  no services page it is a plain surface (hover intact). It
+                  goes back to an <a> when the page exists. */}
+              <div className="sc-card" data-fx-host>
                 <span className="sc-glass" aria-hidden="true" />
                 <span className="sc-spot" aria-hidden="true" />
 
@@ -390,7 +393,7 @@ export default function ServiceCards() {
 
                   <p className="sc-para t-body">{s.para}</p>
                 </span>
-              </a>
+              </div>
             </li>
           ))}
         </ul>

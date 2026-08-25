@@ -118,6 +118,7 @@ export default function Button({
   children,
   hoverLabel,
   href,
+  external = false,
   ghost = false,
   className = '',
   onClick,
@@ -126,6 +127,9 @@ export default function Button({
   /** The label that rolls up behind the first one. Defaults to the same text. */
   hoverLabel?: string
   href?: string
+  /** Opens in a new tab (Calendly, the live project sites). The page
+      transition already ignores `target` links, so nothing else changes. */
+  external?: boolean
   ghost?: boolean
   className?: string
   onClick?: () => void
@@ -387,7 +391,14 @@ export default function Button({
 
   if (href) {
     return (
-      <a ref={ref as React.Ref<HTMLAnchorElement>} href={href} className={cls} onClick={onClick}>
+      <a
+        ref={ref as React.Ref<HTMLAnchorElement>}
+        href={href}
+        className={cls}
+        onClick={onClick}
+        target={external ? '_blank' : undefined}
+        rel={external ? 'noopener noreferrer' : undefined}
+      >
         {inner}
       </a>
     )

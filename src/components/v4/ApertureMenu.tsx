@@ -35,6 +35,7 @@
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { gsap, EASE, DUR, REVEAL } from '@/lib/motion-v4'
+import { SECTIONS } from '@/lib/site'
 
 /** useLayoutEffect warns when it runs during SSR; swap it out on the server. */
 const useIsoLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
@@ -59,24 +60,23 @@ export interface ApertureMenuProps {
 export default function ApertureMenu({
   brand = 'Konaverse',
   /**
-   * NOTE: only the routes that have a v4 page get the arc transition — the rest
-   * are still LEGACY URLs and hard-navigate into the old dark site. That is the
-   * honest current state, not an oversight: /services, /about, /pricing and
-   * /blog have no v4 route to point at yet. As each one is built, change its
-   * href here AND add it to V4_ROUTES in PageTransition.tsx.
+   * ONE-PAGE LAUNCH (2026-08-25, docs/launch-plan.md §1): every row is an
+   * in-page anchor — SmoothScroll routes it through Lenis while the aperture
+   * closes over it. Pricing and Journal are DROPPED until their pages exist
+   * (user call), not linked to nothing. When the inner pages come back,
+   * restore the routes here AND add them to V4_ROUTES in PageTransition.tsx;
+   * the open-menu-into-the-ghost design (plan §5) lands first.
    */
   items = [
-    { label: 'Work', href: '/work' },
-    { label: 'Services', href: '/services' },
-    { label: 'Studio', href: '/about' },
-    { label: 'Pricing', href: '/pricing' },
-    { label: 'Journal', href: '/blog' },
+    { label: 'Work', href: SECTIONS.work },
+    { label: 'Services', href: SECTIONS.services },
+    { label: 'Studio', href: SECTIONS.studio },
   ],
   email = 'info@kona-verse.com',
   location = 'Cyprus, working globally',
   giantWord = 'KONAVERSE',
   contactLabel = 'Contact',
-  contactHref = '/contact',
+  contactHref = SECTIONS.contact,
 }: ApertureMenuProps) {
   const rootRef = useRef<HTMLDivElement | null>(null)
   const barRef = useRef<HTMLDivElement | null>(null)

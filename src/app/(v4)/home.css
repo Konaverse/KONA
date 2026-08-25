@@ -1966,15 +1966,6 @@
   .so-spin { transform: none !important; }
 }
 
-/* the workfoot: §5's hub link, a tight landing strip after the last
-   sheet — pushed high with little below (user call 2026-08-24) */
-.hm-workfoot {
-  display: flex;
-  justify-content: flex-end;
-  padding-top: clamp(2rem, 4.5vh, 3.5rem);
-  padding-bottom: clamp(1rem, 2.5vh, 2rem);
-}
-
 /* ============================================================
    §9 — THE INVITATION (2026-08-24). The line, the button, the
    address, two drifting plates, and the social rail. Mechanism
