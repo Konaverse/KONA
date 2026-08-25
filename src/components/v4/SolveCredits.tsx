@@ -160,7 +160,18 @@ export default function SolveCredits() {
             drifting frame; replaced the portrait-glass stand-in. FULL
             resolution at q95 per the user's call — ~7MB; revisit before
             launch if the section's arrival ever beats the fetch. */}
-        <img className="sv-img" src="/home/bosra.webp" alt="" />
+        {/* srcset (2026-08-25, mobile pass): the plate is the user's file at
+            their quality — 3736w, ~5MB — and that is what desktop still gets.
+            A phone was downloading and decoding all 17 megapixels of it for
+            a 390px column; the 1200w/2000w derivatives (tools: sharp, q82)
+            serve the small screens. */}
+        <img
+          className="sv-img"
+          src="/home/bosra.webp"
+          srcSet="/home/bosra-1200.webp 1200w, /home/bosra-2000.webp 2000w, /home/bosra.webp 3736w"
+          sizes="100vw"
+          alt=""
+        />
         <i className="sv-shade" />
       </div>
 

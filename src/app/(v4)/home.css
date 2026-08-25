@@ -966,7 +966,12 @@
 .sv-item-3 .sv-q { max-width: min(10.8em, 47%); }
 
 @media (max-width: 57.5rem) {
-  .sv-list { padding: 94svh var(--page-pad) 18svh; }
+  /* bottom pad 18svh → 118svh (2026-08-25): §4 rises with margin-top
+     -100svh at EVERY width, so an 18svh exit beat meant the last 82svh
+     of the credits — questions 3 and 4 — were buried before they could
+     be read (seen at 390 and 768). Same rule as desktop's 122svh: the
+     last 100svh is the burial zone, what is left is the visible breath. */
+  .sv-list { padding: 94svh var(--page-pad) 118svh; }
   /* The scatter survives, gentler — phone columns have no room for 48%.
      The GAPS, though, have to be much bigger than the desktop ones and
      it is not a taste call: down here every item is effectively in the

@@ -229,8 +229,17 @@ export default function ProjectSheets({
             <span className="k-sheet__media" aria-hidden="true">
               {p.image && (
                 /* eager: with the stage pinned, every sheet is one turn away
-                   from full-bleed — a lazy image would decode mid-scrub */
-                <img className="k-sheet__img" src={p.image} alt="" decoding="async" />
+                   from full-bleed — a lazy image would decode mid-scrub.
+                   srcset (mobile pass, 2026-08-25): a 1080w derivative for
+                   phones; the capture itself is 2880w. */
+                <img
+                  className="k-sheet__img"
+                  src={p.image}
+                  srcSet={`${p.image.replace(/\.webp$/, '-1080.webp')} 1080w, ${p.image.replace(/\.webp$/, '-1600.webp')} 1600w, ${p.image} 2880w`}
+                  sizes="100vw"
+                  alt=""
+                  decoding="async"
+                />
               )}
             </span>
             <span className="k-sheet__cap">

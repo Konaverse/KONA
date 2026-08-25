@@ -1202,15 +1202,18 @@ html:has(.k-root)::-webkit-scrollbar {
   height: 100%;
   object-fit: cover;
 }
-/* Real artwork is photographic and mostly dark, so the caption flips to
-   white over a soft scrim — the reference's own arrangement, and the dim
-   grammar was built for exactly this. The scrim is on the media, UNDER
-   the dim, so the darkening still reads as one move. */
+/* The caption flips to white over a scrim — the reference's own
+   arrangement, and the dim grammar was built for exactly this. The scrim
+   is on the media, UNDER the dim, so the darkening still reads as one
+   move. STRENGTHENED 2026-08-25: it was tuned for dark photographic art
+   (0.45 at the foot); the real captures that landed are LIGHT sites
+   (Tzankatian, Los Santos) and the white caption sat on near-white at
+   every width. 0.62 at the foot, held to 40%, gone by 66%. */
 .k-sheet.has-image .k-sheet__media::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.12) 34%, rgba(0, 0, 0, 0) 55%);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 0.3) 40%, rgba(0, 0, 0, 0) 66%);
   pointer-events: none;
 }
 .k-sheet.has-image .k-sheet__name {
@@ -2135,6 +2138,20 @@ html.lenis, html.lenis body { height: auto; }
 }
 .ft-next:hover .ft-next-a2 {
   transform: translateX(0);
+}
+
+/* TOUCH TAP TARGETS (2026-08-25). The text links are one line tall
+   (~22px) and the guideline is 44. Block padding on an INLINE element
+   grows its hit box without changing the line box, so nothing moves. */
+@media (pointer: coarse) {
+  .ft-link,
+  .ft-mail,
+  .inv-soc,
+  .inv-mail,
+  .k-nav-brand,
+  .k-nav-contact {
+    padding-block: 0.95rem;
+  }
 }
 
 @media (max-width: 57.5rem) {

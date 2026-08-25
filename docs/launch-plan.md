@@ -158,7 +158,47 @@ reads too small in practice, a floor is ONE line
 offset expressed in `vh`; the five stills should overlay as one picture at
 five sizes.
 
-## 3 · Mobile + tablet — perfect, and smoother
+## 3 · Mobile + tablet — perfect, and smoother — PASS 1 DONE 2026-08-25
+
+Method: `scratchpad/mobile-audit.js` walks the page at a viewport in 0.85vh
+steps, screenshots every frame and audits it (horizontal overflow, <12px
+text, tap targets <40px, §3 question-box collisions). Run at 390x844,
+768x1024, 1024x768 (touch emulation). Clean on overflow, type size and
+collisions at all three. What it found and what changed:
+
+- **THE HERO VIDEO IS MISSING.** `public/home/hero-loop.mp4` 404s — `*.mp4`
+  is gitignored, it was never committed, and it is not on disk anywhere
+  (public/home was touched 2026-08-25 16:53). The staircase panel AND the
+  mobile crop were blank. Both `<video>`s now carry a `poster`
+  (`portrait-glass-mono.webp`, a sharp grayscale derivative — the noir rule
+  forbids the blue original) so a missing clip is never a hole. **The user
+  restores the mp4.**
+- **§4 buried §3's last two questions on mobile** before they could be
+  read: `.sv-list` mobile bottom pad was 18svh against §4's -100svh rise
+  (desktop keeps 122svh). Now 118svh. Verified at 390: all four read.
+- **Sheet captions were white on near-white** — the scrim was tuned for
+  dark art and the real captures are light sites. Foot 0.45→0.62, held to
+  40%, gone by 66%. (Desktop benefits too.)
+- **Tap targets**: text links were 22px tall; `@media (pointer: coarse)`
+  gives `.ft-link/.ft-mail/.inv-soc/.inv-mail/.k-nav-*` block padding —
+  inline, so no line moves. Measured 42–50px.
+- **Smoothness = asset weight on a phone, not GPU tricks**: headless
+  frame timing is SwiftShader and untrustworthy (even the static footer
+  measured 34% slow frames), so the levers taken are GPU-independent:
+  `srcset` for the Bosra plate (1200w/2000w derivatives; the 3736w
+  original is untouched and still what ≥2000-device-px screens get —
+  a phone was decoding 17 megapixels for a 390px column) and for the
+  three sheet captures (1080w/1600w). Sheets stay eager (the previous
+  author's reason stands: a lazy image decodes mid-scrub).
+- Lenis on touch is native (`smoothTouch` default false) — left alone.
+- NOT a bug: the coloured fringing on the claim text in the captures is
+  Windows ClearType on the headless raster (no shadow/filter/blend on it).
+
+**Still to do on this item — needs the user's phone**: one real scroll on
+the prod build (`node node_modules/next/dist/bin/next start`) for feel;
+the hitch list, if any, drives pass 2. And for step 4: §5's sheets crop
+a DESKTOP capture on a phone — capture each site at 390x844 too and swap
+by media query (`<picture>`).
 
 Below 57.5rem the page is a different composition (no peel, no paper
 entrance, one-column scatter in §3), so this is a section-by-section walk at

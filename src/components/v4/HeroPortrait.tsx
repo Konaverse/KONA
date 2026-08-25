@@ -177,6 +177,7 @@ export default function HeroPortrait() {
               >
                 <video
                   className="hw-vid"
+                  poster="/home/portrait-glass-mono.webp"
                   src="/home/hero-loop.mp4"
                   autoPlay
                   muted
@@ -198,6 +199,7 @@ export default function HeroPortrait() {
             the headline in flow, hidden on desktop. Same looping clip. */}
         <video
           className="hw-mimg hw-ent"
+          poster="/home/portrait-glass-mono.webp"
           src="/home/hero-loop.mp4"
           autoPlay
           muted
