@@ -51,4 +51,5 @@ next-env.d.ts
 # blender/blockout.py and versioned with it so the site never points at a
 # loop the rig can't reproduce
 !public/object/*.mp4
+!public/home/hero-loop.mp4
 !public/object/*.webm
