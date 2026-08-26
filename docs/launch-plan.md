@@ -160,6 +160,13 @@ five sizes.
 
 ## 3 · Mobile + tablet — perfect, and smoother — PASS 1 DONE 2026-08-25
 
+**PASS 2 DONE 2026-08-26, on the user's phone against a LAN prod build** (commits
+7350adc → 5901c5e, one per section): hero fold on the crop + one-voice headline; §3 one
+speed / 24svh pad; §5 replaced by the fold deck (WorkFold.tsx); §4 objects open on
+in-view; §9 no plates + full-climb fill; footer wordmark 18svh off the floor; nav
+hero-only on phones; the landed sheet handed to the DOM. Details per section in
+docs/homepage-choreography.md. Next: desktop touch-ups.
+
 Method: `scratchpad/mobile-audit.js` walks the page at a viewport in 0.85vh
 steps, screenshots every frame and audits it (horizontal overflow, <12px
 text, tap targets <40px, §3 question-box collisions). Run at 390x844,
