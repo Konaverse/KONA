@@ -83,6 +83,25 @@ export default function HomePage() {
           landed sheet. */}
       <section className="hm-claim" id="studio">
         <div className="hm-claim-land">
+          {/* THE LANDED SHEET, IN THE DOM (phones, 2026-08-26). Once the
+              peel's sheet has landed, HeroPeel hands its pixels to this:
+              the same loop, cover-fit at the same crop, the same grade and
+              catch the shader draws — but scrolling natively WITH the text
+              instead of being redrawn from JS a frame behind it, which on a
+              phone read as the background trembling under the claim.
+              Hidden on desktop (Lenis drives the scroll there, so GL and
+              DOM never disagree). preload none: HeroPeel loads it when the
+              GL arms, and never on desktop. */}
+          <div className="hm-claim-bg" aria-hidden="true">
+            <video
+              poster="/home/portrait-glass-mono.webp"
+              src="/home/hero-loop.mp4"
+              preload="none"
+              muted
+              loop
+              playsInline
+            />
+          </div>
           <h2 className="t-h1 hm-claim-line" aria-label={CLAIM_LINE}>
             <span aria-hidden="true">
               {CLAIM_LINE.split(' ').map((w, i, arr) => (

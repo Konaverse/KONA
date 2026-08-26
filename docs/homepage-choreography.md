@@ -338,6 +338,17 @@ the hero HAS an entrance** — see the second-cut block above. The object holds 
 
 ## Section 2 — The claim
 
+> **THE LANDED HANDOFF ON PHONES, 2026-08-26** (user: the video "kind of shakes on scroll after
+> it lands on the claim"). Lenis leaves touch scrolling native, so on a phone the compositor
+> moves the claim's text every frame while the peel's canvas is redrawn from JS a frame behind;
+> in flight that is invisible, but a landed sheet is a STATIC background under that text and
+> the lag reads as trembling. Once fully landed, HeroPeel puts `hm-landed` on main: a DOM
+> `.hm-claim-bg` video inside the pad (same loop, same crop, brightness(0.58) = the shader's
+> landing grade, the catch as an inset shadow, --r-lg) shows and scrolls WITH the text, the GL
+> clears, and the bg video is synced to the hero loop's clock at each handoff. Scrolling back
+> below the landing returns the pixels to GL at the same rect. Desktop untouched (Lenis-driven).
+> Also: the peel now re-uploads the video texture only on fresh frames (rVFC / time change).
+
 **Job.** The only place on the page where you speak completely plainly.
 
 **On screen.** One large statement in `h1` or `display`, using the 200 to 600 weight jump for emphasis on two or three words. One paragraph beneath at `body`, capped at 68 characters per line. Nothing else on the screen at all.

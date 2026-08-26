@@ -66,6 +66,21 @@ import { gsap, EASE, DUR, rem } from '@/lib/motion-v4'
  * the cover-fit branch — anchored at the crop's object-position (uCover),
  * so the GL sheet shows the exact pixels the DOM crop did at handoff.
  *
+ * THE LANDED HANDOFF (phones, 2026-08-26, user: the video "shakes on
+ * scroll after it lands on the claim"). Lenis leaves touch scrolling
+ * native (no syncTouch), so on a phone the compositor moves the claim's
+ * text every frame while this canvas is redrawn from JS a frame behind
+ * it — in flight that is invisible, but a landed sheet is supposed to be
+ * a STATIC background under that text, and a one-frame lag there reads
+ * as trembling. So once the sheet has fully landed (uShow at 1, opening
+ * done) the DOM takes the pixels: `hm-landed` on main shows
+ * .hm-claim-bg — the same loop in the pad, same crop, same grade, same
+ * catch (home.css) — which scrolls natively with the text, and the GL
+ * clears. Scrolling back below the landing hands it straight back to GL
+ * at the same rect. The bg video is synced to the hero loop's clock at
+ * each handoff. Desktop is untouched: Lenis drives its scroll, so GL and
+ * DOM never disagree there.
+ *
  * Fallbacks: no JS / reduced motion / no WebGL / texture failure -> the
  * DOM hero and the plain white §2, untouched.
  */
@@ -280,6 +295,8 @@ void main() {
 type Rect = { left: number; top: number; width: number; height: number }
 
 type PeelGL = {
+  /** mark the video as having a new frame to upload (rVFC / time change) */
+  dirty: () => void
   draw: (
     from: Rect,
     to: Rect,
@@ -420,12 +437,22 @@ function createGL(
     }
   }
 
+  /* UPLOAD ONLY NEW FRAMES. The loop is 25fps and the ticker 60+: most
+     draws used to re-upload a frame the GPU already had — on a phone the
+     single most expensive thing in this tick. requestVideoFrameCallback
+     flags a fresh frame where it exists; elsewhere the clock does. */
+  let fresh = true
+  let lastT = -1
   return {
+    dirty() {
+      fresh = true
+    },
     draw(from, to, show, alpha, dy, texA, texB, morph) {
       resize()
-      /* the current video frame, every draw — the loop plays inside the fold */
-      if (video.readyState >= 2) {
+      if (video.readyState >= 2 && (fresh || video.currentTime !== lastT)) {
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, video)
+        fresh = false
+        lastT = video.currentTime
       }
       gl.uniform1f(uMorph, morph)
       gl.uniform4f(uFrom, from.left, from.top, Math.max(1, from.width), Math.max(1, from.height))
@@ -493,6 +520,8 @@ export default function HeroPeel() {
           cover: [pct(cs.objectPosition, 0), pct(cs.objectPosition, 1)] as [number, number],
         }
       : null
+    /* the landed handoff's DOM sheet (phones only — see the header) */
+    const bgVid = mobile ? land.querySelector<HTMLVideoElement>('.hm-claim-bg video') : null
 
     let gl: PeelGL | null = null
     let dead = false
@@ -541,6 +570,24 @@ export default function HeroPeel() {
     const arm = () => {
       if (dead || gl) return
       gl = createGL(canvas, vid, rectShape)
+      /* fresh-frame flag straight from the decoder where the API exists */
+      const rvfc = (vid as HTMLVideoElement & {
+        requestVideoFrameCallback?: (cb: () => void) => number
+      }).requestVideoFrameCallback
+      if (gl && rvfc) {
+        const onFrame = () => {
+          if (dead || !gl) return
+          gl.dirty()
+          rvfc.call(vid, onFrame)
+        }
+        rvfc.call(vid, onFrame)
+      }
+      /* the DOM sheet for the landing: fetch it now so it is decodable by
+         the time the sheet lands (same URL as the hero loop — cached) */
+      if (gl && bgVid) {
+        bgVid.preload = 'auto'
+        bgVid.load()
+      }
       /* the runway engages only when GL actually runs — and stays for
          the page's life (see the CSS note: toggling it would shift
          everything below mid-page) */
@@ -559,6 +606,22 @@ export default function HeroPeel() {
     else vid.addEventListener('loadeddata', arm, { once: true })
 
     let show = 0
+    let landed = false // hm-landed: the DOM sheet in the pad owns the pixels
+    const setLanded = (v: boolean) => {
+      if (landed === v) return
+      landed = v
+      main.classList.toggle('hm-landed', v)
+      if (!bgVid) return
+      if (v) {
+        /* the same instant of the loop as the sheet it replaces */
+        try {
+          bgVid.currentTime = vid.currentTime
+        } catch {}
+        bgVid.play().catch(() => {})
+      } else {
+        bgVid.pause()
+      }
+    }
     let live = false // hm-glhero: DOM image hidden, GL owns the pixels
     const setLive = (v: boolean) => {
       if (live === v) return
@@ -581,6 +644,7 @@ export default function HeroPeel() {
       /* §2 fully scrolled past (plus slack): nothing of the sheet is on
          screen — its trailing edge tracks §2's rect */
       if (rTo.bottom < -80) {
+        setLanded(false)
         setLive(false)
         return
       }
@@ -657,6 +721,17 @@ export default function HeroPeel() {
          same eased value that drives the carve — one gesture, two
          dimensions of it. (intro.m is 0 for the page's whole life after
          the opening, so this is rFrom verbatim from then on.) */
+      /* THE HANDOFF (phones): fully landed → the DOM sheet owns the pixels
+         and the canvas clears; anything less → GL, at the same rect */
+      if (bgVid) {
+        const isLanded = show >= 0.995 && target >= 0.995 && intro.m < 0.001
+        setLanded(isLanded)
+        if (isLanded) {
+          gl.clear()
+          return
+        }
+      }
+
       const im = intro.m
       const rectFrom: Rect =
         im > 0
@@ -684,6 +759,8 @@ export default function HeroPeel() {
       cancelAnimationFrame(rafId)
       gsap.ticker.remove(tick)
       main.classList.remove('hm-glhero')
+      main.classList.remove('hm-landed')
+      bgVid?.pause()
       land?.classList.remove('k-dark')
       heropin.classList.remove('is-run')
     }

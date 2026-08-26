@@ -831,11 +831,53 @@
   margin: 0;
   max-width: 22ch;
   font-weight: var(--w-light);
+  /* positioned so it paints over the landed DOM sheet below (same
+     z-index auto, later in DOM order) — no stacking context on the pad */
+  position: relative;
 }
 .hm-claim-body {
   margin: var(--s-6) 0 0;
   max-width: 52ch;
   color: var(--text-muted);
+  position: relative;
+}
+/* THE LANDED SHEET IN THE DOM — phones only (see page.tsx). Everything
+   here mirrors the shader's landed frame so the handoff is invisible:
+   the pad's rect, --r-lg, cover-fit at the crop's object-position, the
+   ×0.58 landing grade as brightness(), the top catch as an inset shadow.
+   `hm-landed` on main (HeroPeel) is the switch; the GL clears the same
+   frame. The filter is on the VIDEO, never an ancestor of anything. */
+.hm-claim-bg {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-lg);
+  overflow: clip;
+  clip-path: inset(0 round var(--r-lg));
+  opacity: 0;
+  pointer-events: none;
+}
+.hm-claim-bg video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 35%; /* = .hw-mimg's crop, which the sheet took off */
+  filter: brightness(0.58);
+}
+.hm-claim-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5);
+}
+.hm-landed .hm-claim-bg {
+  opacity: 1;
+}
+@media (min-width: 57.5rem) {
+  .hm-claim-bg {
+    display: none;
+  }
 }
 /* the entrance targets: inline-block so transform/filter apply. Visible
    by default (SSR, no-JS, crawlers); ClaimEntrance resolves them in. */
