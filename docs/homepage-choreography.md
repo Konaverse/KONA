@@ -693,6 +693,16 @@ A list beats cards here for two reasons. Cards are the most template-like patter
 
 ---
 
+> **§4 ON PHONES, 2026-08-26** (user: *"all of the animations that happen on hover — 3D, web
+> design, SEO, redesign — where they rotate, or the web design where the elements flow in an
+> orbit, to happen when you scroll into it"*). On a device without hover the card's presence
+> on screen IS the hover: `watchInView` (src/lib/in-view.ts) opens the object at 55% of the
+> card in view and closes it — landing the turn forward on a whole revolution — as the card
+> leaves. Same open/close functions the pointer uses, in all three kinds. The fracture keeps
+> its one-time assembly (it never comes apart again; a leave mid-assembly finishes whole but
+> does not open to an empty viewport). The forever-cost worry that had touch doing nothing is
+> answered by the leave: a phone column has one card mostly on screen at a time.
+
 ## Section 5 — Selected work
 
 **Job.** Proof. This is the section that actually sells.

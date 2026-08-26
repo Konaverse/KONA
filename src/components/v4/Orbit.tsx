@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { watchInView } from '@/lib/in-view'
 import { gsap } from '@/lib/motion-v4'
 
 /**
@@ -157,7 +158,7 @@ export default function Orbit({ art, alt = '' }: { art: OrbitArt; alt?: string }
     faces.forEach((f, i) => gsap.set(f, { rotationY: -art.props[i].angle, yPercent: -50 }))
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reduced || !window.matchMedia('(hover: hover)').matches) {
+    if (reduced) {
       return () => ro.disconnect()
     }
 
@@ -192,6 +193,17 @@ export default function Orbit({ art, alt = '' }: { art: OrbitArt; alt?: string }
     }
 
     const host = root.closest<HTMLElement>('[data-fx-host]') ?? root
+    /* TOUCH (2026-08-26, user): the card's presence on screen is the hover
+       — the orbit opens and turns as the card scrolls in, closes and lands
+       as it leaves. Same start/stop as the pointer. */
+    if (!window.matchMedia('(hover: hover)').matches) {
+      const off = watchInView(host, start, stop)
+      return () => {
+        off()
+        turns.forEach((t) => t.kill())
+        ro.disconnect()
+      }
+    }
     host.addEventListener('mouseenter', start)
     host.addEventListener('mouseleave', stop)
     host.addEventListener('focusin', start)

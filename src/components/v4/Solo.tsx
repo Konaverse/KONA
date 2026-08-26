@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { watchInView } from '@/lib/in-view'
 import { gsap } from '@/lib/motion-v4'
 
 /**
@@ -94,7 +95,6 @@ export default function Solo({ art, alt = '' }: { art: SoloArt; alt?: string }) 
     const root = rootRef.current
     if (!root) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    if (!window.matchMedia('(hover: hover)').matches) return
 
     const lift = root.querySelector<HTMLElement>('.so-lift')
     const float = root.querySelector<HTMLElement>('.so-float')
@@ -135,6 +135,17 @@ export default function Solo({ art, alt = '' }: { art: SoloArt; alt?: string }) 
     }
 
     const host = root.closest<HTMLElement>('[data-fx-host]') ?? root
+    /* TOUCH (2026-08-26, user): the card's presence on screen is the hover
+       — the object opens and turns as the card scrolls in, closes and
+       lands as it leaves. Same open/close as the pointer. */
+    if (!window.matchMedia('(hover: hover)').matches) {
+      const off = watchInView(host, open, close)
+      return () => {
+        off()
+        drift?.kill()
+        turn?.kill()
+      }
+    }
     host.addEventListener('mouseenter', open)
     host.addEventListener('mouseleave', close)
     host.addEventListener('focusin', open)

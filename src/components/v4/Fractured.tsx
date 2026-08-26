@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { watchInView } from '@/lib/in-view'
 import { gsap } from '@/lib/motion-v4'
 import { build, type Fracture, type Built } from '@/components/v4/fractures'
 
@@ -75,13 +76,17 @@ import { build, type Fracture, type Built } from '@/components/v4/fractures'
  *     one card is hovered at a time.
  *
  * ── TRIGGERS ──────────────────────────────────────────────────────────────
- * Pointer devices play on enter and reverse on leave. Touch has no hover to
- * give, so the assembly runs ONCE at 40% in view and never comes apart — and
- * it does not open or turn, because "for as long as you stay" has no meaning
- * on a device that cannot hover, and a card turning forever would be exactly
- * the per-frame forever-cost this section was rebuilt to remove. Reduced
- * motion gets the assembled object as flat markup: the effect never arms, so
- * the CSS fallback has to be the FINAL pose, not the rest one.
+ * Pointer devices play on enter and reverse on leave. TOUCH (revised
+ * 2026-08-26, user: the hover motion must happen on scroll): the card's
+ * presence on screen is the hover — at 55% in view the object assembles,
+ * opens and turns exactly as it does under a pointer; when the card leaves
+ * it closes and lands its turn, but it never comes apart again (an
+ * assembly is a first meeting; the second time it is simply there). The
+ * old touch rule — assemble once, never open or turn — was the forever-cost
+ * worry, and it is answered by the leave: a card off screen runs nothing,
+ * and a phone column has one card mostly on screen at a time. Reduced
+ * motion gets the assembled object as flat markup: the effect never arms,
+ * so the CSS fallback has to be the FINAL pose, not the rest one.
  */
 
 const SHARD_DUR = 0.7
@@ -136,10 +141,15 @@ export default function Fractured({
 
     let drift: gsap.core.Tween | null = null
     let turn: gsap.core.Tween | null = null
+    /* touch only: whether the card is still on screen when the assembly
+       lands — if it left mid-assembly, the object finishes whole but does
+       not open or turn to an empty viewport */
+    let live = true
 
     /** it is whole: let it breathe, open it out of the plate, start it turning */
     const settle = () => {
       disarm()
+      if (!live) return
       drift?.kill()
       drift = gsap.to(float, { y: -6, duration: 4.6, ease: 'sine.inOut', yoyo: true, repeat: -1 })
       gsap.to(lift, { scale: art.expand, duration: OPEN_DUR, ease: 'power2.out' })
@@ -222,19 +232,22 @@ export default function Fractured({
       }
     }
 
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (!e.isIntersecting) continue
-          tl.play()
-          io.disconnect()
-        }
+    /* touch: in view is the hover (see TRIGGERS) */
+    const host = root.closest<HTMLElement>('[data-fx-host]') ?? root
+    const off = watchInView(
+      host,
+      () => {
+        live = true
+        if (tl.progress() >= 1) settle()
+        else tl.timeScale(1).play()
       },
-      { threshold: 0.4 },
+      () => {
+        live = false
+        if (tl.progress() >= 1) unsettle()
+      },
     )
-    io.observe(root)
     return () => {
-      io.disconnect()
+      off()
       drift?.kill()
       turn?.kill()
       tl.kill()
