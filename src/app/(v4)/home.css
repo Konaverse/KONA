@@ -642,13 +642,19 @@
    everything else, but its 815/375 box plus the hero's padding needs
    ~0.6 of the width in height: a 16:9 screen has it, a 3440x1440
    ultrawide does not, and the CTA fell off the bottom edge. Inside this
-   gate — true ultrawides only; a 16:9 monitor with browser chrome is 2.02
-   and stays exactly as signed off — the comp is bounded by the HEIGHT the
-   hero actually has (100svh minus its padding) and centres, and the
-   paragraph sizes off the comp like the headline does (0.9845cqi is
-   --t-small at the reference frame), so the hero shrinks as ONE picture
-   rather than the headline alone. */
-@media (min-width: 57.5rem) and (min-aspect-ratio: 21/10) {
+   gate the comp is bounded by the HEIGHT the hero actually has (100svh
+   minus its padding) and centres, and the paragraph sizes off the comp
+   like the headline does (0.9845cqi is --t-small at the reference frame),
+   so the hero shrinks as ONE picture rather than the headline alone.
+   THE GATE IS 23:10, NOT 21:10 (2026-08-26, user: the desktop hero "feels
+   shrinked"). It shipped at 21/10 on the reasoning that a 16:9 screen
+   with browser chrome is 2.02 — but the reference laptop's Chrome, with
+   its tab strip and bookmarks bar, leaves a 1536x730 viewport, 2.104, and
+   the ultrawide branch fired on the very frame the hero was signed off
+   at, taking it to 1168px wide. Real 16:9 viewports run 2.0–2.2 with any
+   browser chrome; the 3440x1440 case this exists for is 2.39 raw and
+   ~2.65 in a browser. 2.3 separates them. */
+@media (min-width: 57.5rem) and (min-aspect-ratio: 23/10) {
   .hw-comp { width: min(100%, 90rem, calc((100svh - 12rem) * 815 / 375)); }
   .hw-para { font-size: 0.9845cqi; }
 }

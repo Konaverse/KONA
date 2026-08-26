@@ -90,12 +90,15 @@ What shipped, and what was learned:
   all of them. 1534 shots before/after are pixel-identical.
 - THE ASPECT TRAP, as predicted: at 3440x1440 (21:9) the hero's CTA fell
   off the bottom — `.hw-comp` (815/375) plus padding needs ~0.6W of
-  height. Fix is gated to `(min-aspect-ratio: 21/10)` — true ultrawides
-  only; a 16:9 monitor with browser chrome is 2.02 and is untouched —
-  where the comp is bounded by `(100svh − 12rem)·815/375` and centres,
+  height. Fix is gated to `(min-aspect-ratio: 23/10)` — true ultrawides
+  only — where the comp is bounded by `(100svh − 12rem)·815/375` and centres,
   and `.hw-para` sizes off the comp (0.9845cqi) so the hero shrinks as
   one picture. Every other pin (§2, §3, §4, §5, §9, footer) checked at
-  3440x1440: fits.
+  3440x1440: fits. GATE RAISED 21/10 → 23/10 on 2026-08-26: the reference
+  laptop's own Chrome (tab strip + bookmarks bar) leaves a 1536x730
+  viewport, ratio 2.104, and the ultrawide branch fired on the signed-off
+  frame — the hero read "shrinked" (1168px comp instead of 1424). 16:9
+  viewports with browser chrome run 2.0–2.2; 3440x1440 is 2.39 raw.
 - `tools/shot.js` takes `SHOT_W` / `SHOT_H`.
 - STILL OPEN (goes with step 4): §5's captures are 2880 wide → recapture
   at 3440 for ultrawide sharpness.
