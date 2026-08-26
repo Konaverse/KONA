@@ -207,6 +207,27 @@ The consequences, section by section below: **section 3 states problems as text 
 >   reverse reads as unlit stock.
 > - Mobile keeps the plain crop, which — being a rectangle — takes `--lift-4` directly; its
 >   hand-written 20px radius became `--r-lg`.
+
+> **THE FOLD RUNS ON MOBILE — 2026-08-26, user: "make the fold transition happen on mobile
+> too … when it folds it needs to stay stuck and scroll up with the rest of the elements,
+> fold, and come as the background container of the claim."** Under 57.5rem the peel's
+> SOURCE is the plain rounded crop under the headline (`.hw-mimg`, the same loop) instead of
+> the staircase — HeroPeel takes whichever of the two is displayed. The choreography is the
+> desktop's, untouched: opening cover that carves down into the crop, corner 1 grabbed on
+> the first scrolled pixel, stuck corners riding up with the page, the released part
+> anchored and stretched by the scroll, the unfold landing it as §2's container. Only the
+> SHAPE differs (`uRect`): the SDF morph is pinned at the rectangle, the corner is the crop's
+> own `--r-lg` (read off computed style, not duplicated), and the framing is cover-fit at
+> the crop's `object-position` (`uCover`) so the sheet shows the DOM's exact pixels at
+> handoff. The headline, its pills and its walk are unchanged on mobile — a one-voice
+> headline with the video inline after "will" was built the same day and **reverted on the
+> user's call before it shipped** (bring back the pills, the crop where it was).
+> Mechanics that had to change: the runway is `padding-bottom: 35svh` on phones (the hero
+> is flowing content taller than 100svh, a fixed 135svh let its tail overlap the claim), and
+> the crop hides under `.hm-glhero` by **visibility**, not opacity — the sheet's alpha IS the
+> source's computed opacity. Known, unmeasured: the stretch is the same pixels as desktop
+> on a sheet a third the height, so it reads longer; and the loop is a montage with light
+> frames, which the landing grade (×0.58) does not take far enough for white type.
 >
 > **A NAMESPACE COLLISION worth recording, because it cost a full debug cycle.** The beam
 > shipped as a bare `.hw-key`, which is ALREADY the headline's emphasis voice (the word

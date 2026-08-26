@@ -54,9 +54,20 @@ import { gsap, EASE, DUR, rem } from '@/lib/motion-v4'
  * still covers it when it slides under §2. Nav (50) and the fluid (40, root
  * stacking context) stay above.
  *
- * Fallbacks: no JS / reduced motion / mobile (the staircase is display:none
- * under 57.5rem) / no WebGL / texture failure -> the DOM hero and the plain
- * white §2, untouched.
+ * MOBILE (2026-08-26, user: "the fold transition happens on mobile too").
+ * Under 57.5rem the staircase is display:none and the picture is the plain
+ * rounded crop under the headline (.hw-mimg, the same loop). The peel
+ * sources from whichever is displayed, and the choreography is IDENTICAL:
+ * stuck corners ride up with the page, the released part anchors and
+ * stretches, the unfold lands it as §2's background. Only the SHAPE
+ * differs, under `uRect`: the source is a rounded rectangle, so the SDF
+ * morph is pinned at the full rect (m = 1) with the crop's own CSS radius
+ * (uR0, grows to R_LG on landing like the staircase's), and the framing is
+ * the cover-fit branch — anchored at the crop's object-position (uCover),
+ * so the GL sheet shows the exact pixels the DOM crop did at handoff.
+ *
+ * Fallbacks: no JS / reduced motion / no WebGL / texture failure -> the
+ * DOM hero and the plain white §2, untouched.
  */
 
 const SEG_X = 140
@@ -151,6 +162,9 @@ uniform vec2 uTexA;      /* authored SVG framing as an affine map: */
 uniform vec2 uTexB;      /*   uv = vUv * uTexA + uTexB (kb+parallax baked) */
 uniform float uImgAspect;
 uniform float uRem;   /* root font-size / 16 — the picture's scale (tokens.css) */
+uniform float uRect;  /* 1 = the source is a rounded rectangle (mobile crop) */
+uniform float uR0;    /* that rectangle's CSS corner radius, px */
+uniform vec2 uCover;  /* cover-fit anchor = the crop's object-position (0..1) */
 varying vec2 vUv;
 varying vec2 vRectWH;
 varying float vBack;
@@ -186,7 +200,7 @@ void main() {
      load in the other direction — the sheet is born the FULL container
      (m=1) and carves itself down to the staircase, uncovering the text
      that was laid out beneath it all along. One shape system, both doors. */
-  float m = max(smoothstep(0.68, 0.9, uShow), uMorph);
+  float m = max(max(smoothstep(0.68, 0.9, uShow), uMorph), uRect);
   float exG = smoothstep(0.7, 0.94, uShow); /* the landing expansion, uniform */
   vec4 full_ = vec4(0.0, 0.0, 1.0, 1.0);
   vec4 ra = mix(RA, full_, m);
@@ -198,7 +212,8 @@ void main() {
      cover (landing redesign, 2026-08-19). During the OPENING the radius
      scales away with uMorph: a full-page sheet has no corners to round,
      and they grow in as it becomes a container. */
-  float r = mix((28.0 / 815.0) * vRectWH.x, R_LG * uRem, exG) * (1.0 - uMorph);
+  float r0 = mix((28.0 / 815.0) * vRectWH.x, uR0, uRect);
+  float r = mix(r0, R_LG * uRem, exG) * (1.0 - uMorph);
   float k = max((30.0 / 815.0) * vRectWH.x * (1.0 - m), 0.001);
   float dA = sdRoundRect(px, (ra.xy + ra.zw * 0.5) * vRectWH, ra.zw * 0.5 * vRectWH, r);
   float dB = sdRoundRect(px, (rb.xy + rb.zw * 0.5) * vRectWH, rb.zw * 0.5 * vRectWH, r);
@@ -212,7 +227,10 @@ void main() {
   vec2 cf = planeAspect > uImgAspect
     ? vec2(1.0, uImgAspect / planeAspect)
     : vec2(planeAspect / uImgAspect, 1.0);
-  vec2 uvB = (vUv - 0.5) * cf + 0.5;
+  /* object-fit: cover at object-position uCover — (0.5, 0.5) is the
+     centred crop the staircase always used; the mobile crop sits the face
+     at 35% and the sheet must show the same pixels the DOM did */
+  vec2 uvB = vUv * cf + (1.0 - cf) * uCover;
   /* m, not the raw uShow window: the OPENING's full-page state needs the
      cover-fit too — the video fills the viewport honestly, and eases into
      the authored staircase crop as the container closes down */
@@ -275,7 +293,12 @@ type PeelGL = {
   clear: () => void
 }
 
-function createGL(canvas: HTMLCanvasElement, video: HTMLVideoElement): PeelGL | null {
+function createGL(
+  canvas: HTMLCanvasElement,
+  video: HTMLVideoElement,
+  /* the mobile crop (see header): a rounded rect at r0, cover-fit at cover */
+  rect: { r0: number; cover: [number, number] } | null,
+): PeelGL | null {
   const gl = canvas.getContext('webgl', {
     alpha: true,
     antialias: false,
@@ -382,6 +405,9 @@ function createGL(canvas: HTMLCanvasElement, video: HTMLVideoElement): PeelGL | 
   const uRem = U('uRem')
   gl.uniform1i(U('uTex'), 0)
   gl.uniform1f(U('uImgAspect'), video.videoWidth / video.videoHeight)
+  gl.uniform1f(U('uRect'), rect ? 1 : 0)
+  gl.uniform1f(U('uR0'), rect ? rect.r0 : 0)
+  gl.uniform2f(U('uCover'), rect ? rect.cover[0] : 0.5, rect ? rect.cover[1] : 0.5)
 
   const resize = () => {
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
@@ -437,14 +463,36 @@ export default function HeroPeel() {
 
     const main = canvas.closest<HTMLElement>('main.hm')
     const heropin = document.querySelector<HTMLElement>('.hm-heropin')
-    const shape = document.querySelector<SVGSVGElement>('.hw-hero .hw-shape')
-    const pan = document.querySelector<SVGGElement>('.hw-hero .hw-pan')
-    const vid = document.querySelector<HTMLVideoElement>('.hw-hero .hw-vid')
+    const stair = document.querySelector<SVGSVGElement>('.hw-hero .hw-shape')
+    const crop = document.querySelector<HTMLVideoElement>('.hw-hero .hw-mimg')
     const claim = document.querySelector<HTMLElement>('.hm-claim')
     const land = document.querySelector<HTMLElement>('.hm-claim-land')
-    if (!main || !heropin || !shape || !pan || !vid || !claim || !land) return
-    /* mobile swaps the staircase out entirely — nothing to peel */
-    if (getComputedStyle(shape).display === 'none') return
+    if (!main || !heropin || !claim || !land) return
+    /* THE SOURCE is whichever picture this width displays: the staircase on
+       desktop, the rounded crop on mobile — exactly one of them is ever
+       displayed (home.css). Its rect, its opacity and its video frame are
+       what the sheet takes over, so the handoff stays exact either way. */
+    const isOn = (el: Element | null) => !!el && getComputedStyle(el).display !== 'none'
+    const mobile = !isOn(stair) && isOn(crop)
+    const shape: Element | null = mobile ? crop : isOn(stair) ? stair : null
+    if (!shape) return
+    const pan = mobile ? null : document.querySelector<SVGGElement>('.hw-hero .hw-pan')
+    const vid = mobile ? crop : document.querySelector<HTMLVideoElement>('.hw-hero .hw-vid')
+    if (!vid || (!mobile && !pan)) return
+    /* the crop's shape, read once off its computed style — both are tokens
+       (--r-lg, and the face height in the cover crop) and must never be
+       duplicated here as numbers */
+    const cs = getComputedStyle(shape)
+    const pct = (v: string, i: number) => {
+      const n = parseFloat((v.split(' ')[i] ?? '50%').replace('%', ''))
+      return Number.isFinite(n) ? n / 100 : 0.5
+    }
+    const rectShape = mobile
+      ? {
+          r0: parseFloat(cs.borderTopLeftRadius) || 0,
+          cover: [pct(cs.objectPosition, 0), pct(cs.objectPosition, 1)] as [number, number],
+        }
+      : null
 
     let gl: PeelGL | null = null
     let dead = false
@@ -492,7 +540,7 @@ export default function HeroPeel() {
        different frames. GL arms once the first frame is decodable. */
     const arm = () => {
       if (dead || gl) return
-      gl = createGL(canvas, vid)
+      gl = createGL(canvas, vid, rectShape)
       /* the runway engages only when GL actually runs — and stays for
          the page's life (see the CSS note: toggling it would shift
          everything below mid-page) */
@@ -589,8 +637,8 @@ export default function HeroPeel() {
          (Ken-burns mirroring left with the ken-burns: the video is the
          motion now, and it rides along in the texture itself.) */
       const damp = 1 - gsap.utils.clamp(0, 1, (show - 0.05) / 0.45)
-      const panX = ((gsap.getProperty(pan, 'x') as number) || 0) * damp
-      const panY = ((gsap.getProperty(pan, 'y') as number) || 0) * damp
+      const panX = pan ? ((gsap.getProperty(pan, 'x') as number) || 0) * damp : 0
+      const panY = pan ? ((gsap.getProperty(pan, 'y') as number) || 0) * damp : 0
 
       /* authored framing as an affine map vUv -> texture uv, all in viewBox
          units: the video plate's box, panned */

@@ -657,7 +657,11 @@
    GSAP's percent channels; see the hm- gotcha above) */
 .hw-ent { opacity: 0; }
 
-/* ---------- mobile: stack, plain rounded crop instead of the staircase ---------- */
+/* ---------- mobile: stack, plain rounded crop instead of the staircase ----------
+   The crop is also the PEEL'S SOURCE on phones (2026-08-26): HeroPeel reads
+   its rect, its opacity, its border-radius and its object-position, so the
+   fold starts from exactly this picture. Change the radius or the crop
+   here and the sheet follows; nothing is duplicated in the shader. */
 @media (max-width: 57.5rem) {
   .hw-hero { place-items: start; }
   .hw-comp { aspect-ratio: auto; width: 100%; }
@@ -682,6 +686,34 @@
     width: auto;
     font-size: var(--t-h1);
   }
+  /* ONE VOICE (2026-08-26, user): the grey / ink / semibold split is a
+     desktop composition; the phone reads the sentence in one weight and
+     one colour */
+  .hw-grey,
+  .hw-ink,
+  .hw-key {
+    color: var(--text);
+    font-weight: inherit;
+  }
+  /* THE PILLS ON A PHONE (2026-08-26, user: "too laggy"). A beat tweens the
+     pill's WIDTH, and everything painted from that width is re-done every
+     frame: the blurred drop shadow (a raster the size of the pill plus its
+     spread), the grain's mix-blend-mode (a compositing group re-blended
+     per frame), the glint. On a phone GPU that is the stutter. The pill
+     keeps its hairline and its plate; the shadow and the blend go, and the
+     clip is stated as a clip-path — Safari does not honour overflow:hidden
+     + border-radius on a composited child (the plate runs a transform
+     animation), which is why the corners read square on the phone. */
+  .hw-pill {
+    /* the no-JS resting width, scaled like HeroTitle's PHONE_SCALE */
+    width: calc(var(--pw-rest) * 0.5);
+    box-shadow: inset 0 0 0 1px rgb(24 40 51 / 0.07);
+    clip-path: inset(0 round var(--r-md));
+    isolation: isolate;
+    contain: paint;
+  }
+  .hw-pill::after { display: none; }
+  .hw-glint { display: none; }
   .hw-side {
     position: static;
     width: auto;
@@ -703,6 +735,17 @@
 .hm-heropin.is-run {
   height: 135svh;
 }
+/* MOBILE: the hero is flowing content (headline, crop, copy, CTA) and runs
+   past 100svh on most phones, so the runway is the 35svh AFTER the hero,
+   whatever the hero measures — a fixed 135svh would let the hero's tail
+   overlap the claim. Same scrub: wPin = pin height − vh still ends exactly
+   when the claim's top reaches the viewport's bottom edge. */
+@media (max-width: 57.5rem) {
+  .hm-heropin.is-run {
+    height: auto;
+    padding-bottom: 35svh;
+  }
+}
 
 /* Fixed full-viewport GL sheet at z-index 2, mounted in the DOM BETWEEN the
    hero and the claim: the hero (z2, earlier) paints under it, the claim
@@ -720,12 +763,20 @@
 /* while the GL owns the pixels (any scrolled state): the DOM picture goes
    silent — the SVG stays for the live rect — and the claim's white sheet
    opens so the landed GL sheet IS its background. Never applies to no-JS /
-   reduced motion / mobile, which keep the plain DOM forms. */
+   reduced motion, which keep the plain DOM forms. */
 .hm-glhero .hw-shape .hw-vidbox,
 /* the catch goes with the picture: once GL owns the sheet, a DOM lit edge
    would still be sitting in the hero's old footprint */
 .hm-glhero .hw-edge {
   opacity: 0;
+}
+/* MOBILE (2026-08-26): the rounded crop IS the sheet's source, and the crop
+   is the video element itself. VISIBILITY, not opacity: HeroPeel mirrors
+   the source's computed opacity as the sheet's alpha (that is how the
+   entrance fade carries into GL), so an opacity: 0 here would blank the
+   sheet too. visibility leaves rect and opacity readable and paints nothing. */
+.hm-glhero .hw-mimg {
+  visibility: hidden;
 }
 .hm-glhero .hm-claim {
   background: transparent;

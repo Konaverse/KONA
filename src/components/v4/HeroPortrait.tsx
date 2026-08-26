@@ -84,7 +84,7 @@ export default function HeroPortrait() {
        "another section in the back". Pre-gate the hero is just beams
        and nav (every entrance element rests at opacity 0), which reads
        as a quiet first paint, not a flash. The timeout is the no-GL
-       fallback — mobile, no WebGL, a failed video — where the hero must
+       fallback — no WebGL, a failed video — where the hero must
        still arrive on its own. */
     const tl = gsap.timeline({ paused: true, defaults: { ease: EASE.glass } })
     tl.fromTo(
@@ -196,7 +196,10 @@ export default function HeroPortrait() {
         <HeroTitle />
 
         {/* mobile swaps the staircase for a plain rounded crop; sits after
-            the headline in flow, hidden on desktop. Same looping clip. */}
+            the headline in flow, hidden on desktop. Same looping clip — and
+            since 2026-08-26 it is the PEEL'S SOURCE on phones: HeroPeel
+            takes its rect, opacity, radius and crop, and folds it into
+            §2's background exactly as it does the staircase. */}
         <video
           className="hw-mimg hw-ent"
           poster="/home/portrait-glass-mono.webp"

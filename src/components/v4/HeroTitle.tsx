@@ -149,6 +149,18 @@ const LOCK = 0.1
 /** how far a pill may drift off its solved width. Small enough that the
  *  compositions hold, and the layout is verified anyway before anything flies. */
 const JITTER = 0.3
+/** THE PHONE (2026-08-26, user: the pills' animation is "too laggy").
+ *  The six compositions are solved for the desktop's 15em box; a 390px
+ *  phone gives the flow ~9.7em at the same h1, so a 9.9em pill was capped
+ *  at the line and every beat re-broke the whole sentence across five or
+ *  six lines — the most layout a beat can do. On phones the widths are
+ *  scaled down so the pills read as inline thumbnails and a beat moves a
+ *  word or two, and the movers drop their blur (a text raster per frame
+ *  on a phone GPU is the other half of the stutter). Row verification is
+ *  skipped: the desktop `rows` cannot match a different box, and the FLIP
+ *  is correct for any break. */
+const PHONE = '(max-width: 57.5rem)'
+const PHONE_SCALE = 0.5
 
 export default function HeroTitle() {
   const rootRef = useRef<HTMLHeadingElement | null>(null)
@@ -177,10 +189,14 @@ export default function HeroTitle() {
       })
     }
 
+    const phone = window.matchMedia(PHONE).matches
+    const scaled = (w: Widths): Widths =>
+      phone ? { a: w.a * PHONE_SCALE, b: w.b * PHONE_SCALE, c: w.c * PHONE_SCALE } : w
+
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduce) {
       flow.classList.remove('is-pre')
-      setWidths(HOME.w)
+      setWidths(scaled(HOME.w))
       gsap.set(items, { opacity: 1, y: 0, filter: 'none' })
       return
     }
@@ -205,9 +221,10 @@ export default function HeroTitle() {
 
     /** jittered widths, but only if the sentence still breaks as designed */
     const applyComp = (c: Comp) => {
-      const j = (n: number) => +(n + (Math.random() - 0.5) * JITTER).toFixed(3)
-      setWidths({ a: j(c.w.a), b: j(c.w.b), c: j(c.w.c) })
-      if (!matches(c, readRows())) setWidths(c.w)
+      const w = scaled(c.w)
+      const j = (n: number) => +(n + (Math.random() - 0.5) * JITTER * (phone ? PHONE_SCALE : 1)).toFixed(3)
+      setWidths({ a: j(w.a), b: j(w.b), c: j(w.c) })
+      if (!phone && !matches(c, readRows())) setWidths(w)
     }
 
     /**
@@ -292,11 +309,13 @@ export default function HeroTitle() {
           tl.to(
             el,
             {
-              keyframes: {
-                scale: [1, 0.94, 1],
-                opacity: [1, 0.38, 1],
-                filter: ['blur(0px)', 'blur(2px)', 'blur(0px)'],
-              },
+              keyframes: phone
+                ? { scale: [1, 0.94, 1], opacity: [1, 0.38, 1] }
+                : {
+                    scale: [1, 0.94, 1],
+                    opacity: [1, 0.38, 1],
+                    filter: ['blur(0px)', 'blur(2px)', 'blur(0px)'],
+                  },
               duration: D * 0.98,
               ease: 'none',
             },
@@ -422,7 +441,7 @@ export default function HeroTitle() {
 
     /* the opening gate: everything above waits for the peel's cover
        ('k-peel-armed'), with a timeout fallback for the no-GL paths —
-       mobile, no WebGL, a failed video — where the headline must still
+       no WebGL, a failed video — where the headline must still
        arrive on its own clock */
     let begun = false
     const begin = () => {

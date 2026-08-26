@@ -18,7 +18,7 @@ import { gsap, rem } from '@/lib/motion-v4'
  * next section, no pin, no shrink no nothing."
  *
  * Engages only once `.hm-heropin.is-run` exists — HeroPeel's "GL is real"
- * signal — so every fallback mode (no JS / reduced motion / mobile / no
+ * signal — so every fallback mode (no JS / reduced motion / no
  * WebGL / texture failure) keeps the plain screen with the statement
  * fully visible (SSR, SEO D5).
  *
