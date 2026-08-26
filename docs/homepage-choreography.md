@@ -250,6 +250,16 @@ The consequences, section by section below: **section 3 states problems as text 
 > HeroPeel's `OPEN_HOLD`. Applies at every width (the stack generalises to any row count).
 > Filmed headless at 1536x730: cover 0.6–1.2s, carve 1.5–2.4s, stack 2.7–3.3s, split
 > 3.6–3.9s, pills 4.5–4.8s.
+
+> **THE SHAPE MORPH WIDENS ONLY — 2026-08-26, user: "right now it expands from both
+> height and width. It should only expand on width."** The staircase is two rounded blocks
+> whose y-ranges overlap (top-right ends at 190/375, bottom-left starts at 155/375). The
+> morph used to inflate each block in all four directions into the full rectangle; now each
+> keeps its HEIGHT and only widens — the top block slides out to the left edge, the bottom
+> to the right — and two full-width bands are the rectangle, so the notches close (landing)
+> and open (the load's carve) purely sideways. Both doors, one shader line (`ra`/`rb` in
+> HeroPeel's fragment). Filmed: landing and carve both read as bands sliding, no vertical
+> growth.
 >
 > **A NAMESPACE COLLISION worth recording, because it cost a full debug cycle.** The beam
 > shipped as a bare `.hw-key`, which is ALREADY the headline's emphasis voice (the word

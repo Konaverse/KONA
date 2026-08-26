@@ -230,9 +230,15 @@ void main() {
      that was laid out beneath it all along. One shape system, both doors. */
   float m = max(max(smoothstep(0.68, 0.9, uShow), uMorph), uRect);
   float exG = smoothstep(0.7, 0.94, uShow); /* the landing expansion, uniform */
-  vec4 full_ = vec4(0.0, 0.0, 1.0, 1.0);
-  vec4 ra = mix(RA, full_, m);
-  vec4 rb = mix(RB, full_, m);
+  /* WIDTH ONLY (2026-08-26, user: "it expands from both height and width
+     — it should only expand on width"). The two blocks keep their
+     HEIGHTS and only widen — the top block slides out to the left edge,
+     the bottom block out to the right — and because their y-ranges
+     overlap (RA ends at 190/375, RB starts at 155/375) two full-width
+     bands ARE the rectangle: the notches close sideways, never from
+     above or below. Both doors: the opening carves them in the same way. */
+  vec4 ra = vec4(mix(RA.x, 0.0, m), RA.y, mix(RA.z, 1.0, m), RA.w);
+  vec4 rb = vec4(RB.x, RB.y, mix(RB.z, 1.0, m), RB.w);
 
   vec2 px = vUv * vRectWH;
   /* corners stay rounded for the whole flight, and the LANDED form keeps
