@@ -1563,15 +1563,13 @@
   /* `k-dark` is on the section in ServiceCards.tsx, so this resolves to the
      void and every role under it flips with one class */
   background: var(--surface);
-  /* THE SEAM'S NEW SIGNATURE — A LIT LEADING EDGE.
-     The burial used to work on sheer contrast: an opaque WHITE sheet rising
-     over §3's near-black photograph. Both sides are dark now, so contrast
-     cannot carry it and the sheet would slide up invisibly. The edge lights
-     itself instead — not a new invention but the dark polarity's own
-     grammar: `--catch`, the top-edge highlight every lifted panel on this
-     page already wears. You see a clean machine-black surface come up over
-     the stone, edge first. */
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.38);
+  /* THE LIT LEADING EDGE IS GONE (2026-08-26, user: "a white edge on the
+     top of the section with a white shadow on it, that needs to leave").
+     It was a 1px white catch on this edge (`inset 0 1px 0 / 0.38`) plus
+     the ::before light thrown ahead onto §3 and the ::after spill back
+     down the sheet — the dark-over-dark seam's signature since the
+     monochrome pivot. The section now rises over §3 on its surface alone;
+     §3's own drift under it carries the burial. Git has the three rules. */
   /* the paper swings the cards outside the grid box on the way in, and the
      left one would otherwise reach past the viewport edge and raise a
      horizontal scrollbar. `clip`, not `hidden`: hidden would make this a
@@ -1579,36 +1577,6 @@
      y axis, which clip-on-one-axis leaves alone. */
   overflow-x: clip;
 }
-/* the light the edge throws AHEAD of itself, onto the portrait it is about
-   to cover. This was a DARK wash — the right answer when the sheet was white
-   and needed separating from the photograph, and exactly the wrong one now,
-   when the sheet is darker than what it covers and the only thing that can
-   announce it is light. */
-.sc::before {
-  content: '';
-  position: absolute;
-  bottom: 100%;
-  left: 0;
-  right: 0;
-  height: 8rem;
-  background: linear-gradient(to top, rgb(226 238 246 / 0.15), rgb(226 238 246 / 0));
-  pointer-events: none;
-}
-/* and the light that spills BACK down the sheet from its own edge, so the
-   edge has body rather than being a drawn line. Below every card: .sc-page
-   is raised a step so this can never wash over the heading. */
-.sc::after {
-  content: '';
-  position: absolute;
-  z-index: 0;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 11.875rem;
-  background: linear-gradient(to bottom, rgb(226 238 246 / 0.055), rgb(226 238 246 / 0));
-  pointer-events: none;
-}
-
 /* wider than the reading column: the cards have to stay a size an object
    reads at, and 1560 puts each one near the hero plate's own proportion. */
 .sc-page {

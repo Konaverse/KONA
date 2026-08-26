@@ -260,6 +260,12 @@ The consequences, section by section below: **section 3 states problems as text 
 > and open (the load's carve) purely sideways. Both doors, one shader line (`ra`/`rb` in
 > HeroPeel's fragment). Filmed: landing and carve both read as bands sliding, no vertical
 > growth.
+
+> **§4's lit leading edge is gone — 2026-08-26, user: "a white edge on the top of the
+> section with a white shadow on it, that needs to leave."** The 1px white catch on `.sc`'s
+> top edge, the light it threw ahead onto §3 (`::before`) and the spill back down the sheet
+> (`::after`) — the dark-over-dark seam's signature since the monochrome pivot — are
+> removed. §4 rises over §3 on its surface alone; §3's drift under it carries the burial.
 >
 > **A NAMESPACE COLLISION worth recording, because it cost a full debug cycle.** The beam
 > shipped as a bare `.hw-key`, which is ALREADY the headline's emphasis voice (the word
