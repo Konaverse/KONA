@@ -901,6 +901,14 @@ Pricing is one of the two things people already ask on WhatsApp (architecture §
 
 ## Section 9 — The invitation *(BUILT 2026-08-24, user-directed: scroll-driven, kind of parallax, light, with imagery; socials sideways)*
 
+> **MOBILE, 2026-08-26.** User: *"Only one image appears and the way it appears I don't like
+> it. So probably no images. Also the text doesn't animate like the desktop with the font
+> transparency."* Both plates are gone under 57.5rem (the one that stayed sat on the line's
+> first row at every phone width); the section is the line, the button, the address, the
+> socials. The fill was running — its travel is 88%→42% of the viewport, ~390px on a phone,
+> one thumb-flick of native touch scroll, so it was at full ink before the eye arrived. On
+> phones ScrollFillText fills across the line's whole climb, bottom edge → 28%.
+
 **Job.** Make contact feel like the obvious next move rather than a form.
 
 **On screen.** One line at `display` size, filling letter by letter on scroll

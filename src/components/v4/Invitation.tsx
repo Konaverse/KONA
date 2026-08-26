@@ -52,6 +52,9 @@ export default function Invitation() {
 
     const plates = Array.from(root.querySelectorAll<HTMLElement>('[data-drift]'))
     if (!plates.length) return
+    /* phones: no plates (home.css hides the layer) — nothing to drift */
+    const layer = root.querySelector<HTMLElement>('.inv-plates')
+    if (layer && getComputedStyle(layer).display === 'none') return
     const rates = plates.map((el) => Number(el.dataset.drift) || 0)
 
     const tick = () => {

@@ -16,7 +16,17 @@ import { gsap } from '@/lib/motion-v4'
  * aria-label; the letter spans are aria-hidden.
  *
  * House pattern: gsap.ticker + rect math, no scroll listeners.
+ *
+ * THE TRAVEL IS WIDTH-DEPENDENT (2026-08-26, user: on the phone "the text
+ * doesn't animate like the desktop"). The desktop fill runs while the
+ * element climbs from 88% to 42% of the viewport — 46vh, a few wheel
+ * notches under Lenis. On a phone that is ~390px, one thumb-flick of
+ * native (unsmoothed) touch scroll, so the letters were at full ink before
+ * the eye got there. Under 57.5rem the fill spans the element's whole
+ * climb, from the bottom edge to 28% — and it starts from the edge, so the
+ * line always enters faded and is seen filling.
  */
+const TRAVEL = { desktop: [0.88, 0.42], phone: [1.0, 0.28] } as const
 export default function ScrollFillText({
   text,
   as = 'h2',
@@ -41,12 +51,15 @@ export default function ScrollFillText({
     if (!n) return
     const feather = 7
     let last = -1
+    const [from, to] = window.matchMedia('(max-width: 57.5rem)').matches
+      ? TRAVEL.phone
+      : TRAVEL.desktop
 
     const update = () => {
       const vh = window.innerHeight
       const r = el.getBoundingClientRect()
-      // fill runs while the element travels from 88% to 42% of the viewport
-      const p = Math.min(Math.max((vh * 0.88 - r.top) / (vh * 0.46), 0), 1)
+      // fill runs while the element's top travels from `from` to `to` of the viewport
+      const p = Math.min(Math.max((vh * from - r.top) / (vh * (from - to)), 0), 1)
       if (p === last) return
       last = p
       const head = p * (n + feather)

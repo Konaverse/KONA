@@ -2294,8 +2294,12 @@
   .inv {
     padding-block: clamp(7rem, 16vh, 10rem);
   }
-  /* the rail lies back down into a row, and the plates step out of the
-     copy's way: one small still keeps the atmosphere, the second goes */
+  /* the rail lies back down into a row, and the plates GO (2026-08-26,
+     user: "only one image appears and the way it appears I don't like
+     it, so probably no images") — the one still that stayed for
+     atmosphere sat on the line's first row at every phone width, and a
+     phone column has no corner the copy does not need. The section is
+     the line, the button, the address, the socials. */
   .inv-social {
     position: static;
     transform: none;
@@ -2308,13 +2312,7 @@
     writing-mode: horizontal-tb;
     rotate: none;
   }
-  .inv-plate-b {
+  .inv-plates {
     display: none;
-  }
-  .inv-plate-a {
-    top: 3%;
-    right: 4%;
-    width: clamp(7.5rem, 30vw, 12.5rem);
-    opacity: 0.85;
   }
 }
