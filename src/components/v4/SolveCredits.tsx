@@ -91,9 +91,18 @@ export default function SolveCredits() {
        land as a one-time hitch the moment the section scrolled in. This
        moves that work to idle time right after load. */
     if (img instanceof HTMLImageElement) img.decode().catch(() => {})
+    /* ONE SPEED ON PHONES (2026-08-26, user: the problems "appear at
+       different speed" and it read wrong). The credit-roll depth is a
+       desktop effect: it needs the scatter's separate columns so blocks
+       drifting at different rates pass beside each other. A phone has one
+       column, so the same drift only ever put one credit on top of the
+       next, and the 34–38svh gaps that kept them apart spread the section
+       thin. Here they roll with the page, as a list over the drifting
+       plate; the plate's own 0.45× depth stays. */
+    const phone = window.matchMedia('(max-width: 57.5rem)').matches
     const items = Array.from(root.querySelectorAll<HTMLElement>('.sv-item')).map((el) => ({
       el,
-      speed: Number(el.dataset.speed) || 1,
+      speed: phone ? 1 : Number(el.dataset.speed) || 1,
       y: 0,
     }))
     let imgY = 0

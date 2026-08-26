@@ -552,6 +552,16 @@ plain statement; reduced motion never dims. Paragraph keeps the standard reveal,
 > 2.83MB at native/q78, 1.42MB at 2560w/q80, 1.01MB at 1920w/q84. Not done — the file is
 > the user's, at the resolution and quality they chose.
 
+> **MOBILE, 2026-08-26 (user: "the image appears and the first problem comes too late, and
+> the rest appear at different speed").** Under 57.5rem the credits no longer drift at
+> their own speeds — one speed, they roll with the page as a list over the plate, which
+> keeps its 0.45× depth. The differential drift is a two-column effect; in one column it
+> only ever stacked one credit on the next, and the +16svh gaps that outran it spread the
+> section thin. Gaps back to the desktop's kind of uneven (16/22/16svh). The top pad was
+> 94svh — the ORIGINAL build's number, from when §3 slid under the claim and the pad had
+> to outlast the occlusion; desktop went to 20svh when the underlap died, the mobile line
+> was never revisited — and is 24svh now. Bottom pad stays 118svh (the burial rule).
+
 **Job.** Catch the visitor who has a symptom rather than a solution, and carry the problem cluster.
 
 **On screen.** Three or four problem statements, stacked vertically, each one line of `h2` with two lines of `body` beneath. Written as the client would say it, not as you would categorise it. "Your site looks like everyone else's." "Visitors leave before they understand what you do."
@@ -736,6 +746,32 @@ Arrival. The hub link moved onto §7's rising sheet.
 **3D.** Absent. Deliberately. The work has to stand on its own or it is not proof.
 
 ---
+
+> **ON PHONES §5 IS A DIFFERENT SECTION — THE FOLD DECK (`WorkFold.tsx`, 2026-08-26).**
+> User: *"It's terrible. I don't want to work around it, I want something totally different …
+> fascinating and different and more usable. Surely on mobile it needs to not be one viewport
+> each project because websites are landscape and the viewport on mobile is portrait."* The
+> stacking-parallax was named and declined again ("we stole that"). Three directions were put
+> up — the fold deck, "the scan" (the capture pans inside a pinned window; needs tall
+> captures), "the film strip" (swipe rail) — and the user chose the deck.
+>
+> **The deck.** Under 57.5rem the page-turn is `display:none` (its driver returns early) and
+> this mounts instead; both sit in one `#work` wrapper in page.tsx so the nav anchor lands on
+> whichever is displayed. One pinned LANDSCAPE window at the captures' own 2880×2000 aspect —
+> nothing cropped, which is the whole point — with the projects stacked in it, first on top.
+> Scrolling grabs the top sheet by its top-right corner and FOLDS it away — HeroPeel's
+> eight-corner clock, hinge sweep, reflect fold, back-face grade and ripple, trimmed of the
+> landing/opening/stretch that belong to a sheet becoming another section's ground — and the
+> released bundle CARRIES off through the bottom-left corner (corner 5 releases last, so a
+> site's own bottom-left content is the last thing to go; that is the choreography, not a
+> leak). Under the window the caption resolves per project (out by 0.45 of the turn, in by
+> 0.55 — a short dark beat at the crease, never two half-captions on one spot), a `01 / 03`
+> counter keeps the place, the whole window is the live site (new tab on a phone — leaving
+> the page for a site is losing it). 80svh of scroll per turn; ~1.6 viewports for three.
+> The GL canvas shares the window's grid cell, size and radius and draws ONLY mid-turn —
+> at rest the pixels are always DOM. Textures are the DOM `<img>`s themselves.
+> **Fallbacks:** the markup IS a plain list (window, caption, …); `.is-scrub` stacks and pins
+> it; without WebGL the stack, counter and captions still work and a turn is a hard cut.
 
 ## Section 6 — The interlude *(rewritten AGAIN 2026-08-18 — was "The gallery", before that "The demonstration")*
 

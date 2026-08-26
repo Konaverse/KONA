@@ -73,6 +73,8 @@ export default function ProjectSheets({
     const root = rootRef.current
     if (!root) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    /* phones: WorkFold owns §5 and this section is display:none (2026-08-26) */
+    if (getComputedStyle(root).display === 'none') return
 
     const sheets = Array.from(root.querySelectorAll<HTMLElement>('.k-sheet'))
     if (sheets.length < 2) return
@@ -217,7 +219,7 @@ export default function ProjectSheets({
   }, [projects.length, buried])
 
   return (
-    <section ref={rootRef} className="k-sheets" id="work" aria-label="Selected work">
+    <section ref={rootRef} className="k-sheets" aria-label="Selected work">
       <div className="k-sheets__stage">
         {projects.map((p, i) => (
           <a

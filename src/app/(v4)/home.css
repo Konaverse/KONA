@@ -1017,30 +1017,166 @@
 .sv-item-3 .sv-q { max-width: min(10.8em, 47%); }
 
 @media (max-width: 57.5rem) {
-  /* bottom pad 18svh → 118svh (2026-08-25): §4 rises with margin-top
+  /* TOP PAD 94svh → 24svh (2026-08-26, user: "the first problem comes
+     too late"). The 94 was the ORIGINAL build's number, from when §3 slid
+     under the claim by 100svh and the pad had to outlast the occlusion;
+     desktop went to 20svh when that underlap died (2026-08-19) and this
+     line was never revisited — a phone was scrolling a whole viewport of
+     bare stone before the first credit. Now the same beat as desktop:
+     one breath of plate, then the roll.
+     BOTTOM PAD 18svh → 118svh (2026-08-25): §4 rises with margin-top
      -100svh at EVERY width, so an 18svh exit beat meant the last 82svh
      of the credits — questions 3 and 4 — were buried before they could
      be read (seen at 390 and 768). Same rule as desktop's 122svh: the
      last 100svh is the burial zone, what is left is the visible breath. */
-  .sv-list { padding: 94svh var(--page-pad) 118svh; }
+  .sv-list { padding: 24svh var(--page-pad) 118svh; }
   /* The scatter survives, gentler — phone columns have no room for 48%.
-     The GAPS, though, have to be much bigger than the desktop ones and
-     it is not a taste call: down here every item is effectively in the
-     same column, so horizontal separation — the thing that keeps the
-     differential drift from putting two credits on top of each other up
-     there — is simply not available. The only lever left is vertical
-     room, and it has to cover the worst convergence the speed spread
-     (0.72 vs 1.16) can produce over one viewport, which measures ~11%
-     of viewport height between any adjacent pair. Hence ~+16svh on each
-     gap over what the 34ch blocks used to need. */
+     The gaps are the desktop's kind of uneven again: the +16svh each
+     carried until 2026-08-26 existed to outrun the differential drift
+     (0.72 vs 1.16 converging ~11% of a viewport between neighbours), and
+     phones no longer drift the credits at all (SolveCredits: one speed
+     under 57.5rem), so the room is not needed. */
   .sv-item-1 { margin-left: 0; }
-  .sv-item-2 { margin-left: 10%; margin-top: 34svh; }
-  .sv-item-3 { margin-left: 0; margin-top: 38svh; }
-  .sv-item-4 { margin-left: 12%; margin-top: 32svh; }
+  .sv-item-2 { margin-left: 10%; margin-top: 16svh; }
+  .sv-item-3 { margin-left: 0; margin-top: 22svh; }
+  .sv-item-4 { margin-left: 12%; margin-top: 16svh; }
   /* the neighbour-column cap is a DESKTOP constraint: down here the
      scatter collapses to one column, so 47% of it would set item 3's
      question at half the width of its siblings for no reason. */
   .sv-item-3 .sv-q { max-width: 10.8em; }
+}
+
+/* ============================================================
+   §5 ON PHONES — THE FOLD DECK (WorkFold.tsx, 2026-08-26, user call:
+   "something fascinating and different and more usable").
+   ------------------------------------------------------------
+   One pinned LANDSCAPE window at the captures' own aspect, the
+   projects stacked in it, first on top; scrolling folds the top
+   sheet away by its corner (our peel, trimmed) to reveal the
+   next. Caption under the window resolves per project, a counter
+   keeps the place. The desktop page-turn (.k-sheets) is display:
+   none here and this is display:none there — page.tsx wraps both
+   in the one #work landmark.
+   The markup is the FALLBACK: a plain list of window + caption.
+   `.is-scrub` (the driver) is what stacks and pins it.
+   ============================================================ */
+.wf {
+  display: none;
+  position: relative;
+  background: var(--n-11);
+  overflow: clip;
+}
+@media (max-width: 57.5rem) {
+  .k-sheets { display: none; }
+  .wf { display: block; }
+}
+.wf-pin {
+  padding: var(--s-8) var(--page-pad);
+}
+.wf.is-scrub .wf-pin {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: grid;
+  align-content: center;
+  gap: var(--s-6);
+}
+.wf-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--s-6);
+}
+.wf.is-scrub .wf-head { margin-bottom: 0; }
+.wf-idx { font-variant-numeric: tabular-nums; }
+
+/* the stack: in flow as a list; one grid cell, all items on top of each
+   other, once the driver pins it */
+.wf-stack {
+  display: grid;
+  gap: var(--s-8);
+}
+.wf.is-scrub .wf-stack { gap: 0; }
+.wf.is-scrub .wf-item { grid-area: 1 / 1; }
+.wf-item {
+  display: grid;
+  gap: var(--s-5);
+  align-content: start;
+}
+/* THE WINDOW. The capture's own aspect (2880x2000), so a landscape site
+   is shown whole — the reason this section exists. --r-lg, and the fold
+   reads the same radius off computed style for its sheet. */
+.wf-win {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 2880 / 2000;
+  border-radius: var(--r-lg);
+  overflow: clip;
+  background: var(--n-10);
+  /* Safari clips a composited child to a radius only with the clip stated */
+  clip-path: inset(0 round var(--r-lg));
+}
+.wf-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* the catch: a lit top edge on every pane, as an overlay so the picture
+   does not cover it */
+.wf-win::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.22);
+  pointer-events: none;
+}
+/* the fold canvas: exactly the window's cell, size and corner; it draws
+   only mid-turn and is nothing at rest */
+.wf-gl { display: none; }
+.wf.is-scrub .wf-gl {
+  display: block;
+  grid-area: 1 / 1;
+  align-self: start;
+  width: 100%;
+  aspect-ratio: 2880 / 2000;
+  border-radius: var(--r-lg);
+  pointer-events: none;
+}
+/* a sheet mid-fold hands its pixels to the canvas; a folded sheet is gone.
+   VISIBILITY, so the item keeps its layout and the caption under it keeps
+   driving its own opacity. Neither takes taps: the next sheet does. */
+.wf-item.is-fold .wf-win,
+.wf-item.is-gone .wf-win { visibility: hidden; }
+.wf-item.is-fold,
+.wf-item.is-gone { pointer-events: none; }
+
+.wf-cap {
+  display: grid;
+  gap: var(--s-3);
+}
+.wf.is-scrub .wf-cap { will-change: transform, opacity; }
+.wf-name {
+  font-weight: var(--w-medium);
+  color: var(--text);
+}
+.wf-line {
+  color: var(--text-muted);
+  max-width: 34ch;
+}
+.wf-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: var(--s-2);
+}
+.wf-visit {
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 0.125rem;
 }
 
 /* ============================================================
