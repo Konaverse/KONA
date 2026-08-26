@@ -89,6 +89,15 @@ import { gsap, EASE, DUR, rem } from '@/lib/motion-v4'
  *  "arrive, then open" beat; the headline's entrance waits behind it */
 const OPEN_HOLD = 0.7
 
+/** THE FOLD'S SECOND STRETCH: how much of the claim's approach (in
+ *  viewport heights) the scrub runs across — the fold lands when the
+ *  claim's top is (1 − APPROACH)·vh from the top edge. Desktop went
+ *  0.85 → 1.0 on 2026-08-26 with the runway 35 → 55svh (home.css: the
+ *  fold was "too abrupt"), so the landing now completes as the claim
+ *  reaches the top. Phones keep 0.85, as signed off on the user's phone. */
+const APPROACH = 1.0
+const APPROACH_MOBILE = 0.85
+
 const SEG_X = 140
 const SEG_Y = 90
 
@@ -667,7 +676,7 @@ export default function HeroPeel() {
          journey, however long the runway is. Continuous and monotone. */
       const rPin = heropin.getBoundingClientRect()
       const wPin = Math.max(rPin.height - vh, 1)
-      const wAp = vh * 0.85
+      const wAp = vh * (mobile ? APPROACH_MOBILE : APPROACH)
       const pp = gsap.utils.clamp(0, 1, -rPin.top / wPin)
       const ap = gsap.utils.clamp(0, 1, (vh - rTo.top) / wAp)
       const target = (pp * wPin + ap * wAp) / (wPin + wAp)

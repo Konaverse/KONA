@@ -728,18 +728,23 @@
 }
 
 /* ---------- the hero peel (HeroPeel.tsx) ---------- */
-/* THE RUNWAY: 35svh of extra scroll room between the hero and the claim
-   (halved from 70svh, 2026-08-20 — user: the gap between the hero and
-   where the page sits read too long). NOT sticky (round 5's full freeze
-   was rejected — "everything should move together"): the hero scrolls
-   naturally, stuck corners ride up with it, and the sheet stretches
-   across this gap between the leaving hero and the arriving claim.
-   `is-run` is added ONCE by HeroPeel when GL is live and kept for the
-   page's life — toggling it would shift everything below by 35svh
-   mid-page. Unstyled without it: no-JS / reduced motion / mobile keep
-   the plain flowing hero. */
+/* THE RUNWAY: extra scroll room between the hero and the claim. NOT
+   sticky (round 5's full freeze was rejected — "everything should move
+   together"): the hero scrolls naturally, stuck corners ride up with it,
+   and the sheet stretches across this gap between the leaving hero and
+   the arriving claim. `is-run` is added ONCE by HeroPeel when GL is live
+   and kept for the page's life — toggling it would shift everything
+   below mid-page. Unstyled without it: no-JS / reduced motion keep the
+   plain flowing hero.
+   THE LENGTH IS THE FOLD'S SPEED. 70svh → 35svh on 2026-08-20 (user: the
+   gap read too long — back when the whole sweep sat on the runway alone);
+   35svh → 55svh on 2026-08-26 (user: the fold "is too abrupt … slow it
+   down"). The scrub advances at one rate per scrolled pixel across the
+   runway AND the claim's approach (HeroPeel, APPROACH), so the fold's
+   total journey is runway + approach: 120svh before, 155svh now — every
+   phase ~30% slower under the wheel. Mobile keeps its own 35svh below. */
 .hm-heropin.is-run {
-  height: 135svh;
+  height: 155svh;
 }
 /* MOBILE: the hero is flowing content (headline, crop, copy, CTA) and runs
    past 100svh on most phones, so the runway is the 35svh AFTER the hero,
