@@ -937,6 +937,17 @@ plain row under 57.5rem.
 
 ## Footer *(BUILT 2026-08-24, user-directed; RETIMED + CUT TO 120svh same day)* — SiteFooter.tsx, mounted in the (v4) layout on every route
 
+> **MOBILE, 2026-08-26.** User: *"The KONAVERSE animation letter by letter doesn't happen, it
+> needs to happen."* It happened off screen: the rise is scrubbed across the last 26% of a
+> viewport of travel, and at 12vw the word is ~46px tall and sunk at the floor, so it only
+> cleared the bottom edge in the last ~40px. On phones the word sits **18svh above the floor**
+> (sky beneath it) so it is in view for the whole rise. Desktop unchanged.
+>
+> **THE NAV ON PHONES, same day** (user: *"on scroll up the navbar doesn't need to appear …
+> it will only be in the hero"* — the returning grounded bar read as a white block over the
+> sections): under 57.5rem the bar hides once the hero's bottom passes it and **stays hidden
+> in both directions**; the open menu still pins it. Desktop keeps return-on-upward-intent.
+
 **The under-reveal, and its TIMING CONTRACT (user call):** the content's top edge meets
 the viewport's top edge EXACTLY as the section above fully leaves the viewport. That pins
 the formula: **y = −0.45 × max(0, rect.top)** — dragged at 0.55× hand speed through the

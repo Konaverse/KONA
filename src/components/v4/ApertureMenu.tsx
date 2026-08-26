@@ -258,6 +258,26 @@ export default function ApertureMenu({
     const onResize = () => { free = 160 * rem() }
     window.addEventListener('resize', onResize)
 
+    /* PHONES: THE BAR LIVES IN THE HERO ONLY (2026-08-26, user: "on
+       scroll up the navbar doesn't need to appear — it will only be in
+       the hero"; the returning grounded bar read as a white block over
+       the sections). Past the hero it hides and stays hidden, in either
+       scroll direction; the open menu still pins it. The hero's end is
+       read off the page (a route without one falls back to the free
+       zone), re-read on resize with everything else. Desktop keeps the
+       return-on-upward-intent behaviour above. */
+    const phoneMQ = window.matchMedia('(max-width: 57.5rem)')
+    let heroEnd = 0
+    const measure = () => {
+      const hero = document.querySelector<HTMLElement>('.hw-hero')
+      heroEnd = hero
+        ? hero.getBoundingClientRect().bottom + window.scrollY - bar.offsetHeight
+        : free
+    }
+    measure()
+    const onMeasure = () => measure()
+    window.addEventListener('resize', onMeasure)
+
     const update = () => {
       const y = window.scrollY
       const g = y > 8
@@ -271,11 +291,18 @@ export default function ApertureMenu({
           hidden = false
           bar.classList.remove('is-hidden')
         }
-        if (openRef.current || y < free) {
-          if (hidden) show()
-        } else if (dy > 2 && !hidden) {
+        const hide = () => {
           hidden = true
           bar.classList.add('is-hidden')
+        }
+        if (phoneMQ.matches) {
+          const inHero = openRef.current || y < heroEnd
+          if (inHero && hidden) show()
+          else if (!inHero && !hidden) hide()
+        } else if (openRef.current || y < free) {
+          if (hidden) show()
+        } else if (dy > 2 && !hidden) {
+          hide()
         } else if (dy < -2 && hidden) {
           show()
         }
@@ -287,6 +314,7 @@ export default function ApertureMenu({
     return () => {
       gsap.ticker.remove(update)
       window.removeEventListener('resize', onResize)
+      window.removeEventListener('resize', onMeasure)
     }
   }, [])
 
