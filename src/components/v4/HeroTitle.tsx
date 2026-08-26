@@ -14,8 +14,10 @@ import { gsap, EASE, DUR, rem } from '@/lib/motion-v4'
  * and words move between lines. It never repeats the same way twice.
  *
  * ── the beats ──────────────────────────────────────────────────────────────
- * `pre`  pills at zero width, the line reads as pure text (initial frame).
- * Then the pills sew in, and from there the title walks at random through six
+ * `pre`  pills at zero width, the line reads as pure text on three lines.
+ * The ENTRANCE (see ENTER) stacks those lines on the middle one, rises them
+ * through line masks, parts them to their rows, then the pills sew in (into
+ * ENTRY), and from there the title walks at random through six
  * COMPOSITIONS — six different, hand-solved ways this sentence can break
  * around three pills. Each hold is 2.6-4.4s, the order is a shuffled bag (no
  * repeats), and every pill takes a small random width jitter on top. Same
@@ -67,18 +69,20 @@ type Slot =
   | { br: true }
 
 /** The sentence, in flow order. `br` marks where the PRE state forces its
- *  break — the same breaks the resting composition falls into naturally. */
+ *  break — the three lines of the ENTRANCE (user, 2026-08-26): "Build the /
+ *  website that will / make you stand out". The pills then sew into ENTRY,
+ *  whose breaks are these but for one word. */
 const FLOW: Slot[] = [
   { word: 'Build', voice: 'grey' },
   { word: 'the', voice: 'grey' },
   { pill: 'a' },
+  { br: true },
   { word: 'website', voice: 'grey' },
   { word: 'that', voice: 'key' },
-  { br: true },
   { word: 'will', voice: 'grey' },
   { pill: 'b' },
-  { word: 'make', voice: 'grey' },
   { br: true },
+  { word: 'make', voice: 'grey' },
   { word: 'you', voice: 'ink' },
   { word: 'stand', voice: 'ink' },
   { word: 'out', voice: 'ink' },
@@ -132,14 +136,38 @@ const COMPS: Comp[] = [
   { id: 'mid-a', w: { a: 6.3, b: 5.6, c: 8.2 }, rows: [0, 4, 9] },
 ]
 const HOME = COMPS[0]
+/** the composition the pills sew INTO at the end of the entrance: wide-a's
+ *  breaks are the entrance's three lines but for "make", so the pills read
+ *  as appearing in the sentence, not as re-breaking it */
+const ENTRY = COMPS[1]
 
 /** gap between flow items, kept in sync with .hw-w's margin-right */
 const GAP = '0.26em'
-/** when the pills sew in — ONCE THE TEXT IS STILL (user 2026-08-20, third
- *  pass): the word arrival settles at ~0.94s, and the boxes grow the beat
- *  after. Sequenced, never overlapped — the text lands, then it is pushed.
- *  (The original 2.0 hold read as the page taking its time.) */
-const SEW = 1.1
+/** THE ENTRANCE (2026-08-26, user: after the video has formed its shape,
+ *  "all the text will appear in the middle line as a hide and uprise
+ *  reveal, everything stacked on top of each other, and after that the
+ *  first text will move to its line and the other to its below line.
+ *  After that, the images will appear."). The three lines are laid out
+ *  where they will rest, then every word is pulled onto the MIDDLE line's
+ *  y and rises into view through its own line-box mask — the three lines
+ *  land on one another, line by line, word by word. Then the outer lines
+ *  part: the first climbs to its row, the last drops to its row, in
+ *  lockstep (settle). A beat later the pills sew in (ENTRY), which is the
+ *  same FLIP the walk uses. Sequenced, never overlapped — each act starts
+ *  on still text. */
+const ENTER = {
+  /** one word's masked rise */
+  reveal: 0.85,
+  /** lines land one after another, and words within a line cascade */
+  lineStep: 0.14,
+  wordStep: 0.035,
+  /** the split starts this far into the LAST word's rise (overlap, not a wait) */
+  splitLead: 0.55,
+  /** the outer lines' climb / drop */
+  split: 0.85,
+  /** the pause on the three still lines before the pills sew in */
+  beat: 0.25,
+}
 /** dwell on a composition before the next one, randomised per beat */
 const HOLD_MIN = 2600
 const HOLD_MAX = 4400
@@ -371,49 +399,102 @@ export default function HeroTitle() {
       return tl
     }
 
-    // ---- entrance: the words arrive as pure text, then the pills sew in.
-    // The arrival keeps its quick spirit but breathes (user, third pass:
-    // "like now but smoother"): a longer rise and a real stagger, settled
-    // by ~0.94s — just inside SEW, so the boxes only ever push still text.
-    // PAUSED until the peel's cover is up (the opening gate, 2026-08-24):
-    // the words live UNDER the full-page sheet, and the sew this timeline
-    // fires is what launches the container's carve — one clock, from arm. ----
-    const intro = gsap.timeline({ paused: true })
-    intro.fromTo(
-      words,
-      { yPercent: 70, filter: 'blur(12px)', opacity: 0 },
-      {
-        yPercent: 0,
-        filter: 'blur(0px)',
-        opacity: 1,
-        duration: 0.7,
-        ease: EASE.glass,
-        stagger: 0.03,
-      },
-      0,
-    )
-    intro.add(() => {
+    // ---- THE ENTRANCE — see ENTER. Runs as one frozen FLIP: the flow is
+    // measured in its pre layout (the three lines), frozen to absolute boxes,
+    // and every word is placed on its own line's x but the middle line's y.
+    // Each word rises through its own line box — yPercent 100→0 with a
+    // bottom clip-path inset 100%→0% on the same ease, which is exactly a
+    // static mask at the line (the visible part of a box translated down by
+    // (1-p)·H is its top p·H). The outer lines then travel to their rows,
+    // the flow unfreezes on the resting pre layout, and the sew follows. ----
+    let sewCall: gsap.core.Tween | null = null
+    const sew = () => {
       if (!live) return
-      /* the sew starts flush with the arrival's tail — land any still-flying
-         word first, or the FLIP below would measure a mid-tween rect. Opacity
-         clears too: a killed word must not keep a stale inline 0.x (the CSS
-         resting state is 1 once is-pre goes). */
-      gsap.killTweensOf(words)
-      gsap.set(items, { clearProps: 'transform,filter,opacity' })
-      comp = HOME
-      /* the CLOCK SIGNAL (2026-08-24, user): the container's opening carve
-         (HeroPeel's uMorph) launches on this event, same duration, same
-         ease — the boxes expanding and the sheet giving way are one motion,
-         so the pills read as PUSHING the container into its shape */
+      comp = ENTRY
+      /* the pills' push — HeroPortrait brings the copy in on this */
       window.dispatchEvent(new Event('k-hero-sew'))
       morph(
         () => {
           flow.classList.remove('is-pre')
-          applyComp(HOME)
+          applyComp(ENTRY)
         },
         { sew: true },
       )
-    }, SEW)
+    }
+    const enter = () => {
+      if (running) running.progress(1).kill()
+      const first = items.map((el) => el.getBoundingClientRect())
+      const rows = readRows()
+      const base = flow.getBoundingClientRect()
+      /* the y of each line, off the words (the pills are zero-width here) */
+      const rowTop: number[] = []
+      const rowCount: number[] = []
+      words.forEach((el) => {
+        const i = items.indexOf(el)
+        const r = rows[i]
+        if (rowTop[r] === undefined) {
+          rowTop[r] = first[i].top - base.top
+          rowCount[r] = 0
+        }
+      })
+      const mid = Math.floor((rowTop.length - 1) / 2)
+
+      flow.style.height = `${flow.offsetHeight}px`
+      flow.classList.add('is-flip')
+
+      const tl = gsap.timeline()
+      const splits: Array<{ el: HTMLElement; y: number }> = []
+      let lastAt = 0
+      items.forEach((el, i) => {
+        const f = first[i]
+        const x = f.left - base.left
+        const y = f.top - base.top
+        if (!el.classList.contains('hw-w')) {
+          gsap.set(el, { x, y, width: f.width, height: f.height })
+          return
+        }
+        const r = rows[i]
+        const shift = rowTop[mid] - rowTop[r]
+        gsap.set(el, { x, y: y + shift, width: f.width, height: f.height, opacity: 1 })
+        const at = r * ENTER.lineStep + rowCount[r]++ * ENTER.wordStep
+        lastAt = Math.max(lastAt, at)
+        tl.fromTo(
+          el,
+          { yPercent: 100, clipPath: 'inset(0px 0px 100% 0px)' },
+          {
+            yPercent: 0,
+            clipPath: 'inset(0px 0px 0% 0px)',
+            duration: ENTER.reveal,
+            ease: EASE.glass,
+          },
+          at,
+        )
+        if (shift !== 0) splits.push({ el, y })
+      })
+      const splitAt = lastAt + ENTER.reveal * ENTER.splitLead
+      splits.forEach(({ el, y }) => {
+        tl.to(el, { y, duration: ENTER.split, ease: EASE.settle }, splitAt)
+      })
+
+      running = tl
+      tl.eventCallback('onComplete', () => {
+        running = null
+        flow.classList.remove('is-flip')
+        flow.style.height = ''
+        /* opacity stays inline at 1: the flow is still `is-pre` (words 0) */
+        gsap.set(items, { clearProps: 'transform,width,height,clipPath' })
+        sewCall = gsap.delayedCall(ENTER.beat, sew)
+      })
+      return tl
+    }
+    /** the entrance's length, for the walk's first hold */
+    const ENTER_TOTAL =
+      2 * ENTER.lineStep +
+      3 * ENTER.wordStep +
+      ENTER.reveal * ENTER.splitLead +
+      ENTER.split +
+      ENTER.beat +
+      DUR.cinema
 
     // ---- the walk: a shuffled bag of compositions, never twice in a row ----
     let bag: Comp[] = []
@@ -439,19 +520,25 @@ export default function HeroTitle() {
       morph(() => applyComp(comp))
     }
 
-    /* the opening gate: everything above waits for the peel's cover
-       ('k-peel-armed'), with a timeout fallback for the no-GL paths —
-       no WebGL, a failed video — where the headline must still
-       arrive on its own clock */
+    /* THE OPENING GATE: the headline waits for the container to be IN
+       SHAPE — HeroPeel's `k-hero-open`, fired when its carve lands (or is
+       hurried shut by a scroll). Two fallbacks for the no-GL paths (no
+       WebGL, a failed video): from mount, in case the cover never arms;
+       re-armed longer once it does, in case the carve never announces. */
     let begun = false
     const begin = () => {
       if (begun || !live) return
       begun = true
-      intro.play()
-      timer = setTimeout(tick, SEW * 1000 + HOLD_MIN)
+      enter()
+      timer = setTimeout(tick, ENTER_TOTAL * 1000 + HOLD_MIN)
     }
-    window.addEventListener('k-peel-armed', begin, { once: true })
-    const fallback = setTimeout(begin, 1200)
+    window.addEventListener('k-hero-open', begin, { once: true })
+    let fallback = setTimeout(begin, 2600)
+    const onArmed = () => {
+      clearTimeout(fallback)
+      fallback = setTimeout(begin, 4500)
+    }
+    window.addEventListener('k-peel-armed', onArmed, { once: true })
 
     // a headline that re-lays-out every few seconds forever is not free — it
     // holds still while it is off screen
@@ -465,11 +552,12 @@ export default function HeroTitle() {
 
     return () => {
       live = false
-      window.removeEventListener('k-peel-armed', begin)
+      window.removeEventListener('k-hero-open', begin)
+      window.removeEventListener('k-peel-armed', onArmed)
       clearTimeout(fallback)
       if (timer) clearTimeout(timer)
       io?.disconnect()
-      intro.kill()
+      sewCall?.kill()
       running?.kill()
       gsap.killTweensOf(items)
     }

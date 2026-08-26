@@ -85,6 +85,10 @@ import { gsap, EASE, DUR, rem } from '@/lib/motion-v4'
  * DOM hero and the plain white §2, untouched.
  */
 
+/** how long the full-bleed cover holds before it carves (s) — the
+ *  "arrive, then open" beat; the headline's entrance waits behind it */
+const OPEN_HOLD = 0.7
+
 const SEG_X = 140
 const SEG_Y = 90
 
@@ -540,29 +544,34 @@ export default function HeroPeel() {
     let introTween: gsap.core.Tween | null = null
     let introStarted = false
     let introHurried = false
-    let sewFired = false
-    let sewFallback: ReturnType<typeof setTimeout> | null = null
+    let opened = false
+    let openDelay: ReturnType<typeof setTimeout> | null = null
 
-    /* SYNCHRONIZED TO THE HEADLINE (2026-08-24, user): the carve launches
-       on HeroTitle's `k-hero-sew` event — the instant its three pills
-       begin expanding — with the SAME duration and the SAME ease as their
-       width push (settle, cinema), offset by the sew's own LOCK beat
-       (0.1s). One clock, one gesture: the boxes swell and the container
-       gives way, which is what makes them read as the CAUSE of its shape.
-       The fallback timer only exists for a sew that never fires (it
-       cannot on this page today) — the page must not sit full-bleed
-       forever if the headline changes out from under this. */
+    /* THE OPENING LEADS (2026-08-26, user: "the video will be there, it
+       will form to its shape, and THEN we will have an entrance animation
+       for the heading"). Until today the carve launched on HeroTitle's
+       sew — the pills' push was the cause of the shape. Now the shape
+       comes first: the cover reads full-bleed for OPEN_HOLD, carves down
+       to the staircase (settle, cinema), and the moment it is in shape
+       `k-hero-open` fires — HeroTitle's stacked reveal waits on exactly
+       that, and the pills follow the headline. One clock still, but the
+       container now sets it. A scroll that hurries the carve announces
+       the open too, so the headline can never be left waiting. */
+    const announceOpen = () => {
+      if (opened || dead) return
+      opened = true
+      window.dispatchEvent(new Event('k-hero-open'))
+    }
     const startIntro = () => {
       if (dead || introStarted || !gl) return
       introStarted = true
-      if (sewFallback) clearTimeout(sewFallback)
-      introTween = gsap.to(intro, { m: 0, duration: DUR.cinema, ease: EASE.settle, delay: 0.1 })
+      introTween = gsap.to(intro, {
+        m: 0,
+        duration: DUR.cinema,
+        ease: EASE.settle,
+        onComplete: announceOpen,
+      })
     }
-    const onSew = () => {
-      sewFired = true
-      startIntro()
-    }
-    window.addEventListener('k-hero-sew', onSew, { once: true })
 
     /* the texture source is the DOM's OWN looping video element — one
        decode, one clock, so the sheet and the staircase can never show
@@ -598,8 +607,8 @@ export default function HeroPeel() {
            begin — they wait on this so the resting hero can never flash
            behind a cover whose video is still loading */
         window.dispatchEvent(new Event('k-peel-armed'))
-        if (sewFired) startIntro()
-        else sewFallback = setTimeout(startIntro, 3000)
+        /* arrive, then open: the full-bleed frame reads first */
+        openDelay = setTimeout(startIntro, OPEN_HOLD * 1000)
       }
     }
     if (vid.readyState >= 2) arm()
@@ -672,10 +681,10 @@ export default function HeroPeel() {
       if (target > 0.02 && intro.m > 0 && !introHurried) {
         introHurried = true
         introStarted = true
-        if (sewFallback) clearTimeout(sewFallback)
+        if (openDelay) clearTimeout(openDelay)
         introTween?.kill()
         introTween = null
-        gsap.to(intro, { m: 0, duration: 0.25, ease: 'none' })
+        gsap.to(intro, { m: 0, duration: 0.25, ease: 'none', onComplete: announceOpen })
       }
 
       /* at true rest the DOM staircase owns the pixels (so route-transition
@@ -752,8 +761,7 @@ export default function HeroPeel() {
     return () => {
       dead = true
       vid.removeEventListener('loadeddata', arm)
-      window.removeEventListener('k-hero-sew', onSew)
-      if (sewFallback) clearTimeout(sewFallback)
+      if (openDelay) clearTimeout(openDelay)
       introTween?.kill()
       gsap.killTweensOf(intro)
       cancelAnimationFrame(rafId)

@@ -93,15 +93,28 @@ export default function HeroPortrait() {
       { opacity: 1, y: 0, scale: 1, duration: 1.05 },
       0,
     )
-    tl.fromTo(
+
+    /* THE COPY RIDES THE PILLS (2026-08-26, with the entrance re-ordered:
+       cover → carve → headline → pills). It used to rise at 1s into the
+       ground the carve had just cleared; the carve now runs before the
+       headline, so the copy waits for the headline's sew (`k-hero-sew`,
+       the pills' push) and rises with it — the last act arrives as one.
+       The fallback covers a sew that never fires. */
+    const copy = gsap.timeline({ paused: true, defaults: { ease: EASE.glass } })
+    copy.fromTo(
       qa('.hw-para, .hw-btn'),
       { y: 18, filter: 'blur(14px)', opacity: 0 },
       { y: 0, filter: 'blur(0px)', opacity: 1, duration: DUR.slow, stagger: 0.1 },
-      /* rides the OPENING (HeroPeel's uMorph): the full container starts
-         carving with the headline's sew and has largely cleared this
-         quadrant by 1s — the copy rises into just-revealed ground */
-      1.0,
+      0.15,
     )
+    let copyBegun = false
+    const beginCopy = () => {
+      if (copyBegun) return
+      copyBegun = true
+      copy.play()
+    }
+    window.addEventListener('k-hero-sew', beginCopy, { once: true })
+    const copyFallback = setTimeout(beginCopy, 7000)
 
     let begun = false
     const begin = () => {
@@ -115,9 +128,12 @@ export default function HeroPortrait() {
     return () => {
       root.removeEventListener('pointermove', onMove)
       window.removeEventListener('k-peel-armed', begin)
+      window.removeEventListener('k-hero-sew', beginCopy)
       clearTimeout(fallback)
+      clearTimeout(copyFallback)
       gsap.ticker.remove(panTick)
       tl.kill()
+      copy.kill()
     }
   }, [])
 

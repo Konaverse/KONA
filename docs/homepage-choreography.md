@@ -228,6 +228,28 @@ The consequences, section by section below: **section 3 states problems as text 
 > source's computed opacity. Known, unmeasured: the stretch is the same pixels as desktop
 > on a sheet a third the height, so it reads longer; and the loop is a montage with light
 > frames, which the landing grade (×0.58) does not take far enough for white type.
+
+> **THE ENTRANCE, RE-ORDERED — 2026-08-26 (desktop touch-ups), user: "the video will be
+> there, it will form to its shape, and then we will have an entrance animation for the
+> heading … three lines: 'Build the' / 'website that will' / 'make you stand out'. All the
+> text will appear in the middle line as a hide and uprise reveal, everything stacked on
+> top of each other, and after that the first text will move to its line and the other to
+> its below line. After that, the images will appear."** Four acts, sequenced, each on
+> still ground: (1) the full-bleed cover holds 0.7s, then carves to the staircase (settle,
+> cinema) and fires `k-hero-open` when in shape — the carve no longer waits on the pills'
+> sew, it LEADS; a scroll that hurries it shut announces the same. (2) On that event the
+> headline runs as one frozen FLIP: the three lines are measured where they rest, every
+> word is set on its own x but the MIDDLE line's y, and rises through its own line-box
+> mask (yPercent 100→0 with a bottom clip-path inset 100→0% on one ease — a static mask
+> at the line), lines 0.14s apart, words 0.035s apart. (3) At 55% of the last word's rise
+> the outer lines part — first climbs, last drops, lockstep settle 0.85s — and the flow
+> unfreezes on the pre layout. (4) A 0.25s beat, then the pills sew into `wide-a`, whose
+> breaks are the entrance's three lines but for "make" (one mover, so the pills read as
+> appearing, not as re-breaking the sentence); `k-hero-sew` still fires here, and the
+> paragraph + CTA now rise ON it instead of at 1s. Constants in HeroTitle's `ENTER` and
+> HeroPeel's `OPEN_HOLD`. Applies at every width (the stack generalises to any row count).
+> Filmed headless at 1536x730: cover 0.6–1.2s, carve 1.5–2.4s, stack 2.7–3.3s, split
+> 3.6–3.9s, pills 4.5–4.8s.
 >
 > **A NAMESPACE COLLISION worth recording, because it cost a full debug cycle.** The beam
 > shipped as a bare `.hw-key`, which is ALREADY the headline's emphasis voice (the word
