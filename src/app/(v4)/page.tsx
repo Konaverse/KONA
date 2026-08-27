@@ -103,7 +103,13 @@ export default function HomePage() {
               playsInline
             />
           </div>
-          <h2 className="t-h1 hm-claim-line" aria-label={CLAIM_LINE}>
+          {/* ONE LINE, BODY SIZE, IN THE CORNER (2026-08-26, user): after the
+              sheet lands the only type on it is the claim, at body size,
+              bottom-right on desktop and bottom-centre on phones. The
+              display headline and the second paragraph are gone; the
+              word-resolve entrance stays (ClaimEntrance targets the
+              .hm-cw-i spans). Still the section's heading for the outline. */}
+          <h2 className="t-body hm-claim-line" aria-label={CLAIM_LINE}>
             <span aria-hidden="true">
               {CLAIM_LINE.split(' ').map((w, i, arr) => (
                 <Fragment key={i}>
@@ -113,10 +119,6 @@ export default function HomePage() {
               ))}
             </span>
           </h2>
-          <p className="t-body hm-claim-body">
-            Strategy, design, motion and engineering in one continuous process.
-            Based in Cyprus, working globally.
-          </p>
         </div>
         <ClaimEntrance />
       </section>

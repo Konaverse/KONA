@@ -828,29 +828,48 @@
    (HeroPeel reads it live) and the statement lives inside it — an inset
    card with even margin all around, not a full-bleed cover. The white
    margins are the page ground showing through the section's transparent
-   (under .hm-glhero) background. */
+   (under .hm-glhero) background.
+   THE CLAIM SITS IN THE CORNER (2026-08-26, user): one line at body size,
+   bottom-right — the sheet is the picture, the type is its caption. */
 .hm-claim-land {
   position: absolute;
   inset: clamp(1.5rem, 2.4vw, 3rem);
   display: grid;
-  align-content: center;
-  justify-items: center;
-  text-align: center;
-  padding: clamp(2rem, 5vw, 4.5rem);
+  align-content: end;
+  justify-items: end;
+  text-align: right;
+  padding: clamp(1.5rem, 3.2vw, 3rem);
 }
 .hm-claim-line {
   margin: 0;
-  max-width: 22ch;
-  font-weight: var(--w-light);
+  max-width: 36ch;
+  font-weight: var(--w-regular);
   /* positioned so it paints over the landed DOM sheet below (same
      z-index auto, later in DOM order) — no stacking context on the pad */
   position: relative;
 }
-.hm-claim-body {
-  margin: var(--s-6) 0 0;
-  max-width: 52ch;
-  color: var(--text-muted);
-  position: relative;
+/* PHONES: bottom-centre, and the pad is LANDSCAPE-ISH rather than a
+   viewport-tall portrait — with one line of body copy the card no longer
+   needs the height, so the section sizes to the pad (HeroPeel lands on
+   whatever rect the pad has; it reads it live). */
+@media (max-width: 57.5rem) {
+  .hm-claim {
+    height: auto;
+    /* the pad sits HIGH (user): almost no room above it, a little below
+       before §3 arrives */
+    padding: 0.5rem clamp(1.5rem, 2.4vw, 3rem) 1.5rem;
+  }
+  .hm-claim-land {
+    position: relative;
+    inset: auto;
+    aspect-ratio: 4 / 3;
+    justify-items: center;
+    text-align: center;
+    padding: clamp(1.25rem, 5vw, 2rem);
+  }
+  .hm-claim-line {
+    max-width: 30ch;
+  }
 }
 /* THE LANDED SHEET IN THE DOM — phones only (see page.tsx). Everything
    here mirrors the shader's landed frame so the handoff is invisible:
