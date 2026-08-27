@@ -239,40 +239,30 @@ export default function ApertureMenu({
   }, [open, closeMenu])
 
   /**
-   * Scroll behaviour (2026-08-18): grounded past the top, hidden while
-   * scrolling down, returned on the first upward intent. House pattern —
-   * gsap.ticker + position reads, no scroll listener, no ScrollTrigger.
-   * The 160px free zone means the bar never hides while the hero headline
-   * is still the thing on screen; the open menu pins it visible.
+   * Scroll behaviour. THE BAR LIVES IN THE HERO ONLY, at every width
+   * (2026-08-26, user: "on scroll up the navbar shouldn't appear. The
+   * navbar is only a part of the hero" — the phone rule of the same day,
+   * now universal; the 2026-08-18 return-on-upward-intent is gone).
+   * Grounded past the top; past the hero's end it hides and stays hidden
+   * in either scroll direction; the open menu still pins it visible.
+   * House pattern — gsap.ticker + position reads, no scroll listener.
    */
   useEffect(() => {
     const bar = barRef.current
     if (!bar) return
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    let lastY = window.scrollY
     let hidden = false
     let grounded = false
-    /* the free zone is a length of the composition (the hero headline's
-       height), so it scales with the picture; re-read on resize only */
-    let free = 160 * rem()
-    const onResize = () => { free = 160 * rem() }
-    window.addEventListener('resize', onResize)
-
-    /* PHONES: THE BAR LIVES IN THE HERO ONLY (2026-08-26, user: "on
-       scroll up the navbar doesn't need to appear — it will only be in
-       the hero"; the returning grounded bar read as a white block over
-       the sections). Past the hero it hides and stays hidden, in either
-       scroll direction; the open menu still pins it. The hero's end is
-       read off the page (a route without one falls back to the free
-       zone), re-read on resize with everything else. Desktop keeps the
-       return-on-upward-intent behaviour above. */
-    const phoneMQ = window.matchMedia('(max-width: 57.5rem)')
+    /* The hero's end is read off the page; a route without a hero falls
+       back to a free zone that is a length of the composition (the hero
+       headline's height), so it scales with the picture. Re-read on
+       resize only. */
     let heroEnd = 0
     const measure = () => {
       const hero = document.querySelector<HTMLElement>('.hw-hero')
       heroEnd = hero
         ? hero.getBoundingClientRect().bottom + window.scrollY - bar.offsetHeight
-        : free
+        : 160 * rem()
     }
     measure()
     const onMeasure = () => measure()
@@ -286,34 +276,20 @@ export default function ApertureMenu({
         bar.classList.toggle('is-grounded', g)
       }
       if (!reduce) {
-        const dy = y - lastY
-        const show = () => {
+        const inHero = openRef.current || y < heroEnd
+        if (inHero && hidden) {
           hidden = false
           bar.classList.remove('is-hidden')
-        }
-        const hide = () => {
+        } else if (!inHero && !hidden) {
           hidden = true
           bar.classList.add('is-hidden')
         }
-        if (phoneMQ.matches) {
-          const inHero = openRef.current || y < heroEnd
-          if (inHero && hidden) show()
-          else if (!inHero && !hidden) hide()
-        } else if (openRef.current || y < free) {
-          if (hidden) show()
-        } else if (dy > 2 && !hidden) {
-          hide()
-        } else if (dy < -2 && hidden) {
-          show()
-        }
       }
-      lastY = y
     }
 
     gsap.ticker.add(update)
     return () => {
       gsap.ticker.remove(update)
-      window.removeEventListener('resize', onResize)
       window.removeEventListener('resize', onMeasure)
     }
   }, [])

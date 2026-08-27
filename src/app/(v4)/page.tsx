@@ -4,7 +4,8 @@ import HeroPeel from '@/components/v4/HeroPeel'
 import ClaimEntrance from '@/components/v4/ClaimEntrance'
 import SolveCredits from '@/components/v4/SolveCredits'
 import ServiceCards from '@/components/v4/ServiceCards'
-import ProjectSheets, { type SheetProject } from '@/components/v4/ProjectSheets'
+import type { SheetProject } from '@/components/v4/ProjectSheets'
+import WorkWheel from '@/components/v4/WorkWheel'
 import WorkFold from '@/components/v4/WorkFold'
 import Invitation from '@/components/v4/Invitation'
 import './home.css'
@@ -129,17 +130,19 @@ export default function HomePage() {
           the tree, unimported, for comparison. */}
       <ServiceCards />
 
-      {/* §5 — TWO FORMS, ONE LANDMARK (2026-08-26). Desktop: the page-turn
-          (ProjectSheets — full bleed, pins itself; `buried` is off while
-          §7 is unmounted, the tail viewport and the 0.45× drift only exist
-          to be climbed over). Phones: the fold deck (WorkFold — a pinned
-          landscape window the sheets fold out of, because the captures
-          are landscape and a portrait sheet cropped most of them away).
-          CSS shows exactly one; each driver returns early when it is the
-          hidden one. The wrapper carries `#work` so the nav anchor lands
-          on whichever is displayed. */}
+      {/* §5 — TWO FORMS, ONE LANDMARK (2026-08-26). Desktop: THE WHEEL
+          (WorkWheel — the user's wireframe: one pinned viewport, the
+          names on a wheel, one window that FOLDS between captures with
+          the hero's fold (fold-gl.ts), description resolving under it,
+          the title carrying the captures as an inline tile-pill; the
+          capture rests under a veil that lifts on hover; replaced the
+          page-turn, ProjectSheets, which still renders /work). Phones:
+          the fold deck
+          (WorkFold). CSS shows exactly one; each driver returns early
+          when it is the hidden one. The wrapper carries `#work` so the
+          nav anchor lands on whichever is displayed. */}
       <div id="work">
-        <ProjectSheets projects={FEATURED} />
+        <WorkWheel projects={FEATURED} />
         <WorkFold projects={FEATURED} />
       </div>
 

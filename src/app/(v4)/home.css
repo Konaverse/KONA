@@ -1121,6 +1121,7 @@
 }
 @media (max-width: 57.5rem) {
   .k-sheets { display: none; }
+  .ww { display: none; }
   .wf { display: block; }
 }
 .wf-pin {
@@ -1230,6 +1231,273 @@
   text-decoration: none;
   border-bottom: 1px solid currentColor;
   padding-bottom: 0.125rem;
+}
+
+/* ============================================================
+   §5 ON DESKTOP — THE WHEEL (WorkWheel.tsx, 2026-08-26, the
+   user's wireframe — image.png).
+   ------------------------------------------------------------
+   One pinned viewport: title with the hero's inline tile-pill,
+   the names on a wheel (left), one window that FOLDS between
+   captures (right, fold-gl.ts), counter + visit + description
+   under it. The window rests under a VEIL (mono, grain, scan,
+   vignette) that lifts on hover. The driver writes transform /
+   opacity / the descriptions' blur; everything else is here.
+   The markup is the FALLBACK: a plain layout in flow.
+   ============================================================ */
+.ww {
+  position: relative;
+  background: var(--n-11);
+  color: var(--text);
+  overflow: clip;
+  /* the window: the captures' own aspect, never taller than the stage
+     leaves room for under the title and over the foot */
+  /* bigger (user, second cut): the vertical budget is what limits it — a
+     tighter stage padding and a smaller title buy the width */
+  --ww-win-w: min(64vw, calc((100vh - 16.5rem) * 1.44));
+  --ww-gap: clamp(2rem, 4vw, 5rem);
+}
+.ww-stage {
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding: var(--s-9) var(--page-pad);
+}
+.ww.is-scrub .ww-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  box-sizing: border-box;
+  padding-block: var(--s-6);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  align-content: center;
+  row-gap: clamp(var(--s-4), 2.4vh, var(--s-6));
+}
+
+/* ---------- the title and its tile-pill ---------- */
+.ww-title {
+  display: flex;
+  align-items: center;
+  gap: 0.28em;
+  margin: 0;
+  color: var(--text);
+  will-change: transform, opacity, filter;
+}
+.ww-t { white-space: nowrap; }
+/* the hero pill's material: r-md, a hairline ring, grain — with the three
+   captures inside as tiles cut by hairlines */
+.ww-pill {
+  position: relative;
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  width: 3.1em;
+  height: 0.92em;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--n-8);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.1), inset 0 1px 0 rgb(255 255 255 / 0.14);
+}
+.ww-tile {
+  position: relative;
+  overflow: hidden;
+  background: var(--n-10);
+}
+.ww-tile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 12%;
+  filter: grayscale(1) brightness(0.62) contrast(1.05);
+  transition: filter var(--d-slow) var(--e-glass);
+}
+.ww-tile.is-lit img { filter: none; }
+.ww-pill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.3;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='90' height='90' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+/* ---------- the grid ---------- */
+.ww-grid {
+  display: grid;
+  gap: var(--s-8);
+}
+.ww.is-scrub .ww-grid {
+  grid-template-columns: minmax(0, 1fr) var(--ww-win-w);
+  column-gap: var(--ww-gap);
+  align-items: center;
+  min-height: 0;
+}
+
+/* ---------- the wheel ---------- */
+.ww-wheel {
+  display: grid;
+  gap: var(--s-4);
+  justify-items: start;
+}
+.ww.is-scrub .ww-wheel {
+  display: block;
+  position: relative;
+  height: 100%;
+  min-height: 16rem;
+}
+.ww-name {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: inline-block;
+  white-space: nowrap;
+  color: var(--text-faint);
+  cursor: pointer;
+  text-align: left;
+  transition: color var(--d-base) var(--e-settle);
+}
+.ww-name.is-on { color: var(--text); }
+@media (hover: hover) {
+  .ww-name:not(.is-on):hover { color: var(--text-muted); }
+}
+.ww-name:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 6px; }
+/* pinned: the column scrolls through the active slot (the wheel's middle);
+   every name is placed by the driver's variables — translate and recede,
+   never a tilt. --wx/--wy/--wo are the wheel; --ey/--eo are the arrival. */
+.ww.is-scrub .ww-name {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translate3d(var(--wx, 0px), calc(var(--wy, 0px) - 50% + var(--ey, 0px)), 0);
+  opacity: calc(var(--wo, 1) * var(--eo, 1));
+  will-change: transform, opacity;
+}
+/* the dash: STUCK beside the active slot — parked past the widest name by
+   the driver, level with the slot, it never moves */
+.ww-dash {
+  display: none;
+  position: absolute;
+  top: 50%;
+  width: 1.5rem;
+  height: 1px;
+  background: var(--text);
+  transform: translateY(-50%);
+}
+.ww.is-scrub .ww-dash { display: block; }
+
+/* ---------- the window ---------- */
+.ww-right {
+  display: grid;
+  gap: var(--s-5);
+  width: var(--ww-win-w);
+  margin-left: auto;
+  min-width: 0;
+}
+.ww-win {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 2880 / 2000;
+  border-radius: var(--r-lg);
+  overflow: clip;
+  background: var(--n-10);
+  /* Safari clips a composited child to a radius only with the clip stated */
+  clip-path: inset(0 round var(--r-lg));
+  will-change: transform, opacity;
+  -webkit-tap-highlight-color: transparent;
+}
+.ww-sheet {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+.ww-sheet img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* THE VEIL, part one: the capture rests in mono. Hover lifts it. A
+     filter transition rasterises for its duration only — a response. */
+  filter: grayscale(1) contrast(1.04);
+  transition: filter 0.9s var(--e-glass);
+}
+.ww-win.is-hot .ww-sheet img { filter: none; }
+/* a sheet mid-fold hands its pixels to the canvas; a folded sheet is gone */
+.ww-sheet.is-fold,
+.ww-sheet.is-gone { visibility: hidden; }
+.ww-gl {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+/* THE VEIL, part two: grain, a faint scan, a vignette — over the canvas
+   too, so a fold happens under the same glass */
+.ww-veil {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.9s var(--e-glass);
+  background-image:
+    radial-gradient(120% 90% at 50% 40%, rgb(0 0 0 / 0) 55%, rgb(0 0 0 / 0.42) 100%),
+    repeating-linear-gradient(0deg, rgb(0 0 0 / 0.14) 0 1px, rgb(0 0 0 / 0) 1px 4px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+  background-size: 100% 100%, 100% 100%, 180px 180px;
+}
+.ww-veil::after {
+  /* the catch: the dark polarity's lit top edge and hairline ring */
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-lg);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.22), inset 0 0 0 1px rgb(255 255 255 / 0.07);
+}
+.ww-win.is-hot .ww-veil { opacity: 0; }
+.ww-win:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
+
+/* ---------- the foot: counter, visit, description ---------- */
+.ww-foot {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--s-7);
+  align-items: start;
+  will-change: transform, opacity, filter;
+}
+.ww-meta {
+  display: grid;
+  gap: var(--s-2);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.ww-visit {
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 0.125rem;
+  justify-self: start;
+}
+.ww-descs {
+  display: grid;
+  gap: var(--s-3);
+  justify-items: end;
+}
+.ww.is-scrub .ww-descs { gap: 0; }
+.ww-desc {
+  margin: 0;
+  max-width: 44ch;
+  text-align: right;
+  color: var(--text-muted);
+}
+.ww.is-scrub .ww-desc {
+  grid-area: 1 / 1;
+  will-change: transform, opacity, filter;
 }
 
 /* ============================================================
