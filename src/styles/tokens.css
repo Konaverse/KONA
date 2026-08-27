@@ -2180,3 +2180,68 @@ html.lenis, html.lenis body { height: auto; }
     margin-bottom: -0.16em;
   }
 }
+
+/* ============================================================
+   THE BOOKING PANEL (CalendlyPopover.tsx, 2026-08-26). One fixed
+   glass pane, LIGHT polarity (Calendly's calendar is white on this
+   plan — one white card), anchored off whichever booking link
+   was clicked — below it with room, above it without — holding
+   Calendly's inline calendar. Sits above the nav (z 60): it is
+   opened from the page and must not be cut by the bar.
+   ============================================================ */
+.cal-pop {
+  position: fixed;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  background: var(--n-0);
+  color: var(--ink);
+  will-change: transform, opacity;
+}
+.cal-pop[hidden] { display: none; }
+.cal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--s-3) var(--s-3) var(--s-3) var(--s-5);
+  border-bottom: var(--hair) solid var(--hairline);
+  flex: 0 0 auto;
+}
+.cal-title { color: var(--text-muted); }
+.cal-close {
+  appearance: none;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: var(--hair) solid var(--hairline);
+  border-radius: var(--r-full);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  display: inline-grid;
+  place-items: center;
+  transition: border-color var(--d-instant) var(--e-settle);
+}
+.cal-close:hover { border-color: var(--hairline-strong); }
+.cal-close:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.cal-close svg { width: 0.9rem; height: 0.9rem; }
+.cal-note {
+  margin: 0;
+  padding: var(--s-4) var(--s-5);
+  color: var(--text-muted);
+}
+.cal-note a { color: var(--text); }
+.cal-note[hidden] { display: none; }
+/* Calendly sizes its iframe to this box */
+.cal-host {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 320px;
+}
+.cal-host iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

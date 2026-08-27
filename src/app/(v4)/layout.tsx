@@ -1,4 +1,5 @@
 import ApertureMenu from '@/components/v4/ApertureMenu'
+import CalendlyPopover from '@/components/v4/CalendlyPopover'
 import SmoothScroll from '@/components/v4/SmoothScroll'
 import FluidCursor from '@/components/v4/FluidCursor'
 import GrainField from '@/components/v4/GrainField'
@@ -40,6 +41,9 @@ export default function V4Layout({ children }: { children: React.ReactNode }) {
           on screen, so the texture thickens over the dark passages. */}
       <GrainField />
       <ApertureMenu />
+      {/* the booking panel: every Calendly link on the page opens it
+          anchored to the clicked button instead of leaving (2026-08-26) */}
+      <CalendlyPopover />
       <FluidCursor />
 
       <SmoothScroll>
