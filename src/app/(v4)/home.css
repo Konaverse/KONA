@@ -1119,137 +1119,148 @@
 }
 
 /* ============================================================
-   §5 ON PHONES — THE FOLD DECK (WorkFold.tsx, 2026-08-26, user call:
-   "something fascinating and different and more usable").
+   §5 ON PHONES — THE DECK (WorkDeck.tsx, 2026-08-26, user: the
+   desktop title, each project a card, the cards stacking on
+   scroll like magnificent_sections' pitch deck).
    ------------------------------------------------------------
-   One pinned LANDSCAPE window at the captures' own aspect, the
-   projects stacked in it, first on top; scrolling folds the top
-   sheet away by its corner (our peel, trimmed) to reveal the
-   next. Caption under the window resolves per project, a counter
-   keeps the place. The desktop page-turn (.k-sheets) is display:
-   none here and this is display:none there — page.tsx wraps both
-   in the one #work landmark.
-   The markup is the FALLBACK: a plain list of window + caption.
-   `.is-scrub` (the driver) is what stacks and pins it.
+   The title is the wheel's (.ww-title / .ww-pill, shared). One
+   slot under it; the stage pins; the driver moves every slot's
+   transform — the front card climbs and shrinks under a shade
+   while the next arrives from below the fold. The markup is the
+   FALLBACK: a list of cards in flow. `.is-scrub` pins and stacks.
+   The desktop wheel (.ww) is display:none here and this is
+   display:none there — page.tsx wraps both in the one #work.
    ============================================================ */
-.wf {
+.wd {
   display: none;
   position: relative;
   background: var(--n-11);
+  color: var(--text);
   overflow: clip;
+  /* the slot's top under the title: room for the receded cards' strips */
+  --wd-slot-top: 4.25rem;
 }
 @media (max-width: 57.5rem) {
-  .k-sheets { display: none; }
   .ww { display: none; }
-  .wf { display: block; }
+  .wd { display: block; }
 }
-.wf-pin {
-  padding: var(--s-8) var(--page-pad);
+.wd-stage {
+  padding: var(--s-7) var(--page-pad) var(--s-8);
 }
-.wf.is-scrub .wf-pin {
+.wd.is-scrub .wd-stage {
   position: sticky;
   top: 0;
   height: 100svh;
+  box-sizing: border-box;
+  padding-block: var(--s-6) 0;
+  display: flex;
+  flex-direction: column;
+}
+.wd-title {
+  margin-bottom: var(--s-6);
+  will-change: transform, opacity, filter;
+}
+.wd.is-scrub .wd-title { margin-bottom: 0; }
+
+/* the deck: in flow a list; pinned, one slot */
+.wd-deck {
   display: grid;
-  align-content: center;
   gap: var(--s-6);
 }
-.wf-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: var(--s-6);
+.wd.is-scrub .wd-deck {
+  display: block;
+  position: relative;
+  flex: 1;
+  min-height: 0;
 }
-.wf.is-scrub .wf-head { margin-bottom: 0; }
-.wf-idx { font-variant-numeric: tabular-nums; }
+.wd-slot { position: relative; }
+.wd.is-scrub .wd-slot {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--wd-slot-top);
+  transform-origin: 50% 0%;
+  will-change: transform;
+}
 
-/* the stack: in flow as a list; one grid cell, all items on top of each
-   other, once the driver pins it */
-.wf-stack {
+/* THE CARD. The dark polarity's lifted surface: a ladder step, a hairline
+   ring and a top catch, no drop shadow. The whole card is the link. */
+.wd-card {
+  position: relative;
   display: grid;
-  gap: var(--s-8);
+  grid-template-rows: auto auto;
+  gap: var(--s-4);
+  padding: var(--s-4);
+  border-radius: var(--r-lg);
+  background: var(--n-10);
+  box-shadow: var(--lift-2);
+  color: var(--text);
+  text-decoration: none;
+  overflow: clip;
+  clip-path: inset(0 round var(--r-lg));
+  -webkit-tap-highlight-color: transparent;
 }
-.wf.is-scrub .wf-stack { gap: 0; }
-.wf.is-scrub .wf-item { grid-area: 1 / 1; }
-.wf-item {
-  display: grid;
-  gap: var(--s-5);
-  align-content: start;
-}
-/* THE WINDOW. The capture's own aspect (2880x2000), so a landscape site
-   is shown whole — the reason this section exists. --r-lg, and the fold
-   reads the same radius off computed style for its sheet. */
-.wf-win {
+/* CONTENT height, not a fixed one: a fixed card left a dead zone under the
+   caption. The stack is top-anchored, so a card behind only peeks below
+   the front one if it is ~43px taller — a line of copy is 24. */
+.wd-win {
   position: relative;
   display: block;
   width: 100%;
   aspect-ratio: 2880 / 2000;
-  border-radius: var(--r-lg);
+  border-radius: var(--r-md);
   overflow: clip;
-  background: var(--n-10);
-  /* Safari clips a composited child to a radius only with the clip stated */
-  clip-path: inset(0 round var(--r-lg));
+  background: var(--n-9);
+  clip-path: inset(0 round var(--r-md));
 }
-.wf-img {
+.wd-win img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-/* the catch: a lit top edge on every pane, as an overlay so the picture
-   does not cover it */
-.wf-win::after {
+.wd-win::after {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.22);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18), inset 0 0 0 1px rgb(255 255 255 / 0.06);
   pointer-events: none;
 }
-/* the fold canvas: exactly the window's cell, size and corner; it draws
-   only mid-turn and is nothing at rest */
-.wf-gl { display: none; }
-.wf.is-scrub .wf-gl {
-  display: block;
-  grid-area: 1 / 1;
-  align-self: start;
-  width: 100%;
-  aspect-ratio: 2880 / 2000;
-  border-radius: var(--r-lg);
-  pointer-events: none;
-}
-/* a sheet mid-fold hands its pixels to the canvas; a folded sheet is gone.
-   VISIBILITY, so the item keeps its layout and the caption under it keeps
-   driving its own opacity. Neither takes taps: the next sheet does. */
-.wf-item.is-fold .wf-win,
-.wf-item.is-gone .wf-win { visibility: hidden; }
-.wf-item.is-fold,
-.wf-item.is-gone { pointer-events: none; }
-
-.wf-cap {
+.wd-cap {
   display: grid;
-  gap: var(--s-3);
+  gap: var(--s-2);
+  align-content: start;
+  min-height: 0;
+  will-change: transform, opacity, filter;
 }
-.wf.is-scrub .wf-cap { will-change: transform, opacity; }
-.wf-name {
+.wd-row {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+.wd-name {
   font-weight: var(--w-medium);
-  color: var(--text);
 }
-.wf-line {
+.wd-line {
   color: var(--text-muted);
   max-width: 34ch;
 }
-.wf-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-top: var(--s-2);
-}
-.wf-visit {
+.wd-visit {
+  justify-self: start;
+  margin-top: var(--s-1);
   color: var(--text);
-  text-decoration: none;
   border-bottom: 1px solid currentColor;
   padding-bottom: 0.125rem;
+}
+/* the shade a receded card goes under — the deck's lightness cue */
+.wd-shade {
+  position: absolute;
+  inset: 0;
+  background: var(--n-11);
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* ============================================================

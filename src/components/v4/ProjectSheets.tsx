@@ -73,7 +73,7 @@ export default function ProjectSheets({
     const root = rootRef.current
     if (!root) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    /* phones: WorkFold owns §5 and this section is display:none (2026-08-26) */
+    /* phones: the homepage hides this (WorkDeck owns §5 there); on /work it simply stacks (2026-08-26) */
     if (getComputedStyle(root).display === 'none') return
 
     const sheets = Array.from(root.querySelectorAll<HTMLElement>('.k-sheet'))

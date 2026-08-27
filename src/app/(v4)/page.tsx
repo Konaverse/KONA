@@ -6,7 +6,7 @@ import SolveCredits from '@/components/v4/SolveCredits'
 import ServiceCards from '@/components/v4/ServiceCards'
 import type { SheetProject } from '@/components/v4/ProjectSheets'
 import WorkWheel from '@/components/v4/WorkWheel'
-import WorkFold from '@/components/v4/WorkFold'
+import WorkDeck from '@/components/v4/WorkDeck'
 import Invitation from '@/components/v4/Invitation'
 import './home.css'
 
@@ -139,13 +139,15 @@ export default function HomePage() {
           the title carrying the captures as an inline tile-pill; the
           capture rests under a veil that lifts on hover; replaced the
           page-turn, ProjectSheets, which still renders /work). Phones:
-          the fold deck
-          (WorkFold). CSS shows exactly one; each driver returns early
+          THE DECK (WorkDeck — the same title, each project a card, the
+          cards stacking on scroll on the pitch deck's mechanic; replaced
+          the fold deck, WorkFold, git 8f46d2b). CSS shows exactly one;
+          each driver returns early
           when it is the hidden one. The wrapper carries `#work` so the
           nav anchor lands on whichever is displayed. */}
       <div id="work">
         <WorkWheel projects={FEATURED} />
-        <WorkFold projects={FEATURED} />
+        <WorkDeck projects={FEATURED} />
       </div>
 
       {/* §7 (Process) is UNMOUNTED for a user experiment (2026-08-24) — not

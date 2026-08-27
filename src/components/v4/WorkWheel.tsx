@@ -55,7 +55,7 @@ import { getLenis } from '@/components/v4/SmoothScroll'
  * FALLBACKS. The markup is a plain layout: title, a list of names, the
  * first capture in the window, all three descriptions in flow — every word
  * real DOM text (SEO D5). `.is-scrub` (the driver) is what pins and stacks.
- * Reduced motion, no JS, and phones (WorkFold owns §5 under 57.5rem; this
+ * Reduced motion, no JS, and phones (WorkDeck owns §5 under 57.5rem; this
  * is display:none there and returns early) get the plain layout.
  */
 
@@ -90,7 +90,7 @@ export default function WorkWheel({ projects }: { projects: SheetProject[] }) {
     const root = rootRef.current
     if (!root) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    /* phones: WorkFold owns §5 and this section is display:none */
+    /* phones: WorkDeck owns §5 and this section is display:none */
     if (getComputedStyle(root).display === 'none') return
     if (n < 2) return
 

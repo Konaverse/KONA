@@ -2,15 +2,15 @@
  * THE FOLD, SHARED — the corner fold a project sheet leaves by.
  *
  * Extracted from WorkFold.tsx (2026-08-26) the day the desktop §5 wanted the
- * same fold: HeroPeel's eight-corner clock, hinge sweep, reflect-past-the-
+ * same fold (WorkFold itself — the phone fold deck — was replaced by the
+ * card deck the same day and deleted; git 8f46d2b has it): HeroPeel's eight-corner clock, hinge sweep, reflect-past-the-
  * hinge fold, back-face grade and ripple, trimmed of the landing/opening/
  * stretch that belong to a sheet becoming another section's ground, plus
  * the CARRY that takes the released bundle off through the bottom-left
- * corner. Two sections, one fold: if the hero's fold character is ever
- * retuned, retune here.
+ * corner. If the hero's fold character is ever retuned, retune here.
  *
- * `uMono` (desktop only) pulls the sheet to its luminance so a folding sheet
- * matches the mono veil the desktop window rests under; WorkFold passes 0.
+ * `uMono` pulls the sheet to its luminance so a folding sheet matches the
+ * mono veil the desktop window rests under (0 = the picture as it is).
  * The canvas draws ONLY mid-turn — at rest the pixels are always DOM.
  */
 

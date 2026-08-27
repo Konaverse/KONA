@@ -2171,16 +2171,12 @@ html.lenis, html.lenis body { height: auto; }
   }
   .ft-word {
     font-size: clamp(2.6rem, 12vw, 5rem);
-    /* OFF THE FLOOR ON PHONES (2026-08-26, user: "the KONAVERSE
-       animation letter by letter doesn't happen"). It did happen — off
-       screen. The rise is scrubbed across the last 26% of a viewport of
-       travel (SiteFooter WORD_SPAN); at 12vw the word is ~46px tall and
-       sunk at the floor, so its box only cleared the bottom edge in the
-       last ~40px of scroll: every letter was up before the word was in
-       view. On desktop the word is ~200px tall and the two windows
-       coincide. Here the word sits 18svh above the floor — it enters the
-       viewport just as the rise begins and lands its last letter at page
-       end, the sky showing beneath it. */
-    margin-bottom: 18svh;
+    /* ON THE FLOOR, SUNK A LITTLE MORE (2026-08-26, user: "totally at
+       the bottom connecting to the bottom edge … even a little covered").
+       The 18svh lift that briefly sat here existed only so the scrubbed
+       rise had scroll to play in; on phones the rise is now a one-shot
+       entrance fired as the word's box enters (SiteFooter), so the word
+       can live at the edge like the desktop one. */
+    margin-bottom: -0.16em;
   }
 }

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import Aurora from '@/components/v4/Aurora'
-import { gsap } from '@/lib/motion-v4'
+import { gsap, EASE } from '@/lib/motion-v4'
 import { CALENDLY_URL, SECTIONS } from '@/lib/site'
 
 /**
@@ -102,6 +102,31 @@ export default function SiteFooter() {
     if (!inner) return
 
     const N = letters.length
+    const word = root.querySelector<HTMLElement>('.ft-word')
+    /* PHONES: the word lives at the floor (user call 2026-08-26) and is
+       ~46px tall, so its box is only on screen for the last few dozen
+       pixels of scroll — nothing to scrub across. The rise is a ONE-SHOT
+       entrance there instead: fired as the box enters, reversed if the
+       hand backs out far enough that the box has gone again, so a return
+       replays it. Desktop keeps the scrub. */
+    const phone = window.matchMedia('(max-width: 57.5rem)')
+    /* the CSS parks the letters with translateY(108%); GSAP reads that as
+       PIXELS off the computed matrix, so a yPercent tween alone would leave
+       the pixel offset in place — restate the parked state in GSAP's terms */
+    if (phone.matches) gsap.set(letters, { yPercent: 108, y: 0 })
+    let risen = false
+    let riseTween: gsap.core.Tween | null = null
+    const rise = (up: boolean) => {
+      risen = up
+      riseTween?.kill()
+      riseTween = gsap.to(letters, {
+        yPercent: up ? 0 : 108,
+        duration: up ? 0.9 : 0.5,
+        ease: up ? EASE.glass : EASE.settle,
+        stagger: up ? 0.05 : 0.02,
+        overwrite: true,
+      })
+    }
     const tick = () => {
       const r = root.getBoundingClientRect()
       const vh = window.innerHeight
@@ -111,6 +136,14 @@ export default function SiteFooter() {
       gsap.set(inner, { y: -DRAG * Math.max(0, r.top) })
       /* remaining travel: 0 at page end — the wordmark's clock */
       const e = Math.max(0, r.bottom - vh)
+
+      if (phone.matches) {
+        const wr = word ? word.getBoundingClientRect() : r
+        const entered = wr.top < vh - 8
+        if (entered && !risen) rise(true)
+        else if (!entered && risen && wr.top > vh + wr.height * 2) rise(false)
+        return
+      }
 
       /* the wordmark, scrubbed across the last viewport of approach */
       const q = 1 - clamp01(e / (vh * WORD_SPAN))
@@ -124,8 +157,9 @@ export default function SiteFooter() {
 
     return () => {
       gsap.ticker.remove(tick)
+      riseTween?.kill()
       gsap.set(inner, { clearProps: 'transform' })
-      letters.forEach((l) => (l.style.transform = ''))
+      letters.forEach((l) => gsap.set(l, { clearProps: 'transform' }))
     }
   }, [])
 
