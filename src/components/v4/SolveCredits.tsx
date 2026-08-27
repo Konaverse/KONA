@@ -159,7 +159,7 @@ export default function SolveCredits() {
   }, [])
 
   return (
-    <section ref={rootRef} className="sv k-dark">
+    <section ref={rootRef} className="sv k-dark" id="solve">
       <div className="sv-frame" aria-hidden="true">
         {/* decorative — the content is the text riding over it. Eager on
             purpose: it sits exactly one viewport below the fold (the −100svh

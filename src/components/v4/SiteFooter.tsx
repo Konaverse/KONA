@@ -54,9 +54,10 @@ import { CALENDLY_URL, SECTIONS } from '@/lib/site'
  */
 const PAGES: { label: string; href: string; external?: boolean }[] = [
   { label: 'Home', href: '/' },
-  { label: 'Work', href: SECTIONS.work },
-  { label: 'Services', href: SECTIONS.services },
   { label: 'Studio', href: SECTIONS.studio },
+  { label: 'What we solve', href: SECTIONS.solve },
+  { label: 'Solutions', href: SECTIONS.services },
+  { label: 'Work', href: SECTIONS.work },
   { label: 'Contact', href: CALENDLY_URL, external: true },
 ]
 

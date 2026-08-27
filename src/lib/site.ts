@@ -10,9 +10,14 @@
 /** The studio's booking link (user, 2026-08-25). */
 export const CALENDLY_URL = 'https://calendly.com/kona-verse/30min'
 
-/** The homepage's landmarks. Keys are the menu labels, values the ids. */
+/** The homepage's landmarks, IN PAGE ORDER (the menu and the footer list
+ *  them in this order — user call 2026-08-26: "since it's a one page
+ *  website, the links should be ordered correctly"). Values are the ids;
+ *  the labels live with the menus (§4 reads "Solutions" in the menu, its
+ *  id stays `services`). */
 export const SECTIONS = {
   studio: '#studio',
+  solve: '#solve',
   services: '#services',
   work: '#work',
   contact: '#contact',

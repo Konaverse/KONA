@@ -47,7 +47,7 @@ export interface ApertureItem {
 
 export interface ApertureMenuProps {
   brand?: string
-  /** The site map. Contact is deliberately NOT in here — it stays outside. */
+  /** The site map, in page order. Contact is a row AND the bar's standing link. */
   items?: ApertureItem[]
   email?: string
   location?: string
@@ -67,10 +67,15 @@ export default function ApertureMenu({
    * restore the routes here AND add them to V4_ROUTES in PageTransition.tsx;
    * the open-menu-into-the-ghost design (plan §5) lands first.
    */
+  /* PAGE ORDER, all five (user call 2026-08-26): a one-page site's menu
+     reads like its table of contents. Contact is a row here too now,
+     as well as the bar's standing link. */
   items = [
-    { label: 'Work', href: SECTIONS.work },
-    { label: 'Services', href: SECTIONS.services },
     { label: 'Studio', href: SECTIONS.studio },
+    { label: 'What we solve', href: SECTIONS.solve },
+    { label: 'Solutions', href: SECTIONS.services },
+    { label: 'Work', href: SECTIONS.work },
+    { label: 'Contact', href: SECTIONS.contact },
   ],
   email = 'info@kona-verse.com',
   location = 'Cyprus, working globally',
