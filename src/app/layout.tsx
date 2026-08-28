@@ -1,9 +1,10 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Anton, Cormorant_Garamond, DM_Sans, Geist_Mono, Inter, Manrope } from 'next/font/google'
 import Script from 'next/script'
 import JsonLd from '@/components/JsonLd'
 import CookieConsent from '@/components/layout/CookieConsent'
 import GoogleAnalytics from '@/components/layout/GoogleAnalytics'
+import { CONTACT_EMAIL, SITE_NAME, SITE_URL } from '@/lib/site'
 import './globals.css'
 
 // v4 "Whiteout" — the only family the new system uses. Weights are exactly the
@@ -52,21 +53,24 @@ const anton = Anton({
   display: 'swap',
 })
 
+/**
+ * SITE-WIDE DEFAULTS, re-set for v4 (2026-08-28). The homepage carries its
+ * own full metadata in app/(v4)/page.tsx; these are what every OTHER route
+ * inherits — the legal pages set title/description/canonical and take the
+ * rest from here. No `keywords`: Google has ignored the tag since 2009 and
+ * the SEO plan's O1 (one researched primary keyword per page) is still open.
+ */
 export const metadata: Metadata = {
-  metadataBase: new URL('https://kona-verse.com'),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Konaverse — Premium Digital Agency',
-    template: '%s | Konaverse',
+    default: `${SITE_NAME} — Web studio, Cyprus`,
+    template: `%s | ${SITE_NAME}`,
   },
   description:
-    'Konaverse is a premium digital agency crafting web experiences and brand presence that refuses to be ignored.',
-  keywords: [
-    'digital agency', 'web development', 'web applications', 'brand identity',
-    'Next.js agency', 'web engineering', 'web design', 'premium agency',
-  ],
-  authors: [{ name: 'Konaverse', url: 'https://kona-verse.com' }],
-  creator: 'Konaverse',
-  publisher: 'Konaverse',
+    'Konaverse is a web studio in Cyprus that designs and builds websites end to end — strategy, design, motion and engineering in one continuous process.',
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
   verification: {
     other: {
       'msvalidate.01': '914944C03F8EFCB0A516B441FE2CFADA',
@@ -86,35 +90,28 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: 'Konaverse — Premium Digital Agency',
-    description:
-      'Web development, web applications, and brand presence — built with intent.',
     type: 'website',
-    url: 'https://kona-verse.com',
-    siteName: 'Konaverse',
+    siteName: SITE_NAME,
+    locale: 'en_US',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Konaverse — Premium Digital Agency',
+        alt: 'Konaverse — Build the website that will make you stand out',
       },
     ],
-    locale: 'en_US',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Konaverse — Premium Digital Agency',
-    description:
-      'Web development, web applications, and digital brand presence — built with intent.',
     images: ['/og-image.png'],
   },
-  alternates: {
-    canonical: 'https://kona-verse.com',
-  },
-  other: {
-    'theme-color': '#0a0a0a',
-  },
+}
+
+/* the page ground is white now (v4 "Whiteout"); phone browser chrome
+   tints to this */
+export const viewport: Viewport = {
+  themeColor: '#FFFFFF',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -124,16 +121,35 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${manrope.variable} ${cormorant.variable} ${inter.variable} ${dmSans.variable} ${geistMono.variable} ${anton.variable}`}
     >
       <body className="antialiased">
+        {/* Structured data, re-set for v4 (2026-08-28): the studio as it
+            is now — six services, socials as sameAs, Cyprus. The founders'
+            entries carry over. */}
         <JsonLd data={{
           '@context': 'https://schema.org',
           '@type': 'Organization',
-          '@id': 'https://kona-verse.com/#organization',
-          name: 'Konaverse',
-          url: 'https://kona-verse.com',
-          logo: { '@type': 'ImageObject', url: 'https://kona-verse.com/About/Logo%2021.png' },
-          description: 'Premium digital agency specializing in high-end web development and digital experiences.',
-          email: 'info@kona-verse.com',
-          areaServed: ['Europe', 'Middle East', 'North America'],
+          '@id': `${SITE_URL}/#organization`,
+          name: SITE_NAME,
+          url: SITE_URL,
+          logo: { '@type': 'ImageObject', url: `${SITE_URL}/About/KonaLogoNoBg.png` },
+          image: `${SITE_URL}/og-image.png`,
+          description:
+            'A web studio in Cyprus that designs and builds websites end to end — strategy, design, motion and engineering in one continuous process.',
+          email: CONTACT_EMAIL,
+          address: { '@type': 'PostalAddress', addressCountry: 'CY' },
+          areaServed: ['Cyprus', 'Europe', 'Middle East', 'North America'],
+          sameAs: [
+            'https://www.instagram.com/konaverse.cy/',
+            'https://www.facebook.com/konaverse',
+            'https://www.linkedin.com/company/konaverse',
+          ],
+          knowsAbout: [
+            '3D websites',
+            'Web design',
+            'Web development',
+            'One-page websites',
+            'Website redesign',
+            'SEO',
+          ],
           member: [
             { '@type': 'Person', name: 'Konstantinos', jobTitle: 'Technical Architect & Co-Founder' },
             { '@type': 'Person', name: 'Nabil', jobTitle: 'Creative Director & Co-Founder' },
@@ -142,10 +158,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <JsonLd data={{
           '@context': 'https://schema.org',
           '@type': 'WebSite',
-          '@id': 'https://kona-verse.com/#website',
-          name: 'Konaverse',
-          url: 'https://kona-verse.com',
-          publisher: { '@id': 'https://kona-verse.com/#organization' },
+          '@id': `${SITE_URL}/#website`,
+          name: SITE_NAME,
+          url: SITE_URL,
+          publisher: { '@id': `${SITE_URL}/#organization` },
         }} />
         {/* Site chrome (navbar, footer, cursor, smooth scroll) now lives in
             app/(site)/layout.tsx so v4 routes can render without it. Anything

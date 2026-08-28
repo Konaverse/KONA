@@ -60,7 +60,7 @@ import { getLenis } from './SmoothScroll'
  */
 
 /** Every route inside app/(v4). ADD NEW V4 ROUTES HERE — see the warn below. */
-export const V4_ROUTES = ['/', '/design-system', '/work', '/hero-object']
+export const V4_ROUTES = ['/', '/privacy', '/terms', '/cookies', '/design-system', '/work', '/hero-object']
 
 const isV4Route = (path: string) =>
   V4_ROUTES.some((r) => path === r || path.startsWith(`${r}/`))
@@ -217,7 +217,10 @@ export default function PageTransition({ children }: { children: React.ReactNode
        * sequence instead of one gesture. The freeze between click and commit
        * is fine; the reference recording itself holds ~0.3s before anything
        * moves, because exoape too waits for the next page to be ready. */
-      router.push(dest)
+      /* scroll: false — the enter effect below owns the landing position
+         (top, or the hash's section) through Lenis; Next's own hash scroll
+         would set scrollY under Lenis's feet. */
+      router.push(dest, { scroll: false })
       /* If the route never commits — 404, a throw in a server component, a push
        * the router coalesces away — the enter effect never runs. */
       failsafeRef.current = setTimeout(cleanup, 4000)
@@ -272,7 +275,9 @@ export default function PageTransition({ children }: { children: React.ReactNode
       }
 
       e.preventDefault()
-      go(url.pathname + url.search)
+      /* the hash rides along: a menu row on /privacy is `/#work`, and the
+         enter effect lands on that section instead of the top */
+      go(url.pathname + url.search + url.hash)
     }
 
     /* Prefetch on intent, so the commit is effectively free and the 130ms lead
@@ -318,7 +323,10 @@ export default function PageTransition({ children }: { children: React.ReactNode
      * at the OUTGOING route's offset. Safe to do bluntly here: the view is
      * parked below the fold and the ghost covers the viewport. */
     const lenis = getLenis()
-    if (lenis) lenis.scrollTo(0, { immediate: true, force: true })
+    const hash = dest.includes('#') ? dest.slice(dest.indexOf('#')) : ''
+    const anchor = hash.length > 1 ? document.querySelector<HTMLElement>(hash) : null
+    if (lenis) lenis.scrollTo(anchor ?? 0, { immediate: true, force: true })
+    else if (anchor) anchor.scrollIntoView()
     else window.scrollTo(0, 0)
 
     const vh = window.innerHeight

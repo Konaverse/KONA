@@ -276,6 +276,65 @@ Frame cost drops because the menu's close never runs at all — the ghost is
 one flat layer. Verify with `tools/record-transition.js`
 (`MSYS_NO_PATHCONV=1`).
 
+## 6 · Launch technicals — DONE 2026-08-28
+
+The user's list after visual sign-off ("what is left? SEO, the legal pages,
+analytics talking to the cookie modal"). What was found and what shipped:
+
+- **GA + consent were already wired** (root layout: `GoogleAnalytics` under
+  Consent Mode v2, default all-denied, `CookieConsent` writes
+  `konaverse_cookie_consent` to localStorage and updates consent). What was
+  missing was WITHDRAWAL: `/cookies` now carries `CookiePreferences`
+  ("Change your choice") — forgets the key, drops consent to denied at once,
+  and fires `konaverse:cookie-reset`, which the banner listens for and
+  re-enters. The contract (key, events, `applyConsent`) is
+  `src/components/layout/consent.ts`; the inline gtag bootstrap repeats the
+  key string by necessity. Banner copy is final.
+- **Legal pages → v4.** `app/(v4)/(legal)/{privacy,terms,cookies}` on one
+  shell (`components/v4/Legal.tsx`, `legal.css`); the legacy `(site)` copies
+  are deleted (Next would have refused the duplicate routes). Copy updated
+  to what the code does: no contact form (email + Calendly), GA behind
+  consent, Ahrefs cookieless, Vercel/Calendly/Google/Ahrefs as processors;
+  Resend and Cloudinary are gone (`api/contact` deleted with them —
+  `RESEND_API_KEY` can leave the Vercel env). Dated August 2026.
+- **Anchors went root-relative** (`SECTIONS` = `/#studio` …) because the
+  menu and footer now render on routes that are not `/`. On `/` SmoothScroll
+  sees the same pathname and eases in-page exactly as before; elsewhere
+  PageTransition carries the hash (`go(pathname + search + hash)`,
+  `router.push(…, { scroll: false })`) and its enter effect lands on the
+  section through Lenis instead of the top. The nav bar's hero measurement
+  re-runs per route (`usePathname` dep) — it lives in the layout.
+- **Homepage metadata existed only as v3 defaults.** `app/(v4)/page.tsx`
+  now exports its own (absolute title "Konaverse — Build the website that
+  will make you stand out", the hero paragraph as description, canonical,
+  OG/Twitter); root defaults re-set for v4, `keywords` dropped, theme-color
+  white, Organization JSON-LD refreshed (sameAs, knowsAbout = the six
+  services, CY address). `public/og-image.png` is the v4 hero at 1200x630
+  (`scratchpad/og.js` recipe: 2x capture, banner pre-answered, nav hidden,
+  7s for the entrance). Sitemap `lastmod` for legal is a fixed date.
+- **D5 acceptance on `/` passes** on the prod build: every headline, the
+  claim, all six service names, the §3 questions, the three project names
+  and all four section ids are in the raw HTML.
+- **404** — `app/not-found.tsx` composes `V4Layout` explicitly (the root
+  not-found sits outside the route group). One line, one way home, three
+  anchors. Real 404 status verified.
+- **BUG FOUND AND FIXED IN `Reveal`:** the masked variant never fired.
+  `.k-mask > .k-reveal` starts at `translateY(110%)` inside
+  `overflow:hidden`, and IntersectionObserver clips by overflow ancestors,
+  so the observed element's intersection was 0 until it moved — which it
+  never did. Every masked headline (legal h1s, the 404, /work, the design
+  system) depended on it. Reveal now observes the `.k-mask` wrapper. The
+  homepage never used the masked variant, which is why it was never seen.
+- **Known, accepted for launch:** item 5 above (open aperture + transition
+  running together) now has a path to bite — a visitor on a legal page
+  opening the menu and going home. Rare; still post-launch.
+- **Left for the user:** confirm GA property `G-2PEZX44FP9` receives on
+  the deployed site (Realtime); Google Search Console (only Bing + Ahrefs
+  tags are in the head); project years; the `(site)` legacy tree can be
+  deleted whenever — nothing reachable lives there now (every route in it
+  is redirected), and the five v3 font families in the root layout go with
+  it.
+
 ---
 
 ## Decisions (user, 2026-08-25)

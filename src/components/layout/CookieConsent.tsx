@@ -2,6 +2,13 @@
 
 import { useEffect, useState } from 'react'
 import Button from '@/components/v4/Button'
+import {
+  CONSENT_CHOICE_EVENT,
+  CONSENT_KEY,
+  CONSENT_RESET_EVENT,
+  applyConsent,
+  type Consent,
+} from '@/components/layout/consent'
 import '@/styles/tokens.css'
 
 /**
@@ -15,7 +22,10 @@ import '@/styles/tokens.css'
  * done it. Everything in that file is :root variables and k- prefixed
  * classes, so the import is inert on the legacy pages.
  *
- * Copy is placeholder (checklist 6.6 — final copy is handled elsewhere).
+ * Comes back on demand (2026-08-28): the withdrawal control on /cookies
+ * forgets the stored choice and fires CONSENT_RESET_EVENT; the banner
+ * listens and re-enters at once, so changing your mind is the same two
+ * buttons as the first time.
  */
 
 type Phase = 'hidden' | 'entering' | 'in' | 'leaving'
@@ -24,10 +34,17 @@ export default function CookieConsent() {
   const [phase, setPhase] = useState<Phase>('hidden')
 
   useEffect(() => {
-    const consent = localStorage.getItem('konaverse_cookie_consent')
+    const consent = localStorage.getItem(CONSENT_KEY)
     if (consent) return
     const timer = setTimeout(() => setPhase('entering'), 2000)
     return () => clearTimeout(timer)
+  }, [])
+
+  /* the /cookies page's "change your choice" — return immediately */
+  useEffect(() => {
+    const onReset = () => setPhase('entering')
+    window.addEventListener(CONSENT_RESET_EVENT, onReset)
+    return () => window.removeEventListener(CONSENT_RESET_EVENT, onReset)
   }, [])
 
   /* mount first, then transition: is-in lands one frame after `entering`
@@ -47,16 +64,10 @@ export default function CookieConsent() {
     return () => clearTimeout(id)
   }, [phase])
 
-  const close = (value: 'accepted' | 'declined') => {
-    localStorage.setItem('konaverse_cookie_consent', value)
-    const granted = value === 'accepted' ? 'granted' : 'denied'
-    const gtag = (window as { gtag?: (...args: unknown[]) => void }).gtag
-    gtag?.('consent', 'update', {
-      ad_storage: granted,
-      ad_user_data: granted,
-      ad_personalization: granted,
-      analytics_storage: granted,
-    })
+  const close = (value: Consent) => {
+    localStorage.setItem(CONSENT_KEY, value)
+    applyConsent(value)
+    window.dispatchEvent(new Event(CONSENT_CHOICE_EVENT))
     setPhase('leaving')
   }
 
@@ -71,8 +82,9 @@ export default function CookieConsent() {
     >
       <p className="k-cookie__title">Cookies, plainly.</p>
       <p className="k-cookie__body">
-        We use them to understand how the site is used and to improve it.
-        Essential ones are always on; the rest are your call.
+        One is essential and remembers this choice. The rest are analytics —
+        they tell us how the site is used so we can improve it — and they are
+        yours to allow.
       </p>
       <div className="k-cookie__actions">
         <Button onClick={() => close('accepted')}>Accept</Button>

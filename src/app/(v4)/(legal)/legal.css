@@ -1,0 +1,121 @@
+/* Page-local rhythm for the three policies (privacy, terms, cookies).
+   Everything visual comes from tokens.css — this file only spaces the
+   one column. One file for the group, imported once by its layout. */
+
+.lg { position: relative; }
+
+/* the head clears the nav bar the way the work stub's hero does; the
+   composition is one column, so the top is the only generous space here */
+.lg-head {
+  padding-top: clamp(var(--s-10), 22vh, 16rem);
+  padding-bottom: var(--s-8);
+}
+.lg-eyebrow {
+  margin: 0 0 var(--s-5);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.lg-title { margin: 0; }
+.lg-updated { margin: var(--s-5) 0 0; }
+
+.lg-body {
+  max-width: var(--measure);
+  padding-block: var(--s-9);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-9);
+}
+
+.lg-intro { display: flex; flex-direction: column; gap: var(--s-4); }
+.lg-intro p { margin: 0; }
+
+.lg-sec { display: flex; flex-direction: column; gap: var(--s-4); }
+.lg-sec-title { margin: 0; }
+.lg-sec-body { display: flex; flex-direction: column; gap: var(--s-4); }
+.lg-sec-body p { margin: 0; }
+.lg-sec-body strong { font-weight: var(--w-medium); color: var(--text); }
+.lg-sec-body h3 {
+  margin: var(--s-3) 0 0;
+  font-size: var(--t-body);
+  font-weight: var(--w-medium);
+  letter-spacing: var(--ls-h3);
+}
+
+/* the house bullet: a short hairline, not a disc */
+.lg-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+.lg-list li {
+  position: relative;
+  padding-left: var(--s-6);
+}
+.lg-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: calc(0.5em * var(--lh-body));
+  width: var(--s-4);
+  height: var(--hair);
+  background: var(--hairline-strong);
+}
+
+/* an address or a definition block */
+.lg-card {
+  padding-left: var(--s-5);
+  border-left: var(--hair) solid var(--hairline-strong);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+.lg-card p { margin: 0; }
+.lg-row {
+  display: grid;
+  grid-template-columns: minmax(0, 11rem) minmax(0, 1fr);
+  gap: var(--s-4);
+  align-items: baseline;
+}
+.lg-row-name {
+  font-family: var(--font-sans);
+  font-size: var(--t-small);
+  font-weight: var(--w-medium);
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+.lg-row-desc { color: var(--text-muted); font-size: var(--t-small); line-height: var(--lh-body); }
+@media (max-width: 40rem) {
+  .lg-row { grid-template-columns: minmax(0, 1fr); gap: var(--s-1); }
+}
+
+/* links inside the copy: the page's underline, nothing louder */
+.lg-body a:not(.k-arrow-link):not(.k-btn) {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 0.1875rem;
+  text-decoration-color: var(--hairline-strong);
+  transition: text-decoration-color var(--d-instant) var(--e-settle);
+}
+.lg-body a:not(.k-arrow-link):not(.k-btn):hover,
+.lg-body a:not(.k-arrow-link):not(.k-btn):focus-visible {
+  text-decoration-color: currentColor;
+}
+
+/* the cookie-choice control (cookies page only) */
+.lg-choice {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  align-items: flex-start;
+}
+.lg-choice p { margin: 0; }
+
+.lg-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-5) var(--s-8);
+  padding-block: var(--s-8) var(--s-11);
+}

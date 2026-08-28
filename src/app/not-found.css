@@ -1,0 +1,32 @@
+/* The 404's rhythm. Everything visual is tokens.css; this is one column
+   that fills the first viewport so the footer sits below the fold. */
+
+.nf {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: clamp(var(--s-10), 22vh, 16rem) var(--s-11);
+}
+.nf-eyebrow {
+  margin: 0 0 var(--s-5);
+  letter-spacing: 0.18em;
+}
+.nf-title { margin: 0; }
+.nf-lead {
+  margin: var(--s-6) 0 0;
+  max-width: 46ch;
+  color: var(--text-muted);
+}
+.nf-actions {
+  margin-top: var(--s-8);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-6) var(--s-8);
+}
+.nf-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-4) var(--s-6);
+}

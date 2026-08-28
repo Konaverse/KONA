@@ -34,6 +34,7 @@
  */
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { gsap, EASE, DUR, REVEAL, rem } from '@/lib/motion-v4'
 import { SECTIONS } from '@/lib/site'
 
@@ -252,6 +253,7 @@ export default function ApertureMenu({
    * in either scroll direction; the open menu still pins it visible.
    * House pattern — gsap.ticker + position reads, no scroll listener.
    */
+  const pathname = usePathname()
   useEffect(() => {
     const bar = barRef.current
     if (!bar) return
@@ -297,7 +299,10 @@ export default function ApertureMenu({
       gsap.ticker.remove(update)
       window.removeEventListener('resize', onMeasure)
     }
-  }, [])
+    /* re-run per route: this component lives in the layout, so without the
+       dependency a visit that starts on /privacy keeps the hero-less free
+       zone after coming home (and vice versa) */
+  }, [pathname])
 
   const Arrow = () => (
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true">

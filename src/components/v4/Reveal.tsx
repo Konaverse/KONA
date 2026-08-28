@@ -38,22 +38,30 @@ export default function Reveal({
       el.classList.add('is-in', 'is-done')
       return
     }
+    /* WATCH THE MASK, NOT THE MASKED (2026-08-28). The masked variant
+       parks the element at translateY(110%) inside overflow:hidden, and
+       IntersectionObserver clips by overflow ancestors — so the element
+       it was told to watch had an intersection of exactly 0 for as long
+       as it was hidden, and 15% never came: the legal pages' h1 stayed
+       blank for good. The wrapper is never clipped; observe that. */
+    const watched =
+      masked && el.parentElement?.classList.contains('k-mask') ? el.parentElement : el
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
           if (!e.isIntersecting) return
-          e.target.classList.add('is-in')
+          el.classList.add('is-in')
           io.unobserve(e.target)
-          e.target.addEventListener('transitionend', () => e.target.classList.add('is-done'), {
+          el.addEventListener('transitionend', () => el.classList.add('is-done'), {
             once: true,
           })
         })
       },
       { threshold: 0.15 },
     )
-    io.observe(el)
+    io.observe(watched)
     return () => io.disconnect()
-  }, [])
+  }, [masked])
 
   // A callback ref, not the object form: an object ref is invariant in its
   // element type, so RefObject<HTMLElement> will not satisfy Ref<HTMLDivElement>

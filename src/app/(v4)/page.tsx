@@ -1,4 +1,5 @@
 import { Fragment } from 'react'
+import type { Metadata } from 'next'
 import HeroPortrait from '@/components/v4/HeroPortrait'
 import HeroPeel from '@/components/v4/HeroPeel'
 import ClaimEntrance from '@/components/v4/ClaimEntrance'
@@ -8,7 +9,41 @@ import type { SheetProject } from '@/components/v4/ProjectSheets'
 import WorkWheel from '@/components/v4/WorkWheel'
 import WorkDeck from '@/components/v4/WorkDeck'
 import Invitation from '@/components/v4/Invitation'
+import { SITE_URL } from '@/lib/site'
 import './home.css'
+
+/**
+ * THE ONE PAGE'S METADATA (2026-08-28). Until now `/` inherited the root
+ * layout's v3 defaults — "Premium Digital Agency", the old description, the
+ * old keyword list — so the first thing a search result or a link preview
+ * said about the new site was the old site's line. Title is `absolute`:
+ * the root template appends " | Konaverse", and the brand is already the
+ * first word. Description is the hero's paragraph, cut to a result's
+ * width. The OG image is the v4 hero (public/og-image.png, 1200x630).
+ */
+const HOME_TITLE = 'Konaverse — Build the website that will make you stand out'
+const HOME_OG =
+  'A web studio in Cyprus. Strategy, design, motion and engineering in one continuous process, for brands that have outgrown the template.'
+
+export const metadata: Metadata = {
+  title: { absolute: HOME_TITLE },
+  description:
+    'Konaverse is a web studio in Cyprus that designs and builds websites end to end — strategy, design, motion and engineering in one continuous process — for brands that have outgrown the template.',
+  alternates: { canonical: SITE_URL },
+  openGraph: {
+    title: HOME_TITLE,
+    description: HOME_OG,
+    url: SITE_URL,
+    type: 'website',
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: HOME_TITLE }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: HOME_TITLE,
+    description: HOME_OG,
+    images: ['/og-image.png'],
+  },
+}
 
 /**
  * §5's three featured projects — REAL WORK as of 2026-08-24 (user-supplied
