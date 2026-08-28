@@ -281,7 +281,7 @@ export default function WorkDeck({ projects }: { projects: SheetProject[] }) {
                       src={p.image}
                       srcSet={`${p.image.replace(/\.webp$/, '-1080.webp')} 1080w, ${p.image.replace(/\.webp$/, '-1600.webp')} 1600w, ${p.image} 2880w`}
                       sizes="92vw"
-                      alt=""
+                      alt={`${p.title} — website by Konaverse`}
                       decoding="async"
                       loading={i === 0 ? 'eager' : 'lazy'}
                     />

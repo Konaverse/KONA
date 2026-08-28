@@ -150,10 +150,28 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             'Website redesign',
             'SEO',
           ],
-          member: [
-            { '@type': 'Person', name: 'Konstantinos', jobTitle: 'Technical Architect & Co-Founder' },
-            { '@type': 'Person', name: 'Nabil', jobTitle: 'Creative Director & Co-Founder' },
-          ],
+          founder: [{ '@id': `${SITE_URL}/#konstantinos` }, { '@id': `${SITE_URL}/#nabil` }],
+        }} />
+        {/* the founders as entities of their own, tied both ways to the
+            organisation (SEO plan 1.3); sameAs are the user's own LinkedIn
+            URLs (2026-08-28) — a wrong one splits the entity, so no guesses */}
+        <JsonLd data={{
+          '@context': 'https://schema.org',
+          '@type': 'Person',
+          '@id': `${SITE_URL}/#konstantinos`,
+          name: 'Konstantinos Kyprianou',
+          jobTitle: 'Technical Architect & Co-Founder',
+          worksFor: { '@id': `${SITE_URL}/#organization` },
+          sameAs: ['https://www.linkedin.com/in/kon-kyprianou-1011/'],
+        }} />
+        <JsonLd data={{
+          '@context': 'https://schema.org',
+          '@type': 'Person',
+          '@id': `${SITE_URL}/#nabil`,
+          name: 'Nabil Al Jbawi',
+          jobTitle: 'Creative Director & Co-Founder',
+          worksFor: { '@id': `${SITE_URL}/#organization` },
+          sameAs: ['https://www.linkedin.com/in/nabil-al-jbawi-257517291/'],
         }} />
         <JsonLd data={{
           '@context': 'https://schema.org',

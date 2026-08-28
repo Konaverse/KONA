@@ -378,7 +378,7 @@ export default function WorkWheel({ projects }: { projects: SheetProject[] }) {
                       src={p.image}
                       srcSet={`${p.image.replace(/\.webp$/, '-1600.webp')} 1600w, ${p.image} 2880w`}
                       sizes="60vw"
-                      alt=""
+                      alt={`${p.title} — website by Konaverse`}
                       decoding="async"
                     />
                   )}
