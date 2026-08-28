@@ -15,9 +15,9 @@ import { gsap, EASE, DUR, rem } from '@/lib/motion-v4'
  *
  * ── the beats ──────────────────────────────────────────────────────────────
  * `pre`  pills at zero width, the line reads as pure text on three lines.
- * The ENTRANCE (see ENTER) stacks those lines on the middle one, rises them
- * through line masks, parts them to their rows, then the pills sew in (into
- * ENTRY), and from there the title walks at random through six
+ * The ENTRANCE (see ENTER) rises each of those lines straight up into place
+ * through its own mask, then the pills sew in (into ENTRY), and from there
+ * the title walks at random through six
  * COMPOSITIONS — six different, hand-solved ways this sentence can break
  * around three pills. Each hold is 2.6-4.4s, the order is a shuffled bag (no
  * repeats), and every pill takes a small random width jitter on top. Same
@@ -143,30 +143,24 @@ const ENTRY = COMPS[1]
 
 /** gap between flow items, kept in sync with .hw-w's margin-right */
 const GAP = '0.26em'
-/** THE ENTRANCE (2026-08-26, user: after the video has formed its shape,
- *  "all the text will appear in the middle line as a hide and uprise
- *  reveal, everything stacked on top of each other, and after that the
- *  first text will move to its line and the other to its below line.
- *  After that, the images will appear."). The three lines are laid out
- *  where they will rest, then every word is pulled onto the MIDDLE line's
- *  y and rises into view through its own line-box mask — the three lines
- *  land on one another, line by line, word by word. Then the outer lines
- *  part: the first climbs to its row, the last drops to its row, in
- *  lockstep (settle). A beat later the pills sew in (ENTRY), which is the
- *  same FLIP the walk uses. Sequenced, never overlapped — each act starts
- *  on still text. */
+/** THE ENTRANCE (2026-08-26 evening, user: the stack-and-part was "really
+ *  terrible … I want something more elegant. Maybe just a reveal rise up on
+ *  each line straight up. Trying to be always unique will take you
+ *  nowhere."). The three lines are laid out where they rest and each one
+ *  rises straight up into place through its own line-box mask — one long
+ *  glass ease, the lines following each other down the sentence. Nothing
+ *  travels between lines. A beat later the pills sew in (ENTRY), which is
+ *  the same FLIP the walk uses. The START is the gate below (`k-hero-open`),
+ *  untouched — the user: "the timing that it starts is perfect".
+ *  (The stacked-on-the-middle-line entrance it replaces is in the
+ *  choreography doc's record, 2026-08-26 desktop touch-ups.) */
 const ENTER = {
-  /** one word's masked rise */
-  reveal: 0.85,
-  /** lines land one after another, and words within a line cascade */
-  lineStep: 0.14,
-  wordStep: 0.035,
-  /** the split starts this far into the LAST word's rise (overlap, not a wait) */
-  splitLead: 0.55,
-  /** the outer lines' climb / drop */
-  split: 0.85,
+  /** one line's masked rise */
+  reveal: 1.0,
+  /** the lines lift one after another */
+  lineStep: 0.12,
   /** the pause on the three still lines before the pills sew in */
-  beat: 0.25,
+  beat: 0.3,
 }
 /** dwell on a composition before the next one, randomised per beat */
 const HOLD_MIN = 2600
@@ -399,14 +393,14 @@ export default function HeroTitle() {
       return tl
     }
 
-    // ---- THE ENTRANCE — see ENTER. Runs as one frozen FLIP: the flow is
-    // measured in its pre layout (the three lines), frozen to absolute boxes,
-    // and every word is placed on its own line's x but the middle line's y.
-    // Each word rises through its own line box — yPercent 100→0 with a
+    // ---- THE ENTRANCE — see ENTER. Nothing is frozen and nothing changes
+    // line: the flow stays in its pre layout (the three lines) and each
+    // word rises through its own line box in place — yPercent 100→0 with a
     // bottom clip-path inset 100%→0% on the same ease, which is exactly a
     // static mask at the line (the visible part of a box translated down by
-    // (1-p)·H is its top p·H). The outer lines then travel to their rows,
-    // the flow unfreezes on the resting pre layout, and the sew follows. ----
+    // (1-p)·H is its top p·H). Every word on a line shares one start, so
+    // the line lifts as one; the lines follow each other down the
+    // sentence, and the sew follows the last. ----
     let sewCall: gsap.core.Tween | null = null
     const sew = () => {
       if (!live) return
@@ -423,78 +417,33 @@ export default function HeroTitle() {
     }
     const enter = () => {
       if (running) running.progress(1).kill()
-      const first = items.map((el) => el.getBoundingClientRect())
       const rows = readRows()
-      const base = flow.getBoundingClientRect()
-      /* the y of each line, off the words (the pills are zero-width here) */
-      const rowTop: number[] = []
-      const rowCount: number[] = []
-      words.forEach((el) => {
-        const i = items.indexOf(el)
-        const r = rows[i]
-        if (rowTop[r] === undefined) {
-          rowTop[r] = first[i].top - base.top
-          rowCount[r] = 0
-        }
-      })
-      const mid = Math.floor((rowTop.length - 1) / 2)
-
-      flow.style.height = `${flow.offsetHeight}px`
-      flow.classList.add('is-flip')
-
       const tl = gsap.timeline()
-      const splits: Array<{ el: HTMLElement; y: number }> = []
-      let lastAt = 0
-      items.forEach((el, i) => {
-        const f = first[i]
-        const x = f.left - base.left
-        const y = f.top - base.top
-        if (!el.classList.contains('hw-w')) {
-          gsap.set(el, { x, y, width: f.width, height: f.height })
-          return
-        }
-        const r = rows[i]
-        const shift = rowTop[mid] - rowTop[r]
-        gsap.set(el, { x, y: y + shift, width: f.width, height: f.height, opacity: 1 })
-        const at = r * ENTER.lineStep + rowCount[r]++ * ENTER.wordStep
-        lastAt = Math.max(lastAt, at)
+      words.forEach((el) => {
         tl.fromTo(
           el,
-          { yPercent: 100, clipPath: 'inset(0px 0px 100% 0px)' },
+          { opacity: 1, yPercent: 100, clipPath: 'inset(0px 0px 100% 0px)' },
           {
             yPercent: 0,
             clipPath: 'inset(0px 0px 0% 0px)',
             duration: ENTER.reveal,
             ease: EASE.glass,
           },
-          at,
+          rows[items.indexOf(el)] * ENTER.lineStep,
         )
-        if (shift !== 0) splits.push({ el, y })
-      })
-      const splitAt = lastAt + ENTER.reveal * ENTER.splitLead
-      splits.forEach(({ el, y }) => {
-        tl.to(el, { y, duration: ENTER.split, ease: EASE.settle }, splitAt)
       })
 
       running = tl
       tl.eventCallback('onComplete', () => {
         running = null
-        flow.classList.remove('is-flip')
-        flow.style.height = ''
         /* opacity stays inline at 1: the flow is still `is-pre` (words 0) */
-        gsap.set(items, { clearProps: 'transform,width,height,clipPath' })
+        gsap.set(words, { clearProps: 'transform,clipPath' })
         sewCall = gsap.delayedCall(ENTER.beat, sew)
       })
       return tl
     }
     /** the entrance's length, for the walk's first hold */
-    const ENTER_TOTAL =
-      2 * ENTER.lineStep +
-      3 * ENTER.wordStep +
-      ENTER.reveal * ENTER.splitLead +
-      ENTER.split +
-      ENTER.beat +
-      DUR.cinema
+    const ENTER_TOTAL = 2 * ENTER.lineStep + ENTER.reveal + ENTER.beat + DUR.cinema
 
     // ---- the walk: a shuffled bag of compositions, never twice in a row ----
     let bag: Comp[] = []

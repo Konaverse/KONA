@@ -251,6 +251,20 @@ The consequences, section by section below: **section 3 states problems as text 
 > Filmed headless at 1536x730: cover 0.6–1.2s, carve 1.5–2.4s, stack 2.7–3.3s, split
 > 3.6–3.9s, pills 4.5–4.8s.
 
+> **THE HEADLINE RISES STRAIGHT UP — 2026-08-26 evening, user: the stack-and-part above is
+> "really terrible. The timing that it starts is perfect. But I want something more elegant,
+> something different. Maybe just a reveal rise up on each line straight up … I'm trying to be
+> elegant and premium. Trying to be always unique will take you nowhere."** Acts (2) and (3)
+> are gone. The gate is untouched — `k-hero-open` still starts it — and on it the three lines
+> rise straight up into place: the flow stays in its pre layout (no freeze, no FLIP, nothing
+> travels between lines), every word rises through its own line-box mask (yPercent 100→0 with
+> the bottom clip-path inset 100→0% on one ease — the same static-mask identity as before),
+> every word on a line sharing one start so the line lifts as one; lines 0.12s apart, 1.0s
+> each on `glass`. A 0.3s beat, then act (4) — the pills sew into `wide-a` — exactly as
+> before, `k-hero-sew` and the copy's rise with it. Constants in HeroTitle's `ENTER` (now
+> three: reveal, lineStep, beat). The stack's record above stays as the record of what was
+> tried. Applies at every width (rows are read off the live layout).
+
 > **THE SHAPE MORPH WIDENS ONLY — 2026-08-26, user: "right now it expands from both
 > height and width. It should only expand on width."** The staircase is two rounded blocks
 > whose y-ranges overlap (top-right ends at 190/375, bottom-left starts at 155/375). The
