@@ -54,21 +54,21 @@ export const metadata: Metadata = {
  *
  * hrefs point at the LIVE sites until case-study routes exist — the
  * choreography wants each sheet linking to its own case study eventually.
- * YEARS: Lumière states 2026 in its own footer; the other two are the
- * user's to confirm (marked provisional, not scraped).
+ * YEARS confirmed by the user 2026-08-28: Tzankatian 2026, Los Santos
+ * 2025, Lumière 2026.
  */
 const FEATURED: SheetProject[] = [
   {
     title: 'Dimitris Tzankatian',
     line: 'A videographer’s site that opens like his showreel — every frame with a purpose.',
-    year: '2025', // provisional — user to confirm
+    year: '2026',
     href: 'https://dtzankatian.com',
     image: '/work/tzankatian.webp',
   },
   {
     title: 'Los Santos Barbershop',
     line: 'Nicosia’s barbershop set in type as sharp as the fades.',
-    year: '2024', // provisional — user to confirm
+    year: '2025',
     href: 'https://lossantosbarbers.com',
     image: '/work/lossantos.webp',
   },
