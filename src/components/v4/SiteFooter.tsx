@@ -177,7 +177,7 @@ export default function SiteFooter() {
           <div className="ft-id">
             <img
               className="ft-logo"
-              src="/About/KonaLogoNoBg.png"
+              src="/brand/mark.png"
               alt="Konaverse"
               width="44"
               height="44"

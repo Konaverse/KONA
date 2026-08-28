@@ -4,17 +4,15 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Konaverse',
     short_name: 'Konaverse',
-    description: 'Premium digital agency crafting web experiences and cinematic productions.',
+    description:
+      'A web studio in Cyprus that designs and builds websites end to end — strategy, design, motion and engineering in one continuous process.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#0a0a0a',
-    theme_color: '#0a0a0a',
+    background_color: '#FFFFFF',
+    theme_color: '#FFFFFF',
     icons: [
-      {
-        src: '/icon.png',
-        sizes: 'any',
-        type: 'image/png',
-      },
+      { src: '/icon.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+      { src: '/apple-icon.png', sizes: '180x180', type: 'image/png' },
     ],
   }
 }

@@ -334,7 +334,10 @@ export default function ApertureMenu({
       </noscript>
       {/* ---- persistent chrome. Contact never hides behind the burger. ---- */}
       <div ref={barRef} className="k-nav-bar">
-        <a href="/" className="k-nav-brand">{brand}</a>
+        {/* the mark (user's logo, 2026-08-28); the name is its alt */}
+        <a href="/" className="k-nav-brand">
+          <img className="k-nav-mark" src="/brand/mark.png" alt={brand} width="552" height="512" />
+        </a>
 
         <a href={contactHref} className="k-nav-contact">
           <NavLabel text={contactLabel} />
@@ -361,7 +364,9 @@ export default function ApertureMenu({
         aria-label={`${brand} menu`}
       >
         <div className="k-aperture__bar">
-          <span data-k-chrome className="k-nav-brand">{brand}</span>
+          <span data-k-chrome className="k-nav-brand">
+            <img className="k-nav-mark" src="/brand/mark.png" alt={brand} width="552" height="512" />
+          </span>
           <button ref={closeRef} type="button" data-k-chrome className="k-aperture__close" onClick={closeMenu}>
             Close
             <span className="k-aperture__x" aria-hidden="true">

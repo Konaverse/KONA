@@ -130,7 +130,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           '@id': `${SITE_URL}/#organization`,
           name: SITE_NAME,
           url: SITE_URL,
-          logo: { '@type': 'ImageObject', url: `${SITE_URL}/About/KonaLogoNoBg.png` },
+          logo: { '@type': 'ImageObject', url: `${SITE_URL}/icon.png`, width: 512, height: 512 },
           image: `${SITE_URL}/og-image.png`,
           description:
             'A web studio in Cyprus that designs and builds websites end to end — strategy, design, motion and engineering in one continuous process.',

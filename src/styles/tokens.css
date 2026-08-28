@@ -1571,9 +1571,11 @@ html.lenis, html.lenis body { height: auto; }
 }
 .k-nav-brand {
   margin-right: auto;
-  font-weight: var(--w-semi); font-size: var(--t-small);
-  letter-spacing: -0.02em; color: var(--text); text-decoration: none;
+  display: block; line-height: 0;
+  color: var(--text); text-decoration: none;
 }
+/* the mark (2026-08-28): height only, the PNG keeps its own ratio */
+.k-nav-mark { display: block; height: 1.75rem; width: auto; }
 .k-nav-contact {
   font-size: var(--t-small); color: var(--text-muted); text-decoration: none;
   transition: color var(--d-instant) var(--e-settle);
@@ -1992,6 +1994,9 @@ html.lenis, html.lenis body { height: auto; }
   width: 2.75rem;
   height: 2.75rem;
   object-fit: contain;
+  /* one asset for both grounds: the mark is ink on transparent, the
+     footer is dark, so it is inverted here (2026-08-28) */
+  filter: invert(1);
 }
 .ft-tagline {
   margin: var(--s-5) 0 0;
