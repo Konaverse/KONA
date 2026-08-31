@@ -6,7 +6,7 @@ import ClaimEntrance from '@/components/v4/ClaimEntrance'
 import SolveCredits from '@/components/v4/SolveCredits'
 import ServiceCards from '@/components/v4/ServiceCards'
 import type { SheetProject } from '@/components/v4/ProjectSheets'
-import WorkWheel from '@/components/v4/WorkWheel'
+import WorkRows from '@/components/v4/WorkRows'
 import WorkDeck from '@/components/v4/WorkDeck'
 import Invitation from '@/components/v4/Invitation'
 import { SITE_URL } from '@/lib/site'
@@ -167,21 +167,19 @@ export default function HomePage() {
           the tree, unimported, for comparison. */}
       <ServiceCards />
 
-      {/* §5 — TWO FORMS, ONE LANDMARK (2026-08-26). Desktop: THE WHEEL
-          (WorkWheel — the user's wireframe: one pinned viewport, the
-          names on a wheel, one window that FOLDS between captures with
-          the hero's fold (fold-gl.ts), description resolving under it,
-          the title carrying the captures as an inline tile-pill; the
-          capture rests under a veil that lifts on hover; replaced the
-          page-turn, ProjectSheets, which still renders /work). Phones:
-          THE DECK (WorkDeck — the same title, each project a card, the
-          cards stacking on scroll on the pitch deck's mechanic; replaced
-          the fold deck, WorkFold, git 8f46d2b). CSS shows exactly one;
-          each driver returns early
+      {/* §5 — TWO FORMS, ONE LANDMARK. Desktop: THE ROWS (WorkRows,
+          2026-08-31, the user's final mockups — the IMMERSIVENESS /
+          THROUGH — WORK head arriving word by word, then three rows
+          pinned in one viewport, the expanded project trading its
+          height to the next through wave-gl.ts's jelly resize;
+          replaced the wheel, WorkWheel, which stays in the tree
+          unimported). Phones: THE DECK (WorkDeck — each project a
+          card, the cards stacking on scroll on the pitch deck's
+          mechanic). CSS shows exactly one; each driver returns early
           when it is the hidden one. The wrapper carries `#work` so the
           nav anchor lands on whichever is displayed. */}
       <div id="work">
-        <WorkWheel projects={FEATURED} />
+        <WorkRows projects={FEATURED} />
         <WorkDeck projects={FEATURED} />
       </div>
 

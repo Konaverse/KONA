@@ -89,17 +89,18 @@ const FLOW: Slot[] = [
   { pill: 'c' },
 ]
 
-/** PLACEHOLDER art (user: "use whatever images you want") — the same
- *  moody-blue stand-in set §5 uses, lifted (not bleached) so the pills stay in
- *  the same palette as the window behind them. Picked for silhouette at pill
- *  height, and none of them is the hero portrait: a misty skyline,
- *  a lit corridor, an arcade of light shafts. `x` slides each plate
- *  to the stretch of picture that pill should open on, and must satisfy
- *  |x| + that pill's widest composition <= 13em (see .hw-pill img). */
+/** THE PLATES (user-supplied 2026-08-31, generated off the three dark-grain
+ *  prompts — off-topic on purpose): a dune ridge carved by low sun, a
+ *  long-exposure sea with a silver horizon, smoke drifting through a black
+ *  void. All 21:9, action crossing mid-frame, which is exactly the band the
+ *  letterbox crop keeps. Encoded to /home/inline-*.webp (the PNG masters
+ *  stay beside them). `x` slides each plate to the stretch of picture that
+ *  pill should open on, and must satisfy |x| + that pill's widest
+ *  composition <= 13em (see .hw-pill img). */
 const ART: Record<PillKey, { src: string; x: string }> = {
-  a: { src: '/work/fog.webp', x: '-0.2em' },
-  b: { src: '/work/corridor.webp', x: '-3.1em' },
-  c: { src: '/work/orb.webp', x: '-0.6em' },
+  a: { src: '/home/inline-1.webp', x: '-0.4em' },
+  b: { src: '/home/inline-2.webp', x: '-1.8em' },
+  c: { src: '/home/inline-3.webp', x: '-0.5em' },
 }
 
 type Widths = Record<PillKey, number>

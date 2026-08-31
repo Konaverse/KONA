@@ -106,6 +106,7 @@ export default function WorkDeck({ projects }: { projects: SheetProject[] }) {
     if (n < 2) return
 
     const title = root.querySelector<HTMLElement>('.wd-title')
+    const stage = root.querySelector<HTMLElement>('.wd-stage')
     const deck = root.querySelector<HTMLElement>('.wd-deck')
     const slots = Array.from(root.querySelectorAll<HTMLElement>('.wd-slot'))
     const caps = slots.map((s) => s.querySelector<HTMLElement>('.wd-cap'))
@@ -121,21 +122,33 @@ export default function WorkDeck({ projects }: { projects: SheetProject[] }) {
     /* where a card waits — fully below the fold with air to spare, derived
        from the slot's real position rather than a fixed percentage (the
        pitch deck's lesson: a fixed 112% leaves a strip of the next card
-       showing at some sizes) */
+       showing at some sizes).
+
+       MEASURED TRANSFORM-FREE AND PIN-FREE (2026-08-31). This used to read
+       getBoundingClientRect against the section — true at mount, garbage
+       once pinned: on a phone the url bar fires resize MID-SCROLL, and a
+       rect measured through the slot's own transform and the pin's travel
+       turned waitPct wrong or negative, stacking the waiting cards over
+       the front one ("the cards get all messy" on scroll-back). Offsets
+       against the sticky stage ignore transforms and pin state, and the
+       stage's 100svh box is also the bar-stable viewport number. */
     let waitPct = 130
+    let stageH = window.innerHeight
     const measure = () => {
-      const r = slots[0].getBoundingClientRect()
-      /* the slot's top RELATIVE TO THE SECTION is where the card sits once
-         the stage is pinned at the viewport's top (measured against the
-         viewport instead, at mount the section is still far below the fold
-         and the number comes out negative — the cards then arrive from
-         above); from there it needs (viewport − slotTop) / cardHeight to
-         clear the bottom edge, plus air */
-      const slotTop = r.top - root.getBoundingClientRect().top
-      waitPct = ((window.innerHeight - slotTop) / Math.max(r.height, 1)) * 100 + 8
+      const slotTop = deck.offsetTop + slots[0].offsetTop
+      const h = Math.max(slots[0].offsetHeight, 1)
+      stageH = stage ? stage.offsetHeight : window.innerHeight
+      waitPct = ((stageH - slotTop) / h) * 100 + 14
+    }
+    const onResize = () => {
+      measure()
+      /* the url bar's resize must re-place every card with the new numbers
+         even while t has not changed */
+      lastT = -1
+      lastA = -1
     }
     measure()
-    window.addEventListener('resize', measure)
+    window.addEventListener('resize', onResize)
 
     let lastA = -1
     let lastT = -1
@@ -144,7 +157,9 @@ export default function WorkDeck({ projects }: { projects: SheetProject[] }) {
     const update = () => {
       const rect = root.getBoundingClientRect()
       const vh = window.innerHeight
-      const span = rect.height - vh
+      /* span against the stage's svh box, not innerHeight: the url bar
+         growing and shrinking mid-scroll must not re-time the deck */
+      const span = rect.height - stageH
       if (span <= 0) return
       if (rect.bottom < -50 || rect.top > vh + 50) return
 
@@ -218,7 +233,7 @@ export default function WorkDeck({ projects }: { projects: SheetProject[] }) {
     return () => {
       cancelAnimationFrame(rafId)
       gsap.ticker.remove(update)
-      window.removeEventListener('resize', measure)
+      window.removeEventListener('resize', onResize)
       root.classList.remove('is-scrub')
       root.style.height = ''
       if (title) {

@@ -520,14 +520,16 @@
   white-space: nowrap;
 }
 .hw-w { margin-right: 0.26em; }
-/* the voices (user-directed 2026-08-18): grey words are LIGHT grey and LIGHT
-   weight — deliberately paler than --text-muted, display type only.
-   Was a hand-mixed #9aa6ae; the pivot puts it on the ramp at n-5, which is
-   the same value to the eye and inverts with the polarity instead of
-   sitting outside the system. */
-.hw-grey { color: var(--n-5); }
-.hw-ink  { color: var(--text); }
-.hw-key  { color: var(--text); font-weight: var(--w-semi); }
+/* ONE VOICE (2026-08-31, user: "all the same weight and color"). The
+   grey / ink / semibold split of 2026-08-18 is retired everywhere — the
+   phone dropped it 2026-08-26, the desktop follows. The classes stay in
+   the markup (FLOW's voices) so the split can be re-inked in one rule. */
+.hw-grey,
+.hw-ink,
+.hw-key {
+  color: var(--text);
+  font-weight: inherit;
+}
 
 /* the pills. Width is written by HeroTitle (inline, in em); --pw-rest carries
    the resting width so CSS alone (no-JS) can hold the resting composition.
@@ -546,12 +548,15 @@
   margin-right: 0.26em;
   overflow: hidden;
   border-radius: var(--r-md);
-  background: #e4ecf1;
-  /* material, not a hole: a hairline inside the crop and a shadow tinted to
-     the page's ink, never black */
+  /* DARK GRAIN (2026-08-31, user: "make all the images inline the heading
+     dark grain") — the pills flip to the dark polarity: near-black ground,
+     the plates pulled to a dark mono grade, the grain thickened, and the
+     dark surface's lit top edge instead of the ink-tinted hairline. */
+  background: var(--n-10);
   box-shadow:
-    inset 0 0 0 1px rgb(24 40 51 / 0.07),
-    0 0.625rem 1.5rem -1rem rgb(24 40 51 / 0.45);
+    inset 0 1px 0 rgb(255 255 255 / 0.16),
+    inset 0 0 0 1px rgb(255 255 255 / 0.08),
+    0 0.625rem 1.5rem -1rem rgb(24 40 51 / 0.55);
 }
 /* THE PLATE. A fixed 13.5em picture pinned left, so growing the pill UNVEILS
    more of it instead of un-squashing it — the pill opens like an aperture.
@@ -566,13 +571,12 @@
   max-width: none;
   height: 100%;
   object-fit: cover;
-  /* The pills stay in the HERO'S palette, not bleached out of it: the big
-     window behind them is deep blue, and three grey chips read as placeholders
-     next to it. A CSS brightness() cannot lift a black — it multiplies — so
-     the plate is held at 88% over the pill's pale ground, which lifts the
-     shadows the way a print does while the blue survives. */
-  opacity: 0.88;
-  filter: saturate(1.05) brightness(1.18) contrast(0.92);
+  /* the dark grade, relaxed for the authored plates (2026-08-31): the
+     inline-*.webp set is generated dark mono already, so the heavy push
+     that turned the old blue stand-ins to film would crush these to
+     black. Mono stays as a guard, the tone is theirs. */
+  opacity: 0.95;
+  filter: grayscale(1) brightness(0.92) contrast(1.05);
   animation: hw-plate 34s ease-in-out infinite alternate;
 }
 /* the plate breathes. Kept small, and scaling UP with it, so the drift can
@@ -582,13 +586,14 @@
   to   { transform: translate3d(-0.25em, 0, 0) scale(1.06); }
 }
 /* film grain over the plate: the one texture that makes a flat crop read as
-   material. Static SVG noise, no GPU cost beyond one composited layer. */
+   material. Static SVG noise, no GPU cost beyond one composited layer —
+   thickened for the dark grade (grain is the point of a dark plate). */
 .hw-pill::after {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.3;
+  opacity: 0.5;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='90' height='90' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
 }
@@ -692,15 +697,8 @@
     width: auto;
     font-size: var(--t-h1);
   }
-  /* ONE VOICE (2026-08-26, user): the grey / ink / semibold split is a
-     desktop composition; the phone reads the sentence in one weight and
-     one colour */
-  .hw-grey,
-  .hw-ink,
-  .hw-key {
-    color: var(--text);
-    font-weight: inherit;
-  }
+  /* (the one-voice rule that lived here moved up to the base styles
+     2026-08-31 — the user retired the voice split on desktop too) */
   /* THE PILLS ON A PHONE (2026-08-26, user: "too laggy"). A beat tweens the
      pill's WIDTH, and everything painted from that width is re-done every
      frame: the blurred drop shadow (a raster the size of the pill plus its
@@ -1528,6 +1526,208 @@
 .ww.is-scrub .ww-desc {
   grid-area: 1 / 1;
   will-change: transform, opacity, filter;
+}
+
+/* ============================================================
+   §5 ON DESKTOP — THE ROWS (WorkRows.tsx, 2026-08-31, the
+   user's final mockups: Projects section/MacBook Pro 16_ -
+   8..11.png; replaced the wheel, which stays in the tree).
+   ------------------------------------------------------------
+   The head — IMMERSIVENESS / THROUGH — WORK — in flow, words
+   arriving through the house mask, rising away with the
+   scroll. Then the pin: three rows under hairlines in one
+   viewport; the expanded row's capture large with its text
+   block pushed to the right column, the others collapsed to
+   strips. The driver (one function of t) moves hairlines,
+   names, text blocks and captures in lockstep; mid-move the
+   two changing captures are drawn by wave-gl.ts — jelly, not
+   a rigid resize. The markup is the FALLBACK: plain rows in
+   flow, every word real DOM text. `.is-scrub` pins.
+   ============================================================ */
+.wr {
+  position: relative;
+  background: var(--n-11);
+  color: var(--text);
+  overflow: clip;
+  --wr-hairline: rgb(255 255 255 / 0.16);
+}
+@media (max-width: 57.5rem) {
+  .wr { display: none; }
+}
+
+/* ---------- the head ---------- */
+/* tighter above (the services hand over sooner), more breath below before
+   the rows (user, 2026-08-31) */
+.wr-head {
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding: calc(var(--section-y) * 0.55) var(--page-pad) clamp(4.5rem, 13vh, 8rem);
+}
+.wr-title {
+  margin: 0;
+  display: grid;
+  gap: 0.26em;
+  font-size: var(--t-display);
+  font-weight: var(--w-light);
+  line-height: var(--lh-display);
+  letter-spacing: var(--ls-display);
+  text-transform: uppercase;
+  color: var(--text);
+}
+/* the second line: THROUGH at the head, WORK held out at the mockup's gap */
+.wr-l2 {
+  display: flex;
+  justify-content: space-between;
+  width: 88%;
+}
+.wr-w { display: inline-block; }
+/* the words rise one after another — the mask crops, the delay staggers */
+.wr-title .k-reveal { transition-delay: calc(var(--i, 0) * 130ms); }
+
+/* ---------- the pinned rows ---------- */
+.wr-stage {
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding: 0 var(--page-pad) var(--s-9);
+}
+.wr.is-scrub .wr-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  box-sizing: border-box;
+  padding-block: var(--s-6);
+}
+.wr-rows {
+  position: relative;
+}
+.wr.is-scrub .wr-rows { height: 100%; }
+
+/* the fallback row: a plain strip — thumb, text, name — under a hairline */
+.wr-row {
+  display: grid;
+  grid-template-columns: minmax(13rem, 19rem) minmax(0, 1fr) auto;
+  grid-template-areas: 'thumb body name';
+  gap: var(--s-6);
+  align-items: start;
+  padding-block: var(--s-6);
+  border-top: 1px solid var(--wr-hairline);
+}
+/* pinned: the row dissolves (its border with it) and the movers go to the
+   driver — absolutely placed, transform/opacity via variables. --x/--y are
+   the choreography, --ey/--eo the arrival; they compose. */
+.wr.is-scrub .wr-row { display: contents; }
+.wr-hair { display: none; }
+.wr.is-scrub .wr-hair {
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: var(--wr-hairline);
+  transform: translate3d(0, var(--y, 0px), 0);
+  opacity: var(--eo, 1);
+  will-change: transform, opacity;
+}
+/* the side column: name over year, right-aligned — ONE mover. --wo is the
+   ink-follow (the row that owns the screen at 1, the others receded). */
+.wr-side {
+  grid-area: name;
+  display: grid;
+  gap: var(--s-1);
+  justify-items: end;
+  justify-self: end;
+  text-align: right;
+}
+.wr.is-scrub .wr-side {
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 3;
+  transform: translate3d(0, calc(var(--y, 0px) + var(--ey, 0px)), 0);
+  opacity: calc(var(--wo, 1) * var(--eo, 1));
+  will-change: transform, opacity, filter;
+}
+.wr-name {
+  margin: 0;
+  font-weight: var(--w-light);
+  color: var(--text);
+  white-space: nowrap;
+}
+.wr-year {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.wr-thumb {
+  grid-area: thumb;
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r-md);
+  overflow: clip;
+  background: var(--n-10);
+  /* Safari clips a composited child to a radius only with the clip stated */
+  clip-path: inset(0 round var(--r-md));
+  -webkit-tap-highlight-color: transparent;
+}
+.wr.is-scrub .wr-thumb {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  aspect-ratio: auto;
+  transform: translate3d(0, calc(var(--y, 0px) + var(--ey, 0px)), 0);
+  opacity: var(--eo, 1);
+  will-change: transform, opacity;
+}
+.wr-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 0;
+}
+/* mid-move the capture's pixels belong to the canvas — opacity, NOT
+   visibility: an opacity-0 element still hit-tests, so the hand's hover
+   (and the link) survive the DOM→GL swap. visibility:hidden fired
+   pointerleave the moment the rings began and the hover flapped off
+   (2026-08-31). Scoped under .is-scrub to outrank the --eo opacity. */
+.wr.is-scrub .wr-thumb.is-gl { opacity: 0; }
+.wr-thumb:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
+.wr-body {
+  grid-area: body;
+  display: grid;
+  gap: var(--s-4);
+  justify-items: start;
+  max-width: 40ch;
+}
+.wr.is-scrub .wr-body {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  width: max-content;
+  transform: translate3d(var(--x, 0px), calc(var(--y, 0px) + var(--ey, 0px)), 0);
+  opacity: calc(var(--wo, 1) * var(--eo, 1));
+  will-change: transform, opacity, filter;
+}
+.wr-line {
+  margin: 0;
+  color: var(--text-muted);
+  max-width: 40ch;
+}
+.wr-gl {
+  display: none;
+}
+.wr.is-scrub .wr-gl {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
 }
 
 /* ============================================================
