@@ -1,6 +1,6 @@
 # Konaverse SEO Master Plan
 
-Living document. **Version 2, 17 Aug 2026.** Updated from the Technical SEO & AI Search research report (Aug 2026). All claims below marked [verified] trace to that report's primary sources (Google Search Central docs, OpenAI/Anthropic/Perplexity crawler docs, large-scale citation studies).
+Living document. **Version 2.3, 4 Sep 2026.** Updated from the Technical SEO & AI Search research report (Aug 2026). All claims below marked [verified] trace to that report's primary sources (Google Search Central docs, OpenAI/Anthropic/Perplexity crawler docs, large-scale citation studies).
 Companion to `konaverse-site-architecture.md`. That doc says what pages exist. This doc says how they win, in what order, and how we measure it.
 
 Rule for this doc: every item is either a decision, a research task, or an action. Nothing vague. When we learn something from real data, it gets logged in the changelog at the bottom and the plan gets edited, not appended.
@@ -57,14 +57,14 @@ Buyers do not search "premium web design" in meaningful volume. Premium is how t
 ## Phase 0 — Research and setup (start now, before the redesign ships)
 
 ### Accounts and infrastructure
-- [ ] Google Search Console: verify kona-verse.com (domain property). Starts collecting baseline query data on the old site immediately.
-- [ ] **Check for the Generative AI performance report** in GSC (launched June 2026, rolling out gradually). Shows AI Overviews / AI Mode impressions per page, country, device. Impressions only for now, no clicks or queries. [verified]
+- [x] Google Search Console: sc-domain:kona-verse.com is verified and has data since 2026-02-21 (73 clicks / 253 impressions in 16 months, all brand) — `docs/keyword-research/gsc-2026-09-04.md`
+- [x] **Generative AI performance report** is live on the property: 12 impressions since 2026-06-30 (/ ×10, /pricing ×4). **Check for it** in GSC (launched June 2026, rolling out gradually). Shows AI Overviews / AI Mode impressions per page, country, device. Impressions only for now, no clicks or queries. [verified]
 - [ ] Bing Webmaster Tools: verify, submit sitemap, import from GSC. Bing's index feeds Copilot and much of ChatGPT Search. [verified]
 - [ ] **Bing Places for Business** alongside Google Business Profile. NEW: Bing local matters because of Copilot. [verified]
 - [ ] Google Business Profile: claim, categorize as Website Designer, fill every field, real photos, service area. Highest-leverage single action for "Cyprus" queries, in both Google local AND AI answers.
 - [ ] GA4 (or equivalent) with **AI-referral segments**: filter referrers chatgpt.com, perplexity.ai, copilot/bing, gemini. This is the click side that GSC's AI report doesn't show yet. [verified]
-- [ ] Google Keyword Planner access (free via the ads account).
-- [ ] Ahrefs Webmaster Tools (free tier).
+- [x] Google Keyword Planner access (free via the ads account). — used 2026-09-04; account 502-774-5339 has a payment-method warning and no live campaign, so volumes are RANGES
+- [x] Ahrefs Webmaster Tools (free tier). — kona-verse verified (on the www host — re-verify on apex); Keywords Explorer is paywalled, the free KD checker was used instead
 
 ### Keyword research (unchanged method, still the core Phase 0 job)
 1. **Seed list** from the architecture doc plus WhatsApp history ("can I see samples", "what's your pricing" are keywords: "web design portfolio", "website cost Cyprus").
@@ -74,55 +74,64 @@ Buyers do not search "premium web design" in meaningful volume. Premium is how t
 5. **AI engine autopsy**: ask ChatGPT, Perplexity, Gemini and Claude the buyer prompts, record who gets cited and from where. Expect directories, listicles, Reddit. Those sources are your Phase 3 target list.
 6. **Output:** keyword map updated from guesses to data, one primary keyword per page.
 
-- [ ] Seed list built
-- [ ] Autocomplete + PAA expansion (Google and Bing)
-- [ ] Volumes pulled
-- [ ] SERP autopsy done
-- [ ] AI engine autopsy done, citation sources recorded as Phase 3 targets
-- [ ] Keyword map updated
+- [x] Seed list built (2026-09-04: 50 seeds, `tools/kw-suggest.js`)
+- [x] Autocomplete + PAA expansion (Google and Bing) — 1,311 suggestions in `docs/keyword-research/suggest.md`
+- [x] Volumes pulled — 112 terms, Cyprus + worldwide, `docs/keyword-research/keyword-planner-raw.md`
+- [x] SERP autopsy done — 16 queries, `docs/keyword-research/serp-autopsy.md`
+- [~] AI engine autopsy — Perplexity done for all 10 prompts (Konaverse 0/10; `docs/keyword-research/ai-engine-autopsy.md`); ChatGPT, Gemini, Claude NOT run (browser-bridge domain permissions) — run by hand
+- [x] Keyword map updated (§3 below, v1 data)
 
 ### Competitor file
-- [ ] Cyprus agencies ranking for local terms: content depth, schema, GBP review count.
-- [ ] 5 global studios ranking for 3D/immersive terms: what their money pages do that yours must beat.
-- [ ] NEW: which agencies appear in AI answers for the prompt battery, and via which third-party sources.
+- [x] Cyprus agencies ranking for local terms — named in `docs/keyword-research.md` §4 (content depth: thin except Absolute Websites; GBP review counts still to pull).
+- [x] Global studios ranking for 3D/immersive terms — Noomo, Lusion, Immersive Garden, Active Theory, Zajno, Utsubo (`docs/keyword-research.md` §4); their money pages are their HOMEPAGES, ranking on brand + Awwwards.
+- [x] Which agencies appear in AI answers, via which sources — `docs/keyword-research/ai-engine-autopsy.md` summary; Phase 3 list in `docs/keyword-research.md` §5.
 
 ---
 
-## 3. Keyword map (v1 guesses — replace with Phase 0 data)
+## 3. Keyword map (v1 DATA — 4 Sep 2026; full research in `docs/keyword-research.md`)
+
+Volumes are Keyword Planner RANGES (CY = Cyprus, WW = worldwide; no active campaign → no exact numbers). KD is the
+Ahrefs free checker. Every page has ONE primary; secondaries live on the same page.
 
 ### Bucket A: Cyprus commercial (feeds €1,000 to €2,000 tier)
-| Keyword | Page | Status |
-|---|---|---|
-| web design Cyprus | /services/web-design | guess, verify |
-| web development Cyprus | /services/web-development | guess, verify |
-| website cost Cyprus | /pricing | guess, verify |
-| landing page design Cyprus | /services/one-page-websites | guess, verify |
-| web design agency Cyprus | /services | guess, verify |
-| website design Nicosia | secondary on web-design | guess, verify |
+| Keyword | Page | Vol CY / WW | KD | Status |
+|---|---|---|---|---|
+| web design cyprus | /services/web-design | 100–1K / 1K–10K | 57 (aggregators) | DATA |
+| website design cyprus · web design nicosia/limassol/larnaca/paphos | secondary on web-design | 100–1K · 10–100 each | — | DATA |
+| web development cyprus | /services/web-development | 100–1K / 1K–10K | 49 | DATA |
+| web developer cyprus · web development company cyprus | secondary on web-development | 10–100 | — | DATA |
+| web design agency cyprus (+ web agency cyprus, web design company cyprus) | /services | 10–100 (company: 100–1K) | — | DATA |
+| web design cyprus prices · website prices cyprus | /pricing | below floor (autocomplete-confirmed) | — | DATA |
+| website cost cyprus | BLOG post #2, links to /pricing | below floor; SERP has AI Overview + 6 agency posts | — | DATA |
+| seo cyprus | /services/seo (O2 still open) | 100–1K | — | DATA |
+| eshop development cyprus (NOT "eshop cyprus" = consumers) | backlog | 10–100 | — | DATA |
+| Greek terms (κατασκευή ιστοσελίδων κύπρος …) | none | no data at all | — | English-only confirmed |
 
 ### Bucket B: Global niche (feeds €4,000+ tier)
-| Keyword | Page | Status |
-|---|---|---|
-| 3D website design | /services/3d-websites | guess, verify |
-| immersive website design | secondary, 3d-websites | guess, verify |
-| scrollytelling website | secondary or own blog post | guess, verify |
-| WebGL website agency | secondary, 3d-websites | guess, verify |
-| 3D animated website | secondary, 3d-websites | guess, verify |
-| website redesign services | /services/website-redesign | guess, verify |
+| Keyword | Page | Vol WW | KD | Status |
+|---|---|---|---|---|
+| **immersive website design** | /services/3d-websites PRIMARY | 100–1K | **0** | DATA — agency-shaped SERP |
+| 3d website design agency | co-primary, 3d-websites | below floor; agency SERP with AI Overview | — | DATA |
+| 3d website design | in the h1 only — INSPIRATION SERP (Awwwards, Dribbble, galleries) | 1K–10K | 31 | DATA — not chased by the service page |
+| 3d website development · 3d animated website | secondary, 3d-websites | 100–1K · 1K–10K | — | DATA |
+| webgl website · scrollytelling website | vocabulary only (end-user / listicle intent) | 100–1K each | — | DROPPED as targets |
+| website redesign services | /services/website-redesign | 10K–100K | 19 | DATA — US agencies; long-tail + Cyprus first |
+| website redesign agency | secondary | 1K–10K | — | DATA |
+| one page website design | /services/one-page-websites | 1K–10K | 20 | DATA — builders SERP; wins on the PAA cost question |
+| single page website (design) · landing page design cyprus | secondary | 1K–10K · below floor | — | DATA |
 
-### Bucket C: Discovery / problem (feeds both, wins AI citations)
-Blog cluster, priority order:
-1. What a 3D website actually costs
-2. Website costs in Cyprus
-3. Why your website is not converting
-4. Template vs custom website
-5. Do you need a 3D website
-6. How long a website takes to build
-7. What makes a website feel premium
+### Bucket C: Discovery / problem (feeds both, wins AI citations) — priority from the data
+1. **What a 3D website costs (2026)** — "how much does a 3d website cost" (10–100 WW, Reddit/Fiverr SERP, AI Overview from two small posts) → /services/3d-websites
+2. **How much a website costs in Cyprus (2026)** — "website cost cyprus" (AI Overview from six Cyprus agency posts) → /pricing
+3. **The best 3D websites of 2026, ranked — and what they cost to build** (FLAGSHIP) — "best 3d websites" 1K–10K KD 26 · "3d website examples" 100–1K · PAA "top 10 3D websites 2026" → /services/3d-websites
+4. **What scrollytelling is, what it costs, 10 sites that do it well** — "scrollytelling" 1K–10K · "scrollytelling website" 100–1K → /services/3d-websites
+5. **Template or custom website?** — 10–100, AI Overview, low-authority SERP → /services/web-design
+6. **How long a website takes to build** — 1K–10K WW → /services/web-development
+7. **The best web design agencies in Cyprus (2026)** — the D6 play; Vasilkoff/Maskwel already cited for theirs → /services
+8. Is a one-page website enough? — PAA/AI only → /services/one-page-websites
+~~What makes a website feel premium~~ — zero data in every tool; folded into #3 or dropped.
 
-Each post: 1,500+ words, a real opinion, **a one-to-two-sentence direct answer in the first 100 words** [verified: 44.2% of AI citations come from the first 30% of content], exactly one link to its service page.
-
----
+Each post: 1,500+ words, a real opinion, **a one-to-two-sentence direct answer in the first 100 words** [verified: 44.2% of AI citations come from the first 30% of content], a TABLE where the question is a cost (that is what the AI Overviews lift), exactly one link to its service page. The PAA bank in `docs/keyword-research.md` §3 supplies the section headings.
 
 ## Phase 1 — Technical foundation (ships with the redesign)
 
@@ -289,6 +298,8 @@ Fixed 10 buyer prompts, run monthly in ChatGPT, Perplexity, Gemini and Claude. L
 ---
 
 ## Changelog
+- **4 Sep 2026, v2.3:** PHASE 0 RESEARCH RUN (`docs/keyword-research.md` + `docs/keyword-research/`). §3 keyword map rewritten from guesses to data: Keyword Planner ranges for 112 terms (Cyprus + worldwide), Ahrefs KD for 14 primaries, 16 SERP autopsies, 1,311 autocomplete suggestions, GSC 16 months, Perplexity for all 10 battery prompts. Findings that change the plan: (1) global 3D head terms are INSPIRATION SERPs — the 3D page's primary becomes "immersive website design" (KD 0) + "3D website design agency"; (2) the two cost questions are the most winnable high-intent queries and both already carry AI Overviews built from small agency posts; (3) the flagship ranked list is confirmed twice over (PAA asks for "top 10 3D websites 2026"; Perplexity's "examples" answers come from one studio's listicle); (4) Konaverse is cited in 0/10 AI answers — every "who is best" answer is assembled from Clutch/Sortlist/DesignRush/TechBehemoths/OneLittleWeb/ProvenExpert and third-party listicles, so Phase 3 tier 1 gains OneLittleWeb, ProvenExpert and Psychoactive's WebGL agency guide; (5) Greek terms have no data — English-only stands; (6) "what makes a website feel premium" has zero data everywhere and is dropped. Phase 0 boxes ticked; ChatGPT/Gemini/Claude prompts still to run by hand.
+- **4 Sep 2026, v2.2:** Inner-page phase opened (site-architecture.md v2). Decisions taken there that bind this plan: work hub is `/work` (keyword map and Phase 2 references to `/projects` read as `/work`); web-design and web-development both ship with hard differentiation; one service-page template with the direct answer, from-price and timeline in the first 100 words; blog posts authored by one of two named founders, Article.author pointing at the existing Person ids; `/contact` becomes a real page with a two-CTA pattern (Contact + Book) site-wide. Phase 0 keyword research is scheduled as its own session (GSC, Ahrefs, autocomplete, Keyword Planner) before any inner-page copy is written; every keyword stays "guess, verify" until it runs.
 - **17 Aug 2026, v2.1:** O4 decided: training bots (GPTBot, ClaudeBot, Google-Extended) allowed, promoted to D7. Robots.txt roster fully resolved: all listed bots allowed.
 - **17 Aug 2026, v2:** Full update from the Technical SEO & AI Search research report. Added D5 (SSR mandatory: no major AI crawler except Gemini executes JS) and D6 (84% of AI citations are third-party; listicles dominate). Removed llms.txt (97% of files get zero bot requests; no provider uses it). Removed FAQPage schema as a priority (FAQ rich results deprecated May 2026). Corrected robots.txt bot roster from primary vendor docs and the Google-Extended misconception (AI Overviews run on Googlebot). Confirmed CWV thresholds (LCP/INP/CLS) and added the concrete WebGL engineering plan (poster LCP element, OffscreenCanvas + workers, reserved canvas dimensions). Rebuilt Phase 3 around citation surfaces (directories, third-party listicles, reviews, Reddit, LinkedIn, Wikidata) above classic links. Rewrote the Phase 4 engine table (ChatGPT is no longer "just Bing"; AI Overviews cite top-20 organic 97% of the time; cross-engine overlap ~11-12%). Added flagship ranked-list asset to Phase 2, named authors + Person schema, 90-day freshness pass and quarterly re-tests to Phase 5, Bing Places and GSC Generative AI report + GA4 AI-referral segments to Phase 0/5. Opened O4 (training bots decision, recommendation: allow). Demoted structured data from magic lever to entity hygiene per Google's own guidance.
 - **17 Aug 2026, v1:** created. All keywords marked "guess, verify". Phase 0 opened.

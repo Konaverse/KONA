@@ -1,7 +1,22 @@
 # Konaverse — Site Architecture
 
-Version 1. Everything here is a draft to react to.
-Direction: Whiteout. One family, no labels, refraction signature.
+Version 2, 4 Sep 2026. Version 1 was the draft; the seven decisions below are the user's, taken on
+2026-09-04 before any inner page is designed. Everything not marked as a decision is still open to argue.
+Direction: v4 black-and-white tech noir (Whiteout is retired, 2026-08-22). The homepage, the legal
+pages and the 404 are live; every other URL below still redirects home until it ships.
+
+**Decisions of 2026-09-04 (user):**
+1. The work hub is `/work`, case studies are `/work/[slug]`. `/projects` is gone from the map.
+2. `/services/web-design` and `/services/web-development` BOTH ship, with hard differentiation (see §2).
+3. Every service page is ONE template with fixed content slots, the meaningful content at the top (see §2a).
+4. Case studies keep the six blocks in the fixed order (§3); the template makes them impossible to skip.
+5. `/contact` is a real page. The site's CTA becomes TWO actions everywhere: **Contact** (the page) and
+   **Book** (Calendly). The single-button invitation is restructured accordingly.
+6. Blog posts carry a named author from a roster of two: Konstantinos Kyprianou and Nabil Al Jbawi (§4).
+7. Keyword research gets its own session before any copy is written: Search Console, Ahrefs, Google
+   autocomplete and suggestions, Keyword Planner for volume and competition. **DONE 2026-09-04 —
+   `docs/keyword-research.md`.** The primaries in §2 and the blog table in §4 are now data; ChatGPT /
+   Gemini / Claude prompts remain to run by hand.
 
 ---
 
@@ -28,8 +43,8 @@ Realistic expectation: search feeds the 1,000 to 2,000 euro tier. The 4,000+ imm
   /services/website-redesign
   /services/seo
   /services/ecommerce-websites       OPTIONAL, only if you sell it
-/projects                            Work hub
-  /projects/[case-study-slug]        One per project
+/work                                Work hub
+  /work/[case-study-slug]            One per project
 /about
 /pricing                             RECOMMENDED, see section 5
 /contact
@@ -62,8 +77,9 @@ Only build the ones you actually sell. Marked OPTIONAL means decide, do not defa
 
 ### /services/3d-websites — PRIORITY
 - **Purpose:** the top tier. This page sells the 4,000+ work.
-- **Primary keyword:** 3D website design
-- **Secondary:** 3D animated website, immersive website design, scrollytelling website, WebGL website
+- **Primary keyword:** immersive website design *(DATA 2026-09-04: KD 0, 100–1K/month worldwide, an agency-shaped SERP with an AI Overview. "3D website design" (1K–10K, KD 31) is an INSPIRATION SERP — Awwwards, Dribbble, galleries — so it stays in the h1 but the page does not chase it; the flagship listicle does. See `docs/keyword-research.md` §2.)*
+- **Co-primary:** 3D website design agency
+- **Secondary:** 3D website development, 3D animated website; "WebGL" and "scrollytelling" as vocabulary, not targets
 - **Title:** 3D and Immersive Website Design | Konaverse
 - **Content:** what a 3D website actually is, what it costs, how long it takes, what it needs from the client, when it is the wrong choice. 1,500 to 2,000 words. Embed the immersive case study.
 - **Note:** this page is the single best SEO opportunity you have. Low competition, exact commercial intent, and you can genuinely out-demonstrate everyone because the page itself can be a 3D website.
@@ -79,6 +95,26 @@ Only build the ones you actually sell. Marked OPTIONAL means decide, do not defa
 - **Secondary:** website developer Cyprus, Next.js development
 - **Title:** Web Development in Cyprus | Konaverse
 - **Note:** design and development are close enough that Google may treat these as near duplicates. Differentiate hard: design page talks visual and UX, development page talks stack, performance, integrations, CMS. If you cannot make them genuinely different, merge them into one page.
+- **DECIDED 2026-09-04: both ship.** The differentiation is a rule, not a hope: the design page never discusses stack or performance, the development page never discusses visual direction or UX process. Each links to the other once, in the body, as "the other half". Different case studies embedded on each.
+
+### 2a. The service page template (decided 2026-09-04)
+
+One template, every service page. The order is fixed because it is the order search engines and
+language models read in: the citable content sits at the top, the persuasion below it.
+
+1. **h1** with the primary keyword, as real DOM text.
+2. **The direct answer**, within the first 100 words: what this is, who it is for, the from-price and
+   the timeline, in single self-contained sentences that survive being lifted.
+3. **What it is and what it is not**: the "when this is the wrong choice" paragraph qualifies out
+   the wrong leads on purpose.
+4. **Process**: what the client gives, what they get, how long each step takes.
+5. **Proof**: one embedded case study, chosen for this service, linking to `/work/[slug]`.
+6. **What changes the price**: the honest version of a pricing table, in prose.
+7. **The two CTAs**: Contact and Book.
+8. **Up-link** to `/services`, and the one link to the sister page where one exists.
+
+Schema per page: Service with areaServed (Cyprus for bucket A, worldwide for bucket B) and
+BreadcrumbList. Only what is visible on the page.
 
 ### /services/one-page-websites
 - **Primary keyword:** one page website design
@@ -103,15 +139,15 @@ Only build the ones you actually sell. Marked OPTIONAL means decide, do not defa
 
 ## 3. Case studies
 
-`/projects/[slug]`. Slugs below use the client name, which is right when the client has a name worth carrying and wrong when the project is unnamed. Rename freely, then never change them again.
+`/work/[slug]`. Slugs below use the client name, which is right when the client has a name worth carrying and wrong when the project is unnamed. Rename freely, then never change them again.
 
 | Project | Suggested URL | Tier |
 |---|---|---|
-| Los Santos Barbers | `/projects/los-santos-barbers` | One-page |
-| DT Zankatian | `/projects/dt-zankatian` | Full site |
-| Titan Sable | `/projects/titan-sable` | Full site |
-| Watch (3D) | `/projects/[real-name]` | Immersive |
-| Velricon | `/projects/velricon` | Full site |
+| Los Santos Barbers | `/work/los-santos-barbers` | One-page |
+| DT Zankatian | `/work/dt-zankatian` | Full site |
+| Titan Sable | `/work/titan-sable` | Full site |
+| Watch (3D) | `/work/[real-name]` | Immersive |
+| Velricon | `/work/velricon` | Full site |
 
 **Every case study needs the same six blocks**, in the same order, or they stop being comparable:
 
@@ -121,6 +157,10 @@ Only build the ones you actually sell. Marked OPTIONAL means decide, do not defa
 4. One technical or craft detail that proves difficulty
 5. Result, with a number if you have one and an honest omission if you do not
 6. Link to the matching service page
+
+**DECIDED 2026-09-04:** the six blocks are the case study template, in this order, with block 5 as a
+required slot: a number, or the sentence that says honestly why there is none. The three sites the
+homepage already features (Tzankatian 2026, Los Santos 2025, Lumière 2026) are the first three.
 
 **On the vercel.app URLs:** those are staging domains. A case study is fine linking to them, but if any of that work is live on a real client domain, link there instead. It reads as more established, and staging links quietly signal unfinished work.
 
@@ -134,17 +174,28 @@ This is the part almost every agency skips, and it is where AI search is actuall
 
 Starter set, roughly in priority order:
 
-| Post | URL | Intent it catches |
-|---|---|---|
-| What a 3D website actually costs | `/blog/what-a-3d-website-costs` | Pricing research, very high intent |
-| Why your website is not converting | `/blog/why-your-website-isnt-converting` | Symptom search |
-| Template vs custom website | `/blog/template-vs-custom-website` | Comparison, pre-purchase |
-| How long a website takes to build | `/blog/how-long-a-website-takes` | Objection handling |
-| What makes a website feel premium | `/blog/what-makes-a-website-feel-premium` | Brand-adjacent, links to your positioning |
-| Do you need a 3D website | `/blog/do-you-need-a-3d-website` | Qualifies out the wrong leads, which is a feature |
-| Website costs in Cyprus | `/blog/website-cost-cyprus` | Local, high intent |
+| # | Post | URL | Intent it catches | Data (2026-09-04) |
+|---|---|---|---|---|
+| 1 | What a 3D website costs (2026) | `/blog/what-a-3d-website-costs` | Pricing research, very high intent | Reddit/Fiverr SERP + AI Overview from two small posts; PAA on the 3D head term |
+| 2 | How much a website costs in Cyprus (2026) | `/blog/website-cost-cyprus` | Local, high intent | AI Overview built from six Cyprus agency posts — ours needs our tiers in a table |
+| 3 | The best 3D websites of 2026, ranked — and what they cost to build | `/blog/best-3d-websites` | The flagship ranked list; every AI "examples" prompt | "best 3d websites" 1K–10K KD 26; PAA asks for "top 10 3D websites 2026"; updated yearly |
+| 4 | What scrollytelling is, what it costs, and 10 sites that do it well | `/blog/scrollytelling-websites` | Discovery + examples | "scrollytelling" 1K–10K; AI Overview from tool listicles; name Lenis/GSAP/Three.js |
+| 5 | Template vs custom website | `/blog/template-vs-custom-website` | Comparison, pre-purchase | 10–100, AI Overview, low-authority SERP; Absolute Websites (CY) already ranks |
+| 6 | How long a website takes to build | `/blog/how-long-a-website-takes` | Objection handling | 1K–10K worldwide |
+| 7 | The best web design agencies in Cyprus (2026) | `/blog/best-web-design-agencies-cyprus` | The D6 listicle play | Vasilkoff and Maskwel got cited by Perplexity for theirs |
+| 8 | Do you need a 3D website / is a one-page site enough | `/blog/do-you-need-a-3d-website` | Qualifies out the wrong leads, which is a feature | PAA/AI only |
+| — | ~~What makes a website feel premium~~ | | | zero data in every tool — folded into #3 or dropped |
+| — | Why your website is not converting | `/blog/why-your-website-isnt-converting` | Symptom search | not researched; keep for later |
 
 **Every problem post links to exactly one service page.** That is the whole mechanism. Discovery traffic lands on the problem, gets a real answer, and finds the service at the end.
+
+**Authorship (decided 2026-09-04):** every post names its author, with a face, from a roster of two:
+Konstantinos Kyprianou (Technical Architect) and Nabil Al Jbawi (Creative Director). Each is already a
+Person entity in the homepage schema (`/#konstantinos`, `/#nabil`); the post's Article schema points
+its `author` at that id, so nothing is duplicated and the entity stays one. The post template carries
+an author block and visible published and updated dates. Technical and pricing posts default to
+Konstantinos, design and "what makes a website feel premium" posts to Nabil; the byline is a fact
+about who wrote it, never a rotation.
 
 You are right that thin posts are pointless. Target 1,500 words minimum, with a real opinion in each. Four excellent posts beat twenty adequate ones, and a language model will cite the one that actually answers the question.
 
@@ -158,11 +209,27 @@ You are right that thin posts are pointless. Target 1,500 words minimum, with a 
 2. Pricing pages catch high-intent search: "web design cost Cyprus", "how much does a website cost".
 3. Publishing ranges qualifies people out before they reach you, which for a studio selling from 2,000 euro is a filter, not a loss.
 
-**How to publish it without boxing yourself in:** ranges and starting points, never fixed quotes. "From 1,000". "From 4,000". Say what changes the number. Do not build a three-column pricing table with ticks and crosses, that is SaaS furniture and it will look wrong in Whiteout and cheap for the tier you are selling.
+**How to publish it without boxing yourself in:** ranges and starting points, never fixed quotes. "From 1,000". "From 4,000". Say what changes the number. Do not build a three-column pricing table with ticks and crosses, that is SaaS furniture and it will look wrong in the noir and cheap for the tier you are selling.
 
-`/pricing`, primary keyword: website cost Cyprus.
+`/pricing`, primary keyword: **web design cyprus prices** *(DATA 2026-09-04: "website cost cyprus" is a blog-post SERP with an AI Overview — blog post #2 wins it and links here; /pricing catches the "prices" modifier, the brand sitelink (67 impressions before launch) and the AI-feature impressions it was already earning).*
 
 ---
+
+## 5a. The contact page and the two CTAs (decided 2026-09-04)
+
+`/contact` exists as a real page. The launch decision of 2026-08-25 (redirect it, let Calendly carry
+leads) is reversed for the inner-page phase.
+
+- **Two CTAs, everywhere a CTA appears:** **Contact**, which goes to `/contact`, and **Book**, which
+  opens Calendly (`CALENDLY_URL`, the existing popover). The homepage invitation, the nav, every
+  service page foot and every case study foot carry both. Contact is for the person who wants to
+  write first; Book is for the one who already wants the meeting.
+- **The page itself:** email, the Calendly embed or button, the studio's location and hours, and the
+  two or three questions a first email should answer so the reply is useful. Whether a form returns
+  is open: the Resend route was deleted at launch, so a form is new work and needs a processor
+  named again in the privacy policy.
+- **SEO job:** small. It carries the LocalBusiness or ProfessionalService schema with the Cyprus
+  address and is the page the Google Business Profile points at.
 
 ## 6. Language
 
@@ -210,7 +277,11 @@ The rules, which matter more than the diagram:
 
 Do not build all of this before launch. Ship in this order:
 
-**Launch:** `/`, `/services` plus 3D websites and web design, `/projects` plus two case studies, `/about`, `/contact`, the three legal pages.
+**Launch:** `/`, `/services` plus 3D websites and web design, `/work` plus two case studies, `/about`, `/contact`, the three legal pages.
+
+**Where this stands on 2026-09-04:** `/`, the legal pages and the 404 are live. The rest is the
+inner-page phase, which begins with the keyword research session (decision 7) and then the five
+templates: service page, case study, blog post, the two hubs. About, pricing and contact are one-offs.
 
 **Within a month:** remaining service pages, remaining case studies, `/pricing`.
 
