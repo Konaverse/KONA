@@ -266,10 +266,22 @@ export default function ApertureMenu({
        resize only. */
     let heroEnd = 0
     const measure = () => {
-      const hero = document.querySelector<HTMLElement>('.hw-hero')
-      heroEnd = hero
-        ? hero.getBoundingClientRect().bottom + window.scrollY - bar.offsetHeight
-        : 160 * rem()
+      /* the homepage's hero by class; any other route declares its own
+         with data-nav-hero (the service template's header, 2026-09-05) */
+      const hero = document.querySelector<HTMLElement>('.hw-hero, [data-nav-hero]')
+      /* a declared hero may END EARLY: data-nav-hero="0.2" means the bar
+         leaves once a fifth of the element has scrolled by. The service
+         page's picture takes the viewport on scroll, and the bar's paper
+         ground would sit as a band across it — so the bar goes with the
+         copy, not with the section. */
+      const frac = hero ? parseFloat(hero.dataset.navHero || '') : NaN
+      if (hero) {
+        const r = hero.getBoundingClientRect()
+        const end = Number.isFinite(frac) ? r.top + r.height * frac : r.bottom
+        heroEnd = end + window.scrollY - bar.offsetHeight
+      } else {
+        heroEnd = 160 * rem()
+      }
     }
     measure()
     const onMeasure = () => measure()

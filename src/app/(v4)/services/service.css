@@ -1,0 +1,543 @@
+/* ============================================================
+   THE SERVICE PAGE TEMPLATE — .sp-* (2026-09-05)
+   One stylesheet, six instances (src/lib/service-pages.ts). Everything
+   visual comes from tokens.css; this file is layout, the stage, and the
+   few surfaces the template owns (the fact cards, the plate beats).
+
+   THE PICTURE RULE HOLDS (feedback: desktop is one scaling picture): every
+   composition length is rem, hairlines stay px, vh/svh only for the pins
+   and the runways.
+   ============================================================ */
+
+.sp { position: relative; }
+
+/* ---------- THE STAGE ----------
+   hero + plate under one scroll. The frame is the picture; it is sticky,
+   takes no flow height, and is clipped by ServiceStage to the slot at rest.
+   z: hero copy 1 · frame 2 · plate beats 3 · the paper body 4. */
+.sp-stage { position: relative; }
+
+.sp-frame {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  height: 100svh;
+  margin-bottom: -100svh;
+  overflow: clip;
+  /* off until the driver runs — the layout is the fallback */
+  display: none;
+  visibility: hidden;
+  will-change: clip-path;
+  /* NOT a stacking-context toy: no filter, no opacity, no transform on
+     this element. The fluid cursor blends against the nearest stacking
+     context and the plate must stay under it like any other ground. */
+}
+.sp-stage.is-scrub .sp-frame { display: block; }
+.sp-stage.is-live  .sp-frame { visibility: visible; }
+/* the driver hides the slot's copy once the frame has drawn over it */
+.sp-stage.is-live .sp-slot img { visibility: hidden; }
+
+.sp-frame img {
+  position: absolute;
+  left: 0;
+  /* oversized by 2 × DRIFT_VH (ServiceStage.tsx) so the drift never
+     shows an edge */
+  top: -7vh;
+  width: 100%;
+  height: calc(100% + 14vh);
+  object-fit: cover;
+  object-position: 50% 42%;
+  will-change: transform;
+  transform-origin: 50% 50%;
+}
+/* the grade arrives WITH the expansion: bright in the slot, a plate once
+   it is the page. --sp-e is the eased progress the driver publishes.
+   Radial-over-vertical, the same two scrims as .sv-shade. */
+.sp-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--sp-e, 0);
+  background:
+    radial-gradient(118% 82% at 50% 42%,
+      rgb(13 16 18 / 0) 0%, rgb(13 16 18 / 0.18) 58%, rgb(13 16 18 / 0.5) 100%),
+    linear-gradient(180deg,
+      rgb(13 16 18 / 0.28) 0%, rgb(13 16 18 / 0.06) 34%, rgb(13 16 18 / 0.4) 100%);
+}
+
+/* ---------- 1 + 2 · THE HERO (paper) ----------
+   The user's frame: the word top-left, two pills, the tagline, three
+   cards; the picture right, a half-pill bleeding off the right edge, the
+   answer under it. The right column has NO right padding — the picture
+   runs to the edge. */
+.sp-hero {
+  position: relative;
+  z-index: 1;
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: minmax(0, 46fr) minmax(0, 54fr);
+  column-gap: var(--s-8);
+  align-items: center;
+  padding: 5.5rem 0 var(--s-6) var(--page-pad);
+  background: var(--surface);
+}
+
+.sp-hero-l {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* the h1: the word at display scale in the instance's own size (rem, so
+   it holds one line at every desktop width), the modifier as a small
+   second line INSIDE the heading so the h1 text is the whole keyword */
+.sp-h1 {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+.sp-h1-w {
+  display: block;
+  font-size: var(--sp-word, 7rem);
+  font-weight: var(--w-regular);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+  /* the descender-free caps sit visually high; pull the block up onto
+     the padding a touch so the cap height, not the line box, aligns */
+  margin-top: -0.06em;
+}
+.sp-h1-m {
+  display: block;
+  font-size: var(--t-h3);
+  font-weight: var(--w-regular);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-h3);
+  color: var(--text-muted);
+}
+
+.sp-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  margin-top: var(--s-5);
+}
+
+.sp-tag {
+  margin: var(--s-6) 0 0;
+  font-size: 2.75rem;
+  font-weight: var(--w-light);
+  line-height: 1.06;
+  letter-spacing: var(--ls-h1);
+  max-width: 13em;
+}
+
+/* THE THREE FACTS. The numbers the answer states, made visible: a
+   capsule (one of the hero's dark-grain plates), the label, the value.
+   Two on light glass, the third on dark — the frame's own rhythm. */
+.sp-facts {
+  list-style: none;
+  margin: var(--s-6) 0 0;
+  padding: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-4);
+}
+.sp-fact {
+  position: relative;
+  aspect-ratio: 1.5;
+  border-radius: var(--r-lg);
+  padding: var(--s-4);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr auto;
+  align-items: start;
+  background: linear-gradient(160deg, var(--n-0) 0%, var(--n-2) 55%, var(--n-3) 100%);
+  box-shadow: var(--lift-2);
+  color: var(--text);
+}
+.sp-fact-dark {
+  background: linear-gradient(160deg, var(--n-9) 0%, var(--n-10) 50%, var(--n-11) 100%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.14),
+    inset 0 0 0 1px rgb(255 255 255 / 0.06);
+}
+.sp-fact-cap {
+  grid-column: 1;
+  grid-row: 1;
+  display: block;
+  width: 3.5rem;
+  height: 2rem;
+  border-radius: var(--r-full);
+  overflow: hidden;
+  background: var(--n-10);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.18),
+    inset 0 0 0 1px rgb(255 255 255 / 0.08);
+}
+.sp-fact-cap img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.9;
+  filter: grayscale(1) brightness(0.9) contrast(1.05);
+}
+.sp-fact-dark .sp-fact-cap {
+  background: var(--n-2);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.3);
+}
+.sp-fact-dark .sp-fact-cap img { filter: grayscale(1) brightness(1.55) contrast(0.9); }
+.sp-fact-label {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+  text-align: right;
+  font-size: var(--t-small);
+  line-height: 1.3;
+  color: var(--text-muted);
+  max-width: 9ch;
+}
+.sp-fact-value {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  align-self: end;
+  font-size: 1.75rem;
+  font-weight: var(--w-medium);
+  letter-spacing: var(--ls-h2);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* the right column: picture over answer, centred on the row */
+.sp-hero-r {
+  display: grid;
+  align-content: center;
+  row-gap: var(--s-6);
+}
+
+/* THE SLOT. A placeholder box the frame clips to; its own <img> is the
+   LCP and the no-JS picture. Half-pill: the left corners are 45% of the
+   height, the right edge is the viewport's. ServiceStage reads these
+   radii off the computed style — change them here, nowhere else. */
+.sp-slot {
+  position: relative;
+  height: 19.5rem;
+  border-radius: 9rem 0 0 9rem;
+  overflow: clip;
+  background: var(--surface-inset);
+}
+.sp-slot img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 42%;
+}
+
+.sp-answer {
+  padding: 0 var(--page-pad) 0 9%;
+  max-width: 56ch;
+  display: grid;
+  gap: var(--s-3);
+}
+.sp-answer p {
+  margin: 0;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+.sp-answer p + p { color: var(--text-muted); }
+
+/* ---------- 3 · THE PLATE (dark) ----------
+   The second frame: the display line and two beats over the full-bleed
+   picture, scattered like §3's credits. A runway first (the expansion
+   needs the scroll), a burial pad last (the paper needs the frame stuck
+   while it climbs over it). */
+.sp-plate {
+  position: relative;
+  z-index: 3;
+  padding: 92svh var(--page-pad) 100svh;
+  color: var(--text);
+}
+.sp-plate-h {
+  margin: 0 0 0 3%;
+  font-size: var(--t-display);
+  font-weight: var(--w-regular);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  max-width: 9.5em;
+  text-wrap: balance;
+}
+.sp-beat {
+  max-width: 30ch;
+}
+.sp-beat-1 { margin: 34svh 0 0 54%; }
+.sp-beat-2 { margin: 30svh 0 0 8%; }
+.sp-beat-t {
+  margin: 0 0 var(--s-4);
+  font-size: var(--t-h2);
+  font-weight: var(--w-regular);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-h2);
+}
+.sp-beat-b {
+  margin: 0;
+  font-size: var(--t-body);
+  line-height: var(--lh-body);
+  /* on lit stone, not the void — one step brighter than muted */
+  color: var(--n-4);
+}
+.sp-plate-close {
+  margin: 28svh 0 0 auto;
+  max-width: 24ch;
+  text-align: right;
+  font-size: var(--t-small);
+  line-height: 1.5;
+  color: var(--n-4);
+}
+/* the static fallback paints the picture itself */
+.sp-stage:not(.is-scrub) .sp-plate {
+  background: var(--sp-plate) center / cover no-repeat var(--n-11);
+}
+.sp-stage:not(.is-scrub) .sp-plate::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgb(13 16 18 / 0.45);
+  pointer-events: none;
+}
+.sp-stage:not(.is-scrub) .sp-plate > * { position: relative; }
+
+/* ---------- THE PAPER BODY ----------
+   Rises over the stuck plate: the plate's 100svh pad is exactly the
+   overlap. Paper over near-black is sheer contrast, so the seam needs
+   no lit edge — only the landed sheet's corners. */
+.sp-body {
+  position: relative;
+  z-index: 4;
+  margin-top: -100svh;
+  background: var(--surface);
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+}
+
+.sp-sec {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  column-gap: var(--s-9);
+  padding: var(--section-y) var(--page-pad);
+}
+.sp-body > .sp-sec:first-child { padding-top: clamp(6rem, 14vh, 9rem); }
+.sp-sec-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  align-self: start;
+  position: sticky;
+  top: var(--s-9);
+}
+.sp-sec-lead {
+  color: var(--text-muted);
+  max-width: 34ch;
+}
+.sp-rule { margin-inline: var(--page-pad); }
+
+/* 4 · process — numbered rows under hairlines */
+.sp-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.sp-step { border-top: var(--hair) solid var(--hairline); }
+.sp-step:last-child { border-bottom: var(--hair) solid var(--hairline); }
+.sp-step-in {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: var(--s-5);
+  row-gap: var(--s-5);
+  padding-block: var(--s-6);
+}
+.sp-step-n {
+  grid-row: 1 / span 2;
+  font-size: var(--t-small);
+  line-height: 1.8;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+.sp-step-t { margin: 0; }
+.sp-step-meta {
+  grid-column: 2;
+  margin: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 6.5rem;
+  gap: var(--s-5);
+}
+.sp-step-meta dt {
+  font-size: var(--t-small);
+  color: var(--text-faint);
+  margin-bottom: var(--s-2);
+}
+.sp-step-meta dd {
+  margin: 0;
+  font-size: var(--t-body);
+  line-height: var(--lh-snug);
+  color: var(--text-muted);
+}
+
+/* 5 · proof — one capture at the sheets' aspect, its caption under */
+.sp-case { display: grid; gap: var(--s-5); }
+.sp-case-media {
+  display: block;
+  aspect-ratio: 1.44;
+  border-radius: var(--r-lg);
+  overflow: clip;
+  background: var(--surface-inset);
+  box-shadow: var(--lift-2);
+  /* Safari clips a composited child to overflow+radius only with this */
+  clip-path: inset(0 round var(--r-lg));
+}
+.sp-case-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 0;
+  transition: transform var(--d-slow) var(--e-glass);
+}
+@media (hover: hover) {
+  .sp-case-media:hover img { transform: scale(1.025); }
+}
+.sp-case-cap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--s-6);
+  align-items: end;
+}
+.sp-case-name { margin: 0 0 var(--s-2); }
+.sp-case-line { margin: 0; color: var(--text-muted); max-width: 44ch; }
+.sp-case-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--s-3);
+}
+
+/* 6 · price */
+.sp-from {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  margin: 0;
+}
+.sp-from-n {
+  font-size: var(--t-h1);
+  font-weight: var(--w-light);
+  letter-spacing: var(--ls-h1);
+  line-height: 1;
+}
+.sp-drivers { margin: 0; }
+.sp-driver {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: var(--s-6);
+  padding-block: var(--s-6);
+  border-top: var(--hair) solid var(--hairline);
+}
+.sp-driver:last-child { border-bottom: var(--hair) solid var(--hairline); }
+.sp-driver dt { margin: 0; }
+.sp-driver dd { margin: 0; color: var(--text-muted); }
+
+/* 7 · the two CTAs */
+.sp-invite {
+  display: block;
+  padding-bottom: var(--s-9);
+}
+.sp-invite-h {
+  margin: 0;
+  max-width: 10em;
+}
+.sp-invite-act {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-3) var(--s-4);
+  margin-top: var(--s-7);
+}
+.sp-mail {
+  margin-left: var(--s-4);
+  color: var(--text-muted);
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size var(--d-base) var(--e-glass), color var(--d-instant);
+}
+.sp-mail:hover { color: var(--text); background-size: 100% 1px; }
+
+/* 8 · the foot */
+.sp-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--s-6);
+  padding: var(--s-6) var(--page-pad) var(--s-9);
+  border-top: var(--hair) solid var(--hairline);
+  margin-inline: var(--page-pad);
+  padding-inline: 0;
+}
+.sp-sister { margin: 0; }
+.sp-sister a { color: var(--text); text-decoration: none; border-bottom: 1px solid var(--hairline-strong); }
+.sp-sister a:hover { border-color: var(--text); }
+
+/* ---------- PHONES ----------
+   One column; the picture after the CTAs and before the answer; the
+   facts as a row of three small cards. The stage runs the same: the slot
+   is lower so EXPAND grows with it (ServiceStage.tsx). */
+@media (max-width: 57.5rem) {
+  .sp-hero {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--s-7);
+    align-items: start;
+    padding: 5.5rem 0 var(--s-8) var(--page-pad);
+  }
+  .sp-hero-l { padding-right: var(--page-pad); }
+  .sp-h1-w {
+    font-size: clamp(2.5rem, 13vw, var(--sp-word, 7rem));
+    line-height: 0.96;
+  }
+  .sp-tag { font-size: clamp(1.5rem, 6.4vw, 2.25rem); margin-top: var(--s-6); max-width: none; }
+  .sp-facts { gap: var(--s-3); margin-top: var(--s-6); }
+  .sp-fact { aspect-ratio: 1; padding: var(--s-3); border-radius: var(--r-md); }
+  .sp-fact-cap { width: 2.25rem; height: 1.3rem; }
+  .sp-fact-label { font-size: 0.7rem; max-width: 7ch; }
+  .sp-fact-value { font-size: 1.15rem; }
+  .sp-slot { height: min(58svh, 26rem); border-radius: 4rem 0 0 4rem; }
+  .sp-answer { padding: 0 var(--page-pad) 0 0; max-width: none; }
+  .sp-answer p { font-size: 1.05rem; }
+
+  .sp-plate { padding: 88svh var(--page-pad) 100svh; }
+  .sp-plate-h { margin-left: 0; font-size: clamp(2.5rem, 12vw, 4.5rem); }
+  .sp-beat-1 { margin: 26svh 0 0 12%; }
+  .sp-beat-2 { margin: 24svh 0 0 0; }
+  .sp-plate-close { margin-top: 22svh; }
+
+  .sp-sec { grid-template-columns: minmax(0, 1fr); row-gap: var(--s-7); }
+  .sp-sec-head { position: static; }
+  .sp-step-in { grid-template-columns: 2.5rem minmax(0, 1fr); }
+  .sp-step-meta { grid-template-columns: minmax(0, 1fr); gap: var(--s-4); }
+  .sp-case-cap { grid-template-columns: minmax(0, 1fr); }
+  .sp-case-side { align-items: flex-start; flex-direction: row; gap: var(--s-5); }
+  .sp-driver { grid-template-columns: minmax(0, 1fr); gap: var(--s-2); }
+  .sp-foot { flex-direction: column; align-items: flex-start; }
+  .sp-mail { margin-left: 0; flex-basis: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sp-case-media img { transition: none; }
+}

@@ -60,8 +60,16 @@ const nextConfig: NextConfig = {
       { source: p, destination: "/", permanent: false },
       { source: `${p}/:path([^.]+)*`, destination: "/", permanent: false },
     ];
+    /* KONA_OPEN_ROUTES (comma list, .env.local only — never set on Vercel)
+     * lifts the launch redirect for routes under construction so they can
+     * be built and judged locally while production keeps sending them
+     * home. Inner-page phase, 2026-09-05. */
+    const open = (process.env.KONA_OPEN_ROUTES || "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
     const list = [
-      ...LAUNCH_REDIRECTS,
+      ...LAUNCH_REDIRECTS.filter((p) => !open.includes(p)),
       ...(process.env.NODE_ENV === "production" ? PROTO_REDIRECTS : []),
     ];
     return list.flatMap(toHome);

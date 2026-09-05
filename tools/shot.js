@@ -20,6 +20,16 @@ const sel = process.argv[4] || null
     height: Number(process.env.SHOT_H || 1000),
     deviceScaleFactor: 1,
   })
+  // SHOT_NOJS=1: the D5 acceptance shot — the page with no JavaScript at
+  // all, the way most AI crawlers see it. Every word must still be there.
+  if (process.env.SHOT_NOJS === '1') await page.setJavaScriptEnabled(false)
+  // SHOT_CONSENT=1: pre-answer the cookie banner (the og.js recipe), so it
+  // is not in every frame of a page under design
+  if (process.env.SHOT_CONSENT === '1') {
+    await page.evaluateOnNewDocument(() => {
+      try { localStorage.setItem('konaverse_cookie_consent', 'declined') } catch {}
+    })
+  }
   await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 })
   // SHOT_WHEEL=<px>: real wheel events, in steps. window.scrollTo and
   // scrollIntoView are the wrong tools on this page -- Lenis owns the scroll
