@@ -30,16 +30,16 @@ import { gsap, EASE } from '@/lib/motion-v4'
  * choreographed off-screen, the picture simply becomes the page. The plate
  * beats sit above the frame (z 3) so they read on it.
  *
- * THE CLOCK. p = stage scrolled / EXPAND, where EXPAND = the slot's offset
- * in the stage + 0.55vh: on desktop (slot ~22% down a 100svh hero) that is
- * ~0.8 of a viewport, on a phone (slot below the tagline and CTAs, hero
- * taller than the screen) it is whatever puts full-bleed just before the
- * first beat arrives. e = drift(p) — the scrubbed-scroll curve, the same as
- * every pin on the homepage. The rest rect is read LIVE from the slot each
- * tick (it scrolls with the hero), so the window's origin moves with the
- * page for the first pixels and the lerp takes over — there is no moment
- * where the picture is pinned while the text beside it scrolls, which is
- * where a hold would read as a hitch.
+ * THE HERO IS PINNED WHILE THE PICTURE GROWS (user, 2026-09-05: "the
+ * expansion should happen while the hero is pinned. It shouldn't scroll").
+ * The hero is sticky too: on desktop it is one viewport tall so it pins at
+ * the first pixel; on a phone it is taller than the screen, so its sticky
+ * top is set to (vh − height) — it scrolls normally until its bottom meets
+ * the viewport's bottom, THEN pins, so the answer under the picture is
+ * still readable before the window takes it. The clock starts at that pin:
+ * p = (scrolled − pinAt) / EXPAND, EXPAND = 0.8vh of runway, e = drift(p),
+ * the scrubbed-scroll curve every pin on the homepage runs on. The rest
+ * rect is the slot's rect at the pin — static, since nothing moves.
  *
  * THE PICTURE BREATHES: scale 1.12 → 1 over the expansion (the crop opens
  * as the frame does), then a slow 14vh drift down the plate's travel. The
@@ -55,8 +55,8 @@ import { gsap, EASE } from '@/lib/motion-v4'
  * transforms it. The frame is only ever written to, never measured.
  */
 
-/** the expansion's runway beyond the slot's own offset, in viewport heights */
-const EXPAND_VH = 0.55
+/** the expansion's runway once the hero has pinned, in viewport heights */
+const EXPAND_VH = 0.8
 /** the picture's rest scale — the crop it opens from */
 const SCALE_REST = 1.12
 /** the drift down the plate, in viewport heights; .sp-frame img is
@@ -82,7 +82,8 @@ export default function ServiceStage({
     const frame = stage.querySelector<HTMLElement>('.sp-frame')
     const img = frame?.querySelector<HTMLElement>('img')
     const slot = stage.querySelector<HTMLElement>('.sp-slot')
-    if (!frame || !img || !slot) return
+    const hero = stage.querySelector<HTMLElement>('.sp-hero')
+    if (!frame || !img || !slot || !hero) return
 
     stage.classList.add('is-scrub')
     if (img instanceof HTMLImageElement) img.decode().catch(() => {})
@@ -92,7 +93,15 @@ export default function ServiceStage({
        is a half-pill bleeding right, phones a smaller one). */
     let radii = [0, 0, 0, 0]
     let expand = 1
+    /** the scroll at which the hero pins (0 on desktop) */
+    let pinAt = 0
     const measure = () => {
+      const vh = window.innerHeight
+      // a hero taller than the screen pins bottom-aligned, not top
+      const over = Math.max(hero.offsetHeight - vh, 0)
+      hero.style.top = `${-over}px`
+      pinAt = over
+      expand = Math.max(vh * EXPAND_VH, 1)
       const cs = getComputedStyle(slot)
       radii = [
         parseFloat(cs.borderTopLeftRadius) || 0,
@@ -100,14 +109,6 @@ export default function ServiceStage({
         parseFloat(cs.borderBottomRightRadius) || 0,
         parseFloat(cs.borderBottomLeftRadius) || 0,
       ]
-      // the slot's offset in the STAGE, transform-free: walk offsetParents
-      let top = 0
-      let el: HTMLElement | null = slot
-      while (el && el !== stage) {
-        top += el.offsetTop
-        el = el.offsetParent as HTMLElement | null
-      }
-      expand = Math.max(top + window.innerHeight * EXPAND_VH, 1)
     }
     measure()
     window.addEventListener('resize', measure)
@@ -123,7 +124,7 @@ export default function ServiceStage({
       const st = stage.getBoundingClientRect()
       if (st.bottom < -8) return
       const scrolled = Math.max(-st.top, 0)
-      const p = Math.min(scrolled / expand, 1)
+      const p = Math.min(Math.max(scrolled - pinAt, 0) / expand, 1)
       const e = EASE.drift(p)
 
       // THE WINDOW. Rest = the slot's live rect; end = the viewport.
@@ -145,7 +146,10 @@ export default function ServiceStage({
       }
 
       // THE PICTURE: opens as the frame does, then drifts down the plate
-      const q = Math.min(Math.max((scrolled - expand) / Math.max(st.height - expand - vh, 1), 0), 1)
+      const q = Math.min(
+        Math.max((scrolled - pinAt - expand) / Math.max(st.height - pinAt - expand - vh, 1), 0),
+        1,
+      )
       const scale = lerp(SCALE_REST, 1, e)
       const y = (DRIFT_VH - 2 * DRIFT_VH * q) * (vh / 100)
       gsap.set(img, { scale, y })

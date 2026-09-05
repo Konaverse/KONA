@@ -14,6 +14,9 @@
 /* ---------- THE STAGE ----------
    hero + plate under one scroll. The frame is the picture; it is sticky,
    takes no flow height, and is clipped by ServiceStage to the slot at rest.
+   THE HERO IS STICKY TOO once the driver runs: it pins (top 0 on desktop,
+   bottom-aligned on a taller phone hero — the driver writes `top`) and the
+   picture grows over the pinned copy; the plate beats then scroll over both.
    z: hero copy 1 · frame 2 · plate beats 3 · the paper body 4. */
 .sp-stage { position: relative; }
 
@@ -33,6 +36,7 @@
      context and the plate must stay under it like any other ground. */
 }
 .sp-stage.is-scrub .sp-frame { display: block; }
+.sp-stage.is-scrub .sp-hero { position: sticky; }
 .sp-stage.is-live  .sp-frame { visibility: visible; }
 /* the driver hides the slot's copy once the frame has drawn over it */
 .sp-stage.is-live .sp-slot img { visibility: hidden; }
@@ -74,6 +78,7 @@
 .sp-hero {
   position: relative;
   z-index: 1;
+  top: 0;
   min-height: 100svh;
   display: grid;
   grid-template-columns: minmax(0, 46fr) minmax(0, 54fr);
