@@ -862,3 +862,337 @@
   /* the ruler needs width; on a phone the cards already say the time */
   .pp-ruler { display: none; }
 }
+
+/* ============================================================
+   5 · THE DOLLY — .pv-* (ServiceProof.tsx, 2026-09-08)
+   A dark pinned stage: the shot opens on a title card and tracks
+   right through a set built in three planes at three speeds. The
+   sheet rises over the finished schedule; the price's paper rises
+   over it. Fallback = the planes as blocks in reading order.
+   ============================================================ */
+.pv {
+  position: relative;
+  z-index: 40; /* over the schedule's tab bar (z30) as it lands */
+  background: var(--n-11);
+  color: var(--n-0);
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.08);
+}
+/* the lights go down: the sheet starts one viewport early, over the
+   schedule's burial pad */
+.pp.is-scrub + .pv.is-over { margin-top: -100svh; }
+.pv-pin { position: relative; }
+.pv-stage {
+  position: relative;
+  padding: var(--s-9) var(--page-pad) var(--s-10);
+}
+.pv.is-scrub .pv-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  padding: 0;
+  overflow: clip;
+  border-radius: inherit;
+  /* one soft light on the set */
+  background:
+    radial-gradient(60% 70% at 62% 48%, rgb(255 255 255 / 0.05), transparent 70%),
+    var(--n-11);
+}
+/* the house grain, on the sticky stage only (one composited layer) */
+.pv.is-scrub .pv-stage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  opacity: 0.22;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='90' height='90' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+/* ---------- the planes ---------- */
+.pv.is-scrub .pv-title,
+.pv.is-scrub .pv-back,
+.pv.is-scrub .pv-mid,
+.pv.is-scrub .pv-front,
+.pv.is-scrub .pv-close {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 480rem;
+  margin: 0;
+  padding: 0;
+  will-change: transform;
+}
+.pv.is-scrub .pv-back { z-index: 1; }
+.pv.is-scrub .pv-title { z-index: 2; }
+.pv.is-scrub .pv-mid { z-index: 3; }
+.pv.is-scrub .pv-close { z-index: 3; }
+.pv.is-scrub .pv-front { z-index: 4; }
+
+/* ---------- the title card ---------- */
+.pv-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  max-width: 34ch;
+}
+.pv.is-scrub .pv-head {
+  position: absolute;
+  top: clamp(4.5rem, 11vh, 6rem);
+  left: var(--page-pad);
+}
+.pv-h {
+  margin: 0;
+  font-size: var(--t-h2);
+  font-weight: var(--w-regular);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-h2);
+}
+.pv-lede {
+  margin: 0;
+  font-size: var(--t-small);
+  line-height: 1.5;
+  color: var(--n-5);
+}
+.pv-card {
+  margin-top: var(--s-9);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-7);
+}
+.pv.is-scrub .pv-card {
+  position: absolute;
+  left: var(--page-pad);
+  top: 40vh;
+  margin: 0;
+  width: 60rem;
+}
+.pv-name {
+  margin: 0;
+  font-size: clamp(3rem, 7.4vw, 7rem);
+  font-weight: var(--w-light);
+  line-height: 0.98;
+  letter-spacing: var(--ls-display);
+  color: var(--n-0);
+  max-width: 12ch;
+}
+.pv-credits {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, auto));
+  column-gap: var(--s-9);
+  row-gap: var(--s-4);
+  width: fit-content;
+}
+.pv-credits div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  padding-top: var(--s-3);
+  border-top: var(--hair) solid var(--n-8);
+  min-width: 10rem;
+}
+.pv-credits dt {
+  font-size: var(--t-small);
+  color: var(--n-6);
+}
+.pv-credits dd {
+  margin: 0;
+  font-size: var(--t-body);
+  line-height: var(--lh-snug);
+  color: var(--n-3);
+}
+
+/* ---------- the back wall: the brief ---------- */
+.pv-brief {
+  margin: var(--s-9) 0 0;
+  font-size: var(--t-h2);
+  font-weight: var(--w-light);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-h2);
+  color: var(--n-4);
+  max-width: 28ch;
+}
+.pv.is-scrub .pv-brief {
+  position: absolute;
+  left: 24rem;
+  top: 34vh;
+  margin: 0;
+  max-width: none;
+  white-space: nowrap;
+  font-size: 7rem;
+  line-height: 1;
+  letter-spacing: var(--ls-display);
+  color: var(--n-9);
+}
+
+/* ---------- the set: the frames ---------- */
+.pv-mid {
+  list-style: none;
+  margin: var(--s-9) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-7) var(--s-6);
+  align-items: start;
+}
+.pv-frame figure { margin: 0; }
+.pv.is-scrub .pv-frame {
+  position: absolute;
+  left: var(--fx);
+  top: var(--fy);
+  width: var(--fw);
+}
+.pv-media {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r-md);
+  overflow: clip;
+  clip-path: inset(0 round var(--r-md));
+  background: var(--n-10);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.14),
+    inset 0 0 0 1px rgb(255 255 255 / 0.06),
+    0 2.5rem 4rem -1.5rem rgb(0 0 0 / 0.8);
+}
+.pv-frame-tall .pv-media {
+  aspect-ratio: 390 / 844;
+  border-radius: 1.25rem;
+  clip-path: inset(0 round 1.25rem);
+}
+.pv-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 0;
+  transition: transform var(--d-slow) var(--e-glass);
+}
+.pv:not(.is-scrub) .pv-frame-tall { width: min(100%, 15rem); }
+.pv-frame figcaption {
+  margin-top: var(--s-4);
+  font-size: var(--t-small);
+  line-height: 1.5;
+  color: var(--n-5);
+  max-width: 36ch;
+}
+.pv-frame-tall figcaption { max-width: 22ch; }
+@media (hover: hover) {
+  .pv-media:hover img { transform: scale(1.035); }
+}
+
+/* ---------- the foreground: the figures ---------- */
+.pv-front {
+  list-style: none;
+  margin: var(--s-9) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-6);
+}
+.pv-fact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+.pv.is-scrub .pv-fact {
+  position: absolute;
+  left: var(--fx);
+  top: var(--fy);
+  white-space: nowrap;
+}
+.pv-fact-n {
+  font-size: clamp(4rem, 9vw, 8.5rem);
+  font-weight: var(--w-light);
+  line-height: 0.9;
+  letter-spacing: var(--ls-display);
+  color: var(--n-0);
+  font-variant-numeric: tabular-nums;
+  /* nearest the lens: it casts onto the set */
+  text-shadow: 0 1.5rem 3rem rgb(0 0 0 / 0.6);
+}
+.pv-fact-u {
+  font-size: var(--t-body);
+  line-height: var(--lh-snug);
+  color: var(--n-4);
+  padding-left: 0.25rem;
+}
+
+/* ---------- the close ---------- */
+.pv-close { margin-top: var(--s-9); }
+.pv-close-in {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+.pv.is-scrub .pv-close-in {
+  position: absolute;
+  left: var(--fx);
+  top: var(--fy);
+  width: var(--fw);
+}
+.pv-close-name {
+  margin: 0;
+  font-size: var(--t-h2);
+  font-weight: var(--w-regular);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-h2);
+}
+.pv-close-line {
+  margin: 0;
+  font-size: var(--t-body);
+  line-height: var(--lh-body);
+  color: var(--n-5);
+  max-width: 40ch;
+}
+.pv-close-act {
+  margin-top: var(--s-3);
+  display: flex;
+  align-items: center;
+  gap: var(--s-5);
+}
+.pv-close-host {
+  font-size: var(--t-small);
+  color: var(--n-6);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- the timecode ---------- */
+.pv-tc { display: none; }
+.pv.is-scrub .pv-tc {
+  position: absolute;
+  z-index: 7;
+  right: var(--page-pad);
+  bottom: clamp(2rem, 6vh, 3.25rem);
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+  font-size: var(--t-small);
+  font-variant-numeric: tabular-nums;
+  color: var(--n-5);
+}
+.pv-tc-l { color: var(--n-6); letter-spacing: 0.08em; }
+
+/* ---------- the paper after the shot ---------- */
+.sp-after {
+  position: relative;
+  z-index: 41;
+  background: var(--surface);
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+}
+.pv.is-scrub + .sp-after { margin-top: -100svh; }
+.sp-after > .sp-sec:first-child { padding-top: clamp(6rem, 14vh, 9rem); }
+
+@media (max-width: 57.5rem) {
+  .pv-stage { padding: var(--s-8) var(--page-pad); }
+  .pv-mid { grid-template-columns: minmax(0, 1fr); }
+  .pv-front { grid-template-columns: minmax(0, 1fr); gap: var(--s-6); }
+  .pv-credits { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pv-media img { transition: none; }
+}

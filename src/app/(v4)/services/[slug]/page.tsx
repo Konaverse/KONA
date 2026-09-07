@@ -5,6 +5,7 @@ import ArrowLink from '@/components/v4/ArrowLink'
 import Reveal from '@/components/v4/Reveal'
 import ServiceStage from '@/components/v4/ServiceStage'
 import ServiceProcess from '@/components/v4/ServiceProcess'
+import ServiceProof from '@/components/v4/ServiceProof'
 import { SERVICE_PAGES, getServicePage, formatEuro } from '@/lib/service-pages'
 import { CALENDLY_URL, CONTACT_EMAIL, SITE_URL } from '@/lib/site'
 import '../service.css'
@@ -22,7 +23,7 @@ import '../service.css'
  *      hundred words; the three fact cards repeat the numbers for the eye
  *   3  what it is / when it is the wrong choice — the two beats on the plate
  *   4  process
- *   5  proof — one case study
+ *   5  proof — one case study, at length (ServiceProof.tsx)
  *   6  what changes the price
  *   7  the two CTAs — Contact and Book
  *   8  the up-link to /services and the one link to the sister page
@@ -192,45 +193,12 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
         {/* 4 — PROCESS: the schedule (ServiceProcess.tsx) */}
         <ServiceProcess steps={page.process} headingId="sp-process-h" />
 
-        <hr className="k-rule sp-rule" />
+        {/* 5 — PROOF: the dolly (ServiceProof.tsx). The lights go down
+            over the schedule; the price's paper rises over the shot. */}
+        <ServiceProof proof={page.proof} headingId="sp-proof-h" />
 
-        {/* 5 — PROOF */}
-        <section className="sp-sec sp-proof" aria-labelledby="sp-proof-h">
-          <div className="sp-sec-head">
-            <Reveal masked as="h2" className="t-h1">
-              <span id="sp-proof-h">Proof</span>
-            </Reveal>
-            <Reveal as="p" className="t-body sp-sec-lead" index={1}>
-              One project, at length, is more useful than twelve as thumbnails.
-            </Reveal>
-          </div>
-          <Reveal className="sp-case" index={1}>
-            <a
-              className="sp-case-media"
-              href={page.proof.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`${page.proof.name} — visit the site`}
-            >
-              <img src={page.proof.image} alt={page.proof.alt} loading="lazy" decoding="async" />
-            </a>
-            <div className="sp-case-cap">
-              <div>
-                <h3 className="t-h2 sp-case-name">{page.proof.name}</h3>
-                <p className="t-body sp-case-line">{page.proof.line}</p>
-              </div>
-              <div className="sp-case-side">
-                <span className="t-small">{page.proof.year}</span>
-                <ArrowLink href={page.proof.href} external>
-                  Visit the site
-                </ArrowLink>
-              </div>
-            </div>
-          </Reveal>
-        </section>
-
-        <hr className="k-rule sp-rule" />
-
+        {/* THE PAPER AGAIN — rises over the dark shot */}
+        <div className="sp-after">
         {/* 6 — WHAT CHANGES THE PRICE */}
         <section className="sp-sec sp-price" aria-labelledby="sp-price-h">
           <div className="sp-sec-head">
@@ -282,6 +250,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
             </p>
           )}
         </nav>
+        </div>
       </div>
     </article>
   )

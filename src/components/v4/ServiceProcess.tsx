@@ -62,6 +62,9 @@ import { gsap } from '@/lib/motion-v4'
 
 /** scroll length of one step, in viewport heights */
 const STEP_VH = 80
+/** the burial pad after the last step — one viewport during which the
+ *  proof's dark sheet rises over the finished schedule (ServiceProof) */
+const PAD_VH = 100
 /** the numeral's stride window, each side of a boundary (Process.tsx) */
 const FADE = 0.13
 /** the cards' travel window, each side of a boundary — wider: they move
@@ -116,7 +119,7 @@ export default function ServiceProcess({
     if (!pin || cards.length < 2 || !stack) return
 
     root.classList.add('is-scrub')
-    pin.style.height = `${N * STEP_VH + 100}svh`
+    pin.style.height = `${N * STEP_VH + 100 + PAD_VH}svh`
 
     /* the comet: dash geometry once, from each contour's measured length */
     const comets = rail.map((ri) => Array.from(ri.querySelectorAll<SVGPathElement>('.pr-c')))
@@ -135,7 +138,8 @@ export default function ServiceProcess({
       const vh = window.innerHeight
       const vw = window.innerWidth
       if (r.bottom < -100 || r.top > vh + 100) return
-      const p = clamp01(-r.top / Math.max(r.height - vh, 1))
+      /* the pad is not part of the schedule: p holds at 1 through it */
+      const p = clamp01(-r.top / Math.max(r.height - vh - (PAD_VH / 100) * vh, 1))
       const x = p * N
 
       const live = Math.min(N - 1, Math.floor(x))
