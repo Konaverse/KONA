@@ -684,8 +684,11 @@
   z-index: 1;
   left: 1.5rem;
   right: 1.5rem;
-  top: 1.75rem;
-  height: 12rem;
+  /* AT REST ONLY THE SHEET'S EDGE SHOWS — the label, as the tease; the
+     text waits in the pocket, and the hover is what brings it out (user,
+     2026-09-08: "the paper should hide its information until the hover") */
+  top: 4.9rem;
+  height: 14rem;
   padding: var(--s-4) var(--s-5);
   border-radius: var(--r-md);
   background: linear-gradient(180deg, var(--n-0) 0%, var(--n-1) 100%);
@@ -778,12 +781,12 @@
 }
 /* THE HOVER — the sheet comes up to the folder's edge, the plate opens */
 @media (hover: hover) {
-  .pf:hover .pf-sheet { transform: translateY(-1.75rem); }
+  .pf:hover .pf-sheet { transform: translateY(-4.9rem); }
   .pf:hover .pf-plate img { transform: scale(1.1); }
 }
 /* no pointer to hover with: the sheet stands lifted */
 @media (hover: none) {
-  .pf-sheet { transform: translateY(-1.25rem); }
+  .pf-sheet { transform: translateY(-4.9rem); }
 }
 @media (prefers-reduced-motion: reduce) {
   .pf-sheet, .pf-plate img { transition: none; }
@@ -797,10 +800,12 @@
 .pp.is-scrub .pp-ruler {
   position: absolute;
   z-index: 30;
-  left: var(--page-pad);
-  right: var(--page-pad);
+  /* FULL BLEED: a card drifting sideways as it waits must never show
+     beside the bar (user, 2026-09-08) */
+  left: 0;
+  right: 0;
   bottom: 0;
-  padding: var(--s-6) 0 clamp(2.5rem, 7vh, 4rem);
+  padding: var(--s-6) var(--page-pad) clamp(2.5rem, 7vh, 4rem);
   margin: 0;
   /* on paper, over the cards: the next card surfaces from behind it */
   background: var(--surface);
