@@ -595,34 +595,24 @@
 }
 .pp-ri { height: var(--pp-slot); }
 
-/* ---------- the cards: calendar leaves ---------- */
+/* ---------- the cards: folders ---------- */
 .pp-cards {
   list-style: none;
   margin: var(--s-8) 0 0;
   padding: 0;
   display: grid;
-  gap: var(--s-5);
+  gap: var(--s-6);
 }
 .pp.is-scrub .pp-cards {
   position: absolute;
-  /* the slot band — cards rise out from behind the ruler (which sits
-     over them, on paper) and leave through the top of the viewport */
+  /* the slot band — cards rise out from behind the tabs (which sit over
+     them, on paper) and leave through the top of the viewport */
   top: 0;
   bottom: 0;
   left: 44%;
   right: var(--page-pad);
   margin: 0;
   display: block;
-}
-.pp-card {
-  position: relative;
-  display: grid;
-  grid-template-columns: 7.5rem minmax(0, 1fr);
-  border-radius: var(--r-lg);
-  overflow: clip;
-  background: linear-gradient(160deg, var(--n-0) 0%, var(--n-1) 100%);
-  box-shadow: var(--lift-3);
-  color: var(--text);
 }
 .pp.is-scrub .pp-card {
   position: absolute;
@@ -635,95 +625,159 @@
   opacity: var(--co, 1);
   will-change: transform, opacity;
 }
-/* THE TAB — the duration on a dark plate (the hero's own inline plates) */
-.pp-tab {
+
+/* THE FOLDER. Tab top-left (index + duration), the body a dark grain
+   plate, a paper sheet tucked under the body's lip. Everything the
+   hover moves is transform-only. */
+.pf {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: var(--s-5);
-  background: var(--n-10);
+  /* the tab's height less its overlap with the body */
+  padding-top: 2.1rem;
   color: var(--n-0);
-  box-shadow: inset -1px 0 0 rgb(255 255 255 / 0.08);
-  overflow: hidden;
 }
-.pp-tab img {
+.pf-tab {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 62% 50%;
-  opacity: 0.85;
-  filter: grayscale(1) brightness(0.8) contrast(1.05);
+  top: 0;
+  left: 0;
+  height: 2.9rem;
+  padding: 0 var(--s-5) 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  background: var(--n-10);
+  font-size: var(--t-small);
+  font-variant-numeric: tabular-nums;
 }
-.pp-tab::after {
+/* the concave join between the tab and the body's top edge */
+.pf-tab::after {
+  content: '';
+  position: absolute;
+  right: calc(-1 * var(--r-lg));
+  bottom: 0.8rem;
+  width: var(--r-lg);
+  height: var(--r-lg);
+  background: radial-gradient(circle at 100% 0, transparent calc(var(--r-lg) - 0.5px), var(--n-10) var(--r-lg));
+}
+.pf-tab-i { color: var(--n-0); }
+.pf-tab-t { color: var(--n-5); }
+.pf-body {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: var(--s-6);
+  align-items: start;
+  padding: var(--s-6) var(--s-6) 8.25rem;
+  border-radius: 0 var(--r-lg) var(--r-lg) var(--r-lg);
+  background: linear-gradient(160deg, var(--n-9) 0%, var(--n-10) 40%, var(--n-11) 100%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.14),
+    inset 0 0 0 1px rgb(255 255 255 / 0.06),
+    0 1.5rem 3rem -1.5rem rgb(13 16 18 / 0.5);
+  overflow: clip;
+}
+.pf-body::before {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.5;
+  opacity: 0.35;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='90' height='90' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
 }
-.pp-tab-n, .pp-tab-u { position: relative; z-index: 1; }
-.pp-tab-n {
-  font-size: 3.75rem;
-  font-weight: var(--w-light);
-  line-height: 0.9;
-  letter-spacing: var(--ls-display);
-  font-variant-numeric: tabular-nums;
-}
-.pp-tab-u {
-  margin-top: var(--s-2);
-  font-size: var(--t-small);
-  color: var(--n-4);
-}
-/* THE LEAF — the paper body */
-.pp-leaf {
+/* the plate: a rounded square window on one of the hero's plates */
+.pf-plate {
   position: relative;
-  padding: var(--s-6) var(--s-7) var(--s-6) var(--s-7);
-  display: flex;
-  flex-direction: column;
+  display: block;
+  width: 8.25rem;
+  height: 8.25rem;
+  border-radius: var(--r-lg);
+  overflow: clip;
+  background: var(--n-11);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18), inset 0 0 0 1px rgb(255 255 255 / 0.08);
+  clip-path: inset(0 round var(--r-lg));
 }
-.pp-leaf-i {
-  font-size: var(--t-small);
-  color: var(--text-faint);
-  font-variant-numeric: tabular-nums;
+.pf-plate img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 60% 50%;
+  filter: grayscale(1) brightness(0.92) contrast(1.05);
+  transform: scale(1.02);
+  transition: transform var(--d-slow) var(--e-glass);
 }
-.pp-card-t {
-  margin: var(--s-4) 0 0;
+.pf-text {
+  position: relative;
+  min-width: 0;
+  padding-top: var(--s-2);
+}
+.pf-title {
+  margin: 0;
   font-size: var(--t-h1);
   font-weight: var(--w-light);
   line-height: 1;
   letter-spacing: var(--ls-h1);
+  color: var(--n-0);
 }
-.pp-card-meta {
-  margin: var(--s-6) 0 0;
-  padding-top: var(--s-5);
-  border-top: var(--hair) solid var(--hairline);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: var(--s-6);
-}
-.pp-card-meta dt {
+.pf-label {
+  display: block;
   font-size: var(--t-small);
-  color: var(--text-faint);
   margin-bottom: var(--s-2);
 }
-.pp-card-meta dd {
-  margin: 0;
+.pf-give {
+  margin: var(--s-5) 0 0;
+  max-width: 44ch;
   font-size: var(--t-body);
   line-height: var(--lh-snug);
-  color: var(--text-muted);
+  color: var(--n-4);
+}
+.pf-give .pf-label { color: var(--n-5); }
+/* THE SHEET — paper tucked in the folder, its foot under the lip */
+.pf-sheet {
+  position: absolute;
+  left: var(--s-6);
+  right: var(--s-6);
+  bottom: 0;
+  padding: var(--s-4) var(--s-5) 2.25rem;
+  border-radius: var(--r-md) var(--r-md) 0 0;
+  background: var(--n-0);
+  color: var(--text);
+  box-shadow: 0 -0.5rem 1.5rem -0.75rem rgb(13 16 18 / 0.6);
+  transition: transform var(--d-slow) var(--e-glass);
+}
+.pf-sheet .pf-label { color: var(--text-faint); }
+.pf-get {
+  margin: 0;
+  max-width: 60ch;
+  font-size: var(--t-body);
+  line-height: var(--lh-snug);
+  color: var(--text);
+}
+/* the lip: the folder's front edge, over the sheet */
+.pf-lip {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1.375rem;
+  background: var(--n-10);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.16);
+  border-radius: 0 0 var(--r-lg) var(--r-lg);
+}
+/* THE HOVER — the sheet comes out of the folder, the plate opens */
+@media (hover: hover) {
+  .pf:hover .pf-sheet { transform: translateY(-1.25rem); }
+  .pf:hover .pf-plate img { transform: scale(1.1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pf-sheet, .pf-plate img { transition: none; }
 }
 
-/* ---------- the ruler ---------- */
+/* ---------- the tabs ---------- */
 .pp-ruler {
   position: relative;
   margin-top: var(--s-9);
-  /* the playhead is written in cqw — this box is the container */
-  container-type: inline-size;
 }
 .pp.is-scrub .pp-ruler {
   position: absolute;
@@ -737,18 +791,16 @@
   background: var(--surface);
 }
 .pp-names {
-  position: relative;
-  height: 2.6rem;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: var(--s-4);
 }
 .pp-seg {
-  position: absolute;
-  bottom: 0;
-  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  gap: var(--s-2);
-  padding-right: var(--s-3);
+  gap: var(--s-3);
+  min-width: 0;
 }
 .pp-seg-name {
   font-size: var(--t-small);
@@ -761,77 +813,32 @@
 }
 .pp-seg.is-live .pp-seg-name, .pp:not(.is-scrub) .pp-seg-name { color: var(--text); }
 .pp-seg.is-past .pp-seg-name { color: var(--text-muted); }
-/* the span's own bar: a hairline that thickens to a bar when live */
+/* the bar: a hairline track, the fill scrubbed by the step's progress */
 .pp-seg-bar {
-  display: block;
-  height: 3px;
-  border-radius: 2px;
-  background: var(--hairline);
-  transform: scaleY(0.34);
-  transform-origin: 50% 100%;
-  transition: background-color var(--d-base) var(--e-settle), transform var(--d-base) var(--e-settle);
-}
-.pp-seg.is-live .pp-seg-bar { background: var(--text); transform: scaleY(1); }
-.pp-seg.is-past .pp-seg-bar { background: var(--hairline-strong); }
-.pp:not(.is-scrub) .pp-seg-bar { background: var(--text); transform: scaleY(1); }
-.pp-line {
   position: relative;
-  height: var(--hair);
+  display: block;
+  height: 2px;
+  border-radius: 1px;
   background: var(--hairline);
-  margin-top: var(--s-2);
+  overflow: hidden;
 }
-.pp-fill {
+.pp-seg-fill {
   position: absolute;
   inset: 0;
   background: var(--text);
   transform: scaleX(0);
   transform-origin: left center;
 }
-.pp:not(.is-scrub) .pp-fill { display: none; }
-.pp-head {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 0.625rem;
-  height: 0.625rem;
-  margin: -0.3125rem 0 0 -0.3125rem;
-  border-radius: 50%;
-  background: var(--text);
-  box-shadow: 0 0 0 4px var(--surface);
-}
-.pp:not(.is-scrub) .pp-head { display: none; }
-.pp-ticks {
-  position: relative;
-  height: 1.6rem;
-}
-.pp-tick {
-  position: absolute;
-  top: 0;
-  font-size: var(--t-small);
-  color: var(--text-faint);
-  white-space: nowrap;
-  padding-top: var(--s-3);
-  font-variant-numeric: tabular-nums;
-}
-.pp-tick::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 1px;
-  height: var(--s-2);
-  background: var(--hairline-strong);
-}
-.pp-tick:last-child { transform: translateX(-100%); }
+.pp-seg.is-live .pp-seg-fill { transform: scaleX(var(--pf, 0)); }
+.pp-seg.is-past .pp-seg-fill { transform: scaleX(1); background: var(--hairline-strong); }
+.pp:not(.is-scrub) .pp-seg-fill { transform: scaleX(1); }
 
 @media (max-width: 57.5rem) {
   .pp-stage { padding: var(--s-8) var(--page-pad); }
-  .pp-card { grid-template-columns: 5.5rem minmax(0, 1fr); }
-  .pp-tab { padding: var(--s-4); }
-  .pp-tab-n { font-size: 2.5rem; }
-  .pp-leaf { padding: var(--s-5); }
-  .pp-card-t { font-size: var(--t-h2); }
-  .pp-card-meta { grid-template-columns: minmax(0, 1fr); gap: var(--s-4); }
+  .pf-body { grid-template-columns: minmax(0, 1fr); padding: var(--s-5) var(--s-5) 7rem; }
+  .pf-plate { width: 5rem; height: 5rem; }
+  .pf-title { font-size: var(--t-h2); }
+  .pf-sheet { left: var(--s-5); right: var(--s-5); }
   /* the ruler needs width; on a phone the cards already say the time */
   .pp-ruler { display: none; }
 }

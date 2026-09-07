@@ -21,10 +21,12 @@ import { gsap } from '@/lib/motion-v4'
  * THREE MOVERS, ONE CLOCK (x = progress × steps, the house pin: sticky
  * stage + gsap.ticker + rect math, no ScrollTrigger):
  *
- *   THE RULER runs continuously — the playhead's position is TIME, so it
- *   never dwells: within step k it crosses that step's span. The passed
- *   spans fill to ink, the live span carries the head, the future ones
- *   wait as hairlines. Step names sit on their spans.
+ *   THE TABS across the foot: one per step, evenly spaced (user,
+ *   2026-09-08 — the week ruler with its ticks and playhead was cut: "I
+ *   don't like it, keep the progress tabs below evenly spaced"). The
+ *   live tab's bar fills with the step's own progress; passed tabs hold
+ *   their fill muted; future ones wait as hairlines. `weeks` in the data
+ *   now only feeds the lede's total.
  *
  *   THE NUMERAL is an ODOMETER (user, 2026-09-08: "the 0 will stay stuck
  *   there, only the 1,2,3,4 will roll"): the zero is one fixed
@@ -41,9 +43,12 @@ import { gsap } from '@/lib/motion-v4'
  *   ARRIVES FROM BEHIND THE RULER (the ruler carries paper and sits over
  *   the cards, so the next one surfaces out of the schedule) and LEAVES
  *   THROUGH THE TOP OF THE VIEWPORT (user, 2026-09-08 — the first cut's
- *   fading band at both edges was rejected). Each card is a CALENDAR
- *   LEAF: a dark plate tab carrying the step's duration big, a paper body
- *   with the title and the give/get pair — the schedule's own unit.
+ *   fading band at both edges was rejected). Each card is a FOLDER
+ *   (third design, off the user's two references): a tab carrying the
+ *   index and the duration, a dark grain body holding a rounded plate
+ *   and the title with "You give", and a PAPER SHEET tucked inside under
+ *   the folder's lip carrying "You get". HOVER pulls the sheet out of the
+ *   folder and swells the plate — an object with parts, not a box.
  *
  * FALLBACK IS THE LAYOUT: below 57.5rem, without JS, or under reduced
  * motion the stage is not sticky, the cards stack in flow with their own
@@ -71,17 +76,6 @@ const smooth = (v: number) => {
   return t * t * (3 - 2 * t)
 }
 
-/** the cumulative week spans: [start, end] per step, and the total */
-function spans(steps: ProcessStep[]) {
-  let at = 0
-  const out = steps.map((s) => {
-    const a = at
-    at += s.weeks
-    return [a, at] as [number, number]
-  })
-  return { out, total: at }
-}
-
 /** "2 weeks" → { n: "2", u: "weeks" }; "1–2 weeks" → { "1–2", "weeks" };
  *  "Ongoing" → { "", "Ongoing" } — the tab sets the number big */
 const splitTime = (t: string) => {
@@ -102,9 +96,8 @@ export default function ServiceProcess({
   headingId: string
 }) {
   const rootRef = useRef<HTMLElement | null>(null)
-  const { out: SPANS, total } = spans(steps)
+  const total = steps.reduce((sum, s) => sum + s.weeks, 0)
   const N = steps.length
-  const weeks = Math.ceil(total)
 
   useEffect(() => {
     const root = rootRef.current
@@ -117,10 +110,8 @@ export default function ServiceProcess({
     const rail = Array.from(root.querySelectorAll<HTMLElement>('.pp-ri'))
     const zero = root.querySelector<HTMLElement>('.pp-zero')
     const stack = root.querySelector<HTMLElement>('.pp-stack')
-    const fill = root.querySelector<HTMLElement>('.pp-fill')
-    const head = root.querySelector<HTMLElement>('.pp-head')
     const segs = Array.from(root.querySelectorAll<HTMLElement>('.pp-seg'))
-    if (!pin || cards.length < 2 || !stack || !fill || !head) return
+    if (!pin || cards.length < 2 || !stack) return
 
     root.classList.add('is-scrub')
     pin.style.height = `${N * STEP_VH + 100}svh`
@@ -135,7 +126,6 @@ export default function ServiceProcess({
       c.style.strokeDasharray = `${(f * L).toFixed(1)} ${((1 - f) * L).toFixed(1)}`
     })
 
-    const spanOf = (i: number) => SPANS[i]
     let lastLive = -1
 
     const tick = () => {
@@ -146,13 +136,11 @@ export default function ServiceProcess({
       const p = clamp01(-r.top / Math.max(r.height - vh, 1))
       const x = p * N
 
-      /* THE RULER — time, continuous */
       const live = Math.min(N - 1, Math.floor(x))
       const frac = x - live
-      const [a, b] = spanOf(live)
-      const at = (a + (b - a) * frac) / total
-      fill.style.transform = `scaleX(${at.toFixed(4)})`
-      head.style.transform = `translateX(${(at * 100).toFixed(3)}cqw)`
+
+      /* THE TABS — the live bar fills with the step */
+      segs[live]?.style.setProperty('--pf', frac.toFixed(4))
 
       /* THE NUMERAL — strides at the boundary */
       if (live !== lastLive) {
@@ -207,17 +195,18 @@ export default function ServiceProcess({
       root.classList.remove('is-scrub')
       pin.style.height = ''
       stack.style.transform = ''
-      fill.style.transform = ''
-      head.style.transform = ''
       rail.forEach((el) => el.classList.remove('is-on'))
-      segs.forEach((el) => el.classList.remove('is-live', 'is-past'))
+      segs.forEach((el) => {
+        el.classList.remove('is-live', 'is-past')
+        el.style.removeProperty('--pf')
+      })
       ;[...comets.flat(), ...zeroComet].forEach((c) => (c.style.strokeDashoffset = ''))
       cards.forEach((el) => {
         el.classList.remove('is-live')
         el.style.cssText = ''
       })
     }
-  }, [N, SPANS, total])
+  }, [N])
 
   return (
     <section ref={rootRef} className="pp" aria-labelledby={headingId}>
@@ -261,53 +250,41 @@ export default function ServiceProcess({
           {/* THE CARDS */}
           <ol className="pp-cards">
             {steps.map((s, i) => (
-              <li className="pp-card" key={s.title}>
-                {/* the tab: the duration, big, on a dark plate */}
-                <div className="pp-tab">
-                  <img src={`/home/inline-${(i % 3) + 1}.webp`} alt="" aria-hidden="true" draggable={false} />
-                  <span className="pp-tab-n">{splitTime(s.time).n}</span>
-                  <span className="pp-tab-u">{splitTime(s.time).u}</span>
-                </div>
-                <div className="pp-leaf">
-                  <span className="pp-leaf-i">{String(i + 1).padStart(2, '0')}</span>
-                  <h3 className="pp-card-t">{s.title}</h3>
-                  <dl className="pp-card-meta">
-                    <div>
-                      <dt>You give</dt>
-                      <dd>{s.give}</dd>
-                    </div>
-                    <div>
-                      <dt>You get</dt>
-                      <dd>{s.get}</dd>
-                    </div>
-                  </dl>
+              <li className="pp-card pf" key={s.title}>
+                <span className="pf-tab">
+                  <span className="pf-tab-i">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="pf-tab-t">{s.time}</span>
+                </span>
+                <div className="pf-body">
+                  <span className="pf-plate" aria-hidden="true">
+                    <img src={`/home/inline-${(i % 3) + 1}.webp`} alt="" draggable={false} />
+                  </span>
+                  <div className="pf-text">
+                    <h3 className="pf-title">{s.title}</h3>
+                    <p className="pf-give">
+                      <span className="pf-label">You give</span>
+                      {s.give}
+                    </p>
+                  </div>
+                  <div className="pf-sheet">
+                    <span className="pf-label">You get</span>
+                    <p className="pf-get">{s.get}</p>
+                  </div>
+                  <i className="pf-lip" aria-hidden="true" />
                 </div>
               </li>
             ))}
           </ol>
 
-          {/* THE RULER — weeks across the foot; the steps as spans on it */}
+          {/* THE TABS — one per step, evenly spaced; the live bar fills */}
           <div className="pp-ruler" aria-hidden="true">
             <div className="pp-names">
-              {steps.map((s, i) => (
-                <span
-                  key={s.title}
-                  className="pp-seg"
-                  style={{ left: `${(SPANS[i][0] / total) * 100}%`, width: `${(s.weeks / total) * 100}%` }}
-                >
-                  <i className="pp-seg-bar" />
+              {steps.map((s) => (
+                <span key={s.title} className="pp-seg">
+                  <i className="pp-seg-bar">
+                    <b className="pp-seg-fill" />
+                  </i>
                   <span className="pp-seg-name">{s.title}</span>
-                </span>
-              ))}
-            </div>
-            <div className="pp-line">
-              <i className="pp-fill" />
-              <i className="pp-head" />
-            </div>
-            <div className="pp-ticks">
-              {Array.from({ length: weeks + 1 }, (_, w) => (
-                <span key={w} className="pp-tick" style={{ left: `${(w / total) * 100}%` }}>
-                  {w === 0 ? 'Start' : w === weeks && total < weeks ? '' : `Week ${w}`}
                 </span>
               ))}
             </div>
