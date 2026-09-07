@@ -26,20 +26,24 @@ import { gsap } from '@/lib/motion-v4'
  *   spans fill to ink, the live span carries the head, the future ones
  *   wait as hairlines. Step names sit on their spans.
  *
- *   THE NUMERAL is the homepage rail (RailNumeral.tsx — Manrope's own
- *   digit outlines, the fade gradient, the comet lapping the contour once
- *   per step): it STRIDES at each boundary, through the same 2×FADE
- *   window Process.tsx uses, so the number changes as an event.
+ *   THE NUMERAL is an ODOMETER (user, 2026-09-08: "the 0 will stay stuck
+ *   there, only the 1,2,3,4 will roll"): the zero is one fixed
+ *   RailNumeral, the units digit a masked column of single digits that
+ *   STRIDES at each boundary through the same 2×FADE window Process.tsx
+ *   uses. The comet laps the zero every step and the live digit with it.
  *
  *   THE CARDS flow through a focus slot with DEPTH. Every card's state is
  *   a function of dist = flow − k, where flow counts crossed boundaries
  *   fractionally through a WIDER window (CARD_FADE) than the numeral's,
  *   so the cards travel for most of each step and rest at the centre:
- *   y = −sign·PITCH·|dist|^0.72 (perspective spacing: the column
- *   converges as it recedes), scale and opacity fall off with |dist|,
- *   waiting cards stay more visible than passed ones (the client sees
- *   what is coming), and each card drifts sideways by its own rate — the
- *   parallax the user asked for, small on purpose.
+ *   y = −sign·PITCH·|dist|^0.72 (perspective spacing), scale falls off
+ *   with |dist|, and each card drifts sideways by its own rate. A card
+ *   ARRIVES FROM BEHIND THE RULER (the ruler carries paper and sits over
+ *   the cards, so the next one surfaces out of the schedule) and LEAVES
+ *   THROUGH THE TOP OF THE VIEWPORT (user, 2026-09-08 — the first cut's
+ *   fading band at both edges was rejected). Each card is a CALENDAR
+ *   LEAF: a dark plate tab carrying the step's duration big, a paper body
+ *   with the title and the give/get pair — the schedule's own unit.
  *
  * FALLBACK IS THE LAYOUT: below 57.5rem, without JS, or under reduced
  * motion the stage is not sticky, the cards stack in flow with their own
@@ -78,6 +82,13 @@ function spans(steps: ProcessStep[]) {
   return { out, total: at }
 }
 
+/** "2 weeks" → { n: "2", u: "weeks" }; "1–2 weeks" → { "1–2", "weeks" };
+ *  "Ongoing" → { "", "Ongoing" } — the tab sets the number big */
+const splitTime = (t: string) => {
+  const m = t.match(/^([\d.–-]+)\s*(.*)$/)
+  return m ? { n: m[1], u: m[2] } : { n: '', u: t }
+}
+
 const fmtWeeks = (w: number) => {
   const r = Math.round(w * 2) / 2
   return Number.isInteger(r) ? String(r) : r.toFixed(1)
@@ -104,6 +115,7 @@ export default function ServiceProcess({
     const pin = root.querySelector<HTMLElement>('.pp-pin')
     const cards = Array.from(root.querySelectorAll<HTMLElement>('.pp-card'))
     const rail = Array.from(root.querySelectorAll<HTMLElement>('.pp-ri'))
+    const zero = root.querySelector<HTMLElement>('.pp-zero')
     const stack = root.querySelector<HTMLElement>('.pp-stack')
     const fill = root.querySelector<HTMLElement>('.pp-fill')
     const head = root.querySelector<HTMLElement>('.pp-head')
@@ -115,7 +127,8 @@ export default function ServiceProcess({
 
     /* the comet: dash geometry once, from each contour's measured length */
     const comets = rail.map((ri) => Array.from(ri.querySelectorAll<SVGPathElement>('.pr-c')))
-    comets.flat().forEach((c) => {
+    const zeroComet = zero ? Array.from(zero.querySelectorAll<SVGPathElement>('.pr-c')) : []
+    ;[...comets.flat(), ...zeroComet].forEach((c) => {
       const L = c.getTotalLength()
       const f = Number(c.dataset.len) / 100
       c.dataset.total = String(L)
@@ -156,11 +169,13 @@ export default function ServiceProcess({
       stack.style.transform = `translateY(calc(${(-slid).toFixed(4)} * (var(--pp-slot) + var(--pp-gap))))`
 
       const headAt = frac * 100
-      comets[live]?.forEach((c) => {
+      const lap = (c: SVGPathElement) => {
         const L = Number(c.dataset.total)
         const len = Number(c.dataset.len)
         c.style.strokeDashoffset = (((len - headAt) / 100) * L).toFixed(1)
-      })
+      }
+      comets[live]?.forEach(lap)
+      zeroComet.forEach(lap)
 
       /* THE CARDS — the column flows through the slot with depth */
       let flow = 0
@@ -172,8 +187,10 @@ export default function ServiceProcess({
         const sign = dist < 0 ? -1 : 1
         const y = -sign * Math.pow(ad, 0.72) * PITCH_VH * (vh / 100)
         const cx = (i % 2 ? 1 : -1) * dist * DRIFT_VW * (vw / 100)
-        const s = Math.max(0.62, 1 - 0.09 * ad)
-        const o = dist > 0 ? Math.max(0, 1 - 0.85 * ad) : Math.max(0.16, 1 - 0.48 * ad)
+        const s = Math.max(0.7, 1 - 0.08 * ad)
+        /* no fade on arrival (the ruler hides the waiting card), a mild
+           one on the way out — it leaves through the viewport's edge */
+        const o = dist > 0 ? Math.max(0.55, 1 - 0.3 * ad) : 1
         const el = cards[i]
         el.style.setProperty('--cy', `${y.toFixed(2)}px`)
         el.style.setProperty('--cx', `${cx.toFixed(2)}px`)
@@ -194,7 +211,7 @@ export default function ServiceProcess({
       head.style.transform = ''
       rail.forEach((el) => el.classList.remove('is-on'))
       segs.forEach((el) => el.classList.remove('is-live', 'is-past'))
-      comets.flat().forEach((c) => (c.style.strokeDashoffset = ''))
+      ;[...comets.flat(), ...zeroComet].forEach((c) => (c.style.strokeDashoffset = ''))
       cards.forEach((el) => {
         el.classList.remove('is-live')
         el.style.cssText = ''
@@ -226,12 +243,18 @@ export default function ServiceProcess({
                 </linearGradient>
               </defs>
             </svg>
-            <div className="pp-stack">
-              {steps.map((s, i) => (
-                <span className="pr-ri pp-ri" key={s.title}>
-                  <RailNumeral no={String(i + 1).padStart(2, '0')} />
-                </span>
-              ))}
+            {/* the fixed zero, then the rolling units column */}
+            <span className="pr-ri pp-zero is-on">
+              <RailNumeral no="0" />
+            </span>
+            <div className="pp-roll">
+              <div className="pp-stack">
+                {steps.map((s, i) => (
+                  <span className="pr-ri pp-ri" key={s.title}>
+                    <RailNumeral no={String(i + 1)} />
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -239,21 +262,26 @@ export default function ServiceProcess({
           <ol className="pp-cards">
             {steps.map((s, i) => (
               <li className="pp-card" key={s.title}>
-                <div className="pp-card-top">
-                  <span className="pp-card-n">{String(i + 1).padStart(2, '0')}</span>
-                  <span className="pp-card-time">{s.time}</span>
+                {/* the tab: the duration, big, on a dark plate */}
+                <div className="pp-tab">
+                  <img src={`/home/inline-${(i % 3) + 1}.webp`} alt="" aria-hidden="true" draggable={false} />
+                  <span className="pp-tab-n">{splitTime(s.time).n}</span>
+                  <span className="pp-tab-u">{splitTime(s.time).u}</span>
                 </div>
-                <h3 className="pp-card-t">{s.title}</h3>
-                <dl className="pp-card-meta">
-                  <div>
-                    <dt>You give</dt>
-                    <dd>{s.give}</dd>
-                  </div>
-                  <div>
-                    <dt>You get</dt>
-                    <dd>{s.get}</dd>
-                  </div>
-                </dl>
+                <div className="pp-leaf">
+                  <span className="pp-leaf-i">{String(i + 1).padStart(2, '0')}</span>
+                  <h3 className="pp-card-t">{s.title}</h3>
+                  <dl className="pp-card-meta">
+                    <div>
+                      <dt>You give</dt>
+                      <dd>{s.give}</dd>
+                    </div>
+                    <div>
+                      <dt>You get</dt>
+                      <dd>{s.get}</dd>
+                    </div>
+                  </dl>
+                </div>
               </li>
             ))}
           </ol>

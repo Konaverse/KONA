@@ -549,7 +549,7 @@
   color: var(--text-muted);
 }
 
-/* ---------- the numeral ---------- */
+/* ---------- the numeral: the odometer ---------- */
 .pp-rail {
   display: none;
   --pp-slot: 46svh;
@@ -562,15 +562,32 @@
   bottom: 0;
   left: var(--page-pad);
   right: 60%;
+}
+/* the fixed zero */
+.pp-zero {
+  position: absolute;
+  top: calc(49% - var(--pp-slot) / 2);
+  left: 0;
+  height: var(--pp-slot);
+}
+/* the rolling units column, masked so the waiting and passed digits
+   dissolve short of the heading and the ruler. Its left edge is the
+   zero's advance: the glyph box is 1600 units tall for a 2000-unit em,
+   so the zero (0.578em) is slot × 2000/1600 × 0.578 wide, less the
+   −0.06em tracking Process.tsx used between the two digits. */
+.pp-roll {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--pp-slot) * 1.25 * 0.518);
+  width: calc(var(--pp-slot) * 0.8);
   overflow: clip;
-  /* fades the waiting/passed numerals at the stage's edges */
-  mask-image: linear-gradient(180deg, transparent 20%, #000 30%, #000 66%, transparent 78%);
+  mask-image: linear-gradient(180deg, transparent 18%, #000 28%, #000 68%, transparent 80%);
 }
 .pp-stack {
   position: absolute;
   top: calc(49% - var(--pp-slot) / 2);
   left: 0;
-  right: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -578,7 +595,7 @@
 }
 .pp-ri { height: var(--pp-slot); }
 
-/* ---------- the cards ---------- */
+/* ---------- the cards: calendar leaves ---------- */
 .pp-cards {
   list-style: none;
   margin: var(--s-8) 0 0;
@@ -588,93 +605,117 @@
 }
 .pp.is-scrub .pp-cards {
   position: absolute;
-  /* THE BAND: the cards live between the head and the ruler, and the
-     mask dissolves them at both edges — a waiting card never sits on the
-     ruler, a passed card never covers the heading */
-  top: 17%;
-  bottom: 22%;
+  /* the slot band — cards rise out from behind the ruler (which sits
+     over them, on paper) and leave through the top of the viewport */
+  top: 0;
+  bottom: 0;
   left: 44%;
   right: var(--page-pad);
   margin: 0;
   display: block;
-  mask-image: linear-gradient(180deg, transparent 0%, #000 14%, #000 84%, transparent 100%);
 }
 .pp-card {
   position: relative;
-  padding: var(--s-6);
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
   border-radius: var(--r-lg);
-  /* dark grain on paper — the hero's third fact card, the pills */
-  background: linear-gradient(160deg, var(--n-9) 0%, var(--n-10) 45%, var(--n-11) 100%);
-  color: var(--n-0);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.14),
-    inset 0 0 0 1px rgb(255 255 255 / 0.06),
-    0 1.5rem 3rem -1.5rem rgb(13 16 18 / 0.5);
-}
-.pp-card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  opacity: 0.35;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='90' height='90' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  overflow: clip;
+  background: linear-gradient(160deg, var(--n-0) 0%, var(--n-1) 100%);
+  box-shadow: var(--lift-3);
+  color: var(--text);
 }
 .pp.is-scrub .pp-card {
   position: absolute;
   left: 0;
   right: 0;
-  /* the slot: the band's centre */
-  top: 50%;
+  top: 47%;
   /* the driver writes --cx/--cy/--cs/--co; the card is centred on the slot */
   transform: translate3d(var(--cx, 0px), calc(-50% + var(--cy, 0px)), 0) scale(var(--cs, 1));
   transform-origin: 50% 50%;
   opacity: var(--co, 1);
   will-change: transform, opacity;
 }
-.pp-card-top {
+/* THE TAB — the duration on a dark plate (the hero's own inline plates) */
+.pp-tab {
+  position: relative;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--s-6);
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--s-5);
+  background: var(--n-10);
+  color: var(--n-0);
+  box-shadow: inset -1px 0 0 rgb(255 255 255 / 0.08);
+  overflow: hidden;
 }
-.pp-card-n {
-  font-size: var(--t-small);
-  color: var(--n-5);
+.pp-tab img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 62% 50%;
+  opacity: 0.85;
+  filter: grayscale(1) brightness(0.8) contrast(1.05);
+}
+.pp-tab::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='90' height='90' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+.pp-tab-n, .pp-tab-u { position: relative; z-index: 1; }
+.pp-tab-n {
+  font-size: 3.75rem;
+  font-weight: var(--w-light);
+  line-height: 0.9;
+  letter-spacing: var(--ls-display);
   font-variant-numeric: tabular-nums;
 }
-.pp-card-time {
+.pp-tab-u {
+  margin-top: var(--s-2);
   font-size: var(--t-small);
-  color: var(--n-0);
-  padding: 0.35em 0.8em;
-  border-radius: var(--r-full);
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.18), inset 0 1px 0 rgb(255 255 255 / 0.12);
-  background: rgb(255 255 255 / 0.05);
+  color: var(--n-4);
+}
+/* THE LEAF — the paper body */
+.pp-leaf {
+  position: relative;
+  padding: var(--s-6) var(--s-7) var(--s-6) var(--s-7);
+  display: flex;
+  flex-direction: column;
+}
+.pp-leaf-i {
+  font-size: var(--t-small);
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
 }
 .pp-card-t {
-  margin: 0;
+  margin: var(--s-4) 0 0;
   font-size: var(--t-h1);
   font-weight: var(--w-light);
   line-height: 1;
   letter-spacing: var(--ls-h1);
 }
 .pp-card-meta {
-  margin: var(--s-7) 0 0;
+  margin: var(--s-6) 0 0;
+  padding-top: var(--s-5);
+  border-top: var(--hair) solid var(--hairline);
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: var(--s-6);
 }
 .pp-card-meta dt {
   font-size: var(--t-small);
-  color: var(--n-5);
+  color: var(--text-faint);
   margin-bottom: var(--s-2);
 }
 .pp-card-meta dd {
   margin: 0;
   font-size: var(--t-body);
   line-height: var(--lh-snug);
-  color: var(--n-4);
+  color: var(--text-muted);
 }
 
 /* ---------- the ruler ---------- */
@@ -686,10 +727,14 @@
 }
 .pp.is-scrub .pp-ruler {
   position: absolute;
+  z-index: 30;
   left: var(--page-pad);
   right: var(--page-pad);
-  bottom: clamp(2.5rem, 7vh, 4rem);
+  bottom: 0;
+  padding: var(--s-6) 0 clamp(2.5rem, 7vh, 4rem);
   margin: 0;
+  /* on paper, over the cards: the next card surfaces from behind it */
+  background: var(--surface);
 }
 .pp-names {
   position: relative;
@@ -781,7 +826,10 @@
 
 @media (max-width: 57.5rem) {
   .pp-stage { padding: var(--s-8) var(--page-pad); }
-  .pp-card { padding: var(--s-5); }
+  .pp-card { grid-template-columns: 5.5rem minmax(0, 1fr); }
+  .pp-tab { padding: var(--s-4); }
+  .pp-tab-n { font-size: 2.5rem; }
+  .pp-leaf { padding: var(--s-5); }
   .pp-card-t { font-size: var(--t-h2); }
   .pp-card-meta { grid-template-columns: minmax(0, 1fr); gap: var(--s-4); }
   /* the ruler needs width; on a phone the cards already say the time */
