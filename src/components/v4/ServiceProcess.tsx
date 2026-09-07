@@ -43,12 +43,14 @@ import { gsap } from '@/lib/motion-v4'
  *   ARRIVES FROM BEHIND THE RULER (the ruler carries paper and sits over
  *   the cards, so the next one surfaces out of the schedule) and LEAVES
  *   THROUGH THE TOP OF THE VIEWPORT (user, 2026-09-08 — the first cut's
- *   fading band at both edges was rejected). Each card is a FOLDER
- *   (third design, off the user's two references): a tab carrying the
- *   index and the duration, a dark grain body holding a rounded plate
- *   and the title with "You give", and a PAPER SHEET tucked inside under
- *   the folder's lip carrying "You get". HOVER pulls the sheet out of the
- *   folder and swells the plate — an object with parts, not a box.
+ *   fading band at both edges was rejected). Each card is a FOLDER, built
+ *   IN DEPTH (fourth cut — the user liked the idea and called the first
+ *   build poor): the BACK panel carries a trapezoid TAB whose label is
+ *   the step's name; the paper SHEET stands in front of the back and
+ *   carries "You get"; the FRONT panel pockets the sheet's lower half
+ *   and carries the plate, "You give" and the time, casting its shadow
+ *   onto the sheet. HOVER lifts the sheet to the folder's edge and opens
+ *   the plate; a touch screen sees the sheet already lifted.
  *
  * FALLBACK IS THE LAYOUT: below 57.5rem, without JS, or under reduced
  * motion the stage is not sticky, the cards stack in flow with their own
@@ -251,26 +253,29 @@ export default function ServiceProcess({
           <ol className="pp-cards">
             {steps.map((s, i) => (
               <li className="pp-card pf" key={s.title}>
-                <span className="pf-tab">
+                {/* THE FOLDER, in depth: the back panel carries the tab (the
+                    step's name is its label); the sheet stands in front of
+                    the back; the front panel pockets the sheet's lower half
+                    and carries the plate, what you give, and the time. */}
+                <div className="pf-tab">
                   <span className="pf-tab-i">{String(i + 1).padStart(2, '0')}</span>
-                  <span className="pf-tab-t">{s.time}</span>
-                </span>
-                <div className="pf-body">
-                  <span className="pf-plate" aria-hidden="true">
-                    <img src={`/home/inline-${(i % 3) + 1}.webp`} alt="" draggable={false} />
-                  </span>
-                  <div className="pf-text">
-                    <h3 className="pf-title">{s.title}</h3>
-                    <p className="pf-give">
-                      <span className="pf-label">You give</span>
-                      {s.give}
-                    </p>
-                  </div>
+                  <h3 className="pf-tab-t">{s.title}</h3>
+                </div>
+                <div className="pf-back">
                   <div className="pf-sheet">
                     <span className="pf-label">You get</span>
                     <p className="pf-get">{s.get}</p>
                   </div>
-                  <i className="pf-lip" aria-hidden="true" />
+                  <div className="pf-front">
+                    <span className="pf-plate" aria-hidden="true">
+                      <img src={`/home/inline-${(i % 3) + 1}.webp`} alt="" draggable={false} />
+                    </span>
+                    <p className="pf-give">
+                      <span className="pf-label">You give</span>
+                      {s.give}
+                    </p>
+                    <span className="pf-time">{s.time}</span>
+                  </div>
                 </div>
               </li>
             ))}

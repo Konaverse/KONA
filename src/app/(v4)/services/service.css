@@ -626,60 +626,103 @@
   will-change: transform, opacity;
 }
 
-/* THE FOLDER. Tab top-left (index + duration), the body a dark grain
-   plate, a paper sheet tucked under the body's lip. Everything the
-   hover moves is transform-only. */
+/* THE FOLDER, IN DEPTH. Three planes: the back (dark, carries the tab),
+   the sheet (paper, in front of the back), the front (dark, nearer so a
+   step lighter, pockets the sheet). The tab is a trapezoid — the one
+   silhouette that says "folder" from across the room. Every hover move
+   is transform-only. */
 .pf {
   position: relative;
-  /* the tab's height less its overlap with the body */
-  padding-top: 2.1rem;
+  /* the tab's height less its overlap with the back */
+  padding-top: 2.5rem;
   color: var(--n-0);
 }
 .pf-tab {
   position: absolute;
   top: 0;
   left: 0;
-  height: 2.9rem;
-  padding: 0 var(--s-5) 0.6rem;
+  z-index: 0;
+  height: 2.75rem;
+  padding: 0 2.6rem 0.2rem var(--s-5);
   display: flex;
   align-items: center;
   gap: var(--s-4);
-  border-radius: var(--r-lg) var(--r-lg) 0 0;
   background: var(--n-10);
+  border-radius: var(--r-md) 0 0 0;
+  /* the right shoulder slopes — a trapezoid; the top-left keeps its radius */
+  clip-path: polygon(0 0, calc(100% - 1.6rem) 0, 100% 100%, 0 100%);
+}
+.pf-tab-i {
   font-size: var(--t-small);
+  color: var(--n-5);
   font-variant-numeric: tabular-nums;
 }
-/* the concave join between the tab and the body's top edge */
-.pf-tab::after {
-  content: '';
-  position: absolute;
-  right: calc(-1 * var(--r-lg));
-  bottom: 0.8rem;
-  width: var(--r-lg);
-  height: var(--r-lg);
-  background: radial-gradient(circle at 100% 0, transparent calc(var(--r-lg) - 0.5px), var(--n-10) var(--r-lg));
+.pf-tab-t {
+  margin: 0;
+  font-size: var(--t-h3);
+  font-weight: var(--w-medium);
+  line-height: 1;
+  letter-spacing: var(--ls-h3);
+  color: var(--n-0);
+  white-space: nowrap;
 }
-.pf-tab-i { color: var(--n-0); }
-.pf-tab-t { color: var(--n-5); }
-.pf-body {
+.pf-back {
   position: relative;
+  z-index: 1;
+  /* the inside of the folder: room for the sheet to stand in */
+  padding-top: 7.5rem;
+  border-radius: 0 var(--r-lg) var(--r-lg) var(--r-lg);
+  background: linear-gradient(170deg, var(--n-10) 0%, var(--n-11) 100%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.1),
+    inset 0 0 0 1px rgb(255 255 255 / 0.05),
+    0 1.75rem 3rem -1.5rem rgb(13 16 18 / 0.55);
+}
+/* THE SHEET — paper, in front of the back, its foot in the pocket */
+.pf-sheet {
+  position: absolute;
+  z-index: 1;
+  left: 1.5rem;
+  right: 1.5rem;
+  top: 1.75rem;
+  height: 12rem;
+  padding: var(--s-4) var(--s-5);
+  border-radius: var(--r-md);
+  background: linear-gradient(180deg, var(--n-0) 0%, var(--n-1) 100%);
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px rgb(21 23 26 / 0.06);
+  transform-origin: 50% 100%;
+  transition: transform var(--d-slow) var(--e-glass);
+}
+.pf-sheet .pf-label { color: var(--text-faint); }
+.pf-get {
+  margin: 0;
+  max-width: 62ch;
+  font-size: var(--t-body);
+  line-height: var(--lh-snug);
+  color: var(--text);
+}
+/* THE FRONT — nearer, so a step lighter; casts onto the sheet */
+.pf-front {
+  position: relative;
+  z-index: 2;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: 7.25rem minmax(0, 1fr) auto;
   column-gap: var(--s-6);
   align-items: start;
-  padding: var(--s-6) var(--s-6) 8.25rem;
-  border-radius: 0 var(--r-lg) var(--r-lg) var(--r-lg);
-  background: linear-gradient(160deg, var(--n-9) 0%, var(--n-10) 40%, var(--n-11) 100%);
+  padding: var(--s-6);
+  border-radius: var(--r-md) var(--r-md) var(--r-lg) var(--r-lg);
+  background: linear-gradient(160deg, var(--n-9) 0%, var(--n-10) 55%, var(--n-10) 100%);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.14),
-    inset 0 0 0 1px rgb(255 255 255 / 0.06),
-    0 1.5rem 3rem -1.5rem rgb(13 16 18 / 0.5);
-  overflow: clip;
+    inset 0 1px 0 rgb(255 255 255 / 0.16),
+    inset 0 0 0 1px rgb(255 255 255 / 0.05),
+    0 -0.875rem 1.75rem -0.5rem rgb(13 16 18 / 0.6);
 }
-.pf-body::before {
+.pf-front::before {
   content: '';
   position: absolute;
   inset: 0;
+  border-radius: inherit;
   pointer-events: none;
   opacity: 0.35;
   mix-blend-mode: overlay;
@@ -689,8 +732,8 @@
 .pf-plate {
   position: relative;
   display: block;
-  width: 8.25rem;
-  height: 8.25rem;
+  width: 7.25rem;
+  height: 7.25rem;
   border-radius: var(--r-lg);
   overflow: clip;
   background: var(--n-11);
@@ -707,68 +750,40 @@
   transform: scale(1.02);
   transition: transform var(--d-slow) var(--e-glass);
 }
-.pf-text {
-  position: relative;
-  min-width: 0;
-  padding-top: var(--s-2);
-}
-.pf-title {
-  margin: 0;
-  font-size: var(--t-h1);
-  font-weight: var(--w-light);
-  line-height: 1;
-  letter-spacing: var(--ls-h1);
-  color: var(--n-0);
-}
 .pf-label {
   display: block;
   font-size: var(--t-small);
   margin-bottom: var(--s-2);
 }
 .pf-give {
-  margin: var(--s-5) 0 0;
-  max-width: 44ch;
+  position: relative;
+  margin: 0;
+  padding-top: var(--s-2);
+  max-width: 40ch;
   font-size: var(--t-body);
   line-height: var(--lh-snug);
   color: var(--n-4);
 }
 .pf-give .pf-label { color: var(--n-5); }
-/* THE SHEET — paper tucked in the folder, its foot under the lip */
-.pf-sheet {
-  position: absolute;
-  left: var(--s-6);
-  right: var(--s-6);
-  bottom: 0;
-  padding: var(--s-4) var(--s-5) 2.25rem;
-  border-radius: var(--r-md) var(--r-md) 0 0;
-  background: var(--n-0);
-  color: var(--text);
-  box-shadow: 0 -0.5rem 1.5rem -0.75rem rgb(13 16 18 / 0.6);
-  transition: transform var(--d-slow) var(--e-glass);
+.pf-time {
+  position: relative;
+  align-self: end;
+  font-size: var(--t-h2);
+  font-weight: var(--w-light);
+  letter-spacing: var(--ls-h2);
+  line-height: 1;
+  color: var(--n-0);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
-.pf-sheet .pf-label { color: var(--text-faint); }
-.pf-get {
-  margin: 0;
-  max-width: 60ch;
-  font-size: var(--t-body);
-  line-height: var(--lh-snug);
-  color: var(--text);
-}
-/* the lip: the folder's front edge, over the sheet */
-.pf-lip {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 1.375rem;
-  background: var(--n-10);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.16);
-  border-radius: 0 0 var(--r-lg) var(--r-lg);
-}
-/* THE HOVER — the sheet comes out of the folder, the plate opens */
+/* THE HOVER — the sheet comes up to the folder's edge, the plate opens */
 @media (hover: hover) {
-  .pf:hover .pf-sheet { transform: translateY(-1.25rem); }
+  .pf:hover .pf-sheet { transform: translateY(-1.75rem); }
   .pf:hover .pf-plate img { transform: scale(1.1); }
+}
+/* no pointer to hover with: the sheet stands lifted */
+@media (hover: none) {
+  .pf-sheet { transform: translateY(-1.25rem); }
 }
 @media (prefers-reduced-motion: reduce) {
   .pf-sheet, .pf-plate img { transition: none; }
@@ -835,10 +850,10 @@
 
 @media (max-width: 57.5rem) {
   .pp-stage { padding: var(--s-8) var(--page-pad); }
-  .pf-body { grid-template-columns: minmax(0, 1fr); padding: var(--s-5) var(--s-5) 7rem; }
+  .pf-front { grid-template-columns: 5rem minmax(0, 1fr); padding: var(--s-5); }
   .pf-plate { width: 5rem; height: 5rem; }
-  .pf-title { font-size: var(--t-h2); }
-  .pf-sheet { left: var(--s-5); right: var(--s-5); }
+  .pf-time { grid-column: 2; justify-self: start; margin-top: var(--s-2); }
+  .pf-sheet { left: var(--s-4); right: var(--s-4); }
   /* the ruler needs width; on a phone the cards already say the time */
   .pp-ruler { display: none; }
 }
