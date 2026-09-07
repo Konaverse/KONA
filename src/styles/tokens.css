@@ -2250,3 +2250,52 @@ html.lenis, html.lenis body { height: auto; }
   width: 100%;
   height: 100%;
 }
+
+/* ============================================================
+   THE RAIL NUMERAL (RailNumeral.tsx) — shared by the homepage's parked §7
+   and the service template's schedule. Moved here from home.css 2026-09-08.
+   ============================================================ */
+.pr-ri {
+  display: flex;
+  justify-content: center;
+  height: var(--pr-slot);
+  opacity: 0.22;
+  transition: opacity var(--d-base) var(--e-settle);
+}
+.pr-ri.is-on {
+  opacity: 1;
+}
+.pr-rsvg {
+  height: 100%;
+  width: auto;
+  overflow: visible;
+  color: var(--text); /* the gradient's currentColor, and the comet's ink */
+}
+/* the glyph: the same fade-out gradient as the DOM numerals, drawn by
+   the one shared <linearGradient> */
+.pr-glyph {
+  fill: url(#pr-fade);
+}
+/* the comet: three dash layers per digit, all ending on one travelling
+   head — driven by the scrub (Process.tsx), parked when the hand stops.
+   Hidden off the active numeral; the fade is the handoff. */
+.pr-c {
+  fill: none;
+  stroke: currentColor;
+  /* USER units (viewBox height 1600 over ~32svh): ~1.6px on a laptop, and
+     it scales with the numeral, which is what a drawn edge should do */
+  stroke-width: 8;
+  stroke-linecap: round;
+  opacity: 0;
+  transition: opacity var(--d-base) var(--e-settle);
+}
+.pr-ri.is-on .pr-c1 {
+  opacity: 1;
+}
+.pr-ri.is-on .pr-c2 {
+  opacity: 0.35;
+}
+.pr-ri.is-on .pr-c3 {
+  opacity: 0.12;
+}
+

@@ -4,6 +4,7 @@ import Button from '@/components/v4/Button'
 import ArrowLink from '@/components/v4/ArrowLink'
 import Reveal from '@/components/v4/Reveal'
 import ServiceStage from '@/components/v4/ServiceStage'
+import ServiceProcess from '@/components/v4/ServiceProcess'
 import { SERVICE_PAGES, getServicePage, formatEuro } from '@/lib/service-pages'
 import { CALENDLY_URL, CONTACT_EMAIL, SITE_URL } from '@/lib/site'
 import '../service.css'
@@ -188,41 +189,8 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
 
       {/* THE PAPER — rises over the plate */}
       <div className="sp-body">
-        {/* 4 — PROCESS */}
-        <section className="sp-sec sp-process" aria-labelledby="sp-process-h">
-          <div className="sp-sec-head">
-            <Reveal masked as="h2" className="t-h1" >
-              <span id="sp-process-h">How it goes</span>
-            </Reveal>
-            <Reveal as="p" className="t-body sp-sec-lead" index={1}>
-              What you give, what you get, and how long each step takes.
-            </Reveal>
-          </div>
-          <ol className="sp-steps">
-            {page.process.map((s, i) => (
-              <li key={s.title} className="sp-step">
-                <Reveal className="sp-step-in" index={i}>
-                  <span className="sp-step-n">{String(i + 1).padStart(2, '0')}</span>
-                  <h3 className="sp-step-t t-h2">{s.title}</h3>
-                  <dl className="sp-step-meta">
-                    <div>
-                      <dt>You give</dt>
-                      <dd>{s.give}</dd>
-                    </div>
-                    <div>
-                      <dt>You get</dt>
-                      <dd>{s.get}</dd>
-                    </div>
-                    <div>
-                      <dt>Time</dt>
-                      <dd>{s.time}</dd>
-                    </div>
-                  </dl>
-                </Reveal>
-              </li>
-            ))}
-          </ol>
-        </section>
+        {/* 4 — PROCESS: the schedule (ServiceProcess.tsx) */}
+        <ServiceProcess steps={page.process} headingId="sp-process-h" />
 
         <hr className="k-rule sp-rule" />
 

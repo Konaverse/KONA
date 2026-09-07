@@ -40,7 +40,11 @@ export type ProcessStep = {
   title: string
   give: string
   get: string
+  /** as it reads on the card: "2 weeks", "1–2 weeks", "Ongoing" */
   time: string
+  /** the step's span on the schedule's week ruler (ServiceProcess) —
+   *  a number even where `time` is a range or "Ongoing" */
+  weeks: number
 }
 
 export type PriceDriver = {
@@ -145,24 +149,28 @@ export const SERVICE_PAGES: ServicePage[] = [
         give: 'An hour of your time, your brand files, three sites you admire.',
         get: 'A written brief: audience, pages, tone, what success looks like.',
         time: '1 week',
+        weeks: 1,
       },
       {
         title: 'Direction',
         give: 'One round of honest feedback.',
         get: 'Two visual directions for the homepage, presented live.',
         time: '1 week',
+        weeks: 1,
       },
       {
         title: 'Design',
         give: 'Final copy and imagery, or the go-ahead for us to source them.',
         get: 'Every page designed at desktop and phone size, with the motion specified.',
         time: '2 weeks',
+        weeks: 2,
       },
       {
         title: 'Handover',
         give: 'Sign-off.',
         get: 'The design system, the files, and the build — or a hand-off pack for your developer.',
         time: '1–2 weeks',
+        weeks: 1.5,
       },
     ],
     proof: {
@@ -225,10 +233,10 @@ export const SERVICE_PAGES: ServicePage[] = [
       close: 'Engineering is the part of the site you never see, and always feel',
     },
     process: [
-      { title: 'Scope', give: 'The design, or the brief for one, and a list of every system the site talks to.', get: 'A technical plan: stack, integrations, hosting, what is fixed-price and what is not.', time: '1 week' },
-      { title: 'Build', give: 'Access to the accounts we integrate with.', get: 'A staging site you can click through, updated every few days.', time: '2–5 weeks' },
-      { title: 'Content and QA', give: 'Final content in the CMS — we train you in an hour.', get: 'Every page tested on real devices, performance measured, accessibility checked.', time: '1 week' },
-      { title: 'Launch', give: 'DNS access, or your IT contact.', get: 'The site live, monitored, with analytics and search console connected.', time: '2 days' },
+      { title: 'Scope', give: 'The design, or the brief for one, and a list of every system the site talks to.', get: 'A technical plan: stack, integrations, hosting, what is fixed-price and what is not.', time: '1 week' , weeks: 1 },
+      { title: 'Build', give: 'Access to the accounts we integrate with.', get: 'A staging site you can click through, updated every few days.', time: '2–5 weeks' , weeks: 4 },
+      { title: 'Content and QA', give: 'Final content in the CMS — we train you in an hour.', get: 'Every page tested on real devices, performance measured, accessibility checked.', time: '1 week' , weeks: 1 },
+      { title: 'Launch', give: 'DNS access, or your IT contact.', get: 'The site live, monitored, with analytics and search console connected.', time: '2 days' , weeks: 0.4 },
     ],
     proof: {
       name: 'Los Santos Barbershop',
@@ -290,10 +298,10 @@ export const SERVICE_PAGES: ServicePage[] = [
       close: 'The page itself is the proof: everything you are looking at was built this way',
     },
     process: [
-      { title: 'Concept', give: 'Brand, product, references, and what the visitor should feel.', get: 'A storyboard of the scroll: every scene, in order, with the object in it.', time: '2 weeks' },
-      { title: 'Art', give: 'Product files or the go-ahead to model.', get: 'Rendered stills for approval, then the animation passes.', time: '3–4 weeks' },
-      { title: 'Build', give: 'Copy.', get: 'The site with every scene wired to the scroll, measured on real devices.', time: '3–4 weeks' },
-      { title: 'Launch', give: 'Sign-off.', get: 'Live, with a fallback that reads fully with no JavaScript at all.', time: '1 week' },
+      { title: 'Concept', give: 'Brand, product, references, and what the visitor should feel.', get: 'A storyboard of the scroll: every scene, in order, with the object in it.', time: '2 weeks' , weeks: 2 },
+      { title: 'Art', give: 'Product files or the go-ahead to model.', get: 'Rendered stills for approval, then the animation passes.', time: '3–4 weeks' , weeks: 3.5 },
+      { title: 'Build', give: 'Copy.', get: 'The site with every scene wired to the scroll, measured on real devices.', time: '3–4 weeks' , weeks: 3.5 },
+      { title: 'Launch', give: 'Sign-off.', get: 'Live, with a fallback that reads fully with no JavaScript at all.', time: '1 week' , weeks: 1 },
     ],
     proof: {
       name: 'Lumière Éclat',
@@ -344,9 +352,9 @@ export const SERVICE_PAGES: ServicePage[] = [
       close: 'Small is a discipline, not a compromise',
     },
     process: [
-      { title: 'Brief', give: 'A call, your logo, the text you already have.', get: 'The page’s outline and a quote.', time: '2 days' },
-      { title: 'Design', give: 'One round of feedback.', get: 'The page designed at desktop and phone size.', time: '1 week' },
-      { title: 'Build and launch', give: 'Final copy, domain access.', get: 'The page live, with analytics and a contact route that works.', time: '1 week' },
+      { title: 'Brief', give: 'A call, your logo, the text you already have.', get: 'The page’s outline and a quote.', time: '2 days' , weeks: 0.4 },
+      { title: 'Design', give: 'One round of feedback.', get: 'The page designed at desktop and phone size.', time: '1 week' , weeks: 1 },
+      { title: 'Build and launch', give: 'Final copy, domain access.', get: 'The page live, with analytics and a contact route that works.', time: '1 week' , weeks: 1 },
     ],
     proof: {
       name: 'Los Santos Barbershop',
@@ -396,10 +404,10 @@ export const SERVICE_PAGES: ServicePage[] = [
       close: 'A redesign is a decision about what to keep',
     },
     process: [
-      { title: 'Audit', give: 'Analytics and Search Console access.', get: 'A written audit: what to keep, what to cut, what to add.', time: '1 week' },
-      { title: 'Structure', give: 'Your priorities for the next two years.', get: 'A new site map with every old URL mapped to a new one.', time: '1 week' },
-      { title: 'Design and build', give: 'Feedback in two rounds.', get: 'The redesigned site on staging, content migrated.', time: '2–5 weeks' },
-      { title: 'Launch', give: 'A go date.', get: 'Live, redirects in place, rankings monitored for the following month.', time: '1 week' },
+      { title: 'Audit', give: 'Analytics and Search Console access.', get: 'A written audit: what to keep, what to cut, what to add.', time: '1 week' , weeks: 1 },
+      { title: 'Structure', give: 'Your priorities for the next two years.', get: 'A new site map with every old URL mapped to a new one.', time: '1 week' , weeks: 1 },
+      { title: 'Design and build', give: 'Feedback in two rounds.', get: 'The redesigned site on staging, content migrated.', time: '2–5 weeks' , weeks: 4 },
+      { title: 'Launch', give: 'A go date.', get: 'Live, redirects in place, rankings monitored for the following month.', time: '1 week' , weeks: 1 },
     ],
     proof: {
       name: 'Dimitris Tzankatian',
@@ -449,9 +457,9 @@ export const SERVICE_PAGES: ServicePage[] = [
       close: 'Search is a habit your customers already have',
     },
     process: [
-      { title: 'Foundation audit', give: 'Search Console and analytics access.', get: 'A prioritised list of technical and content fixes, with the expected effect of each.', time: '2 weeks' },
-      { title: 'Fixes', give: 'Access to the site, or your developer’s.', get: 'Every technical item done and verified in Search Console.', time: '2–4 weeks' },
-      { title: 'Monthly', give: 'An hour a month with whoever knows the customers.', get: 'One page written and published, off-site work done, a report in plain language.', time: 'Ongoing' },
+      { title: 'Foundation audit', give: 'Search Console and analytics access.', get: 'A prioritised list of technical and content fixes, with the expected effect of each.', time: '2 weeks' , weeks: 2 },
+      { title: 'Fixes', give: 'Access to the site, or your developer’s.', get: 'Every technical item done and verified in Search Console.', time: '2–4 weeks' , weeks: 3 },
+      { title: 'Monthly', give: 'An hour a month with whoever knows the customers.', get: 'One page written and published, off-site work done, a report in plain language.', time: 'Ongoing' , weeks: 4 },
     ],
     proof: {
       name: 'Konaverse',
