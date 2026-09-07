@@ -6,10 +6,10 @@
  * here is a slot the page renders in the order search engines and language
  * models read in — the citable content at the top (h1 → direct answer with
  * the from-price and the timeline in the first hundred words → what it is
- * and is not) and the persuasion below it (process → proof → what changes
- * the price → the two CTAs → the up-link and the one link to the sister
- * page). Nothing about layout lives here; services/[slug]/page.tsx is the
- * one reader.
+ * and is not) and the persuasion below it (process → the two CTAs → the
+ * up-link and the one link to the sister page). LOCKED 2026-09-08: no
+ * proof section and no price-driver section on the template. Nothing
+ * about layout lives here; services/[slug]/page.tsx is the one reader.
  *
  * `services-data.tsx` beside the components is the HOMEPAGE'S six cards
  * (objects, light angles). Same six slugs, different job; the slug is the
@@ -17,9 +17,7 @@
  *
  * ALL COPY, PRICES AND TIMELINES ARE PLACEHOLDER (checklist 6.6). The
  * numbers are the /work stub's tiers where a tier existed and a guess where
- * it did not — the user supplies the real ones before any page indexes. The
- * proof projects are the three live sites the homepage already shows; each
- * page will be wired to its own case study once /work/[slug] exists.
+ * it did not — the user supplies the real ones before any page indexes.
  */
 
 export type Fact = {
@@ -45,49 +43,6 @@ export type ProcessStep = {
   /** the step's span on the schedule's week ruler (ServiceProcess) —
    *  a number even where `time` is a range or "Ongoing" */
   weeks: number
-}
-
-export type PriceDriver = {
-  driver: string
-  effect: string
-}
-
-export type ProofFrame = {
-  image: string
-  alt: string
-  /** one line under the frame: what this frame shows and why it matters */
-  caption: string
-  /** a desktop still (16:9) or a phone still (390:844) */
-  kind: 'wide' | 'tall'
-}
-
-export type ProofFact = {
-  /** the figure, as it reads big: "4", "2", "60" */
-  value: string
-  /** the rest of the sentence, small: "weeks from brief to launch" */
-  unit: string
-}
-
-export type Proof = {
-  name: string
-  /** the one-line description under the name */
-  line: string
-  /** who they are, where: "Videographer, Athens" */
-  client: string
-  year: string
-  /** what Konaverse did: "Design, development, motion" */
-  scope: string
-  /** THE BRIEF, in one sentence — the dolly's back wall, read slowly
-   *  across the whole shot; the fallback sets it as a pull-quote */
-  brief: string
-  href: string
-  /** the one still the layout falls back to (and the old single capture) */
-  image: string
-  alt: string
-  /** four stills of the live site, in the order the dolly passes them */
-  frames: ProofFrame[]
-  /** three figures. PLACEHOLDER numbers until the user supplies real ones. */
-  facts: [ProofFact, ProofFact, ProofFact]
 }
 
 export type ServicePage = {
@@ -124,10 +79,6 @@ export type ServicePage = {
     close: string
   }
   process: ProcessStep[]
-  /** THE PROOF — one project, at length (ServiceProof.tsx, the dolly).
-   *  Shared records below (PROOF_*); a page may override `line`. */
-  proof: Proof
-  priceDrivers: PriceDriver[]
   /** the CTA block's line */
   invite: string
   /** the sister page — linked ONCE, in the foot (§2a.8). Design ↔ development. */
@@ -137,102 +88,6 @@ export type ServicePage = {
 /* the stand-in plate for every page until the user's dune master lands:
    Bosra, already graded for the noir direction (see .sv-img in home.css) */
 const PLATE = '/home/bosra-2000.webp'
-
-/* THE PROOF RECORDS — the three live sites the homepage shows plus this
-   one, each with four stills captured from the live site (public/work/
-   proof/). Captions describe what the frame shows. The FACTS are
-   PLACEHOLDER figures (checklist 6.6) — plausible, not measured. */
-const PROOF_TZANKATIAN: Proof = {
-  name: 'Dimitris Tzankatian',
-  line: 'A videographer’s site that opens like his showreel — every frame with a purpose.',
-  client: 'Videographer, Athens',
-  year: '2026',
-  scope: 'Design, development, motion',
-  brief: 'He wanted a site that opens like his showreel.',
-  href: 'https://dtzankatian.com',
-  image: '/work/tzankatian.webp',
-  alt: 'The Dimitris Tzankatian homepage — a full-bleed film still under a single line of type',
-  frames: [
-    { image: '/work/proof/tzankatian-1.webp', alt: 'The homepage: a yacht at sea, full bleed, under the line “Every frame has a purpose”', caption: 'The opening frame is his own footage, full bleed, with one line over it.', kind: 'wide' },
-    { image: '/work/proof/tzankatian-2.webp', alt: 'The same homepage on a phone: the Acropolis at dusk under the headline', caption: 'On a phone the reel still leads and the type still fits.', kind: 'tall' },
-    { image: '/work/proof/tzankatian-3.webp', alt: 'A hillside villa at night with its pool lit, under the line “Spaces that speak”', caption: 'Each chapter of the reel gets a line of type and nothing else.', kind: 'wide' },
-    { image: '/work/proof/tzankatian-4.webp', alt: 'Fog over a coastline, the line “A different perspective” barely visible in it', caption: 'The interface stays out of the way. The footage is what you look at.', kind: 'wide' },
-  ],
-  facts: [
-    { value: '4', unit: 'weeks from brief to launch' },
-    { value: '2', unit: 'languages, one design' },
-    { value: '6', unit: 'pages, each designed twice' },
-  ],
-}
-
-const PROOF_LOSSANTOS: Proof = {
-  name: 'Los Santos Barbershop',
-  line: 'Nicosia’s barbershop set in type as sharp as the fades.',
-  client: 'Barbershop, Nicosia',
-  year: '2025',
-  scope: 'Design and development',
-  brief: 'They wanted the shop’s confidence on a screen.',
-  href: 'https://lossantosbarbers.com',
-  image: '/work/lossantos.webp',
-  alt: 'The Los Santos Barbershop homepage — large type over a dark photograph',
-  frames: [
-    { image: '/work/proof/lossantos-1.webp', alt: 'The homepage: the name LOS SANTOS in heavy black type, the three services listed beside it', caption: 'The name set as big as the sign outside, the three services right beside it.', kind: 'wide' },
-    { image: '/work/proof/lossantos-2.webp', alt: 'The homepage on a phone: the name, the services, the booking button', caption: 'On a phone the booking button is one thumb away.', kind: 'tall' },
-    { image: '/work/proof/lossantos-3.webp', alt: 'The services section: three dark cards, each with its time and price', caption: 'Every cut with its time and its price. No menu PDF to download.', kind: 'wide' },
-    { image: '/work/proof/lossantos-4.webp', alt: 'The gallery: a grid of black-and-white photographs of cuts', caption: 'The cuts themselves, in a gallery that scrolls sideways.', kind: 'wide' },
-  ],
-  facts: [
-    { value: '3', unit: 'weeks from brief to launch' },
-    { value: '1', unit: 'page, top to bottom' },
-    { value: '2', unit: 'taps from landing to booking' },
-  ],
-}
-
-const PROOF_LUMIERE: Proof = {
-  name: 'Lumière Éclat',
-  line: 'A scroll-driven story of light and steel.',
-  client: 'Watchmaker, concept',
-  year: '2026',
-  scope: 'Design, 3D, development',
-  brief: 'A watch you could turn over without touching it.',
-  href: 'https://watchweb.vercel.app',
-  image: '/work/lumiere.webp',
-  alt: 'The Lumière Éclat homepage — a watch rendered in light and steel',
-  frames: [
-    { image: '/work/proof/lumiere-1.webp', alt: 'The homepage: a steel watch with a blue dial over the word LUMIÈRE repeated in white', caption: 'The watch arrives before the name does.', kind: 'wide' },
-    { image: '/work/proof/lumiere-2.webp', alt: 'The homepage on a phone: the watch at an angle over the same type', caption: 'The same scene on a phone, the watch held in one hand.', kind: 'tall' },
-    { image: '/work/proof/lumiere-3.webp', alt: 'A black panther holding the watch in its jaws, in a dark room', caption: 'A dark room, one light source, and the steel does the rest.', kind: 'wide' },
-    { image: '/work/proof/lumiere-4.webp', alt: 'The dial, magnified to the size of the screen', caption: 'The dial at the size of the screen, rendered as you scroll.', kind: 'wide' },
-  ],
-  facts: [
-    { value: '6', unit: 'weeks from brief to launch' },
-    { value: '60', unit: 'frames a second, on a laptop' },
-    { value: '1', unit: 'page, one long scene' },
-  ],
-}
-
-const PROOF_KONAVERSE: Proof = {
-  name: 'Konaverse',
-  line: 'This site — server-rendered, structured, and measured monthly.',
-  client: 'This studio, Cyprus',
-  year: '2026',
-  scope: 'Design, development, SEO',
-  brief: 'Every word readable by a crawler before a script runs.',
-  href: 'https://kona-verse.com',
-  image: '/work/proof/konaverse-1.webp',
-  alt: 'The Konaverse homepage',
-  frames: [
-    { image: '/work/proof/konaverse-1.webp', alt: 'The Konaverse homepage: the headline with three inline plates, the dark card below', caption: 'The homepage you came in through.', kind: 'wide' },
-    { image: '/work/proof/konaverse-2.webp', alt: 'The Konaverse homepage on a phone', caption: 'On a phone: the same site, rebuilt for the thumb.', kind: 'tall' },
-    { image: '/work/proof/konaverse-3.webp', alt: 'A section of the homepage: three statements over a black-and-white photograph of ruins', caption: 'Every word here is in the HTML before any script runs.', kind: 'wide' },
-    { image: '/work/proof/konaverse-4.webp', alt: 'The services section: four dark cards, each with an object', caption: 'Six services, six objects, one page.', kind: 'wide' },
-  ],
-  facts: [
-    { value: '0', unit: 'words that need JavaScript to read' },
-    { value: '1', unit: 'report a month, in plain numbers' },
-    { value: '6', unit: 'service pages, one template' },
-  ],
-}
 
 export const SERVICE_PAGES: ServicePage[] = [
   {
@@ -302,13 +157,6 @@ export const SERVICE_PAGES: ServicePage[] = [
         weeks: 1.5,
       },
     ],
-    proof: PROOF_TZANKATIAN,
-    priceDrivers: [
-      { driver: 'Number of distinct page designs', effect: 'Each new layout is designed twice, desktop and phone. Templates within a type (all blog posts, all products) count once.' },
-      { driver: 'Motion', effect: 'Entrances and hover states are included. Scroll-driven scenes and 3D are their own line — see 3D websites.' },
-      { driver: 'Copy and imagery', effect: 'Supplied by you at no cost; written or sourced by us as an addition.' },
-      { driver: 'Build', effect: 'Design only, or design and development in one continuous process — the second is the usual choice and the cheaper total.' },
-    ],
     invite: 'Let’s design yours.',
     sister: {
       slug: 'web-development',
@@ -359,13 +207,6 @@ export const SERVICE_PAGES: ServicePage[] = [
       { title: 'Build', give: 'Access to the accounts we integrate with.', get: 'A staging site you can click through, updated every few days.', time: '2–5 weeks' , weeks: 4 },
       { title: 'Content and QA', give: 'Final content in the CMS — we train you in an hour.', get: 'Every page tested on real devices, performance measured, accessibility checked.', time: '1 week' , weeks: 1 },
       { title: 'Launch', give: 'DNS access, or your IT contact.', get: 'The site live, monitored, with analytics and search console connected.', time: '2 days' , weeks: 0.4 },
-    ],
-    proof: PROOF_LOSSANTOS,
-    priceDrivers: [
-      { driver: 'Integrations', effect: 'Bookings, payments, CRM, newsletters — each is a fixed line, quoted upfront.' },
-      { driver: 'Content model', effect: 'A blog is included. Products, listings or multi-language content are their own model each.' },
-      { driver: 'Accounts and roles', effect: 'A public site is the base; logins, dashboards and customer areas are a different class of build.' },
-      { driver: 'Migration', effect: 'Moving existing content and redirecting every old URL is priced by the page count.' },
     ],
     invite: 'Let’s build yours.',
     sister: {
@@ -418,13 +259,6 @@ export const SERVICE_PAGES: ServicePage[] = [
       { title: 'Build', give: 'Copy.', get: 'The site with every scene wired to the scroll, measured on real devices.', time: '3–4 weeks' , weeks: 3.5 },
       { title: 'Launch', give: 'Sign-off.', get: 'Live, with a fallback that reads fully with no JavaScript at all.', time: '1 week' , weeks: 1 },
     ],
-    proof: PROOF_LUMIERE,
-    priceDrivers: [
-      { driver: 'Number of scenes', effect: 'Each scroll-driven scene is storyboarded, rendered and built. Three is a typical site; one is a hero.' },
-      { driver: 'Modelling', effect: 'A product with CAD files renders quickly. A product modelled from photographs is its own line.' },
-      { driver: 'Live WebGL', effect: 'Pre-rendered is the base. Interactive, real-time 3D adds engineering and testing time.' },
-      { driver: 'Pages beyond the story', effect: 'Supporting pages are priced as web design.' },
-    ],
     invite: 'Let’s make yours.',
   },
 
@@ -463,12 +297,6 @@ export const SERVICE_PAGES: ServicePage[] = [
       { title: 'Brief', give: 'A call, your logo, the text you already have.', get: 'The page’s outline and a quote.', time: '2 days' , weeks: 0.4 },
       { title: 'Design', give: 'One round of feedback.', get: 'The page designed at desktop and phone size.', time: '1 week' , weeks: 1 },
       { title: 'Build and launch', give: 'Final copy, domain access.', get: 'The page live, with analytics and a contact route that works.', time: '1 week' , weeks: 1 },
-    ],
-    proof: PROOF_LOSSANTOS,
-    priceDrivers: [
-      { driver: 'Copywriting', effect: 'Your text is free; ours is a fixed addition.' },
-      { driver: 'Bookings or payments', effect: 'A contact form is included; a booking calendar or a checkout is a line each.' },
-      { driver: 'Motion', effect: 'Entrances are included; a scroll-driven scene is priced as 3D work.' },
     ],
     invite: 'Let’s make your page.',
   },
@@ -510,12 +338,6 @@ export const SERVICE_PAGES: ServicePage[] = [
       { title: 'Design and build', give: 'Feedback in two rounds.', get: 'The redesigned site on staging, content migrated.', time: '2–5 weeks' , weeks: 4 },
       { title: 'Launch', give: 'A go date.', get: 'Live, redirects in place, rankings monitored for the following month.', time: '1 week' , weeks: 1 },
     ],
-    proof: PROOF_TZANKATIAN,
-    priceDrivers: [
-      { driver: 'Page count', effect: 'The number of pages that survive the audit and need designing.' },
-      { driver: 'Content migration', effect: 'Moving fifty posts is an afternoon; moving five hundred products is a project.' },
-      { driver: 'Platform change', effect: 'Staying on your platform is cheapest. Moving to a modern stack is priced as development.' },
-    ],
     invite: 'Let’s redesign yours.',
   },
 
@@ -554,12 +376,6 @@ export const SERVICE_PAGES: ServicePage[] = [
       { title: 'Foundation audit', give: 'Search Console and analytics access.', get: 'A prioritised list of technical and content fixes, with the expected effect of each.', time: '2 weeks' , weeks: 2 },
       { title: 'Fixes', give: 'Access to the site, or your developer’s.', get: 'Every technical item done and verified in Search Console.', time: '2–4 weeks' , weeks: 3 },
       { title: 'Monthly', give: 'An hour a month with whoever knows the customers.', get: 'One page written and published, off-site work done, a report in plain language.', time: 'Ongoing' , weeks: 4 },
-    ],
-    proof: PROOF_KONAVERSE,
-    priceDrivers: [
-      { driver: 'Competition', effect: 'A Nicosia dentist and a Europe-wide SaaS need different amounts of work for the same position.' },
-      { driver: 'Content volume', effect: 'One page a month is the base. More pages, more research, more writing.' },
-      { driver: 'Site condition', effect: 'A site we built needs no foundation work. One we did not may need a lot.' },
     ],
     invite: 'Let’s get you found.',
   },

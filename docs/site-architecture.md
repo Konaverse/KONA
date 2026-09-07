@@ -108,10 +108,12 @@ language models read in: the citable content sits at the top, the persuasion bel
 3. **What it is and what it is not**: the "when this is the wrong choice" paragraph qualifies out
    the wrong leads on purpose.
 4. **Process**: what the client gives, what they get, how long each step takes.
-5. **Proof**: one embedded case study, chosen for this service, linking to `/work/[slug]`.
-6. **What changes the price**: the honest version of a pricing table, in prose.
-7. **The two CTAs**: Contact and Book.
-8. **Up-link** to `/services`, and the one link to the sister page where one exists.
+5. **The two CTAs**: Contact and Book.
+6. **Up-link** to `/services`, and the one link to the sister page where one exists.
+
+Locked 2026-09-08: the embedded case study and the "what changes the price" prose were cut from
+the template (two builds of each read generic). Proof lives on `/work/[slug]`; the from-price is
+already in the hero and the direct answer.
 
 Schema per page: Service with areaServed (Cyprus for bucket A, worldwide for bucket B) and
 BreadcrumbList. Only what is visible on the page.

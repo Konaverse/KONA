@@ -5,8 +5,7 @@ import ArrowLink from '@/components/v4/ArrowLink'
 import Reveal from '@/components/v4/Reveal'
 import ServiceStage from '@/components/v4/ServiceStage'
 import ServiceProcess from '@/components/v4/ServiceProcess'
-import ServiceProof from '@/components/v4/ServiceProof'
-import { SERVICE_PAGES, getServicePage, formatEuro } from '@/lib/service-pages'
+import { SERVICE_PAGES, getServicePage } from '@/lib/service-pages'
 import { CALENDLY_URL, CONTACT_EMAIL, SITE_URL } from '@/lib/site'
 import '../service.css'
 
@@ -22,11 +21,14 @@ import '../service.css'
  *   2  the direct answer — what, for whom, from-price, timeline in the first
  *      hundred words; the three fact cards repeat the numbers for the eye
  *   3  what it is / when it is the wrong choice — the two beats on the plate
- *   4  process
- *   5  proof — one case study, at length (ServiceProof.tsx)
- *   6  what changes the price
- *   7  the two CTAs — Contact and Book
- *   8  the up-link to /services and the one link to the sister page
+ *   4  process — the schedule
+ *   5  the two CTAs — Contact and Book
+ *   6  the up-link to /services and the one link to the sister page
+ *
+ * LOCKED 2026-09-08 (user): no proof section and no "what changes the
+ * price" section — after the process comes the CTA. The proof lives in
+ * the case studies (/work) and the from-price in the hero and the
+ * direct answer.
  *
  * SERVER-RENDERED, every word in the raw HTML (SEO plan D5). The stage's
  * motion is an enhancement in ServiceStage.tsx; the layout is the fallback.
@@ -193,36 +195,9 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
         {/* 4 — PROCESS: the schedule (ServiceProcess.tsx) */}
         <ServiceProcess steps={page.process} headingId="sp-process-h" />
 
-        {/* 5 — PROOF: the dolly (ServiceProof.tsx). The lights go down
-            over the schedule; the price's paper rises over the shot. */}
-        <ServiceProof proof={page.proof} headingId="sp-proof-h" />
-
-        {/* THE PAPER AGAIN — rises over the dark shot */}
-        <div className="sp-after">
-        {/* 6 — WHAT CHANGES THE PRICE */}
-        <section className="sp-sec sp-price" aria-labelledby="sp-price-h">
-          <div className="sp-sec-head">
-            <Reveal masked as="h2" className="t-h1">
-              <span id="sp-price-h">What changes the price</span>
-            </Reveal>
-            <Reveal as="p" className="sp-from" index={1}>
-              <span className="t-small">{page.name} starts at</span>
-              <strong className="sp-from-n">{formatEuro(page.fromPrice)}</strong>
-            </Reveal>
-          </div>
-          <dl className="sp-drivers">
-            {page.priceDrivers.map((d, i) => (
-              <Reveal key={d.driver} className="sp-driver" index={i}>
-                <dt className="t-h3">{d.driver}</dt>
-                <dd className="t-body">{d.effect}</dd>
-              </Reveal>
-            ))}
-          </dl>
-        </section>
-
         <hr className="k-rule sp-rule" />
 
-        {/* 7 — THE TWO CTAs */}
+        {/* 5 — THE TWO CTAs */}
         <section className="sp-sec sp-invite" aria-labelledby="sp-invite-h">
           <Reveal masked as="h2" className="t-display sp-invite-h">
             <span id="sp-invite-h">{page.invite}</span>
@@ -240,7 +215,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
           </Reveal>
         </section>
 
-        {/* 8 — UP-LINK and the sister page */}
+        {/* 6 — UP-LINK and the sister page */}
         <nav className="sp-foot" aria-label="Related">
           <ArrowLink href="/services">All services</ArrowLink>
           {page.sister && (
@@ -250,7 +225,6 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
             </p>
           )}
         </nav>
-        </div>
       </div>
     </article>
   )
