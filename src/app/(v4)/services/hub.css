@@ -1,0 +1,555 @@
+/* ============================================================
+   THE SERVICES HUB — .sh-* (2026-09-08; rebuilt 2026-09-09)
+   §1 THE BEND (HubHero.tsx) on paper, STICKY; §2 THE LIST (HubList.tsx)
+   on paper, in flow, scrolling up OVER the hero (which drifts up and
+   dims beneath, --sh-cover); §3 the CTA in flow. Colours, type and
+   easings from
+   tokens.css; the plate material is the homepage hero's dark-grain
+   pill, restated here because home.css is not on this route.
+
+   THE PICTURE RULE HOLDS: every composition length is rem, hairlines
+   stay px, svh only for the pins. The frames were drawn at 1720 wide;
+   every number below is that frame scaled to the 1534 reference.
+   ============================================================ */
+
+.sh {
+  position: relative;
+  /* the grain the plates share */
+  --sh-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='90' height='90' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+/* ---------- THE COVER ----------
+   The hero is STICKY at the top (CSS alone) and everything after it is
+   opaque and above it, so the list and then the CTA scroll up over it
+   as any section would. */
+.sh-index,
+.sh-cta {
+  position: relative;
+  z-index: 2;
+  background: var(--surface);
+}
+
+/* ---------- §1 · THE HERO (paper) ----------
+   The frame: the statement top-right in a column that starts at 46.3%
+   of the page, the small paragraph bottom-left, the display word
+   bottom-right on the same baseline. The left column holds the keyword
+   line top-left and is EMPTY above the paragraph on purpose — that is
+   where the word lands. STICKY: one viewport that stays while the index
+   scrolls over it (the index is above it and opaque); under that cover
+   it drifts up a little and dims (--sh-cover, HubList), so the cover
+   reads as depth. */
+.sh-hero {
+  position: sticky;
+  top: 0;
+  z-index: 0;
+  height: 100svh;
+  transform: translate3d(0, calc(var(--sh-cover, 0) * -18svh), 0);
+  will-change: transform;
+  display: grid;
+  grid-template-columns: minmax(0, 46.3fr) minmax(0, 53.7fr);
+  padding: 5.5rem 0 2rem;
+  overflow: clip;
+  background: var(--surface);
+}
+/* the shade the incoming section casts */
+.sh-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  pointer-events: none;
+  background: var(--n-11);
+  opacity: calc(var(--sh-cover, 0) * 0.35);
+}
+.sh-hero-l {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding-left: var(--page-pad);
+}
+/* the keyword line, top-left under the mark */
+.sh-kicker {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: var(--w-regular);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-h3);
+  color: var(--text-muted);
+}
+.sh-para {
+  grid-row: 3;
+  margin: 0 0 0.45rem;
+  max-width: 22rem;
+  font-size: 1rem;
+  line-height: 1.42;
+  color: var(--text-muted);
+}
+.sh-hero-r {
+  display: grid;
+  grid-template-rows: auto minmax(2rem, 1fr) auto;
+  padding-right: var(--page-pad);
+}
+
+/* the statement: six lines, each behind its own crop edge.
+   SIZED TO THE REFERENCE VIEWPORT (1536x730): the frame was drawn
+   taller; at the real height the six lines and the display word have to
+   share 730px with the nav's clearance */
+.sh-state {
+  margin: 1.25rem 0 0;
+  font-size: 3.45rem;
+  font-weight: var(--w-light);
+  line-height: 1.13;
+  letter-spacing: var(--ls-h1);
+  color: var(--text);
+}
+.sh-mask {
+  display: block;
+  overflow: hidden;
+  /* descenders breathe; the crop edge is for the rise, not the glyphs */
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+.sh-ln {
+  display: block;
+  white-space: nowrap;
+  will-change: transform;
+}
+/* the entrance's parked state — opacity only, so a CSS transform never
+   adds to GSAP's yPercent channel. page.tsx's noscript lifts it. */
+.sh-ent { opacity: 0; }
+.sh-hero.is-in .sh-ent { opacity: 1; }
+
+/* THE SLOT: the word in the flow, the plate absolutely behind it in the
+   word's own footprint. The word carries the
+   emphasis weight — the one heavy word in a light line. */
+.sh-slot {
+  position: relative;
+  display: inline-block;
+  vertical-align: baseline;
+}
+.sh-word {
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+  font-style: normal;
+  font-weight: var(--w-semi);
+  will-change: transform, filter;
+  /* the roll's crop: the word's own line, tight (a leaving letter's tail
+     showed as a detached sliver above the word with slack here); at the
+     landing the box is the widest word's, so nothing is cut sideways */
+  clip-path: inset(-0.03em -0.1em -0.05em -0.1em);
+}
+/* the synonyms: the served word in flow, the injected ones stacked on
+   it, hidden until their roll */
+.sh-syn {
+  display: inline-block;
+  white-space: nowrap;
+  will-change: transform;
+}
+.sh-syn:not(.is-cur) {
+  position: absolute;
+  right: 0;
+  top: 0;
+  visibility: hidden;
+}
+/* the letters (split by the driver): each rolls through the crop on its
+   own column, so the change runs letter by letter */
+.sh-ch {
+  display: inline-block;
+  will-change: transform, filter;
+}
+/* the plate — the homepage pill's material: near-black ground, a lit
+   top edge, the picture pulled to dark mono, grain over it */
+.sh-pill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0.16em;
+  bottom: 0.07em;
+  overflow: hidden;
+  border-radius: var(--r-md);
+  background: var(--n-10);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.16),
+    inset 0 0 0 1px rgb(255 255 255 / 0.08),
+    0 0.625rem 1.5rem -1rem rgb(24 40 51 / 0.55);
+  /* closed until the word leaves: the clip's left edge IS the word's
+     right edge (HubHero writes it per frame) */
+  clip-path: inset(0 0 0 100%);
+}
+/* a fixed-width plate pinned RIGHT, so the opening clip unveils more
+   picture instead of un-squashing it — the aperture reading */
+.sh-pill img {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 9.5em;
+  max-width: none;
+  height: 100%;
+  object-fit: cover;
+  object-position: 62% 50%;
+  opacity: 0.95;
+  filter: grayscale(1) brightness(0.92) contrast(1.05);
+  animation: sh-plate 34s ease-in-out infinite alternate;
+}
+@keyframes sh-plate {
+  from { transform: translate3d(0, 0, 0) scale(1.02); }
+  to   { transform: translate3d(0.25em, 0, 0) scale(1.07); }
+}
+.sh-pill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+  background-image: var(--sh-grain);
+}
+.sh-glint {
+  position: absolute;
+  inset: -20% -40%;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(100deg, transparent 38%, rgb(255 255 255 / 0.55) 50%, transparent 62%);
+}
+/* the bend line's crop edge exists for the rise only: released once the
+   line has landed (is-free, HubHero) and in the CSS final state */
+.sh-hero.is-free .sh-mask-bend,
+.sh-hero.is-bent .sh-mask-bend { overflow: visible; }
+
+/* THE FINAL STATE, in CSS: the word out of the flow at its landing (the
+   driver writes --sh-travel and --sh-wmax from the widest synonym), the
+   words RIGHT-aligned in that box so every one ends one gap short of the
+   plate (user, 2026-09-09), the plate open in the frozen footprint. */
+.sh-hero.is-bent .sh-word {
+  position: absolute;
+  left: calc(-1 * var(--sh-travel, 0px));
+  top: 0;
+  width: var(--sh-wmax, auto);
+  text-align: right;
+  transform: none;
+}
+.sh-hero.is-bent .sh-pill { clip-path: inset(0 0 0 0); }
+
+/* the h1: the display word alone, on the hero's bottom padding */
+.sh-h1 {
+  grid-row: 3;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.sh-h1-w {
+  display: block;
+  font-size: 9.75rem;
+  font-weight: var(--w-regular);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+  margin-left: -0.05em;
+  will-change: transform;
+}
+/* caps only: pull the line box in to the cap height so the baseline,
+   not the box, sits on the hero's bottom padding */
+.sh-mask-w {
+  padding-bottom: 0;
+  margin-bottom: -0.12em;
+  margin-top: -0.14em;
+}
+
+/* ---------- §2 · THE LIST (paper) ----------
+   The user's reference (image.png, 2026-09-09): a lead paragraph with a
+   small label at its left, then rows split by hairlines — the number,
+   the title, a short text on the right. In flow, unpinned.
+   THE STACK (user, same day): the rows are sticky CARDS on the paper —
+   each sticks a title-and-a-half (--sh-stack-step) below the one
+   before, so it covers the card above and leaves the top half of its
+   title showing; the list's bottom padding holds the full deck, then
+   the deck closes and leaves. Every length rem (the picture rule); the
+   hairlines px; svh only for the cards' height. */
+.sh-index {
+  /* a card's sticky top steps by its own padding plus half its title;
+     the first card is a viewport tall and every next one a step shorter,
+     so all their bottoms meet on one line: they cover to the viewport's
+     bottom and, at the list's end, RELEASE TOGETHER — a sticky card lets
+     go when its bottom meets its container's, and cards of equal height
+     would let go last-first and collapse under the last one */
+  --sh-stack-step: 3.45rem;
+  --sh-card: 100svh;
+  padding: 8rem 0 0;
+  color: var(--text);
+}
+
+/* THE LEAD: the label in the number column, the paragraph in the rest,
+   filling letter by letter as it climbs (ScrollFillText) */
+.sh-lead {
+  display: grid;
+  grid-template-columns: 10rem minmax(0, 1fr);
+  column-gap: 2rem;
+  align-items: start;
+  padding: 0 var(--page-pad);
+}
+.sh-lead-l,
+.sh-row-no {
+  padding-top: 0.6rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.sh-lead-p {
+  margin: 0;
+  max-width: 58rem;
+  font-size: 2.35rem;
+  font-weight: var(--w-light);
+  line-height: 1.22;
+  letter-spacing: var(--ls-h2);
+  color: var(--text);
+}
+
+/* THE CARDS */
+.sh-list {
+  list-style: none;
+  margin: 7rem 0 0;
+  /* the hold at the full deck before it closes */
+  padding: 0 0 30svh;
+}
+.sh-row {
+  position: sticky;
+  top: calc(var(--i, 0) * var(--sh-stack-step));
+  display: grid;
+  grid-template-columns: 10rem minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 2rem;
+  align-items: start;
+  /* the card is a fixed height: pack its rows at the top, or the block
+     sinks to the bottom of the card */
+  align-content: start;
+  height: calc(var(--sh-card) - var(--i, 0) * var(--sh-stack-step));
+  /* the top: the step less half the title — compact (user, 2026-09-09) */
+  padding: 1.4rem var(--page-pad) 0;
+  background: var(--surface);
+}
+/* the hairline above each row, drawn from the left as the row enters */
+.sh-row::before {
+  content: '';
+  position: absolute;
+  left: var(--page-pad);
+  right: var(--page-pad);
+  top: 0;
+  height: var(--hair);
+  background: var(--hairline-strong);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform var(--d-cinema) var(--e-glass);
+}
+.sh-row.is-in::before { transform: none; }
+.sh-row-no {
+  padding-top: 0.75rem;
+  opacity: 0;
+  transition: opacity var(--d-slow) var(--e-glass) 0.12s;
+}
+.sh-row.is-in .sh-row-no { opacity: 1; }
+/* the title: the link, rising through its crop edge */
+.sh-row-title {
+  margin: 0;
+  font-size: 4rem;
+  font-weight: var(--w-regular);
+  line-height: 1.02;
+  letter-spacing: var(--ls-h2);
+}
+.sh-row-mask {
+  display: block;
+  overflow: hidden;
+  /* descenders breathe; the crop edge is for the rise, not the glyphs */
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+.sh-row-link {
+  display: inline-block;
+  color: var(--text);
+  text-decoration: none;
+  transform: translateY(110%);
+  transition:
+    transform var(--d-slow) var(--e-glass) 0.06s,
+    translate var(--d-base) var(--e-settle),
+    color var(--d-instant) linear;
+  will-change: transform;
+}
+.sh-row.is-in .sh-row-link { transform: none; }
+/* one legible move on hover: the title steps right */
+@media (hover: hover) {
+  .sh-row-link:hover { translate: 0.5rem 0; }
+}
+/* THE EDITORIAL BLOCK under the title, spanning the title column: the
+   plate with its caption, the text, the mini cards — resolving after the
+   title. Sized so the LAST card's block fits under the five half-titles
+   above it at the reference viewport (730px): ~24rem of a ~28rem budget. */
+.sh-row-more {
+  grid-column: 2;
+  display: grid;
+  grid-template-columns: 16rem minmax(0, 1fr) 19rem;
+  column-gap: 2.5rem;
+  align-items: start;
+  margin-top: 1.5rem;
+  opacity: 0;
+  filter: blur(var(--reveal-blur));
+  transform: translateY(var(--reveal-shift));
+  transition:
+    opacity var(--d-slow) var(--e-glass) 0.18s,
+    filter var(--d-slow) var(--e-glass) 0.18s,
+    transform var(--d-slow) var(--e-glass) 0.18s;
+}
+.sh-row.is-in .sh-row-more {
+  opacity: 1;
+  filter: blur(0);
+  transform: none;
+}
+/* the plate: framed, graded mono, the tagline under it */
+.sh-more-fig {
+  margin: 0;
+}
+.sh-more-fig img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10.5;
+  object-fit: cover;
+  border-radius: var(--r-md);
+  background: var(--n-10);
+  filter: grayscale(1) brightness(0.95) contrast(1.06);
+}
+.sh-more-fig figcaption {
+  margin-top: 0.7rem;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+/* the text: the blurb in ink, the "What it is" paragraph muted */
+.sh-more-text {
+  max-width: 30rem;
+  padding-top: 0.2rem;
+}
+.sh-blurb {
+  margin: 0;
+  font-size: 1.0625rem;
+  line-height: 1.45;
+  color: var(--text);
+}
+.sh-more-body {
+  margin: 0.9rem 0 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+/* the button: the house pill, under the text */
+.sh-more-cta {
+  margin-top: 1.5rem;
+  display: flex;
+}
+/* the mini cards: the three facts as tiles, stacked */
+.sh-tiles {
+  margin: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+.sh-tile {
+  display: grid;
+  gap: 0.1rem;
+  padding: 0.7rem 0.95rem 0.75rem;
+  border: var(--hair) solid var(--hairline-strong);
+  border-radius: var(--r-md);
+  background: var(--surface-raised);
+}
+.sh-tile dt {
+  font-size: 0.7rem;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.sh-tile dd {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: var(--w-medium);
+  letter-spacing: var(--ls-h3);
+  line-height: 1.2;
+  color: var(--text);
+}
+
+/* ---------- phones ----------
+   No pin, no gutter for the word, no slot for the tape: the statement
+   wraps, the plate sews in after the word, the index is the plain dark
+   list. */
+@media (max-width: 57.5rem) {
+  .sh-hero {
+    position: relative;
+    height: auto;
+    min-height: 100svh;
+    transform: none;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    row-gap: var(--s-7);
+    padding: 6rem var(--page-pad) var(--s-7);
+  }
+  .sh-hero-l { order: 2; padding-left: 0; grid-template-rows: auto auto; row-gap: var(--s-4); }
+  .sh-para { grid-row: auto; }
+  .sh-hero-r { order: 1; padding-right: 0; grid-template-rows: auto; row-gap: var(--s-7); }
+  .sh-state {
+    margin-top: 0;
+    font-size: clamp(2rem, 8.6vw, 3rem);
+    line-height: 1.16;
+  }
+  .sh-mask { display: inline; overflow: visible; padding: 0; margin: 0; }
+  .sh-ln { display: inline; white-space: normal; will-change: auto; }
+  .sh-mask + .sh-mask::before { content: ' '; }
+  .sh-slot { display: inline; }
+  .sh-word { display: inline; clip-path: none; }
+  .sh-syn { display: inline; }
+  .sh-hero.is-bent .sh-word { position: static; width: auto; text-align: inherit; transform: none; }
+  .sh-pill {
+    position: relative;
+    display: inline-block;
+    left: auto;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    width: 0;
+    height: 0.92em;
+    vertical-align: -0.14em;
+    margin-left: 0.22em;
+    clip-path: none;
+  }
+  .sh-hero.is-bent .sh-pill { width: 4.4em; }
+  .sh-h1-w { font-size: clamp(3.5rem, 19vw, 7rem); }
+  .sh-mask-w { margin: 0; }
+
+  .sh-index { padding: 5rem 0 2rem; }
+  .sh-lead { grid-template-columns: minmax(0, 1fr); row-gap: 0.75rem; }
+  .sh-lead-p { font-size: clamp(1.5rem, 6.2vw, 2rem); }
+  .sh-list { margin-top: 4rem; padding-bottom: 0; }
+  /* no stack on a phone: the plain list */
+  .sh-row {
+    position: relative;
+    top: auto;
+    height: auto;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0.75rem;
+    padding: 2.5rem var(--page-pad) 2.75rem;
+  }
+  .sh-row-no { padding-top: 0; }
+  .sh-row-title { font-size: clamp(2rem, 8.4vw, 2.75rem); }
+  .sh-row-more {
+    grid-column: 1;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 1.25rem;
+    margin-top: 1rem;
+  }
+  .sh-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5rem; }
+  .sh-tile { padding: 0.6rem 0.7rem; }
+  .sh-tile dd { font-size: 1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sh-pill img { animation: none; }
+  .sh-glint { display: none; }
+}

@@ -6,6 +6,7 @@ import Reveal from '@/components/v4/Reveal'
 import ScrollFillText from '@/components/v4/ScrollFillText'
 import { gsap, rem } from '@/lib/motion-v4'
 import { CALENDLY_URL } from '@/lib/site'
+import './invitation.css'
 
 /**
  * SECTION 9 — THE INVITATION (built 2026-08-24, user-directed: "scroll-driven
