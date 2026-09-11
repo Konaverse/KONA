@@ -1,28 +1,595 @@
-/* Page-local layout for the /work stub. Everything visual comes from
-   tokens.css — this file only does section rhythm, the same way
-   design-system.css does. It stays small on purpose: when the real
-   work hub is designed, this is the file that gets rewritten. */
+/* ============================================================
+   THE WORK HUB — .wk-* (2026-09-11, the user's wireframe "Work Page.png")
+   §1 THE HERO: the inset dark card (statement, window, the two CTAs),
+   the vertical labels outside it, "selected work" cut by its edge;
+   §2 THE META ROW; §3 THE CARDS; §4 the CTA. Colours, type and easings
+   from tokens.css; the dark card and the project cards take `k-dark`,
+   so their type paints from the dark polarity's roles.
 
-.wk { position: relative; }
+   THE PICTURE RULE HOLDS: every composition length is rem, hairlines
+   stay px. The wireframe was drawn at 1728 wide; every number below is
+   that frame scaled to the 1534 reference (frame px x 0.0555), then the
+   hero compressed so the window and its buttons clear the reference
+   viewport (730px = 45.6rem).
+   ============================================================ */
 
-.wk-section { padding-block: clamp(var(--s-9), 10vw, var(--s-11)); }
-
-.wk-hero {
-  padding-top: clamp(var(--s-11), 26vh, 20rem);
-  border-top: 0;
+.wk {
+  position: relative;
+  background: var(--surface);
+  color: var(--text);
+  --wk-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='90' height='90' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+/* the entrance's parked state — opacity only; the noscript lifts it */
+.wk-ent { opacity: 0; }
+.wk.is-in .wk-ent { opacity: 1; }
+.wk-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+.wk-ln {
+  display: block;
+  white-space: nowrap;
+  will-change: transform;
 }
 
-.wk-lead {
-  max-width: 46ch;
+/* ---------- §1 · THE HERO ----------
+   ON PAPER (user, 2026-09-11: the inset dark card is gone). The
+   statement, then the window; the host's bottom edge IS the window's
+   bottom edge, and the title sits across it, so the hero's bottom
+   padding holds the half of the word that lands below. */
+.wk-hero {
+  position: relative;
+}
+.wk-stage {
+  position: relative;
+  padding: 8.4rem 8rem 9rem;
+}
+.wk-card-hero {
+  position: relative;
+  padding: 0;
+}
+/* THE PIN (desktop, armed by the driver): the hero is a viewport plus
+   the budget after the sequence; the stage is sticky and one viewport
+   high, and the window — taken out of the flow by the driver — grows
+   inside it. The cut title under the window goes; the big one lives
+   in the stage's centre. */
+.wk-hero.is-pin {
+  height: calc(100svh + var(--wk-after, 35svh));
+}
+.wk-hero.is-pin .wk-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: clip;
+  perspective: 90rem;
+}
+.wk-hero.is-pin .wk-title-wrap { display: none; }
+/* the window's containing block must be the STAGE, not the host, or
+   the box grows from the host's corner and lands off the viewport */
+.wk-hero.is-pin .wk-card-hero { position: static; }
+.wk-hero.is-pin .wk-win { z-index: 3; }
+/* the scroll is locked while the sequence runs — the page must not
+   move under it */
+.wk.is-locked { overscroll-behavior: none; }
+
+/* the big title: two words on one line, each behind its own crop
+   edge, centred in the stage, in paper over the reel */
+.wk-big {
+  display: none;
+}
+.wk-hero.is-pin .wk-big {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.28em;
+  margin: 0;
+  font-size: 11.5rem;
+  font-weight: var(--w-light);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--n-0);
+  pointer-events: none;
+}
+.wk-big-m {
+  display: block;
+  overflow: hidden;
+  padding: 0.06em 0.04em 0.1em;
+  margin: -0.06em -0.04em -0.1em;
+}
+.wk-big-w {
+  display: block;
+  /* parked by the driver (yPercent 112), never by CSS */
+  will-change: transform;
+}
+
+/* the statement: three lines centred, two in the muted step, the third
+   in ink */
+.wk-state {
+  position: relative;
+  z-index: 1;
+  margin: 0 auto 2rem;
+  text-align: center;
+  font-size: 3.2rem;
+  font-weight: var(--w-light);
+  line-height: 1.14;
+  letter-spacing: var(--ls-h1);
   color: var(--text-muted);
 }
-
-.wk-tiles {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--s-6);
+.wk-ln-ink {
+  font-weight: var(--w-regular);
+  color: var(--text);
 }
 
+/* THE WINDOW: narrower than the card (user, 2026-09-11), THE REEL under
+   a grade and a scrim, the two CTAs on it, the pane tilting toward the
+   hand (perspective on the card) */
+.wk-win {
+  position: relative;
+  z-index: 1;
+  width: 42rem;
+  height: 22rem;
+  margin: 0 auto;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--n-10);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.16),
+    inset 0 0 0 1px rgb(255 255 255 / 0.08);
+  /* the pane: the driver lerps the two angles toward the hand */
+  transform: perspective(90rem) rotateX(var(--wk-rx, 0deg)) rotateY(var(--wk-ry, 0deg));
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+/* the shade the expansion raises under the big title */
+.wk-win-shade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: rgb(13 16 18 / 0.5);
+  opacity: 0;
+}
+.wk-win-media {
+  position: absolute;
+  inset: -6% 0;
+  will-change: transform;
+}
+/* THE REEL: the frames stacked, every one hidden except for its step —
+   a stepped keyframe on a shared clock, each frame delayed by its index,
+   so the stack cuts through itself at --wk-fps frames a second and never
+   stops. The second crop of each capture looks lower down the page. */
+.wk-reel {
+  --wk-fps: 4.5;
+  --wk-n: 8;
+  --wk-cycle: calc(var(--wk-n) / var(--wk-fps) * 1s);
+}
+.wk-reel-f {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 0;
+  filter: grayscale(1) brightness(0.72) contrast(1.08);
+  opacity: 0;
+  animation: wk-flick var(--wk-cycle) steps(1, end) infinite;
+  animation-delay: calc(var(--f, 0) / var(--wk-n) * var(--wk-cycle));
+}
+.wk-reel-f-low { object-position: 50% 100%; }
+@keyframes wk-flick {
+  0% { opacity: 1; }
+  12.5% { opacity: 0; }
+  100% { opacity: 0; }
+}
+/* the reel is a hard flicker: reduced motion holds the first frame */
+@media (prefers-reduced-motion: reduce) {
+  .wk-reel-f { animation: none; }
+  .wk-reel-f:first-child { opacity: 1; }
+}
+/* the scrim: the void thickening at the foot, where the buttons sit,
+   and the grain */
+.wk-win::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgb(13 16 18 / 0.15) 0%, rgb(13 16 18 / 0.05) 40%, rgb(13 16 18 / 0.55) 100%),
+    radial-gradient(50% 60% at 50% 55%, rgb(13 16 18 / 0.35) 0%, rgb(13 16 18 / 0) 100%);
+}
+.wk-win::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.45;
+  mix-blend-mode: overlay;
+  background-image: var(--wk-grain);
+}
+.wk-win-acts {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.4rem;
+}
+
+/* the services at the page's edges, vertical, in the hero's gutters */
+.wk-sides {
+  position: absolute;
+  top: 9.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  gap: 1.6rem;
+  font-size: 0.72rem;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+.wk-sides-l {
+  left: 3.3rem;
+  transform-origin: 0 0;
+  transform: rotate(-90deg) translateX(-100%);
+}
+.wk-sides-r {
+  right: 3.3rem;
+  transform-origin: 100% 0;
+  transform: rotate(90deg) translateX(100%);
+}
+.wk-side { transition: color var(--d-instant) linear; }
+.wk-sides:hover .wk-side { color: var(--text-muted); }
+
+/* THE CUT TITLE: across the WINDOW's bottom edge, painted in DIFFERENCE
+   so it is paper where it crosses the dark window and ink on the paper
+   either side. The wrap carries the lag (WorkMotion), the word carries
+   the entrance. */
+.wk-title-wrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 9rem;
+  pointer-events: none;
+  /* the blend sits on the WRAP: its transform makes it a stacking
+     context, and a blend inside one only sees the context — here the
+     whole wrap blends with the page under it */
+  mix-blend-mode: difference;
+  will-change: transform;
+}
+.wk-title {
+  margin: 0;
+  transform: translateY(50%);
+  text-align: center;
+  font-size: 10.6rem;
+  font-weight: var(--w-light);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+  color: #fff;
+  will-change: transform;
+}
+
+/* ---------- §2 · THE META ROW ----------
+   Three labels on one line, the hairlines between them drawn from the
+   labels outward as the row enters. */
+.wk-meta {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 1.4rem;
+  padding: 0 5.7rem;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.wk-meta-l {
+  display: contents;
+}
+/* the two lines: after the first label (drawn rightward from it) and
+   after the second (drawn leftward from the third) — five grid items
+   in all: label, line, label, line, label */
+.wk-meta-l:nth-child(1)::after,
+.wk-meta-l:nth-child(2)::after {
+  content: '';
+  height: var(--hair);
+  background: var(--hairline-strong);
+  transform: scaleX(0);
+  transition: transform var(--d-cinema) var(--e-glass);
+}
+.wk-meta-l:nth-child(1)::after { transform-origin: 0 50%; }
+.wk-meta-l:nth-child(2)::after { transform-origin: 100% 50%; }
+.wk-meta.is-in .wk-meta-l::after { transform: none; }
+
+/* ---------- §3 · THE CARDS ----------
+   Two columns; the first card spans the row. A card is a step of the
+   ladder with a lit top edge and a ring; its plate holds the capture,
+   mono at rest. Under the hand: the spotlight on the ring and the
+   glow on the ground follow the pointer (--wk-mx/--wk-my), the plate
+   develops to colour and steps in, the card lifts one step. */
+.wk-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3.5rem;
+  padding: 6.4rem 5.7rem 0;
+}
+/* THE CELL: the paper's host — the driver bends it by its corners with
+   one matrix3d (transform-origin at the corner the matrix expects);
+   the card inside keeps its own hover lift */
+.wk-cell {
+  transform-origin: 0 0;
+  will-change: transform, opacity;
+}
+.wk-grid.is-paper .wk-card {
+  opacity: 1;
+  filter: none;
+  transform: none;
+  transition: transform var(--d-base) var(--e-settle), background var(--d-base) var(--e-settle);
+}
+.wk-card {
+  --wk-mx: 50%;
+  --wk-my: 30%;
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  padding: 1.5rem;
+  border-radius: var(--r-lg);
+  background: linear-gradient(180deg, var(--n-10) 0%, var(--n-11) 100%);
+  color: var(--text);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.1),
+    inset 0 0 0 1px rgb(255 255 255 / 0.06);
+  overflow: hidden;
+  isolation: isolate;
+  opacity: 0;
+  filter: blur(var(--reveal-blur));
+  transform: translateY(var(--reveal-shift));
+  transition:
+    opacity var(--d-slow) var(--e-glass) calc(var(--i, 0) * 0.1s),
+    filter var(--d-slow) var(--e-glass) calc(var(--i, 0) * 0.1s),
+    transform var(--d-slow) var(--e-glass) calc(var(--i, 0) * 0.1s);
+}
+.wk-card.is-in { opacity: 1; filter: blur(0); transform: none; }
+/* THE SPOTLIGHT: the glow on the ground and the light on the ring,
+   both centred on the hand; they fade in with the hover */
+.wk-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(34rem 24rem at var(--wk-mx) var(--wk-my), rgb(255 255 255 / 0.07) 0%, rgb(255 255 255 / 0) 60%);
+  opacity: 0;
+  transition: opacity var(--d-base) var(--e-settle);
+}
+.wk-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(22rem 16rem at var(--wk-mx) var(--wk-my), rgb(255 255 255 / 0.45) 0%, rgb(255 255 255 / 0) 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity var(--d-base) var(--e-settle);
+}
+@media (hover: hover) {
+  .wk-card { transition-property: opacity, filter, transform, background; cursor: none; }
+  .wk-card.is-in:hover,
+  .wk-grid.is-paper .wk-card:hover {
+    transform: translateY(-0.35rem);
+    transition:
+      transform var(--d-base) var(--e-settle),
+      background var(--d-base) var(--e-settle);
+  }
+  .wk-card:hover::before,
+  .wk-card:hover::after { opacity: 1; }
+}
+/* THE PLATE: 19:10 — the ratio the reel's captures are shot at. At
+   rest the first frame, mono. Under the hand the plate is a REEL: the
+   frames stacked, cutting between at the window's rate (the same
+   stepped keyframe, --wk-n frames per card), in colour, stepped in. */
+.wk-plate {
+  position: relative;
+  z-index: 1;
+  aspect-ratio: 19 / 10;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--n-9);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+  --wk-fps: 4.5;
+  --wk-cycle: calc(var(--wk-n, 2) / var(--wk-fps) * 1s);
+}
+.wk-pf {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 0;
+  opacity: 0;
+  filter: grayscale(1) brightness(0.82) contrast(1.06);
+  transform: scale(1);
+  transition:
+    filter var(--d-slow) var(--e-settle),
+    transform var(--d-slow) var(--e-settle);
+  will-change: transform;
+}
+.wk-pf:first-child { opacity: 1; }
+.wk-pf-low { object-position: 50% 100%; }
+@media (hover: hover) {
+  .wk-card:hover .wk-pf {
+    filter: grayscale(0) brightness(1) contrast(1);
+    transform: scale(1.04);
+    /* the keyframe set is picked by the card's frame count (--wk-anim,
+       written by the page): a frame is on for one nth of the cycle */
+    animation: var(--wk-anim, wk-flick-2) var(--wk-cycle) steps(1, end) infinite;
+    animation-delay: calc(var(--f, 0) / var(--wk-n, 2) * var(--wk-cycle));
+  }
+}
+/* one keyframe set per frame count, two to twelve */
+@keyframes wk-flick-2 { 0% { opacity: 1; } 50.000% { opacity: 0; } 100% { opacity: 0; } }
+@keyframes wk-flick-3 { 0% { opacity: 1; } 33.333% { opacity: 0; } 100% { opacity: 0; } }
+@keyframes wk-flick-4 { 0% { opacity: 1; } 25.000% { opacity: 0; } 100% { opacity: 0; } }
+@keyframes wk-flick-5 { 0% { opacity: 1; } 20.000% { opacity: 0; } 100% { opacity: 0; } }
+@keyframes wk-flick-6 { 0% { opacity: 1; } 16.667% { opacity: 0; } 100% { opacity: 0; } }
+@keyframes wk-flick-7 { 0% { opacity: 1; } 14.286% { opacity: 0; } 100% { opacity: 0; } }
+@keyframes wk-flick-8 { 0% { opacity: 1; } 12.500% { opacity: 0; } 100% { opacity: 0; } }
+@keyframes wk-flick-9 { 0% { opacity: 1; } 11.111% { opacity: 0; } 100% { opacity: 0; } }
+@keyframes wk-flick-10 { 0% { opacity: 1; } 10.000% { opacity: 0; } 100% { opacity: 0; } }
+@keyframes wk-flick-11 { 0% { opacity: 1; } 9.091% { opacity: 0; } 100% { opacity: 0; } }
+@keyframes wk-flick-12 { 0% { opacity: 1; } 8.333% { opacity: 0; } 100% { opacity: 0; } }
+
+/* the body: the meta, the name, the line, the link at the foot right */
+.wk-card-body {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  padding: 1.9rem 0.6rem 0.4rem;
+}
+.wk-card-meta {
+  display: flex;
+  gap: 1.2rem;
+  margin: 0 0 1rem;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.wk-card-name {
+  margin: 0;
+  font-size: 2.35rem;
+  font-weight: var(--w-light);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+.wk-card-line {
+  margin: 0.9rem 0 1.6rem;
+  max-width: 30rem;
+  font-size: 0.98rem;
+  line-height: 1.42;
+  color: var(--text-muted);
+}
+.wk-card-act {
+  display: flex;
+  justify-content: flex-end;
+  align-items: end;
+}
+.wk-card-soon {
+  font-size: 0.9rem;
+  color: var(--text-faint);
+}
+/* the whole card is the link; the visible link inside stays a link for
+   the reader, the cover carries the click for the hand */
+.wk-card-cover {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+}
+.wk-card-cover:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: -2px; }
+
+/* THE HAND'S DISC over the cards: the about page's drag disc, re-worded.
+   Fixed, moved by the driver (its outer translate), scaling through its
+   inner face so the two transforms never fight. */
+.wk-view {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 40;
+  width: 6.4rem;
+  height: 6.4rem;
+  display: grid;
+  place-items: center;
+  color: var(--n-0);
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 2px rgb(13 16 18 / 0.35);
+  pointer-events: none;
+  will-change: transform;
+}
+.wk-view::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-full);
+  background: linear-gradient(160deg, rgb(255 255 255 / 0.28) 0%, rgb(255 255 255 / 0.1) 100%);
+  backdrop-filter: blur(0.9rem) saturate(1.1);
+  -webkit-backdrop-filter: blur(0.9rem) saturate(1.1);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.5),
+    inset 0 0 0 1px rgb(255 255 255 / 0.28),
+    0 1rem 2rem -0.75rem rgb(13 16 18 / 0.35);
+  transform: scale(0);
+  transition: transform var(--d-base) var(--e-settle);
+}
+.wk-view > span {
+  position: relative;
+  display: block;
+  transform: scale(0);
+  opacity: 0;
+  transition:
+    transform var(--d-base) var(--e-settle),
+    opacity var(--d-instant) linear;
+}
+.wk.is-view .wk-view::before { transform: scale(1); }
+.wk.is-view .wk-view > span { transform: scale(1); opacity: 1; }
+@media (hover: none) {
+  .wk-view { display: none; }
+}
+
+/* ---------- §4 · THE INVITATION ---------- */
+.wk-cta {
+  position: relative;
+  margin-top: 2rem;
+  background: var(--surface);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wk-win { transform: none; }
+}
+
+/* ============================================================
+   PHONES (under 57.5rem, the 16px root). The card insets to the
+   gutter; the statement wraps; the window is a 16:10 plate with the
+   buttons stacked; the side labels go; the title still cuts the edge;
+   the meta row keeps its line; the cards stack.
+   ============================================================ */
 @media (max-width: 57.5rem) {
-  .wk-tiles { grid-template-columns: minmax(0, 1fr); }
+  .wk-stage { padding: 6.5rem 1rem 4rem; }
+  .wk-card-hero { padding: 0; }
+  .wk-state { font-size: 1.55rem; margin-bottom: 1.4rem; }
+  .wk-ln { white-space: normal; }
+  .wk-win { width: 100%; height: auto; aspect-ratio: 16 / 12; }
+  .wk-win-acts { flex-direction: column; gap: 0.8rem; }
+  .wk-sides { display: none; }
+  .wk-title-wrap { bottom: 4rem; }
+  .wk-title { font-size: 3.1rem; }
+  .wk-meta { padding: 0 1.25rem; font-size: 0.68rem; column-gap: 0.8rem; }
+  .wk-grid { grid-template-columns: minmax(0, 1fr); gap: 1.4rem; padding: 3rem 1.25rem 0; }
+  .wk-card { padding: 0.9rem; }
+  .wk-card-body { padding: 1.2rem 0.3rem 0.2rem; }
+  .wk-card-name { font-size: 1.7rem; }
+  .wk-card-line { margin: 0.6rem 0 1.2rem; font-size: 0.95rem; }
 }
