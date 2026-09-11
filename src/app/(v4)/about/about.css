@@ -1,0 +1,1110 @@
+/* ============================================================
+   THE ABOUT PAGE — .ab-* (2026-09-11, the user's frame "About Page.png")
+   §1 THE SENTENCE (AboutHero.tsx) on paper, the third line on a dark
+   band that ends on the viewport's bottom; §2 THE STATEMENT on paper;
+   §3 WHO WE ARE (AboutWho.tsx) — THE PICTURE, a fixed composition;
+   §4 WE REFUSE TO DO (AboutRefuse.tsx) — the dark card; §5 the CTA in
+   flow. Colours, type and easings from tokens.css; the plate material
+   is the homepage hero's dark-grain pill, restated here because
+   home.css is not on this route.
+
+   THE PICTURE RULE HOLDS: every composition length is rem, hairlines
+   stay px, svh only for the hero's pin to the viewport. The frame was
+   drawn at 1728 wide; every number below is that frame scaled to the
+   1534 reference (px in the 1200-wide crop x 0.0799).
+   ============================================================ */
+
+.ab {
+  position: relative;
+  /* the page's own gutter — the frame sits its type deeper than
+     --page-pad, and the picture is measured off this edge */
+  --ab-pad: 6.8rem;
+  --ab-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='90' height='90' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  background: var(--surface);
+  color: var(--text);
+}
+
+/* the entrance's parked state — opacity only, so a CSS transform never
+   adds to GSAP's yPercent channel. page.tsx's noscript lifts it. */
+.ab-ent { opacity: 0; }
+.ab-hero.is-in .ab-ent { opacity: 1; }
+.ab-mask {
+  display: block;
+  overflow: hidden;
+  /* descenders breathe; the crop edge is for the rise, not the glyphs */
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+.ab-ln {
+  display: block;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+/* ---------- §1 · THE HERO (paper, then the band) ----------
+   Three lines at 10.4rem, the light weight, the first two in the muted
+   step on paper and the third in paper on the void. THE BAND ENDS ON
+   THE VIEWPORT'S BOTTOM EDGE at every size (user, 2026-09-11): the hero
+   is one viewport tall and a grid of four rows — an empty first row
+   takes all the slack, then the two paper lines, then the band — so
+   the sentence sits on the bottom and the band is the last thing in
+   the viewport. Content taller than the viewport simply grows it. */
+.ab-hero {
+  position: relative;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto auto auto;
+  min-height: 100svh;
+  padding-top: 6.6rem;
+}
+.ab-h1 {
+  /* the h1 is the sentence; its three lines are the grid's items */
+  display: contents;
+  margin: 0;
+  font-size: 10.4rem;
+  font-weight: var(--w-light);
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+  color: var(--n-7);
+}
+.ab-h1 > .ab-mask { padding-left: var(--ab-pad); }
+.ab-h1 > .ab-mask:nth-child(1) { grid-row: 2; }
+.ab-h1 > .ab-mask:nth-child(2) { grid-row: 3; }
+
+/* THE PILL: inline in the second line, closed until the aperture. The
+   rest width is the composition (2.1em of the line), read by the driver. */
+.ab-pill {
+  --ab-pill-rest: 2.1em;
+  position: relative;
+  display: inline-block;
+  vertical-align: -0.1em;
+  width: 0;
+  height: 0.86em;
+  margin: 0 0.22em 0 0;
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  background: var(--n-10);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.16),
+    inset 0 0 0 1px rgb(255 255 255 / 0.08),
+    0 0.625rem 1.5rem -1rem rgb(24 40 51 / 0.55);
+  will-change: width;
+}
+.ab-hero.is-open .ab-pill {
+  width: var(--ab-pill-rest);
+  margin-left: 0.22em;
+}
+/* the plate: pinned, wider than the pill, so the opening UNVEILS it */
+.ab-pill img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2.6em;
+  max-width: none;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 62%;
+  opacity: 0.95;
+  filter: grayscale(1) brightness(0.92) contrast(1.05);
+  animation: ab-plate 34s ease-in-out infinite alternate;
+}
+@keyframes ab-plate {
+  from { transform: translate3d(0, 0, 0) scale(1.02); }
+  to   { transform: translate3d(-0.12em, 0, 0) scale(1.07); }
+}
+.ab-pill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+  background-image: var(--ab-grain);
+}
+.ab-glint {
+  position: absolute;
+  inset: -20% -40%;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(100deg, transparent 38%, rgb(255 255 255 / 0.55) 50%, transparent 62%);
+}
+
+/* THE BAND: the third line's row, full-bleed void, the last row of the
+   hero — its bottom IS the viewport's bottom; the ink wipes in from the
+   left under the rising word */
+.ab-band {
+  grid-row: 4;
+  position: relative;
+  display: block;
+  margin-top: 0.1em;
+  padding: 0.12em 0 0.2em;
+  color: var(--n-0);
+  isolation: isolate;
+}
+.ab-band::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--n-11);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform var(--d-cinema) var(--e-glass);
+}
+.ab-hero.is-band .ab-band::before { transform: none; }
+.ab-band > .ab-mask { padding-left: var(--ab-pad); }
+
+/* ---------- §2 · THE STATEMENT (paper) ----------
+   ONE voice (user, 2026-09-11): both sentences the same size and
+   weight, the first in ink and indented, the second in the muted step
+   at the gutter, and the gap between them is the line spacing — the
+   second starts on the line after the first ends. Both fill letter by
+   letter as they climb. */
+.ab-state {
+  padding: 7rem 0 9rem;
+  font-size: 4.1rem;
+  font-weight: var(--w-light);
+  line-height: 1.16;
+  letter-spacing: var(--ls-h1);
+}
+.ab-aim {
+  margin: 0 0 0 15.2rem;
+  max-width: 66rem;
+  color: var(--text);
+}
+.ab-do {
+  margin: 0 0 0 var(--ab-pad);
+  max-width: 46rem;
+  color: var(--text-muted);
+}
+
+/* ---------- §3 · WHO WE ARE (paper) — THE PICTURE ----------
+   A fixed composition, 150rem tall, every child placed in rem off the
+   section's top-left. Konstantinos's block first, Nabil's mirrored.
+   The stack: the watermark at the bottom, the blocks over it, the
+   title over everything. */
+.ab-who {
+  position: relative;
+  height: 130rem;
+  overflow: clip;
+}
+/* WITHOUT THE DRIVER (reduced motion, no JS) the portraits never
+   climb, so Nabil's would run past the section's end: it rests higher */
+.ab-who.is-static .ab-person-r .ab-port { top: 100rem; }
+/* the title: three words stepping right and down, each through its
+   own crop edge. The MASKS carry the parallax (AboutWho writes their
+   transform), the words inside carry the rise. */
+.ab-who-t {
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: 3;
+  height: 24rem;
+  margin: 0;
+  font-size: 8rem;
+  font-weight: var(--w-light);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  color: var(--text);
+  pointer-events: none;
+}
+.ab-who-m {
+  position: absolute;
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+  will-change: transform;
+}
+.ab-who-m:nth-child(1) { left: 41.2rem; top: 3.6rem; }
+.ab-who-m:nth-child(2) { left: 63rem;   top: 9.6rem; }
+.ab-who-m:nth-child(3) { left: 76.7rem; top: 14rem; }
+.ab-w {
+  display: block;
+  transform: translateY(110%);
+  transition: transform var(--d-cinema) var(--e-glass);
+  will-change: transform;
+}
+.ab-who-m:nth-child(2) .ab-w { transition-delay: 0.1s; }
+.ab-who-m:nth-child(3) .ab-w { transition-delay: 0.2s; }
+.ab-who-t.is-in .ab-w { transform: none; }
+
+/* the watermark: ink at a tenth, heavy, AS TALL AS THE SECTION (user,
+   2026-09-11), behind everything; lags the scroll (AboutWho writes the
+   transform) */
+.ab-mark {
+  position: absolute;
+  z-index: 0;
+  left: 3.6rem;
+  right: 3.6rem;
+  top: 3rem;
+  margin: 0;
+  font-size: 13rem;
+  font-weight: var(--w-semi);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+  color: var(--text);
+  opacity: 0.1;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform;
+}
+
+/* THE BLOCKS. Each is a positioning context the size of the section;
+   the children are placed in rem. */
+.ab-person {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.ab-person > * { pointer-events: auto; }
+
+/* the plate: void, bleeding off its page edge, the far corners soft;
+   drawn from the bleeding edge as the block enters */
+.ab-plate {
+  position: absolute;
+  overflow: hidden;
+  background: var(--n-11);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.08);
+  transform: scaleX(0);
+  transition: transform var(--d-cinema) var(--e-glass);
+  will-change: transform;
+}
+.ab-person-l .ab-plate {
+  left: 0;
+  top: 36.8rem;
+  width: 53.5rem;
+  height: 20rem;
+  border-radius: 0 var(--r-lg) var(--r-lg) 0;
+  transform-origin: 0 50%;
+}
+.ab-person-r .ab-plate {
+  left: 39.5rem;
+  right: 0;
+  top: 93.1rem;
+  height: 20.4rem;
+  border-radius: var(--r-lg) 0 0 var(--r-lg);
+  transform-origin: 100% 50%;
+}
+.ab-person.is-in .ab-plate { transform: none; }
+/* the word inside: the role, light, the dark ladder's border step on
+   the void — read as engraving, not as type; tilted, cut by the figure */
+.ab-plate-w {
+  position: absolute;
+  display: block;
+  font-size: 7.6rem;
+  font-weight: var(--w-light);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  color: var(--n-8);
+  white-space: nowrap;
+  transform: translate3d(var(--ab-dx, 0px), 0, 0) rotate(6deg);
+  transform-origin: 0 0;
+  opacity: 0;
+  transition: opacity var(--d-slow) var(--e-glass) 0.35s;
+  will-change: transform;
+}
+.ab-person-l .ab-plate-w { left: 0.3rem; top: 3.4rem; }
+.ab-person-r .ab-plate-w { left: 25.5rem; top: 2.4rem; }
+.ab-person.is-in .ab-plate-w { opacity: 1; }
+
+/* the figure: standing on the plate's bottom edge, rising above it;
+   arrives rising onto the plate as it draws */
+.ab-fig {
+  position: absolute;
+  height: 37.2rem;
+  width: auto;
+  max-width: none;
+  opacity: 0;
+  filter: blur(var(--reveal-blur));
+  transform: translateY(1.5rem);
+  transition:
+    opacity var(--d-slow) var(--e-glass) 0.25s,
+    filter var(--d-slow) var(--e-glass) 0.25s,
+    transform var(--d-cinema) var(--e-glass) 0.25s;
+  will-change: transform, filter;
+}
+.ab-person-l .ab-fig { left: 29.4rem; top: 19.6rem; }
+.ab-person-r .ab-fig { left: 41.4rem; top: 75.1rem; height: 38.4rem; }
+.ab-person.is-in .ab-fig { opacity: 1; filter: blur(0); transform: none; }
+
+/* the bio beside the plate, the name below it — resolving a beat
+   apart after the figure */
+.ab-bio,
+.ab-name {
+  position: absolute;
+  opacity: 0;
+  filter: blur(var(--reveal-blur));
+  transform: translateY(var(--reveal-shift));
+  transition:
+    opacity var(--d-slow) var(--e-glass),
+    filter var(--d-slow) var(--e-glass),
+    transform var(--d-slow) var(--e-glass);
+}
+.ab-bio  { transition-delay: 0.45s; }
+.ab-name { transition-delay: 0.55s; }
+.ab-person.is-in .ab-bio,
+.ab-person.is-in .ab-name { opacity: 1; filter: blur(0); transform: none; }
+
+.ab-bio {
+  margin: 0;
+  width: 33.5rem;
+  font-size: 1.08rem;
+  line-height: 1.34;
+  color: var(--text-muted);
+}
+.ab-person-l .ab-bio { left: 55.9rem; top: 37.2rem; }
+.ab-person-r .ab-bio { left: 4.8rem; top: 93.1rem; width: 32.8rem; text-align: right; }
+
+.ab-name {
+  margin: 0;
+  font-size: 2.9rem;
+  font-weight: var(--w-semi);
+  line-height: 1.1;
+  letter-spacing: var(--ls-h2);
+  color: var(--text);
+}
+.ab-role {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 1rem;
+  font-weight: var(--w-regular);
+  line-height: 1.3;
+  letter-spacing: 0;
+  color: var(--text-muted);
+}
+.ab-person-l .ab-name { left: var(--ab-pad); top: 58.9rem; }
+.ab-person-r .ab-name { left: 53.5rem; top: 115.5rem; }
+
+/* the portrait across: framed, ABOVE the bio in the stack — it climbs
+   faster than the page and slides over the description as the
+   description leaves (AboutWho owns its transform, so its reveal is
+   opacity and blur alone) */
+.ab-port {
+  position: absolute;
+  z-index: 2;
+  margin: 0;
+  width: 23.2rem;
+  height: 28rem;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--n-10);
+  box-shadow: var(--lift-5);
+  opacity: 0;
+  filter: blur(var(--reveal-blur));
+  transition:
+    opacity var(--d-slow) var(--e-glass) 0.65s,
+    filter var(--d-slow) var(--e-glass) 0.65s;
+  will-change: transform;
+}
+.ab-person.is-in .ab-port { opacity: 1; filter: blur(0); }
+.ab-port img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ab-person-l .ab-port { left: 67.1rem; top: 57.1rem; }
+.ab-person-r .ab-port { left: 4.8rem; top: 115rem; width: 23.6rem; }
+
+/* ---------- §4 · WE REFUSE TO DO — the card ----------
+   REBUILT 2026-09-11 (user: "a big card with nice layout, clean
+   design, premium"). One card inset from the page edges: the bosra
+   plate as its ground under a scrim that darkens toward the text
+   (taller than the frame, sliding within it — AboutRefuse), a lit top
+   edge and a hairline ring (the dark polarity's lift, no shadow), the
+   grain. Two columns: the heading and a line of intro on the left; the
+   five refusals on the right as hairline rows — the number, the
+   refused thing in the light weight, what we do instead in the muted
+   step. Generous padding, nothing else. */
+.ab-refuse {
+  position: relative;
+  display: grid;
+  grid-template-columns: 26rem minmax(0, 1fr);
+  column-gap: 5rem;
+  align-items: start;
+  margin: 2rem 2.4rem 0;
+  padding: 5.6rem 6rem 5.8rem;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--n-11);
+  color: var(--n-0);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.12),
+    inset 0 0 0 1px rgb(255 255 255 / 0.06);
+  isolation: isolate;
+}
+.ab-ref-bg {
+  position: absolute;
+  z-index: -2;
+  left: 0;
+  top: -12%;
+  width: 100%;
+  height: 124%;
+  object-fit: cover;
+  object-position: 50% 42%;
+  filter: grayscale(1) brightness(0.62) contrast(1.08);
+  will-change: transform;
+}
+/* the scrim: the void thickening toward the left, where the heading
+   sits, and along the bottom, so every line clears the stone */
+.ab-refuse::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgb(13 16 18 / 0.9) 0%, rgb(13 16 18 / 0.72) 42%, rgb(13 16 18 / 0.5) 100%),
+    linear-gradient(180deg, rgb(13 16 18 / 0.1) 0%, rgb(13 16 18 / 0) 40%, rgb(13 16 18 / 0.45) 100%);
+}
+/* the grain over the plate */
+.ab-refuse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.4;
+  mix-blend-mode: overlay;
+  background-image: var(--ab-grain);
+}
+
+/* the left column: the heading in the light weight, the intro under
+   it; both resolve as the card enters */
+.ab-ref-l {
+  position: sticky;
+  top: 6rem;
+}
+.ab-ref-h,
+.ab-ref-p {
+  opacity: 0;
+  filter: blur(var(--reveal-blur));
+  transform: translateY(var(--reveal-shift));
+  transition:
+    opacity var(--d-cinema) var(--e-glass),
+    filter var(--d-cinema) var(--e-glass),
+    transform var(--d-cinema) var(--e-glass);
+}
+.ab-ref-p { transition-delay: 0.12s; }
+.ab-refuse.is-in .ab-ref-h,
+.ab-refuse.is-in .ab-ref-p { opacity: 1; filter: blur(0); transform: none; }
+.ab-ref-h {
+  margin: 0;
+  font-size: 5.6rem;
+  font-weight: var(--w-light);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  color: var(--n-0);
+}
+.ab-ref-p {
+  margin: 2.2rem 0 0;
+  max-width: 22rem;
+  font-size: 1.08rem;
+  line-height: 1.42;
+  color: var(--n-5);
+}
+
+/* THE ROWS: hairlines, the number, the refused thing, the answer */
+.ab-rows {
+  list-style: none;
+  margin: 0.6rem 0 0;
+  padding: 0;
+}
+.ab-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1fr) 19rem;
+  column-gap: 2rem;
+  align-items: baseline;
+  padding: 1.75rem 0 1.85rem;
+  border-top: var(--hair) solid rgb(255 255 255 / 0.14);
+  opacity: 0;
+  transform: translateY(0.8rem);
+  transition:
+    opacity var(--d-slow) var(--e-glass) calc(0.25s + var(--i, 0) * 0.09s),
+    transform var(--d-slow) var(--e-glass) calc(0.25s + var(--i, 0) * 0.09s);
+}
+.ab-row:last-child { border-bottom: var(--hair) solid rgb(255 255 255 / 0.14); }
+.ab-refuse.is-in .ab-row { opacity: 1; transform: none; }
+.ab-row-no {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+  color: var(--n-6);
+}
+.ab-row-what {
+  position: relative;
+  justify-self: start;
+  font-size: 2.3rem;
+  font-weight: var(--w-light);
+  line-height: 1.1;
+  letter-spacing: var(--ls-h2);
+  color: var(--n-0);
+}
+/* the strike: drawn across the phrase a beat after it lands */
+.ab-row-what::after {
+  content: '';
+  position: absolute;
+  left: -0.04em;
+  right: -0.04em;
+  top: 54%;
+  height: var(--hair);
+  background: var(--n-0);
+  opacity: 0.85;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform var(--d-slow) var(--e-glass) calc(0.7s + var(--i, 0) * 0.12s);
+}
+.ab-refuse.is-in .ab-row-what::after { transform: none; }
+.ab-row-why {
+  font-size: 0.98rem;
+  line-height: 1.4;
+  color: var(--n-4);
+}
+
+/* ---------- §5 · THE INVITATION ---------- */
+.ab-cta {
+  position: relative;
+  background: var(--surface);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ab-pill img { animation: none; }
+  .ab-glint { display: none; }
+}
+
+/* ============================================================
+   PHONES (under 57.5rem, the 16px root). The picture cannot hold at a
+   phone's width: §3 becomes a stacked flow — the title, then each
+   person as plate-with-figure, name, bio, portrait — and the
+   watermark goes. The hero wraps and still ends on the viewport's
+   bottom; the plate stays inline. The card stacks its two columns.
+   ============================================================ */
+@media (max-width: 57.5rem) {
+  .ab { --ab-pad: 1.25rem; }
+  .ab-hero { padding-top: 6.5rem; }
+  .ab-h1 { font-size: clamp(3.1rem, 13.5vw, 4.5rem); line-height: 1.08; }
+  .ab-pill { --ab-pill-rest: 1.9em; }
+  .ab-band { padding: 0.14em 0 0.22em; }
+
+  .ab-state { padding: 4rem 0 4.5rem; font-size: 1.85rem; }
+  .ab-aim { margin: 0 var(--ab-pad) 0 3rem; }
+  .ab-do  { margin: 0 var(--ab-pad); }
+
+  .ab-who {
+    height: auto;
+    padding: 1rem 0 2rem;
+  }
+  .ab-who-t {
+    position: relative;
+    height: auto;
+    padding: 0 var(--ab-pad) 2.5rem;
+    font-size: 3.4rem;
+  }
+  .ab-who-m { position: relative; left: auto !important; top: auto !important; }
+  .ab-who-m:nth-child(2) { margin-left: 1.6em; }
+  .ab-who-m:nth-child(3) { margin-left: 3.2em; }
+  .ab-mark { display: none; }
+
+  .ab-person {
+    position: relative;
+    inset: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    padding: 0 0 3.5rem;
+  }
+  /* the plate and the figure share the first row, so the figure stands
+     on the PLATE's bottom edge (align-self end), not the block's */
+  .ab-person .ab-plate,
+  .ab-person .ab-fig { grid-row: 1; grid-column: 1; }
+  .ab-person .ab-plate,
+  .ab-person .ab-fig,
+  .ab-person .ab-bio,
+  .ab-person .ab-name,
+  .ab-person .ab-port {
+    position: relative;
+    inset: auto;
+  }
+  .ab-person .ab-plate {
+    order: 1;
+    height: 10rem;
+    /* room above for the figure's head and shoulders */
+    margin-top: 11rem;
+    width: 78%;
+    overflow: visible;
+  }
+  .ab-person-r .ab-plate { margin-left: auto; }
+  .ab-person .ab-plate-w {
+    font-size: 3.4rem;
+    left: 0.3rem;
+    top: 1rem;
+    overflow: hidden;
+  }
+  .ab-person-r .ab-plate-w { left: auto; right: 0.6rem; transform-origin: 100% 0; }
+  .ab-person .ab-fig {
+    position: relative;
+    left: auto;
+    top: auto;
+    height: 20rem;
+    align-self: end;
+    justify-self: center;
+    transform: translateY(1rem);
+    z-index: 1;
+  }
+  .ab-person.is-in .ab-fig { transform: none; }
+  .ab-person .ab-name { order: 2; margin: 1.2rem var(--ab-pad) 0; font-size: 1.7rem; }
+  .ab-person .ab-bio { order: 3; width: auto; margin: 0.9rem var(--ab-pad) 0; text-align: left; font-size: 1rem; }
+  .ab-person .ab-port { order: 4; width: 62%; height: auto; aspect-ratio: 5 / 6; margin: 1.6rem var(--ab-pad) 0; }
+  .ab-person-r .ab-port { margin-left: auto; }
+
+  .ab-refuse {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 2.4rem;
+    margin: 1rem var(--ab-pad) 0;
+    padding: 2.6rem 1.4rem 2.4rem;
+  }
+  .ab-ref-l { position: static; }
+  .ab-ref-h { font-size: 2.8rem; }
+  .ab-ref-p { margin-top: 1.2rem; font-size: 1rem; }
+  .ab-row {
+    grid-template-columns: 2rem minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    column-gap: 0.8rem;
+    padding: 1.1rem 0 1.2rem;
+  }
+  .ab-row-no { grid-row: 1 / span 2; }
+  .ab-row-what { font-size: 1.5rem; }
+  .ab-row-why { grid-column: 2; margin-top: 0.4rem; font-size: 0.92rem; }
+}
+
+/* ---------- §5 · OUR TOOLSET — the drag track ----------
+   (2026-09-11, the user's frame "toolset section.png"). Not pinned. The
+   title at the gutter, "our" in the muted step; under it a row of cards
+   wider than the page, moved by the hand (AboutTools). Each card is a
+   step of the dark ladder — the first the void, each next one lighter —
+   with the bosra plate fading into its top-right corner, the arrow and
+   the name bottom-left, one line bottom-right. Over the row the native
+   cursor goes and the frosted disc follows the hand. */
+.ab-tools {
+  position: relative;
+  padding: 10rem 0 4rem;
+  overflow: clip;
+}
+.ab-tools-t {
+  margin: 0 0 3.2rem var(--ab-pad);
+  font-size: 6.8rem;
+  font-weight: var(--w-light);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--text);
+}
+.ab-tools-t em,
+.ab-tl-t em { font-style: normal; font-weight: inherit; color: var(--text-muted); }
+.ab-tools-m {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+.ab-tools-w {
+  display: block;
+  transform: translateY(110%);
+  transition: transform var(--d-cinema) var(--e-glass);
+}
+.ab-tools-t.is-in .ab-tools-w { transform: none; }
+
+.ab-tools-vp {
+  position: relative;
+  overflow: hidden;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+@media (hover: hover) {
+  .ab-tools-vp { cursor: none; }
+}
+.ab-tools-track {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+  margin: 0;
+  /* the row starts at the gutter and runs off the right edge; the last
+     card can be pulled to the gutter on the other side */
+  padding: 0 var(--ab-pad);
+  width: max-content;
+  will-change: transform;
+}
+.ab-tool {
+  --ab-tool-ground: var(--n-11);
+  position: relative;
+  flex: 0 0 auto;
+  width: 38rem;
+  height: 27rem;
+  padding: 2.4rem 2.6rem 2.2rem;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--ab-tool-ground);
+  color: var(--n-0);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.12),
+    inset 0 0 0 1px rgb(255 255 255 / 0.06);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 18rem;
+  grid-template-rows: 1fr auto auto;
+  column-gap: 2rem;
+  align-items: end;
+  opacity: 0;
+  transform: translateY(1.2rem);
+  transition:
+    opacity var(--d-slow) var(--e-glass) calc(var(--i, 0) * 0.08s),
+    transform var(--d-slow) var(--e-glass) calc(var(--i, 0) * 0.08s);
+}
+.ab-tools-vp.is-in .ab-tool { opacity: 1; transform: none; }
+/* the ladder: each card one step lighter than the one before */
+.ab-tool:nth-child(2) { --ab-tool-ground: var(--n-10); }
+.ab-tool:nth-child(3) { --ab-tool-ground: var(--n-9); }
+.ab-tool:nth-child(4) { --ab-tool-ground: var(--n-8); }
+.ab-tool:nth-child(5) { --ab-tool-ground: var(--n-7); }
+.ab-tool:nth-child(6) { --ab-tool-ground: var(--n-6); }
+/* the plate in the corner, fading toward the bottom-left */
+.ab-tool-bg {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 72%;
+  height: 78%;
+  object-fit: cover;
+  object-position: 50% 30%;
+  opacity: 0.5;
+  filter: grayscale(1) contrast(1.1);
+  -webkit-mask-image: linear-gradient(225deg, rgb(0 0 0 / 0.9) 0%, rgb(0 0 0 / 0.35) 40%, transparent 72%);
+  mask-image: linear-gradient(225deg, rgb(0 0 0 / 0.9) 0%, rgb(0 0 0 / 0.35) 40%, transparent 72%);
+  pointer-events: none;
+}
+.ab-tool-arrow {
+  grid-column: 1;
+  grid-row: 2;
+  display: block;
+  font-size: 2rem;
+  line-height: 1;
+  margin-bottom: 0.8rem;
+}
+.ab-tool-arrow svg { display: block; }
+.ab-tool-name {
+  grid-column: 1;
+  grid-row: 3;
+  margin: 0;
+  font-size: 2.7rem;
+  font-weight: var(--w-light);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.ab-tool-line {
+  grid-column: 2;
+  grid-row: 3;
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.36;
+  text-align: right;
+  color: rgb(251 252 252 / 0.78);
+}
+
+/* THE HAND: the frosted disc, fixed, moved by the driver (its outer
+   translate), scaling through its inner face so the two transforms
+   never fight; in over the row, a little smaller while the hand holds
+   the track */
+.ab-drag {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 40;
+  width: 6.4rem;
+  height: 6.4rem;
+  display: grid;
+  place-items: center;
+  color: var(--n-0);
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 2px rgb(13 16 18 / 0.35);
+  pointer-events: none;
+  will-change: transform;
+}
+.ab-drag::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-full);
+  background: linear-gradient(160deg, rgb(255 255 255 / 0.28) 0%, rgb(255 255 255 / 0.1) 100%);
+  backdrop-filter: blur(0.9rem) saturate(1.1);
+  -webkit-backdrop-filter: blur(0.9rem) saturate(1.1);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.5),
+    inset 0 0 0 1px rgb(255 255 255 / 0.28),
+    0 1rem 2rem -0.75rem rgb(13 16 18 / 0.35);
+  transform: scale(0);
+  transition: transform var(--d-base) var(--e-settle);
+}
+.ab-drag > span {
+  position: relative;
+  display: block;
+  transform: scale(0);
+  opacity: 0;
+  transition:
+    transform var(--d-base) var(--e-settle),
+    opacity var(--d-instant) linear;
+}
+.ab-tools.is-hand .ab-drag::before { transform: scale(1); }
+.ab-tools.is-hand .ab-drag > span { transform: scale(1); opacity: 1; }
+.ab-tools.is-hand .ab-tools-vp.is-holding ~ .ab-drag::before { transform: scale(0.82); }
+@media (hover: none) {
+  .ab-drag { display: none; }
+}
+
+/* ---------- §6 · HOW IT WENT — the pinned roll ----------
+   (2026-09-11, the user's frame "timeline section.png"). The wrapper is
+   the pin's length (--ab-tl-len, written by AboutTimeline); the stage
+   is sticky and one viewport high. Sized to the reference viewport
+   (730px = 45.6rem): the title under the nav, the year bottom-left,
+   the plate right with the chip on its left edge and the badge on its
+   bottom-right corner. Every voice that rolls sits in a crop box. */
+.ab-time {
+  position: relative;
+  height: var(--ab-tl-len, 100svh);
+  margin-top: 4rem;
+}
+/* the accessible list — off-screen unless there is no JS */
+.ab-tl-list {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  list-style: none;
+}
+.ab-tl-list li { margin: 0 0 2rem; white-space: normal; }
+.ab-tl-list h3 { margin: 0 0 0.4rem; font-size: 2rem; font-weight: var(--w-regular); }
+.ab-tl-list h3 span { color: var(--text-muted); margin-right: 0.5em; }
+.ab-tl-list p { margin: 0; max-width: 40rem; color: var(--text-muted); }
+
+.ab-tl-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+.ab-tl-t {
+  position: absolute;
+  left: var(--ab-pad);
+  top: 5.6rem;
+  margin: 0;
+  font-size: 6.8rem;
+  font-weight: var(--w-light);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--text);
+  white-space: nowrap;
+}
+/* the crops: one box per voice, the layers stacked inside it */
+.ab-tl-labels,
+.ab-tl-digits,
+.ab-tl-frame,
+.ab-tl-chip {
+  position: absolute;
+  overflow: hidden;
+}
+.ab-tl-label,
+.ab-tl-digit,
+.ab-tl-plate,
+.ab-tl-cap {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+  will-change: transform, filter;
+}
+.ab-tl-label:first-child,
+.ab-tl-digit:first-child,
+.ab-tl-plate:first-child,
+.ab-tl-cap:first-child { visibility: visible; }
+
+.ab-tl-labels {
+  left: 22.9rem;
+  top: 17.6rem;
+  width: 26rem;
+  height: 2rem;
+}
+.ab-tl-label {
+  font-size: 1.15rem;
+  line-height: 2rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.ab-tl-year {
+  position: absolute;
+  left: 3.6rem;
+  top: 19.6rem;
+  display: flex;
+  font-size: 11.6rem;
+  font-weight: var(--w-light);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--text);
+}
+.ab-tl-hold { color: var(--text-muted); }
+.ab-tl-digits {
+  position: relative;
+  width: 0.62em;
+  height: 1em;
+  /* the crop is the digit's own line, with a hair of slack for the
+     glyph's overshoot */
+  margin: -0.04em 0;
+  padding: 0.04em 0;
+  box-sizing: content-box;
+}
+.ab-tl-digit {
+  inset: 0.04em 0;
+  text-align: left;
+}
+.ab-tl-frame {
+  left: 50rem;
+  top: 10rem;
+  width: 33rem;
+  height: 31rem;
+  border-radius: var(--r-lg);
+  background: var(--n-10);
+  box-shadow: var(--lift-5);
+}
+.ab-tl-plate {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) brightness(0.9) contrast(1.06);
+}
+.ab-tl-chip {
+  left: 40rem;
+  top: 13.2rem;
+  width: 22rem;
+  height: 7.4rem;
+  border-radius: var(--r-md);
+  background: rgb(90 97 101 / 0.55);
+  backdrop-filter: blur(1rem);
+  -webkit-backdrop-filter: blur(1rem);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.28),
+    inset 0 0 0 1px rgb(255 255 255 / 0.14);
+}
+.ab-tl-cap {
+  margin: 0;
+  padding: 1.15rem 1.4rem;
+  font-size: 0.92rem;
+  line-height: 1.38;
+  color: var(--n-0);
+}
+/* the badge: the void disc on the plate's corner, a ring of progress
+   around it */
+.ab-tl-badge {
+  position: absolute;
+  left: 74rem;
+  top: 33.4rem;
+  width: 11rem;
+  height: 11rem;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-full);
+  background: var(--n-11);
+  color: var(--n-0);
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.2;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  row-gap: 0.35rem;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.14),
+    0 1.25rem 2.5rem -1rem rgb(13 16 18 / 0.5);
+  transition: transform var(--d-base) var(--e-settle);
+}
+@media (hover: hover) {
+  .ab-tl-badge:hover { transform: scale(1.04); }
+}
+.ab-tl-say { text-align: center; }
+.ab-tl-arrow {
+  font-size: 1.1rem;
+  line-height: 1;
+  animation: ab-tl-nudge 2.4s ease-in-out infinite;
+}
+.ab-tl-arrow:last-child { animation-delay: 0.2s; }
+@keyframes ab-tl-nudge {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(0.2em); }
+}
+.ab-tl-ringsvg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+.ab-tl-track,
+.ab-tl-ring {
+  fill: none;
+  stroke-width: 1.5;
+}
+.ab-tl-track { stroke: rgb(255 255 255 / 0.12); }
+.ab-tl-ring {
+  stroke: rgb(255 255 255 / 0.7);
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ab-tl-arrow { animation: none; }
+}
+
+@media (max-width: 57.5rem) {
+  .ab-tools { padding: 5rem 0 2rem; }
+  .ab-tools-t { margin: 0 0 1.6rem var(--ab-pad); font-size: 3rem; }
+  .ab-tools-track { gap: 0.9rem; padding: 0 var(--ab-pad); }
+  .ab-tool {
+    width: 78vw;
+    height: 56vw;
+    padding: 1.3rem 1.3rem 1.2rem;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 1fr auto auto auto;
+    row-gap: 0.4rem;
+  }
+  .ab-tool-arrow { font-size: 1.4rem; margin-bottom: 0.2rem; }
+  .ab-tool-name { font-size: 1.8rem; }
+  .ab-tool-line { grid-column: 1; grid-row: 4; text-align: left; font-size: 0.82rem; }
+
+  .ab-time { margin-top: 1rem; }
+  .ab-tl-stage { padding: 5.5rem var(--ab-pad) 0; }
+  .ab-tl-t { position: static; font-size: 2.8rem; margin-bottom: 1.2rem; }
+  .ab-tl-labels { position: static; width: auto; height: 1.6rem; }
+  .ab-tl-label { font-size: 0.95rem; line-height: 1.6rem; }
+  .ab-tl-year { position: static; font-size: 5.2rem; margin: 0.2rem 0 1rem; }
+  .ab-tl-frame {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1.15;
+  }
+  .ab-tl-chip {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    height: 6.2rem;
+    margin-top: 0.9rem;
+  }
+  .ab-tl-cap { padding: 0.9rem 1rem; font-size: 0.88rem; }
+  .ab-tl-badge { display: none; }
+}
