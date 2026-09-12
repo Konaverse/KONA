@@ -1,0 +1,371 @@
+/* ============================================================
+   THE CONTACT PAGE — .ct-* (2026-09-12, decided with the user: THE
+   SPLIT, a short form, paper first, the questions dark)
+
+   §1 THE SPLIT — on paper: the line, the email, the three prompts, the
+      form and the facts at the left; Calendly's full inline widget (the
+      user's embed, 700px) as a white card at the right.
+   §2 THE QUESTIONS — one viewport: a dark card set into the paper, the
+      heading at the left, eight <details> rows at the right.
+
+   No pin, no scrub. The house reveal carries the entrance; the rows
+   open with the browser's own details animation where it has one.
+   THE PICTURE RULE HOLDS: rem everywhere, hairlines px.
+   ============================================================ */
+
+.ct {
+  position: relative;
+  background: var(--surface);
+  color: var(--text);
+  --ct-pad: 5.7rem;
+}
+
+/* ---------- §1 · THE SPLIT ---------- */
+.ct-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 24rem;
+  grid-template-rows: auto;
+  column-gap: 5rem;
+  padding: 6.4rem var(--ct-pad) 2.2rem;
+}
+.ct-write {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  max-width: 40rem;
+}
+.ct-h1 {
+  margin: 0;
+  font-size: 3.2rem;
+  font-weight: var(--w-light);
+  line-height: 1.04;
+  letter-spacing: var(--ls-h1);
+  color: var(--text);
+}
+.ct-mail-wrap { margin-top: 0.2rem; }
+.ct-mail {
+  display: inline-block;
+  font-size: 2rem;
+  font-weight: var(--w-light);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: 1px solid var(--hairline-strong);
+  padding-bottom: 0.15em;
+  transition: border-color var(--d-quick) var(--e-settle);
+}
+.ct-mail:hover { border-color: var(--text); }
+.ct-prompts {
+  display: grid;
+  grid-template-columns: 11rem minmax(0, 1fr);
+  gap: 0.6rem 1.6rem;
+  align-items: start;
+  padding-top: 0.4rem;
+}
+.ct-prompts-l {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  padding-top: 0.2rem;
+}
+.ct-prompts ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.3rem;
+}
+.ct-prompts li {
+  position: relative;
+  padding-left: 1.1rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+.ct-prompts li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.72rem;
+  width: 0.5rem;
+  height: 1px;
+  background: var(--n-5);
+}
+
+/* THE FORM: hairline fields on the paper, the label as a small cap
+   over each; the house button sends */
+.ct-form {
+  display: grid;
+  gap: 1.1rem;
+  margin-top: 0.6rem;
+}
+.ct-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.4rem;
+}
+.ct-field {
+  display: grid;
+  gap: 0.35rem;
+}
+.ct-label {
+  font-size: 0.72rem;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.ct-field input,
+.ct-field textarea {
+  width: 100%;
+  margin: 0;
+  padding: 0.55rem 0;
+  border: 0;
+  border-bottom: 1px solid var(--hairline-strong);
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text);
+  outline: none;
+  transition: border-color var(--d-quick) var(--e-settle);
+  resize: vertical;
+}
+.ct-field textarea { min-height: 4.2rem; }
+.ct-field input::placeholder,
+.ct-field textarea::placeholder { color: var(--text-faint); }
+.ct-field input:focus,
+.ct-field textarea:focus { border-color: var(--text); }
+.ct-field input:user-invalid,
+.ct-field textarea:user-invalid { border-color: var(--n-7); }
+.ct-hp {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.ct-send {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem 1.4rem;
+  margin-top: 0.4rem;
+}
+.ct-status { margin: 0; }
+.ct-status a { color: var(--text); }
+
+/* THE CALENDAR: the popover's calendar as a white card on the paper.
+   Calendly's colours are fixed on this plan, so the card is honest
+   about being white: raised surface, the light ladder's lift. */
+.ct-book {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: start;
+}
+.ct-cal {
+  border-radius: var(--r-md);
+  background: var(--surface-raised);
+  box-shadow: var(--lift-4);
+  overflow: hidden;
+}
+.ct-cal-host {
+  position: relative;
+  /* the user's embed: 700px tall on a 320px minimum (2026-09-12) */
+  height: 43.75rem;
+  min-height: 700px;
+  min-width: 320px;
+}
+.ct-cal-host iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+/* Calendly writes an inline min-width/height on its wrapper; the card
+   owns the box */
+.ct-cal-host > div { height: 100% !important; min-width: 0 !important; }
+.ct-cal-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+.ct-cal-host.is-live .ct-cal-fallback { display: none; }
+.ct-cal-note {
+  margin: 0.9rem 0 0;
+  color: var(--text-faint);
+}
+.ct-cal-note a { color: var(--text-muted); }
+
+/* THE FACTS: two by two on a hairline at the left column's foot,
+   pushed down to meet the calendar's bottom edge */
+.ct-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.1rem 2rem;
+  margin: auto 0 0;
+  padding: 1.1rem 0 0;
+  list-style: none;
+  border-top: 1px solid var(--hairline);
+}
+.ct-fact {
+  display: grid;
+  gap: 0.3rem;
+}
+.ct-fact-l {
+  font-size: 0.72rem;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.ct-fact-v {
+  font-size: 0.92rem;
+  line-height: 1.3;
+  color: var(--text);
+}
+
+/* ---------- §2 · THE QUESTIONS ----------
+   A dark card set into the paper: the ground stays paper, the object
+   flips. One viewport: the section is a viewport, the card fills it. */
+.ct-faq-sec {
+  display: grid;
+  min-height: 100svh;
+  padding: 1.6rem var(--ct-pad) 4rem;
+}
+.ct-faq {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.55fr);
+  column-gap: 5rem;
+  padding: 2.8rem 3.6rem;
+  border-radius: var(--r-lg);
+  background: linear-gradient(180deg, var(--n-10) 0%, var(--n-11) 100%);
+  color: var(--text);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.1), inset 0 0 0 1px rgb(255 255 255 / 0.06);
+}
+.ct-faq-l {
+  position: sticky;
+  top: 6rem;
+  align-self: start;
+}
+.ct-faq-h {
+  margin: 0;
+  font-size: 2.8rem;
+  font-weight: var(--w-light);
+  line-height: 1.02;
+  letter-spacing: var(--ls-h1);
+  color: var(--n-0);
+}
+.ct-faq-p {
+  margin: 1.2rem 0 0;
+  max-width: 22rem;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+.ct-faq-list {
+  border-top: 1px solid var(--hairline);
+}
+.ct-q {
+  border-bottom: 1px solid var(--hairline);
+}
+.ct-q summary {
+  display: grid;
+  grid-template-columns: 2.4rem minmax(0, 1fr) 1.2rem;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.85rem 0;
+  list-style: none;
+  cursor: pointer;
+  font-size: 1.05rem;
+  line-height: 1.3;
+  color: var(--n-4);
+  transition: color var(--d-quick) var(--e-settle);
+}
+.ct-q summary::-webkit-details-marker { display: none; }
+.ct-q summary:hover,
+.ct-q[open] summary { color: var(--n-0); }
+.ct-q-n {
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+/* the mark: a plus that turns to a minus */
+.ct-q-i {
+  position: relative;
+  width: 1rem;
+  height: 1rem;
+  justify-self: end;
+}
+.ct-q-i::before,
+.ct-q-i::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0.9rem;
+  height: 1px;
+  background: var(--n-5);
+  transform: translate(-50%, -50%);
+  transition: transform var(--d-base) var(--e-settle), background var(--d-quick) linear;
+}
+.ct-q-i::after { transform: translate(-50%, -50%) rotate(90deg); }
+.ct-q[open] .ct-q-i::after { transform: translate(-50%, -50%) rotate(0deg); }
+.ct-q[open] .ct-q-i::before,
+.ct-q[open] .ct-q-i::after { background: var(--n-0); }
+.ct-a {
+  padding: 0 2.6rem 1.2rem 3.2rem;
+}
+.ct-a p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+/* the open: the browser animates the content box where it can */
+@supports (interpolate-size: allow-keywords) {
+  .ct-q { interpolate-size: allow-keywords; }
+  .ct-q::details-content {
+    height: 0;
+    overflow: clip;
+    transition: height var(--d-base) var(--e-settle), content-visibility var(--d-base) allow-discrete;
+  }
+  .ct-q[open]::details-content { height: auto; }
+}
+
+/* ---------- PHONES ---------- */
+@media (max-width: 57.5rem) {
+  .ct { --ct-pad: 1.25rem; }
+  .ct-hero {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    row-gap: 2.4rem;
+    min-height: 0;
+    padding-top: 6.2rem;
+  }
+  .ct-write { grid-row: 1; max-width: none; }
+  .ct-book { grid-column: 1; grid-row: 2; }
+  .ct-facts { margin-top: 1.6rem; }
+  .ct-h1 { font-size: 2.3rem; }
+  .ct-mail { font-size: 1.4rem; }
+  .ct-prompts { grid-template-columns: minmax(0, 1fr); }
+  .ct-row { grid-template-columns: minmax(0, 1fr); }
+  .ct-faq-sec { min-height: 0; padding: 1rem var(--ct-pad) 4rem; }
+  .ct-faq { grid-template-columns: minmax(0, 1fr); row-gap: 1.8rem; padding: 1.8rem 1.4rem; }
+  .ct-faq-l { position: static; }
+  .ct-faq-h { font-size: 2rem; }
+  .ct-q summary { grid-template-columns: 2rem minmax(0, 1fr) 1.2rem; font-size: 0.98rem; }
+  .ct-a { padding-left: 2.8rem; padding-right: 1rem; }
+}
