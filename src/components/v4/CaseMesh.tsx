@@ -9,16 +9,20 @@ import { gsap } from '@/lib/motion-v4'
  * stays there always; subtle but animated").
  *
  * ONE FIXED CANVAS behind the whole page, a hand-written fragment shader
- * on a fullscreen triangle (the aurora's construction, Aurora.tsx). The
- * field is domain-warped fbm — noise fed through noise twice — which is
- * what makes a gradient read as LIQUID rather than as blobs drifting:
- * the shapes fold into each other instead of sliding past.
+ * on a fullscreen triangle (the aurora's construction, Aurora.tsx).
+ *
+ * A MESH GRADIENT, the classic kind (user, 2026-09-12, after the
+ * noise-warped field was rejected: "it reads as smoke — let's do fluid
+ * mesh gradients"): six wide gaussian points on the ramp, each drifting
+ * on its own pair of slow sines, blended as a weighted average over the
+ * void. No noise at all — the only distortion is one low-frequency bend
+ * of the plane, which bows the points' edges into each other and is what
+ * makes it fluid rather than a set of discs.
  *
  * THE PALETTE is the ramp and nothing else: the void (n-11) as the
- * ground, the lift (n-9) where the field rises, the muted grey (n-7) at
- * the few peaks. Monochrome light in the dark — the pivot's one rule.
- * Peaks are small and rare on purpose; most of the frame stays within
- * two ramp steps of the void, so type sits on it anywhere.
+ * ground, the points in n-9, n-8 and n-7. Monochrome light in the dark —
+ * the pivot's one rule. The void keeps a base weight in the blend so the
+ * points read as light on it, and type sits on it anywhere.
  *
  * DITHERED: a hash per pixel adds ±1/255, which is what keeps a slow
  * gradient this dark from banding on an 8-bit panel. The root grain
@@ -40,49 +44,51 @@ precision highp float;
 uniform vec2 uRes;
 uniform float uT;
 float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123); }
-float noise(vec2 p){
-  vec2 i = floor(p), f = fract(p);
-  f = f * f * (3.0 - 2.0 * f);
-  float a = hash(i), b = hash(i + vec2(1.0, 0.0));
-  float c = hash(i + vec2(0.0, 1.0)), d = hash(i + vec2(1.0, 1.0));
-  return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+
+/* one mesh point: a wide gaussian around a centre that drifts on its own
+   pair of slow sines. The weight is what the blend uses. */
+float pt(vec2 p, vec2 base, vec2 amp, vec2 w, float ph, float r, float t){
+  vec2 c = base + amp * vec2(sin(t * w.x + ph), cos(t * w.y + ph * 1.7));
+  vec2 d = (p - c) / r;
+  return exp(-dot(d, d));
 }
-float fbm(vec2 p){
-  float v = 0.0, a = 0.5;
-  for (int i = 0; i < 4; i++) { v += a * noise(p); p = p * 2.02 + vec2(11.3, 7.7); a *= 0.5; }
-  return v;
-}
+
 void main(){
-  /* aspect-true, spanning the WHOLE frame: about ±1.9 across, ±0.9 up,
-     so several features sit side by side and none of them owns the
-     centre (user, 2026-09-12: "it reads as smoke in the centre") */
+  /* aspect-true, spanning the whole frame: about ±1.9 across, ±0.9 up */
   vec2 p = (gl_FragCoord.xy / uRes - 0.5) * vec2(uRes.x / uRes.y, 1.0) * 1.8;
   float t = uT;
 
-  /* THE WARP: the field bent by itself, twice, each pass on its own
-     slow clock — the liquid */
-  vec2 q = vec2(fbm(p + t * 0.040), fbm(p + vec2(5.2, 1.3) - t * 0.032));
-  vec2 r = vec2(fbm(p + 3.4 * q + vec2(1.7, 9.2) + t * 0.026),
-                fbm(p + 3.4 * q + vec2(8.3, 2.8) - t * 0.021));
-  float f = fbm(p + 3.0 * r);
+  /* THE FLUID: one low-frequency bend of the plane, so the points'
+     edges bow into each other instead of staying round. One sine per
+     axis — no noise, no wisps. */
+  p += 0.16 * vec2(sin(p.y * 1.4 + t * 0.09), cos(p.x * 1.1 - t * 0.07));
 
-  /* the value: the field rests near the void and rises to peaks
-     spread across the frame */
-  float v = smoothstep(0.30, 0.82, f);
-  v = pow(v, 1.4);
-
-  /* the ramp: void, lift, the muted grey at the peaks */
+  /* THE MESH: six points on the ramp — the lift, the border step, the
+     muted grey — blended as a weighted average over the void */
   vec3 cVoid = vec3(13.0, 16.0, 18.0) / 255.0;
-  vec3 cLift = vec3(37.0, 42.0, 44.0) / 255.0;
-  vec3 cPeak = vec3(90.0, 97.0, 101.0) / 255.0;
-  vec3 col = mix(cVoid, cLift, smoothstep(0.0, 0.55, v));
-  col = mix(col, cPeak, smoothstep(0.5, 1.0, v) * 0.9);
+  vec3 c9 = vec3(37.0, 42.0, 44.0) / 255.0;
+  vec3 c8 = vec3(58.0, 65.0, 68.0) / 255.0;
+  vec3 c7 = vec3(90.0, 97.0, 101.0) / 255.0;
 
-  /* a broad diagonal wash that turns very slowly, so the light has a
-     side without a centre */
-  float a = t * 0.02;
-  float wash = 0.5 + 0.5 * sin(dot(p, vec2(cos(a), sin(a))) * 1.1 + t * 0.06);
-  col += wash * 0.028;
+  float w0 = pt(p, vec2(-1.30,  0.55), vec2(0.30, 0.22), vec2(0.11, 0.08), 0.0, 0.72, t);
+  float w1 = pt(p, vec2( 1.35,  0.40), vec2(0.28, 0.26), vec2(0.08, 0.12), 1.9, 0.80, t);
+  float w2 = pt(p, vec2( 0.10, -0.70), vec2(0.40, 0.20), vec2(0.10, 0.07), 3.1, 0.78, t);
+  float w3 = pt(p, vec2(-0.55, -0.15), vec2(0.26, 0.24), vec2(0.07, 0.10), 4.4, 0.60, t);
+  float w4 = pt(p, vec2( 0.95, -0.05), vec2(0.32, 0.20), vec2(0.12, 0.09), 5.6, 0.66, t);
+  float w5 = pt(p, vec2( 0.20,  0.85), vec2(0.36, 0.18), vec2(0.09, 0.11), 0.9, 0.70, t);
+
+  /* ADDITIVE: each point adds its tone's lift over the void, so the
+     ground stays the void between points and rises at each one — the
+     mesh reads as light on the dark, not as a grey wash */
+  vec3 col = cVoid
+           + (c8 - cVoid) * w0 * 0.80
+           + (c7 - cVoid) * w1 * 0.68
+           + (c9 - cVoid) * w2 * 0.95
+           + (c7 - cVoid) * w3 * 0.60
+           + (c8 - cVoid) * w4 * 0.76
+           + (c9 - cVoid) * w5 * 0.90;
+  /* the ceiling: nothing brighter than the muted grey */
+  col = min(col, c7);
 
   /* dither */
   col += (hash(gl_FragCoord.xy + fract(t) * 7.0) - 0.5) * (2.0 / 255.0);
