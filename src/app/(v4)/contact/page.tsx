@@ -14,9 +14,10 @@ import './contact.css'
  *
  * §1 THE SPLIT — on paper. Left: the line, the email set large as real
  *    text, the three prompts a first email should answer, then the form
- *    (name, email, message). Right: Calendly's inline embed as the user
- *    supplied it (full widget, 700px), as one white card. The facts sit
- *    at the left column's foot, level with the calendar's.
+ *    (name, email, message). Right: the calendar, inline, wide and
+ *    short — the user's embed URL plus hide_event_type_details, so the
+ *    pane is the date picker alone (user, 2026-09-12: "more wide and
+ *    less tall"). Under both: the facts on one hairline.
  * §2 THE QUESTIONS — one viewport. A dark card set into the paper (the
  *    object flips polarity, the page does not — the seam is the card's
  *    edge): the heading and a line at the left, eight questions as
@@ -158,17 +159,6 @@ export default async function ContactPage({ searchParams }: { searchParams: Prom
           <Reveal index={3}>
             <ContactForm initial={initial} initialError={initialError} />
           </Reveal>
-          {/* the facts sit at the column's foot, level with the calendar's */}
-          <ul className="ct-facts" aria-label="At a glance">
-            {FACTS.map((f, i) => (
-              <li key={f.label}>
-                <Reveal className="ct-fact" index={Math.min(i, 3)}>
-                  <span className="ct-fact-l">{f.label}</span>
-                  <span className="ct-fact-v">{f.value}</span>
-                </Reveal>
-              </li>
-            ))}
-          </ul>
         </div>
 
         <Reveal className="ct-book" index={2}>
@@ -181,6 +171,16 @@ export default async function ContactPage({ searchParams }: { searchParams: Prom
           </p>
         </Reveal>
 
+        <ul className="ct-facts" aria-label="At a glance">
+          {FACTS.map((f, i) => (
+            <li key={f.label}>
+              <Reveal className="ct-fact" index={Math.min(i, 3)}>
+                <span className="ct-fact-l">{f.label}</span>
+                <span className="ct-fact-v">{f.value}</span>
+              </Reveal>
+            </li>
+          ))}
+        </ul>
       </header>
 
       {/* §2 — THE QUESTIONS */}

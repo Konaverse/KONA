@@ -7,9 +7,9 @@ import { CALENDLY_URL } from '@/lib/site'
 /**
  * THE CALENDAR, INLINE — /contact (user, 2026-09-12: "the modal of the
  * Calendly opened as a section"). Calendly's own inline embed, as the
- * user supplied it: the full widget WITH its event header (title,
- * duration, timezone), only the cookie strip hidden, 700px tall on a
- * 320px minimum — mounted through the same script the popover loads,
+ * user supplied it, with the event header hidden so the pane is the
+ * date picker alone and the card can be wide and short — mounted
+ * through the same script the popover loads,
  * via initInlineWidget rather than the data-url auto-init, so it works
  * inside a client-rendered tree. Calendly's colour parameters are a
  * paid feature this account does not have, so the pane is white and
@@ -17,8 +17,10 @@ import { CALENDLY_URL } from '@/lib/site'
  *
  * Without JS the card holds a plain link to the booking page.
  */
-/** the user's embed URL, verbatim (2026-09-12) */
-const INLINE_URL = `${CALENDLY_URL}?hide_gdpr_banner=1`
+/** the user's embed URL (hide_gdpr_banner) plus hide_event_type_details,
+ *  so the pane is the calendar alone and can be short (user, 2026-09-12:
+ *  "more wide and less tall") */
+const INLINE_URL = `${CALENDLY_URL}?hide_event_type_details=1&hide_gdpr_banner=1`
 export default function CalendlyInline() {
   const hostRef = useRef<HTMLDivElement | null>(null)
 
