@@ -166,11 +166,6 @@
   text-decoration: none;
 }
 .ct-cal-host.is-live .ct-cal-fallback { display: none; }
-.ct-cal-note {
-  margin: 0.9rem 0 0;
-  color: var(--text-faint);
-}
-.ct-cal-note a { color: var(--text-muted); }
 
 /* THE FACTS: one hairline row across the hero's foot, under both
    columns */

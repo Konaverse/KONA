@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Reveal from '@/components/v4/Reveal'
 import ContactForm from '@/components/v4/ContactForm'
 import CalendlyInline from '@/components/v4/CalendlyInline'
-import { CALENDLY_URL, CONTACT_EMAIL, SITE_URL } from '@/lib/site'
+import { CONTACT_EMAIL, SITE_URL } from '@/lib/site'
 import './contact.css'
 
 /**
@@ -154,10 +154,6 @@ export default async function ContactPage({ searchParams }: { searchParams: Prom
           <div className="ct-cal">
             <CalendlyInline />
           </div>
-          <p className="ct-cal-note t-small">
-            Pick a slot and it lands in both calendars. Or open it on{' '}
-            <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">Calendly</a>.
-          </p>
         </Reveal>
 
         <ul className="ct-facts" aria-label="At a glance">
