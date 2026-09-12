@@ -62,6 +62,7 @@ export const WORK_PROJECTS: WorkProject[] = [
     serviceSlug: 'one-page-websites',
     href: 'https://lossantosbarbers.com',
     image: '/work/lossantos.webp',
+    frames: Array.from({ length: 7 }, (_, i) => `/work/los-santos-barbers/${String(i + 1).padStart(2, '0')}.webp`),
   },
   {
     slug: 'lumiere-eclat',
@@ -72,6 +73,7 @@ export const WORK_PROJECTS: WorkProject[] = [
     serviceSlug: '3d-websites',
     href: 'https://watchweb.vercel.app',
     image: '/work/lumiere.webp',
+    frames: Array.from({ length: 5 }, (_, i) => `/work/lumiere-eclat/${String(i + 1).padStart(2, '0')}.webp`),
   },
   {
     slug: 'velricon',
@@ -80,6 +82,8 @@ export const WORK_PROJECTS: WorkProject[] = [
     year: '2025',
     service: 'Web design',
     serviceSlug: 'web-design',
+    href: 'https://velricon.com',
     image: '/work/velricon.webp',
+    frames: Array.from({ length: 8 }, (_, i) => `/work/velricon/${String(i + 1).padStart(2, '0')}.webp`),
   },
 ]

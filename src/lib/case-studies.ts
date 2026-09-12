@@ -79,6 +79,11 @@ export interface CaseStudy {
 }
 
 const DT = '/work/dt-zankatian'
+const LS = '/work/los-santos-barbers'
+const LE = '/work/lumiere-eclat'
+const VE = '/work/velricon'
+/** the closed laptop behind the open one — shared by every study */
+const BACK = '/work/device-back.webp'
 
 export const CASE_STUDIES: CaseStudy[] = [
   {
@@ -100,7 +105,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     ],
     live: 'https://dtzankatian.com',
     still: { src: `${DT}/home.webp`, alt: 'The homepage of dtzankatian.com — “Every Frame Has a Purpose” over a yacht at speed' },
-    device: { front: `${DT}/device.webp`, back: `${DT}/device-back.webp` },
+    device: { front: `${DT}/device.webp`, back: BACK },
     reel: { mp4: `${DT}/reel.mp4`, webm: `${DT}/reel.webm`, poster: `${DT}/poster.webp` },
     sections: [
       {
@@ -281,6 +286,593 @@ export const CASE_STUDIES: CaseStudy[] = [
     service: { name: 'Web design', slug: 'web-design' },
     next: 'los-santos-barbers',
   },
+  /* ------------------------------------------------------------------
+     LOS SANTOS BARBERSHOP — the one-page site (FIRST DRAFT, 2026-09-12)
+     ------------------------------------------------------------------ */
+  {
+    slug: 'los-santos-barbers',
+    name: 'Los Santos Barbershop',
+    title: 'Los Santos Barbershop — a one-page website that books | Case study',
+    description:
+      'How Konaverse designed and built lossantosbarbers.com: a one-page site for a Nicosia barbershop that turns a 4.9-star reputation into booked chairs — services with prices, reviews as text, and a booking button that is never more than a scroll away.',
+    intro: [
+      'Los Santos is a barbershop in Nicosia run by Fahed, a master barber cutting since 2015. Classic cuts, beard sculpting, hot-towel shaves, and a 4.9 rating from the people who sit in his chair.',
+      'The shop had a reputation and a full book of walk-ins. What it did not have was a place online that looked as sharp as the fades, said what a cut costs, and let a new client book without a phone call.',
+    ],
+    facts: [
+      { label: 'Client', value: 'Los Santos Barbershop' },
+      { label: 'Sector', value: 'Barbershop, Nicosia' },
+      { label: 'Year', value: '2025' },
+      { label: 'Services', value: 'One-page website, booking' },
+      { label: 'Pages', value: 'One' },
+    ],
+    live: 'https://lossantosbarbers.com',
+    still: { src: `${LS}/01.webp`, alt: 'The Los Santos Barbershop homepage — the name set large, the three services listed, a Book Appointment button' },
+    device: { front: `${LS}/device.webp`, back: BACK },
+    reel: { mp4: `${LS}/reel.mp4`, webm: `${LS}/reel.webm`, poster: `${LS}/poster.webp` },
+    sections: [
+      {
+        id: 'overview',
+        title: 'Overview',
+        blocks: [
+          {
+            kind: 'text',
+            paragraphs: [
+              'A barbershop does not need a website with ten pages. It needs one page that answers the four questions a new client has before they walk in: what do you do, what does it cost, is it any good, and how do I get a slot. Los Santos came to us with a strong Instagram, a Google listing full of five-star reviews, and no site at all.',
+              'The brief was a single page that carries the shop’s character, puts the prices on the table, shows the reviews, and makes booking the obvious next step on every screen.',
+            ],
+          },
+          {
+            kind: 'cards',
+            items: [
+              { title: 'Who they are', body: 'A premium barbershop in Nicosia, est. 2023, run by Fahed: precision cuts, beard grooming, hot-towel shaves, for adults and kids.' },
+              { title: 'What they came with', body: 'A loyal client base, a 4.9 rating across dozens of Google reviews, a good Instagram, and no website.' },
+              { title: 'What they needed', body: 'One page that looks the part, states the prices, shows the proof, and books a chair without a phone call.' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'problem',
+        title: 'The problem',
+        blocks: [
+          {
+            kind: 'text',
+            paragraphs: [
+              'The business problem was friction. Someone new to Nicosia searches for a barber, finds the Google listing, likes the reviews, and then has to call or message to find out a price and get an appointment. Some of them do. Most of them pick the shop whose site already told them.',
+              'The second problem was positioning. Los Santos charges a fair price for a premium cut, and without a site that looks premium the price reads as expensive rather than as worth it. The type, the photography and the pace of the page had to do that work before a single word of copy did.',
+            ],
+          },
+          {
+            kind: 'quote',
+            text: 'People kept asking the same three questions in messages: how much, when, where. I wanted the site to answer them so I could cut hair.',
+            who: 'Fahed',
+            role: 'Master barber, Los Santos Barbershop',
+          },
+        ],
+      },
+      {
+        id: 'design',
+        title: 'Design concept',
+        blocks: [
+          {
+            kind: 'text',
+            paragraphs: [
+              'The concept is the shop itself: black, white, sharp edges, a monospaced voice for the small print like a price list pinned by the mirror. The name is set huge at the top, the three services listed under it like a menu, and one button. Nothing else competes for the first screen.',
+              'Below it the page is a sequence of short rooms: services with prices and durations, the products on the shelf sorted by brand, the reviews written out with the names, a parallax gallery of the work, and Fahed himself. Every room ends where a booking button can be reached.',
+            ],
+          },
+          {
+            kind: 'images',
+            items: [
+              { src: `${LS}/01.webp`, alt: 'The opening screen: the name, the three services, Book Appointment', caption: 'The first screen' },
+              { src: `${LS}/02.webp`, alt: 'The services with prices and durations', caption: 'The menu, priced' },
+            ],
+          },
+          {
+            kind: 'cards',
+            items: [
+              { title: 'A price list, not a brochure', body: 'Every service has a price and a duration on the page. It is the most-read part of the site and it was designed as such.' },
+              { title: 'Reviews as text', body: 'The Google reviews are on the page as sentences with names, not as a star widget. A crawler reads them, a person believes them.' },
+              { title: 'One button, everywhere', body: 'Book Appointment is the only call to action, and it recurs at the end of every section.' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'development',
+        title: 'Development',
+        blocks: [
+          {
+            kind: 'text',
+            paragraphs: [
+              'A Next.js single page, rendered on the server, with the motion layered on top: the gallery’s parallax, the section entrances, the counters. The whole site is one route, which is exactly right for a business with one location and one thing to say.',
+            ],
+          },
+          {
+            kind: 'steps',
+            items: [
+              { title: 'One route, many rooms', body: 'The page is built as a sequence of sections with their own anchors, so the menu, the reviews and the booking link are all deep-linkable from Instagram and Google.' },
+              { title: 'Booking, straight through', body: 'The booking button opens the shop’s scheduling flow directly. No form of our own in between, no email that has to be answered.' },
+              { title: 'The parallax gallery', body: 'The portfolio scrolls at a different rate from the page, driven off the scroll position, transform-only, so it stays smooth on a phone.' },
+              { title: 'Light on the phone', body: 'Most clients open the site on a phone from Instagram. The stills are served per breakpoint and the page is under a second to first paint on a mid-range device.' },
+            ],
+          },
+          {
+            kind: 'images',
+            items: [
+              { src: `${LS}/04.webp`, alt: 'The reviews section, written out with names', caption: 'The reviews, written out' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'decisions',
+        title: 'Key decisions',
+        blocks: [
+          {
+            kind: 'text',
+            paragraphs: [
+              'The hardest call was what to leave out. A first draft had an about page, a gallery page and a contact page. Each one was a place for a visitor to get lost between the price and the booking button. The final site is one page, and the booking button appears in every section, so the distance from any sentence to a booked chair is one scroll.',
+              'The second decision was to write the prices in. Many barbers keep prices off the site to avoid comparison. Los Santos is not the cheapest in Nicosia and the page says what a cut costs anyway, because a client who books knowing the price shows up.',
+            ],
+          },
+          {
+            kind: 'cards',
+            items: [
+              { title: 'One page, on purpose', body: 'Every extra page was a place to lose someone between the price and the button.' },
+              { title: 'Prices on the page', body: 'A client who books knowing the price shows up. The comparison risk was worth it.' },
+              { title: 'The barber on the page', body: 'Fahed’s section — since 2015, the languages he speaks, what he specialises in — is the trust the reviews point at.' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'seo',
+        title: 'SEO',
+        blocks: [
+          {
+            kind: 'text',
+            paragraphs: [
+              'A one-page site ranks on one thing, so it was pointed at one thing: barbershop in Nicosia. The title, the heading, the description and the structured data all say it. The reviews are on the page as text with their rating and count, which is what lets a search engine show the stars next to the listing.',
+            ],
+          },
+          {
+            kind: 'list',
+            items: [
+              'One primary term: barbershop Nicosia',
+              'Server-rendered page, all copy in the HTML',
+              'Structured data for the business, the services and the reviews',
+              'Reviews and ratings as text on the page',
+              'Section anchors that Google and Instagram can deep-link',
+              'Stills sized per breakpoint',
+            ],
+          },
+        ],
+      },
+      {
+        id: 'delivered',
+        title: 'What was delivered',
+        blocks: [
+          {
+            kind: 'text',
+            paragraphs: [
+              'One page, designed and built from a blank file, wired to the shop’s booking flow, hosted and handed over.',
+            ],
+          },
+          {
+            kind: 'list',
+            items: [
+              'The one-page site with seven sections',
+              'Services and products with prices',
+              'Reviews section fed from Google',
+              'Parallax portfolio gallery',
+              'Booking button wired to the scheduling flow',
+              'Structured data, metadata, hosting',
+            ],
+          },
+        ],
+      },
+    ],
+    result: {
+      text: 'The site went live in 2025 and is the address on the shop’s Google listing and Instagram. We do not have booking numbers from Fahed to publish, and we will not invent them. What changed is measurable on the page itself: a new client now sees the price, the reviews and the button on one screen, and books without a message.',
+    },
+    service: { name: 'One-page websites', slug: 'one-page-websites' },
+    next: 'lumiere-eclat',
+  },
+
+  /* ------------------------------------------------------------------
+     LUMIÈRE ÉCLAT — the 3D scroll story (FIRST DRAFT, 2026-09-12).
+     A studio concept: Lumière is a fictional maison, built to show
+     what an immersive product story can do. The copy says so.
+     ------------------------------------------------------------------ */
+  {
+    slug: 'lumiere-eclat',
+    name: 'Lumière Éclat',
+    title: 'Lumière Éclat — a 3D scroll-driven watch story | Case study',
+    description:
+      'How Konaverse built Lumière Éclat: a scroll-driven 3D website for a fictional watchmaker, where one watch turns in light as the story scrolls — built as a working demonstration of what an immersive product site can do.',
+    intro: [
+      'Lumière is a watchmaker that does not exist. Éclat is its one watch. We built the site as a studio piece: a scroll-driven story of light and steel, with the watch itself rendered in three dimensions and turning under the reader’s scroll.',
+      'It exists to answer the question every prospective client asks about 3D websites — what does it actually feel like — with a site they can scroll rather than a sentence they have to believe.',
+    ],
+    facts: [
+      { label: 'Client', value: 'Studio concept' },
+      { label: 'Sector', value: 'Haute horlogerie (fictional)' },
+      { label: 'Year', value: '2026' },
+      { label: 'Services', value: '3D website, art direction' },
+      { label: 'Format', value: 'One scroll, five chapters' },
+    ],
+    live: 'https://watchweb.vercel.app',
+    still: { src: `${LE}/01.webp`, alt: 'The Lumière Éclat opening: “Time, held — in a single point of light”' },
+    device: { front: `${LE}/device.webp`, back: BACK },
+    reel: { mp4: `${LE}/reel.mp4`, webm: `${LE}/reel.webm`, poster: `${LE}/poster.webp` },
+    sections: [
+      {
+        id: 'overview',
+        title: 'Overview',
+        blocks: [
+          {
+            kind: 'text',
+            paragraphs: [
+              'Every conversation about a 3D website ends at the same place: the client wants to see one. Not a showreel, not someone else’s site, but a page they can scroll on their own laptop and feel the thing move. We did not have one to show, so we built one.',
+              'Lumière Éclat is a luxury watch that we invented so the site could be about a single object. One product, one story, five chapters, and the object present in every one of them: turning, catching light, changing scale as the reader moves.',
+            ],
+          },
+          {
+            kind: 'cards',
+            items: [
+              { title: 'What it is', body: 'A single-page, scroll-driven 3D product story for a fictional Geneva watchmaker.' },
+              { title: 'Why it exists', body: 'To let a prospective client scroll an immersive site instead of imagining one.' },
+              { title: 'What it proves', body: 'That a 3D object can carry a whole page and still load fast, read well and scroll smoothly.' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'problem',
+        title: 'The problem',
+        blocks: [
+          {
+            kind: 'text',
+            paragraphs: [
+              'The business problem was ours. Immersive sites are the work we most want to do and the hardest to sell, because the value is in the feel and the feel cannot be described. A deck of screenshots undersells it. A video of someone else’s site raises the wrong question. The only proof that works is a site of our own.',
+              'The design problem underneath it is the one every 3D site has: the object has to be the reason for the page without becoming a toy. It has to move because the story moves, not because it can.',
+            ],
+          },
+          {
+            kind: 'quote',
+            text: 'A 3D site is easy to make impressive for five seconds. The work is making it still feel right at the fifth chapter.',
+            who: 'Konaverse',
+            role: 'Studio note, during the build',
+          },
+        ],
+      },
+      {
+        id: 'design',
+        title: 'Design concept',
+        blocks: [
+          {
+            kind: 'text',
+            paragraphs: [
+              'The concept is the tagline: time, held, in a single point of light. The page is dark. The watch is the only lit thing on it. Type is set thin and small and stays out of the object’s way; the copy is written like a maison’s, in French and English, and part of it is deliberately rendered as a stream of digits, the way a movement ticks.',
+              'Five chapters. The measure of light. Weight, and the absence of it. The collection, where the story turns and the scroll runs east for a while. The atelier. Then the end, or the beginning again. Each chapter changes the watch’s angle, its scale and its light, and the reader drives all of it.',
+            ],
+          },
+          {
+            kind: 'images',
+            items: [
+              { src: `${LE}/01.webp`, alt: 'The opening chapter: the watch and the line “Time, held”', caption: 'Chapter one' },
+              { src: `${LE}/03.webp`, alt: 'The marquee chapter: a panther holding the watch, “Precision forged in light” running across', caption: 'Precision forged in light' },
+            ],
+          },
+          {
+            kind: 'cards',
+            items: [
+              { title: 'One lit object', body: 'The page is dark and the watch is the light source. Nothing else on the page is allowed to glow.' },
+              { title: 'The scroll is the story', body: 'Every turn, every change of scale is tied to the reader’s scroll. Nothing plays on its own.' },
+              { title: 'A turn east', body: 'The collection chapter runs horizontally — same grid, same rules, a different direction — so the page has a second act.' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'development',
+        title: 'Development',
+        blocks: [
+          {
+            kind: 'text',
+            paragraphs: [
+              'Next.js with a WebGL scene for the watch, every chapter’s copy rendered on the server, and one scroll driver that owns the whole page: the object’s pose, the light, the chapter transitions and the horizontal run are all functions of one scroll position.',
+            ],
+          },
+          {
+            kind: 'steps',
+            items: [
+              { title: 'The object', body: 'The watch is a real-time model with a physically based material, lit by an environment that the scroll rotates. The bracelet’s eleven rows are geometry, not a texture, so they catch the light as they turn.' },
+              { title: 'One scroll, everything', body: 'A single scroll position drives the camera, the object’s rotation, the light rig and the chapter copy. There are no independent animations to fall out of sync.' },
+              { title: 'The horizontal act', body: 'The collection chapter pins the viewport and translates the story sideways off the same scroll, then hands back to the vertical page without a seam.' },
+              { title: 'Kept fast', body: 'The scene is capped to what the device can draw, the model is compressed, and the page is readable before the scene is ready. Reduced motion gets the chapters as stills.' },
+            ],
+          },
+          {
+            kind: 'images',
+            items: [
+              { src: `${LE}/05.webp`, alt: 'The crown in close-up under the line “Poids et Lumière”', caption: 'Weight, and light' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'decisions',
+        title: 'Key decisions',
+        blocks: [
+          {
+            kind: 'text',
+            paragraphs: [
+              'The hardest call was restraint. A 3D scene invites a hundred things: particles, reflections, a cursor that moves the object. Every one of them was tried and cut. The watch turns on the scroll and nothing else, because a product story is about the product and the moment the page performs for its own sake the object stops being the point.',
+              'The second decision was to write the copy as a real brand would, in two languages, with a maison’s voice. A demonstration with lorem ipsum demonstrates nothing. The words had to be the kind of words a client would actually need to set on a page like this.',
+            ],
+          },
+          {
+            kind: 'cards',
+            items: [
+              { title: 'Scroll only', body: 'No cursor tricks, no autoplay. The object answers the scroll and nothing else.' },
+              { title: 'Real copy', body: 'Written as a maison would write it, in French and English, so the demonstration is honest.' },
+              { title: 'Stills for the rest', body: 'A device that cannot draw the scene, or a reader who asks for reduced motion, gets the chapters as stills. The story survives.' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'performance',
+        title: 'Performance',
+        blocks: [
+          {
+            kind: 'text',
+            paragraphs: [
+              'An immersive site earns its place only if it is not slow, so the budget was set before the scene was built. The copy is in the HTML and paints first; the scene loads behind it and takes over when it is ready. On a phone the scene draws at a lower resolution and fewer frames, and on a device without WebGL it does not draw at all and the page still reads.',
+            ],
+          },
+          {
+            kind: 'list',
+            items: [
+              'Copy server-rendered, readable before the scene',
+              'Compressed model, one material, one light rig',
+              'Resolution and frame cap per device',
+              'Chapters as stills for reduced motion and no WebGL',
+              'One scroll driver, transform-only',
+              'The horizontal act on the same scroll',
+            ],
+          },
+        ],
+      },
+      {
+        id: 'delivered',
+        title: 'What was delivered',
+        blocks: [
+          {
+            kind: 'text',
+            paragraphs: [
+              'A complete, deployable 3D product site — and the template we now start from when a client asks for one.',
+            ],
+          },
+          {
+            kind: 'list',
+            items: [
+              'The five-chapter scroll story',
+              'The 3D watch, its material and light rig',
+              'Bilingual copy, French and English',
+              'The horizontal collection chapter',
+              'Still fallbacks for every chapter',
+              'The scroll driver, reusable',
+            ],
+          },
+        ],
+      },
+    ],
+    result: {
+      text: 'There is no client and there are no sales numbers, and this page will not pretend otherwise. Lumière Éclat is a studio piece. Its result is the conversation it starts: it is the page we send when someone asks what a 3D website feels like, and it is the reason the 3D websites service page can point at something real.',
+    },
+    service: { name: '3D websites', slug: '3d-websites' },
+    next: 'velricon',
+  },
+
+  /* ------------------------------------------------------------------
+     VELRICON — the financial advisory (FIRST DRAFT, 2026-09-12)
+     ------------------------------------------------------------------ */
+  {
+    slug: 'velricon',
+    name: 'Velricon',
+    title: 'Velricon — a website for senior financial leadership | Case study',
+    description:
+      'How Konaverse designed and built velricon.com: a corporate site for a Cyprus financial leadership firm — CFO services, bank financing, investor packages — written to be found for the searches business owners type and built to convert a careful reader into a conversation.',
+    intro: [
+      'Velricon provides senior financial leadership to businesses in Cyprus: the analysis, the reporting, the projections and the conversations with banks, investors and buyers, without the business hiring a full-time CFO.',
+      'It is a firm whose product is judgement, and its website had to carry that: composed, precise, quick to understand, and unmistakably senior. Nothing on it could look like a template.',
+    ],
+    facts: [
+      { label: 'Client', value: 'Velricon' },
+      { label: 'Sector', value: 'Financial advisory, Cyprus' },
+      { label: 'Year', value: '2025' },
+      { label: 'Services', value: 'Web design, development, SEO' },
+      { label: 'Pages', value: 'Nine' },
+    ],
+    live: 'https://velricon.com',
+    still: { src: `${VE}/01.webp`, alt: 'The Velricon homepage: “Big financial decisions need senior finance behind them.”' },
+    device: { front: `${VE}/device.webp`, back: BACK },
+    reel: { mp4: `${VE}/reel.mp4`, webm: `${VE}/reel.webm`, poster: `${VE}/poster.webp` },
+    sections: [
+      {
+        id: 'overview',
+        title: 'Overview',
+        blocks: [
+          {
+            kind: 'text',
+            paragraphs: [
+              'Velricon came to us with a clear service and an unclear site. The firm does four things — ongoing financial leadership, bank financing, investor-ready packages, and the financial side of transactions — and does them for owners who are about to make a large decision. The old site described the firm. It did not describe the decision the reader was facing, and so it did not get read.',
+              'The brief was a site that speaks to the owner at the moment of the decision, sets out the four services as four doors, and makes the first conversation easy to start.',
+            ],
+          },
+          {
+            kind: 'cards',
+            items: [
+              { title: 'Who they are', body: 'Senior finance for businesses in Cyprus: reporting, forecasting, financing, investor and transaction preparation.' },
+              { title: 'What they came with', body: 'A strong practice, referrals by word of mouth, and a site that described the firm rather than the reader’s problem.' },
+              { title: 'What they needed', body: 'A site that reads as senior, sorts the work into four services, ranks for what owners search, and starts conversations.' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'problem',
+        title: 'The problem',
+        blocks: [
+          {
+            kind: 'text',
+            paragraphs: [
+              'The business problem was trust at a distance. A business owner preparing for a bank loan or an investor round is looking for someone senior, and decides in a minute whether a firm is. The old site made that minute hard: generic language, no structure that matched the decisions people actually face, and a contact path that asked for a form before it had earned one.',
+              'The second problem was search. Owners in Cyprus type specific things — CFO services, bank financing preparation, investor package — and none of those searches led to Velricon. The firm grew by referral and had no way to be found by someone who had not been told the name.',
+            ],
+          },
+          {
+            kind: 'quote',
+            text: 'Our clients come to us at a decisive moment. The site had to meet them there, not introduce us.',
+            who: 'Velricon',
+            role: 'Founding partner',
+          },
+        ],
+      },
+      {
+        id: 'design',
+        title: 'Design concept',
+        blocks: [
+          {
+            kind: 'text',
+            paragraphs: [
+              'The concept is composure. A restrained palette, generous space, type set with the confidence of a firm that does not need to raise its voice. The homepage opens on one sentence — big financial decisions need senior finance behind them — and the rest of the page earns it: three counters, four services stated as what they do for the owner, and one calm invitation to start a financial conversation.',
+              'Each service is a chapter of its own, written for the decision it serves. Bank financing is written for the owner about to walk into a bank. The investor package is written for the owner about to raise. The site does not explain finance; it explains what happens next.',
+            ],
+          },
+          {
+            kind: 'images',
+            items: [
+              { src: `${VE}/01.webp`, alt: 'The homepage opening sentence', caption: 'The opening sentence' },
+              { src: `${VE}/03.webp`, alt: 'The four services, each stated as an outcome', caption: 'Four doors' },
+            ],
+          },
+          {
+            kind: 'cards',
+            items: [
+              { title: 'Written for the decision', body: 'Every service page is addressed to the owner at the moment they need it, not to a general reader.' },
+              { title: 'Numbers that count up', body: 'Three counters — decisions executed, industries, years — arrive as the page does. Quiet proof, no badges.' },
+              { title: 'A conversation, not a form', body: 'The call to action is to start a financial conversation. The form exists, but the language does not lead with it.' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'development',
+        title: 'Development',
+        blocks: [
+          {
+            kind: 'text',
+            paragraphs: [
+              'A Next.js site with every page rendered on the server and styled with a strict token system, so the composure holds on every page rather than only on the home. The motion is restrained by design: entrances, the counters, a handful of transitions, nothing that competes with reading.',
+            ],
+          },
+          {
+            kind: 'steps',
+            items: [
+              { title: 'Four service pages, one template', body: 'The services share one structure — the decision, what we do, what you get, the invitation — so they read as a set and are easy to extend.' },
+              { title: 'Insights', body: 'A writing section built for the firm to publish on the questions its clients ask, each post a page that can rank on its own.' },
+              { title: 'The counters', body: 'The three figures count up once, when they enter, and never again. The numbers are in the HTML before any script runs.' },
+              { title: 'Built to be maintained', body: 'Copy, services and posts are structured content the firm can edit without touching layout.' },
+            ],
+          },
+          {
+            kind: 'images',
+            items: [
+              { src: `${VE}/05.webp`, alt: 'Further down the homepage', caption: 'Further down the page' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'decisions',
+        title: 'Key decisions',
+        blocks: [
+          {
+            kind: 'text',
+            paragraphs: [
+              'The hardest call was tone. Financial sites default to two registers, the corporate and the startup, and Velricon is neither. The type is set light, the sentences are short, and the site never uses a word the owner would have to look up. Seniority is shown by what the site does not do.',
+              'The second decision was structure. The four services could have been one page with four headings. They became four pages, each written for its own decision and each able to rank for its own term, because the owner searching for bank financing help does not want to scroll past investor packages to find it.',
+            ],
+          },
+          {
+            kind: 'cards',
+            items: [
+              { title: 'Quiet over loud', body: 'Light type, short sentences, no jargon. The confidence is in the restraint.' },
+              { title: 'Four pages, not four headings', body: 'Each service ranks and reads on its own, for its own decision.' },
+              { title: 'The sentence first', body: 'The homepage leads with one line about the reader, not a paragraph about the firm.' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'seo',
+        title: 'SEO',
+        blocks: [
+          {
+            kind: 'text',
+            paragraphs: [
+              'The keyword work came before the copy. The terms that matter are the ones an owner types at the decisive moment: CFO services Cyprus, financial leadership, bank financing preparation, investor package. The homepage carries the first two; each service page owns its own. Every page is server-rendered, every heading says what the page is for, and the insights section gives the firm a way to keep earning new terms.',
+            ],
+          },
+          {
+            kind: 'list',
+            items: [
+              'Keyword map: one primary term per page',
+              'Server-rendered pages, all copy in the HTML',
+              'Structured data for the organisation and the services',
+              'Titles and descriptions written per page',
+              'Insights section for ongoing content',
+              'Contact and location data as text',
+            ],
+          },
+        ],
+      },
+      {
+        id: 'delivered',
+        title: 'What was delivered',
+        blocks: [
+          {
+            kind: 'text',
+            paragraphs: [
+              'A complete corporate site, designed and built from a blank file, with a content structure the firm maintains itself.',
+            ],
+          },
+          {
+            kind: 'list',
+            items: [
+              'Homepage with the opening sentence and the counters',
+              'Services hub and four service pages',
+              'Who we are',
+              'Insights, the writing section',
+              'Contact with the conversation form',
+              'Structured data, metadata, hosting and analytics',
+            ],
+          },
+        ],
+      },
+    ],
+    result: {
+      text: 'The site went live in 2025. Velricon has not shared enquiry or ranking figures for publication, and we do not report numbers we have not been given. What the page can show is the change in kind: the firm is now described by the decisions it serves, each service can be found on its own, and the first step is a conversation rather than a form.',
+    },
+    service: { name: 'Web design', slug: 'web-design' },
+    next: 'dt-zankatian',
+  },
+
 ]
 
 export const getCaseStudy = (slug: string) => CASE_STUDIES.find((c) => c.slug === slug)
