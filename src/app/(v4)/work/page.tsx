@@ -4,6 +4,7 @@ import Button from '@/components/v4/Button'
 import ArrowLink from '@/components/v4/ArrowLink'
 import Invitation from '@/components/v4/Invitation'
 import { WORK_PROJECTS } from '@/lib/work-projects'
+import { getCaseStudy } from '@/lib/case-studies'
 import { CALENDLY_URL, SITE_URL } from '@/lib/site'
 import './work.css'
 
@@ -97,7 +98,7 @@ export default function WorkPage() {
           '@type': 'ListItem',
           position: i + 1,
           name: p.name,
-          ...(p.href ? { url: p.href } : {}),
+          ...(getCaseStudy(p.slug) ? { url: `${SITE_URL}/work/${p.slug}` } : p.href ? { url: p.href } : {}),
         })),
       },
     ],
@@ -197,6 +198,10 @@ export default function WorkPage() {
           /* the plate's reel: the shot frames, or two crops of the one
              capture until they exist */
           const frames = p.frames?.length ? p.frames : [p.image, p.image]
+          /* the card goes to the case study once it exists (2026-09-12),
+             else to the live site where known */
+          const study = getCaseStudy(p.slug)
+          const to = study ? `/work/${p.slug}` : p.href
           return (
           <div key={p.slug} className="wk-cell">
           <article
@@ -227,7 +232,9 @@ export default function WorkPage() {
               <h3 className="wk-card-name">{p.name}</h3>
               <p className="wk-card-line">{p.line}</p>
               <div className="wk-card-act">
-                {p.href ? (
+                {study ? (
+                  <ArrowLink href={to!}>View case study</ArrowLink>
+                ) : p.href ? (
                   <ArrowLink href={p.href} external>
                     View project
                   </ArrowLink>
@@ -237,7 +244,9 @@ export default function WorkPage() {
               </div>
             </div>
             {/* the whole card is the link where there is one */}
-            {p.href ? (
+            {study ? (
+              <a className="wk-card-cover" href={to!} aria-label={`${p.name} — view case study`} />
+            ) : p.href ? (
               <a className="wk-card-cover" href={p.href} target="_blank" rel="noopener noreferrer" aria-label={`${p.name} — view project`} />
             ) : null}
           </article>

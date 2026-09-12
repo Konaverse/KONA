@@ -1,0 +1,837 @@
+/* ============================================================
+   THE CASE STUDY — .cs-* (2026-09-12, the user's wireframe
+   "Case Study.png": "a full dark page with noise white/gray gradients;
+   hero video of a screen recording, some details, then full details
+   with images and a pinned index on the side; clean layout, smooth
+   motion, not crazy; it needs to read as a nice article").
+
+   §1 THE HERO — the name, the two paragraphs, the facts on a hairline,
+      the small still in the corner with the Visit button under it;
+   §2 THE DEVICE — the laptop render on a glow;
+   §3 THE RECORDING — the screen recording of the live site, full width;
+   §4 THE ARTICLE — the index pinned at the left, the sections at the
+      right: text, three cards, a quote, stills, steps, the checklist;
+      the result closes it;
+   §5 THE FOOT — the next project, the two CTAs, the up-links.
+
+   ONE POLARITY, DARK, END TO END: the root takes k-dark and paints the
+   void; the footer is the same void, so there is no seam to choreograph.
+   THE GLOW is the wireframe's white-grey gradients: soft radial lights
+   in the void, grained, drifting a little slower than the page.
+
+   THE PICTURE RULE HOLDS: every composition length is rem, hairlines
+   stay px. The wireframe was drawn at 1728 wide; a number below is that
+   frame scaled to the 1534 reference (frame px x 0.0555).
+   ============================================================ */
+
+.cs {
+  position: relative;
+  background: var(--surface);
+  color: var(--text);
+  overflow: clip;
+  --cs-pad: 5.7rem;
+  --cs-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* the entrance's parked state — opacity only; the noscript lifts it */
+.cs-ent { opacity: 0; }
+.cs.is-in .cs-ent { opacity: 1; }
+.cs-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+.cs-ln {
+  display: block;
+  will-change: transform;
+}
+.cs-h1 > span { display: inline; }
+.cs-h1 .cs-mask {
+  display: inline-block;
+  vertical-align: top;
+}
+/* the stagger rides the reveal itself (Reveal writes --i) */
+.cs-cards .k-reveal,
+.cs-figs .k-reveal,
+.cs-stats .k-reveal { transition-delay: calc(var(--i, 0) * var(--stagger)); }
+/* the first block after a heading sits on the heading's margin alone */
+.cs-sec > .k-mask + .cs-block,
+.cs-sec > .k-mask + .cs-cards,
+.cs-sec > .k-mask + .cs-figs { margin-top: 0; }
+
+/* ---------- THE GLOW ----------
+   A blob is a radial light in the void with the grain laid over it and
+   masked to its own falloff, so the noise lives only where the light
+   is. Placed per section, drifting on the driver (--cs-gy), breathing
+   on a slow clock. Never under small type at full strength. */
+.cs-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+.cs-blob {
+  position: absolute;
+  width: var(--w, 60rem);
+  height: var(--h, 60rem);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(255 255 255 / var(--a, 0.2)) 0%, rgb(255 255 255 / calc(var(--a, 0.2) * 0.4)) 38%, rgb(255 255 255 / 0) 100%);
+  transform: translate3d(0, var(--cs-gy, 0px), 0) scale(var(--cs-gs, 1));
+  will-change: transform;
+  animation: cs-breathe 16s var(--e-drift) infinite alternate;
+  animation-delay: var(--d, 0s);
+}
+.cs-blob::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: var(--cs-grain);
+  background-size: 120px 120px;
+  opacity: 0.55;
+  mix-blend-mode: soft-light;
+  -webkit-mask: radial-gradient(closest-side, #000 0%, rgb(0 0 0 / 0.5) 45%, transparent 100%);
+  mask: radial-gradient(closest-side, #000 0%, rgb(0 0 0 / 0.5) 45%, transparent 100%);
+}
+@keyframes cs-breathe {
+  from { --cs-gs: 1; }
+  to { --cs-gs: 1.06; }
+}
+@property --cs-gs {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cs-blob { animation: none; }
+}
+
+/* ---------- §1 · THE HERO ----------
+   The wireframe: the name at the left, the two paragraphs under it at
+   the foot; the small still at the right with the Visit button under
+   it, right-aligned. Compressed to clear the reference viewport
+   (730px = 45.6rem) with the facts row in. */
+.cs-hero {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 24rem;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  column-gap: 6rem;
+  min-height: 100svh;
+  padding: 8.6rem var(--cs-pad) 3.4rem;
+}
+.cs-h1 {
+  grid-column: 1;
+  grid-row: 1;
+  margin: 0;
+  font-size: 3.9rem;
+  font-weight: var(--w-light);
+  line-height: 1.02;
+  letter-spacing: var(--ls-h1);
+  color: var(--text);
+}
+.cs-intro {
+  grid-column: 1;
+  grid-row: 3;
+  align-self: end;
+  max-width: 40rem;
+  margin: 0;
+}
+.cs-intro p {
+  margin: 0 0 1em;
+  font-size: 1.02rem;
+  line-height: 1.6;
+  color: var(--n-4);
+}
+.cs-intro p:last-child { margin-bottom: 0; }
+/* the still: 3:2, ringed, the pane tilting toward the hand */
+.cs-still-wrap {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  align-self: start;
+  perspective: 80rem;
+}
+.cs-still {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--n-10);
+  box-shadow: var(--lift-3);
+  transform: rotateX(var(--cs-rx, 0deg)) rotateY(var(--cs-ry, 0deg));
+  will-change: transform;
+}
+.cs-still img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 0;
+}
+.cs-still::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.1), inset 0 1px 0 rgb(255 255 255 / 0.18);
+}
+.cs-visit {
+  grid-column: 2;
+  grid-row: 3;
+  align-self: end;
+  justify-self: end;
+}
+/* the facts: one hairline row across the hero's foot */
+.cs-facts {
+  grid-column: 1 / -1;
+  grid-row: 4;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 2rem;
+  margin: 2.8rem 0 0;
+  padding: 1.2rem 0 0;
+  list-style: none;
+  border-top: 1px solid var(--hairline);
+}
+.cs-fact {
+  display: grid;
+  gap: 0.35rem;
+}
+.cs-fact-l {
+  font-size: 0.72rem;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.cs-fact-v {
+  font-size: 0.95rem;
+  line-height: 1.3;
+  color: var(--text);
+}
+
+/* ---------- §2 · THE DEVICE ----------
+   The laptop on a glow, the closed one behind it at the right, the way
+   the wireframe has them. The render is shown near its native width
+   (never upscaled past it). The driver lags the two at different rates. */
+.cs-device {
+  position: relative;
+  z-index: 1;
+  height: 42rem;
+  overflow: visible;
+}
+.cs-device-stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+.cs-device-front,
+.cs-device-back {
+  position: absolute;
+  display: block;
+  will-change: transform;
+  user-select: none;
+  filter: drop-shadow(0 2.4rem 3rem rgb(0 0 0 / 0.55));
+}
+.cs-device-front-wrap {
+  position: absolute;
+  left: 23rem;
+  top: 2.5rem;
+  z-index: 2;
+  width: 38rem;
+}
+.cs-device-front {
+  position: relative;
+  width: 100%;
+}
+.cs-device-back {
+  width: 22rem;
+  right: 17rem;
+  top: 10rem;
+  z-index: 1;
+  opacity: 0.85;
+}
+.cs-device-cap {
+  position: absolute;
+  left: var(--cs-pad);
+  bottom: 1.5rem;
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--text-faint);
+}
+.cs-device-cap a { color: var(--text-muted); text-decoration: none; }
+.cs-device-cap a:hover { color: var(--text); }
+
+/* ---------- §3 · THE RECORDING ----------
+   Near full-bleed; it comes in a touch smaller and rounder and resolves
+   to its rest size as it crosses the viewport (the driver writes the
+   two numbers). The hairline under it is the playhead. */
+.cs-reel {
+  position: relative;
+  z-index: 1;
+  margin: 2rem 1.4rem 0;
+}
+.cs-reel-win {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--cs-reel-r, var(--r-lg));
+  overflow: hidden;
+  background: var(--n-10);
+  box-shadow: var(--lift-3);
+  transform: scale(var(--cs-reel-s, 1));
+  transform-origin: 50% 40%;
+  will-change: transform;
+}
+.cs-reel-win video,
+.cs-reel-win img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cs-reel-win::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.1), inset 0 1px 0 rgb(255 255 255 / 0.16);
+}
+.cs-reel-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 1rem var(--cs-pad) 0 calc(var(--cs-pad) - 1.4rem);
+  font-size: 0.78rem;
+  color: var(--text-faint);
+}
+.cs-reel-foot figcaption { margin: 0; }
+.cs-reel-bar {
+  position: relative;
+  flex: 1 1 auto;
+  max-width: 22rem;
+  height: 1px;
+  background: var(--hairline);
+}
+.cs-reel-bar i {
+  position: absolute;
+  inset: 0;
+  transform-origin: 0 50%;
+  transform: scaleX(var(--cs-reel-p, 0));
+  background: var(--n-4);
+}
+
+/* ---------- §4 · THE ARTICLE ----------
+   Two columns: the index pinned at the left (wireframe x=172 → 9.5rem),
+   the sections at the right (x=514 → 28.5rem, 41.6rem wide). */
+.cs-article {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 19rem minmax(0, 41.6rem);
+  column-gap: 0;
+  padding: 11rem 0 8rem 9.5rem;
+}
+.cs-rail {
+  position: sticky;
+  top: 9rem;
+  align-self: start;
+  padding-top: 0.35rem;
+}
+.cs-index {
+  position: relative;
+  margin: 0;
+  padding: 0 0 0 1.2rem;
+  list-style: none;
+  --cs-row: 1.7rem;
+}
+/* the rail's hairline and the marker that rides it to the active row */
+.cs-index::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.2rem;
+  bottom: 0.2rem;
+  width: 1px;
+  background: var(--hairline);
+}
+.cs-index::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.35rem;
+  width: 1px;
+  height: 1rem;
+  background: var(--n-0);
+  transform: translateY(calc(var(--cs-active, 0) * var(--cs-row)));
+  transition: transform var(--d-base) var(--e-settle);
+}
+.cs-index li { height: var(--cs-row); }
+.cs-index a {
+  display: inline-block;
+  font-size: 0.98rem;
+  line-height: var(--cs-row);
+  color: var(--text-faint);
+  text-decoration: none;
+  transition: color var(--d-quick) var(--e-settle), transform var(--d-base) var(--e-settle);
+}
+.cs-index a:hover { color: var(--text-muted); }
+.cs-index li.is-active a {
+  color: var(--text);
+  transform: translateX(0.3rem);
+}
+
+.cs-body { min-width: 0; }
+.cs-sec {
+  scroll-margin-top: 8rem;
+  padding-bottom: 7rem;
+}
+.cs-sec:last-child { padding-bottom: 0; }
+.cs-h2 {
+  margin: 0 0 1.6rem;
+  font-size: 2.15rem;
+  font-weight: var(--w-light);
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.cs-text {
+  max-width: 38rem;
+}
+.cs-text p {
+  margin: 0 0 1.1em;
+  font-size: 1.02rem;
+  line-height: 1.68;
+  color: var(--n-4);
+}
+.cs-text p:last-child { margin-bottom: 0; }
+.cs-block { margin-top: 2.4rem; }
+.cs-block:first-child { margin-top: 0; }
+
+/* THE CARDS: three glass tiles, a title and a line each; under the
+   hand a spotlight on the ground and on the ring, centred on the
+   pointer (the driver writes --cs-mx/--cs-my), the card lifts a step */
+.cs-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.2rem;
+  margin: 2.4rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.cs-card {
+  --cs-mx: 50%;
+  --cs-my: 30%;
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 0.7rem;
+  min-height: 10.5rem;
+  padding: 1.3rem 1.3rem 1.4rem;
+  border-radius: var(--r-lg);
+  background: linear-gradient(160deg, rgb(255 255 255 / 0.075) 0%, rgb(255 255 255 / 0.03) 100%), var(--n-10);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08), inset 0 1px 0 rgb(255 255 255 / 0.14);
+  overflow: hidden;
+  isolation: isolate;
+  transition: transform var(--d-base) var(--e-settle);
+}
+.cs-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(22rem 16rem at var(--cs-mx) var(--cs-my), rgb(255 255 255 / 0.09) 0%, rgb(255 255 255 / 0) 60%);
+  opacity: 0;
+  transition: opacity var(--d-base) var(--e-settle);
+}
+.cs-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(16rem 12rem at var(--cs-mx) var(--cs-my), rgb(255 255 255 / 0.5) 0%, rgb(255 255 255 / 0) 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity var(--d-base) var(--e-settle);
+}
+@media (hover: hover) {
+  .cs-card:hover { transform: translateY(-0.25rem); }
+  .cs-card:hover::before,
+  .cs-card:hover::after { opacity: 1; }
+}
+.cs-card-t {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-size: 1.08rem;
+  font-weight: var(--w-regular);
+  line-height: 1.25;
+  color: var(--text);
+}
+.cs-card-b {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+/* THE QUOTE: the client's sentence at display scale, a hairline at
+   its left, the name under it */
+.cs-quote {
+  position: relative;
+  margin: 3rem 0 0;
+  padding: 0.4rem 0 0.4rem 2rem;
+  border-left: 1px solid var(--hairline-strong);
+}
+.cs-quote p {
+  margin: 0;
+  font-size: 1.7rem;
+  font-weight: var(--w-light);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  text-wrap: balance;
+}
+.cs-quote footer {
+  margin-top: 1.1rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+.cs-quote footer span { color: var(--text-faint); }
+
+/* THE STILLS: one is full width, two sit side by side; the image is
+   taller than its frame and the driver slides it as the frame crosses
+   the viewport */
+.cs-figs {
+  display: grid;
+  gap: 1.2rem;
+  margin: 2.6rem 0 0;
+}
+.cs-figs-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cs-fig { margin: 0; }
+.cs-fig-win {
+  position: relative;
+  aspect-ratio: 19 / 10;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--n-10);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08);
+}
+.cs-fig-win img {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: -6%;
+  width: 100%;
+  height: 112%;
+  object-fit: cover;
+  object-position: 50% 0;
+  transform: translate3d(0, var(--cs-py, 0%), 0);
+  will-change: transform;
+}
+.cs-fig-win::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08), inset 0 1px 0 rgb(255 255 255 / 0.12);
+}
+.cs-fig figcaption {
+  margin-top: 0.7rem;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--text-faint);
+}
+
+/* THE STEPS: numbered rows on hairlines */
+.cs-steps {
+  margin: 2.6rem 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: cs-step;
+  border-top: 1px solid var(--hairline);
+}
+.cs-step {
+  display: grid;
+  grid-template-columns: 3.2rem minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1.3rem 0;
+  border-bottom: 1px solid var(--hairline);
+  counter-increment: cs-step;
+}
+.cs-step::before {
+  content: counter(cs-step, decimal-leading-zero);
+  font-size: 0.78rem;
+  line-height: 1.6;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+.cs-step h3,
+.cs-step p { grid-column: 2; }
+.cs-step h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+  font-weight: var(--w-regular);
+  line-height: 1.3;
+  color: var(--text);
+}
+.cs-step p {
+  margin: 0;
+  max-width: 34rem;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* THE LIST: the checklist as a two-column grid of hairline rows */
+.cs-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 2.4rem;
+  margin: 2.4rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.cs-list li {
+  position: relative;
+  padding: 0.8rem 0 0.8rem 1.4rem;
+  border-bottom: 1px solid var(--hairline);
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--n-4);
+}
+.cs-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 1.35rem;
+  width: 0.5rem;
+  height: 1px;
+  background: var(--n-5);
+}
+
+/* THE RESULT: block 5 — the numbers when there are any, and always the
+   sentence */
+.cs-stats {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 1.2rem;
+  margin: 0 0 2rem;
+  padding: 0;
+  list-style: none;
+}
+.cs-stat {
+  padding: 1.2rem 0 0;
+  border-top: 1px solid var(--hairline-strong);
+}
+.cs-stat-v {
+  display: block;
+  font-size: 3rem;
+  font-weight: var(--w-light);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+.cs-stat-l {
+  display: block;
+  margin-top: 0.6rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+.cs-result {
+  padding: 1.8rem 0 0;
+  border-top: 1px solid var(--hairline-strong);
+}
+.cs-result p {
+  margin: 0;
+  max-width: 38rem;
+  font-size: 1.15rem;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+/* ---------- §5 · THE FOOT ----------
+   The next project as a card with its capture; then the line and the
+   two CTAs; then the up-links: all work, the service page (block 6). */
+.cs-foot {
+  position: relative;
+  z-index: 1;
+  padding: 4rem var(--cs-pad) 7rem;
+}
+.cs-next {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 30rem;
+  align-items: end;
+  gap: 4rem;
+  padding: 3.4rem 0 0;
+  border-top: 1px solid var(--hairline);
+  text-decoration: none;
+  color: inherit;
+}
+.cs-next-l { min-width: 0; }
+.cs-next-k {
+  display: block;
+  margin: 0 0 1rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.cs-next-n {
+  margin: 0;
+  font-size: 3.2rem;
+  font-weight: var(--w-light);
+  line-height: 1;
+  letter-spacing: var(--ls-h1);
+  color: var(--text);
+  transition: transform var(--d-base) var(--e-settle);
+}
+.cs-next-line {
+  margin: 1rem 0 0;
+  max-width: 28rem;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+.cs-next-plate {
+  position: relative;
+  aspect-ratio: 19 / 10;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--n-10);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08);
+}
+.cs-next-plate img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 0;
+  filter: grayscale(1) brightness(0.8) contrast(1.06);
+  transform: scale(1);
+  transition: filter var(--d-slow) var(--e-settle), transform var(--d-slow) var(--e-settle);
+}
+@media (hover: hover) {
+  .cs-next:hover .cs-next-plate img { filter: none; transform: scale(1.04); }
+  .cs-next:hover .cs-next-n { transform: translateX(0.4rem); }
+}
+.cs-invite {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 3rem;
+  margin-top: 6rem;
+  padding-top: 3.4rem;
+  border-top: 1px solid var(--hairline);
+}
+.cs-invite-h {
+  margin: 0;
+  font-size: 2.6rem;
+  font-weight: var(--w-light);
+  line-height: 1.08;
+  letter-spacing: var(--ls-h1);
+  color: var(--text);
+  max-width: 30rem;
+}
+.cs-invite-act {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.2rem;
+}
+.cs-mail {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+.cs-mail:hover { color: var(--text); }
+.cs-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 3rem;
+  margin-top: 4rem;
+}
+
+/* ---------- PHONES ----------
+   One column. The rail lies down into a row that sticks under the
+   top edge; the device shrinks; the recording goes edge to edge. */
+@media (max-width: 57.5rem) {
+  .cs { --cs-pad: 1.25rem; }
+  .cs-hero {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto auto auto;
+    row-gap: 1.6rem;
+    min-height: 0;
+    padding-top: 6.5rem;
+  }
+  .cs-h1 { grid-row: 1; font-size: 2.6rem; }
+  .cs-still-wrap { grid-column: 1; grid-row: 2; perspective: none; }
+  .cs-intro { grid-row: 3; }
+  .cs-visit { grid-column: 1; grid-row: 4; justify-self: start; }
+  .cs-facts { grid-row: 5; grid-auto-flow: row; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem 1.5rem; margin-top: 0.6rem; }
+  .cs-device { height: 24rem; }
+  .cs-device-front-wrap { position: relative; width: 21rem; left: auto; top: 0; }
+  .cs-device-back { display: none; }
+  .cs-device-cap { left: var(--cs-pad); bottom: 0.4rem; }
+  .cs-reel { margin: 1rem 0 0; }
+  .cs-reel-win { border-radius: 0; transform: none; }
+  .cs-reel-foot { padding: 0.8rem var(--cs-pad) 0; }
+  .cs-article {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 5rem var(--cs-pad) 4rem;
+  }
+  .cs-rail {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    margin: 0 calc(-1 * var(--cs-pad)) 2rem;
+    padding: 0.8rem var(--cs-pad);
+    background: linear-gradient(180deg, var(--n-11) 70%, rgb(13 16 18 / 0));
+  }
+  .cs-index {
+    display: flex;
+    gap: 1.2rem;
+    padding: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    --cs-row: 1.6rem;
+  }
+  .cs-index::-webkit-scrollbar { display: none; }
+  .cs-index::before, .cs-index::after { display: none; }
+  .cs-index a { white-space: nowrap; font-size: 0.85rem; }
+  .cs-index li.is-active a { transform: none; }
+  .cs-sec { padding-bottom: 4.5rem; scroll-margin-top: 4rem; }
+  .cs-h2 { font-size: 1.7rem; }
+  .cs-cards { grid-template-columns: minmax(0, 1fr); }
+  .cs-card { min-height: 0; }
+  .cs-figs-2 { grid-template-columns: minmax(0, 1fr); }
+  .cs-list { grid-template-columns: minmax(0, 1fr); }
+  .cs-stats { grid-auto-flow: row; }
+  .cs-quote p { font-size: 1.3rem; }
+  .cs-foot { padding: 2rem var(--cs-pad) 4rem; }
+  .cs-next { grid-template-columns: minmax(0, 1fr); gap: 1.6rem; }
+  .cs-next-n { font-size: 2.2rem; }
+  .cs-invite { grid-template-columns: minmax(0, 1fr); gap: 1.6rem; margin-top: 4rem; }
+  .cs-invite-h { font-size: 2rem; }
+}

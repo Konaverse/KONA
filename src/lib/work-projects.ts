@@ -47,6 +47,11 @@ export const WORK_PROJECTS: WorkProject[] = [
     serviceSlug: 'web-design',
     href: 'https://dtzankatian.com',
     image: '/work/tzankatian.webp',
+    /* the case study's stills (2026-09-12), shot at 1900 x 1000 */
+    frames: [
+      'home', 'home-stats', 'home-services', 'home-cases', 'home-partners',
+      'about', 'about-press', 'services', 'services-process', 'cases', 'contact',
+    ].map((n) => `/work/dt-zankatian/${n}.webp`),
   },
   {
     slug: 'los-santos-barbers',
