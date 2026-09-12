@@ -3,6 +3,7 @@
 import { useEffect, useRef, type ReactNode } from 'react'
 import { gsap, EASE, DUR, rem } from '@/lib/motion-v4'
 import { getLenis } from '@/components/v4/SmoothScroll'
+import CaseMesh from '@/components/v4/CaseMesh'
 
 /**
  * /work/[slug] — THE MOTION (2026-09-12, the user's wireframe "Case
@@ -16,9 +17,8 @@ import { getLenis } from '@/components/v4/SmoothScroll'
  *   THE ENTRANCE. The name rises through its crop; the paragraphs, the
  *   still, the button and the facts resolve a beat behind it.
  *
- *   THE GLOW. The white-grey lights in the void drift a little slower
- *   than the page (each blob carries its own rate), so the ground has
- *   depth without anything on it moving on its own.
+ *   THE GROUND is the mesh (CaseMesh.tsx), mounted here, fixed behind
+ *   everything — the one thing on the page that moves on its own.
  *
  *   THE DEVICE. The laptop and the closed one behind it lag the scroll at
  *   two rates — a parallax of two planes, small.
@@ -67,7 +67,6 @@ export default function CaseMotion({ children }: { children: ReactNode }) {
     /* ---- the elements ---- */
     const lines = Array.from(root.querySelectorAll<HTMLElement>('.cs-h1 .cs-ln'))
     const ents = Array.from(root.querySelectorAll<HTMLElement>('.cs-ent'))
-    const blobs = Array.from(root.querySelectorAll<HTMLElement>('.cs-blob'))
     const deviceFront = root.querySelector<HTMLElement>('.cs-device-front')
     const deviceBack = root.querySelector<HTMLElement>('.cs-device-back')
     const device = root.querySelector<HTMLElement>('.cs-device')
@@ -174,7 +173,6 @@ export default function CaseMotion({ children }: { children: ReactNode }) {
 
     /* ---- THE TICKER ---- */
     let active = -1
-    const blobRates = blobs.map((b) => Number(b.dataset.drift) || 0)
     const tick = () => {
       const vh = window.innerHeight
 
@@ -190,15 +188,6 @@ export default function CaseMotion({ children }: { children: ReactNode }) {
       }
 
       if (reduced) return
-
-      /* the glow */
-      blobs.forEach((b, i) => {
-        const host = b.parentElement?.parentElement
-        if (!host) return
-        const r = host.getBoundingClientRect()
-        const c = r.top + r.height / 2 - vh / 2
-        b.style.setProperty('--cs-gy', `${(-c * blobRates[i]).toFixed(1)}px`)
-      })
 
       /* the device */
       if (device && deviceFront) {
@@ -242,6 +231,7 @@ export default function CaseMotion({ children }: { children: ReactNode }) {
 
   return (
     <main ref={ref} className="cs k-dark">
+      <CaseMesh />
       {children}
     </main>
   )

@@ -28,6 +28,11 @@ import './case.css'
  *   §5 THE FOOT — the next project, the two CTAs, all work + the service
  *      page (block 6)
  *
+ * THE GROUND is one fixed, full-viewport liquid mesh shader behind
+ * everything (CaseMesh.tsx, mounted by CaseMotion) — user, 2026-09-12:
+ * "an animated mesh gradient, subtle but animated". The sections sit on
+ * it at z-index 1.
+ *
  * SERVER-RENDERED, every word in the raw HTML (SEO plan D5): the article,
  * the index, the facts, the captions. The motion (CaseMotion.tsx) is an
  * enhancement; the recording has a poster and the page stands without JS.
@@ -204,10 +209,6 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
 
       {/* §1 — THE HERO */}
       <header className="cs-hero">
-        <div className="cs-glow" aria-hidden="true">
-          <i className="cs-blob" data-drift="0.12" style={{ '--w': '96rem', '--h': '40rem', '--a': 0.24, '--r': '-26deg', right: '-38rem', top: '2rem' } as React.CSSProperties} />
-          <i className="cs-blob" data-drift="0.06" style={{ '--w': '60rem', '--h': '22rem', '--a': 0.1, '--r': '-14deg', left: '-26rem', bottom: '-6rem', '--d': '-6s' } as React.CSSProperties} />
-        </div>
         <h1 className="cs-h1">
           {study.name.split(' ').map((w, i, arr) => (
             <span key={w + i} className="cs-mask" style={{ display: arr.length > 2 && i < arr.length - 1 ? 'inline-block' : undefined }}>
@@ -257,10 +258,6 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
 
       {/* §2 — THE DEVICE */}
       <section className="cs-device" aria-label="The site on a laptop">
-        <div className="cs-glow" aria-hidden="true">
-          <i className="cs-blob" data-drift="0.1" style={{ '--w': '90rem', '--h': '44rem', '--a': 0.3, '--r': '-32deg', right: '-30rem', top: '-8rem', '--d': '-3s' } as React.CSSProperties} />
-          <i className="cs-blob" data-drift="0.18" style={{ '--w': '70rem', '--h': '26rem', '--a': 0.18, '--r': '-10deg', left: '-28rem', bottom: '-4rem', '--d': '-9s' } as React.CSSProperties} />
-        </div>
         <div className="cs-device-stage">
           {study.device.back ? (
             <img className="cs-device-back" src={study.device.back} alt="" loading="lazy" decoding="async" draggable={false} aria-hidden="true" />
@@ -296,11 +293,6 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
 
       {/* §4 — THE ARTICLE */}
       <section className="cs-article" aria-label="The case study">
-        <div className="cs-glow" aria-hidden="true">
-          <i className="cs-blob" data-drift="0.05" style={{ '--w': '80rem', '--h': '30rem', '--a': 0.14, '--r': '-38deg', left: '-40rem', top: '16%', '--d': '-4s' } as React.CSSProperties} />
-          <i className="cs-blob" data-drift="0.08" style={{ '--w': '100rem', '--h': '34rem', '--a': 0.13, '--r': '-28deg', right: '-46rem', top: '50%', '--d': '-11s' } as React.CSSProperties} />
-          <i className="cs-blob" data-drift="0.04" style={{ '--w': '70rem', '--h': '26rem', '--a': 0.11, '--r': '-16deg', left: '-32rem', bottom: '-2rem', '--d': '-7s' } as React.CSSProperties} />
-        </div>
         <nav className="cs-rail" aria-label="In this case study">
           <ol className="cs-index">
             {index.map((s, i) => (
@@ -347,9 +339,6 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
 
       {/* §5 — THE FOOT */}
       <footer className="cs-foot">
-        <div className="cs-glow" aria-hidden="true">
-          <i className="cs-blob" data-drift="0.1" style={{ '--w': '84rem', '--h': '30rem', '--a': 0.16, '--r': '-24deg', right: '-30rem', bottom: '-10rem', '--d': '-2s' } as React.CSSProperties} />
-        </div>
         {next ? (
           <a className="cs-next" href={nextHref}>
             <div className="cs-next-l">

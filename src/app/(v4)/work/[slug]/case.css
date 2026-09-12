@@ -16,8 +16,8 @@
 
    ONE POLARITY, DARK, END TO END: the root takes k-dark and paints the
    void; the footer is the same void, so there is no seam to choreograph.
-   THE GLOW is the wireframe's white-grey gradients: soft radial lights
-   in the void, grained, drifting a little slower than the page.
+   THE GROUND is the mesh: one fixed liquid-gradient canvas behind the
+   whole page (CaseMesh.tsx), monochrome, subtle, always moving.
 
    THE PICTURE RULE HOLDS: every composition length is rem, hairlines
    stay px. The wireframe was drawn at 1728 wide; a number below is that
@@ -59,74 +59,25 @@
 .cs-sec > .k-mask + .cs-cards,
 .cs-sec > .k-mask + .cs-figs { margin-top: 0; }
 
-/* ---------- THE GLOW ----------
-   NOT A CIRCLE (user, 2026-09-12: "the shape is clearly a circle
-   everywhere, and the colour mixing needs improvement"). A light is an
-   ELONGATED, ROTATED sheet: two ellipses on one element, off-centre from
-   each other so the shape has a bias, in two tones — paper at the core,
-   the cool grey of the ramp (n-3 → n-6) in the skirt — with a long
-   eased falloff (six stops, not two) so nothing bands. The lights
-   SCREEN onto the void, so where two overlap they add like light rather
-   than paint over each other. The grain is masked to the light's own
-   falloff. Placed per section, drifting on the driver (--cs-gy),
-   breathing on a slow clock. Never under small type at full strength. */
-.cs-glow {
-  position: absolute;
+/* ---------- THE MESH ----------
+   One fixed, full-viewport canvas behind the page (CaseMesh.tsx): the
+   liquid gradient, monochrome, subtle. Under it — and instead of it
+   without WebGL or JS — a still of the same idea in CSS: two soft
+   sheets of the lift tone on the void, so the ground is never flat. */
+.cs-mesh {
+  position: fixed;
   inset: 0;
   z-index: 0;
-  overflow: visible;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-}
-.cs-blob {
-  position: absolute;
-  width: var(--w, 80rem);
-  height: var(--h, 36rem);
-  --a: 0.2;
   background:
-    radial-gradient(ellipse 52% 46% at 40% 44%,
-      rgb(251 252 252 / var(--a)) 0%,
-      rgb(251 252 252 / calc(var(--a) * 0.72)) 18%,
-      rgb(235 238 239 / calc(var(--a) * 0.42)) 40%,
-      rgb(221 226 227 / calc(var(--a) * 0.18)) 62%,
-      rgb(196 202 205 / calc(var(--a) * 0.05)) 84%,
-      rgb(196 202 205 / 0) 100%),
-    radial-gradient(ellipse 78% 64% at 64% 58%,
-      rgb(196 202 205 / calc(var(--a) * 0.55)) 0%,
-      rgb(162 170 174 / calc(var(--a) * 0.3)) 32%,
-      rgb(124 131 136 / calc(var(--a) * 0.12)) 62%,
-      rgb(124 131 136 / 0) 100%);
-  mix-blend-mode: screen;
-  -webkit-mask: radial-gradient(ellipse closest-side, #000 30%, rgb(0 0 0 / 0.55) 62%, transparent 100%);
-  mask: radial-gradient(ellipse closest-side, #000 30%, rgb(0 0 0 / 0.55) 62%, transparent 100%);
-  transform: translate3d(0, var(--cs-gy, 0px), 0) rotate(var(--r, -18deg)) scale(var(--cs-gs, 1));
-  transform-origin: 50% 50%;
-  will-change: transform;
-  animation: cs-breathe 18s var(--e-drift) infinite alternate;
-  animation-delay: var(--d, 0s);
+    radial-gradient(ellipse 60% 44% at 72% 30%, rgb(37 42 44 / 0.9) 0%, rgb(37 42 44 / 0.45) 40%, rgb(13 16 18 / 0) 100%),
+    radial-gradient(ellipse 70% 40% at 20% 78%, rgb(37 42 44 / 0.7) 0%, rgb(37 42 44 / 0.3) 45%, rgb(13 16 18 / 0) 100%),
+    var(--n-11);
 }
-.cs-blob::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: var(--cs-grain);
-  background-size: 120px 120px;
-  opacity: 0.6;
-  mix-blend-mode: soft-light;
-  -webkit-mask: radial-gradient(ellipse closest-side, #000 0%, rgb(0 0 0 / 0.5) 50%, transparent 100%);
-  mask: radial-gradient(ellipse closest-side, #000 0%, rgb(0 0 0 / 0.5) 50%, transparent 100%);
-}
-@keyframes cs-breathe {
-  from { --cs-gs: 1; }
-  to { --cs-gs: 1.05; }
-}
-@property --cs-gs {
-  syntax: '<number>';
-  inherits: false;
-  initial-value: 1;
-}
-@media (prefers-reduced-motion: reduce) {
-  .cs-blob { animation: none; }
-}
+/* the canvas is a picture, never a layout: upscaled from half res */
+canvas.cs-mesh { image-rendering: auto; }
 
 /* ---------- §1 · THE HERO ----------
    The wireframe: the name at the left, the two paragraphs under it at
