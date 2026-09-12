@@ -161,6 +161,11 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
   const next = WORK_PROJECTS.find((p) => p.slug === nextSlug) ?? null
   const nextHref = next && getCaseStudy(next.slug) ? `/work/${next.slug}` : '/work'
 
+  /* the hero still is a REEL of the project's stills (the hub's frames),
+     cut at five a second; the first frame is the still itself */
+  const project = WORK_PROJECTS.find((p) => p.slug === study.slug)
+  const frames = project?.frames?.length ? project.frames : [study.still.src]
+
   const index = [...study.sections.map((s) => ({ id: s.id, title: s.title })), { id: 'result', title: 'Result' }]
 
   const jsonLd = {
@@ -200,8 +205,8 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
       {/* §1 — THE HERO */}
       <header className="cs-hero">
         <div className="cs-glow" aria-hidden="true">
-          <i className="cs-blob" data-drift="0.12" style={{ '--w': '70rem', '--h': '58rem', '--a': 0.22, right: '-26rem', top: '6rem' } as React.CSSProperties} />
-          <i className="cs-blob" data-drift="0.06" style={{ '--w': '40rem', '--h': '40rem', '--a': 0.1, left: '-18rem', bottom: '-14rem', '--d': '-6s' } as React.CSSProperties} />
+          <i className="cs-blob" data-drift="0.12" style={{ '--w': '96rem', '--h': '40rem', '--a': 0.24, '--r': '-26deg', right: '-38rem', top: '2rem' } as React.CSSProperties} />
+          <i className="cs-blob" data-drift="0.06" style={{ '--w': '60rem', '--h': '22rem', '--a': 0.1, '--r': '-14deg', left: '-26rem', bottom: '-6rem', '--d': '-6s' } as React.CSSProperties} />
         </div>
         <h1 className="cs-h1">
           {study.name.split(' ').map((w, i, arr) => (
@@ -216,8 +221,21 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
           ))}
         </div>
         <div className="cs-still-wrap cs-ent">
-          <div className="cs-still">
-            <img src={study.still.src} alt={study.still.alt} width={1900} height={1000} fetchPriority="high" decoding="async" draggable={false} />
+          <div className="cs-still" style={{ '--cs-n': frames.length, '--cs-anim': `cs-flick-${Math.min(frames.length, 12)}` } as React.CSSProperties}>
+            {frames.slice(0, 12).map((src, j) => (
+              <img
+                key={src}
+                style={{ '--f': j } as React.CSSProperties}
+                src={src}
+                alt={j === 0 ? study.still.alt : ''}
+                width={1900}
+                height={1000}
+                fetchPriority={j === 0 ? 'high' : undefined}
+                loading={j === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+                draggable={false}
+              />
+            ))}
           </div>
         </div>
         {study.live ? (
@@ -240,8 +258,8 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
       {/* §2 — THE DEVICE */}
       <section className="cs-device" aria-label="The site on a laptop">
         <div className="cs-glow" aria-hidden="true">
-          <i className="cs-blob" data-drift="0.1" style={{ '--w': '64rem', '--h': '52rem', '--a': 0.26, right: '-14rem', top: '-4rem', '--d': '-3s' } as React.CSSProperties} />
-          <i className="cs-blob" data-drift="0.18" style={{ '--w': '46rem', '--h': '36rem', '--a': 0.16, left: '-20rem', bottom: '-8rem', '--d': '-9s' } as React.CSSProperties} />
+          <i className="cs-blob" data-drift="0.1" style={{ '--w': '90rem', '--h': '44rem', '--a': 0.3, '--r': '-32deg', right: '-30rem', top: '-8rem', '--d': '-3s' } as React.CSSProperties} />
+          <i className="cs-blob" data-drift="0.18" style={{ '--w': '70rem', '--h': '26rem', '--a': 0.18, '--r': '-10deg', left: '-28rem', bottom: '-4rem', '--d': '-9s' } as React.CSSProperties} />
         </div>
         <div className="cs-device-stage">
           {study.device.back ? (
@@ -279,9 +297,9 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
       {/* §4 — THE ARTICLE */}
       <section className="cs-article" aria-label="The case study">
         <div className="cs-glow" aria-hidden="true">
-          <i className="cs-blob" data-drift="0.05" style={{ '--w': '60rem', '--h': '60rem', '--a': 0.14, left: '-30rem', top: '18%', '--d': '-4s' } as React.CSSProperties} />
-          <i className="cs-blob" data-drift="0.08" style={{ '--w': '70rem', '--h': '70rem', '--a': 0.12, right: '-34rem', top: '52%', '--d': '-11s' } as React.CSSProperties} />
-          <i className="cs-blob" data-drift="0.04" style={{ '--w': '50rem', '--h': '50rem', '--a': 0.1, left: '-22rem', bottom: '-6rem', '--d': '-7s' } as React.CSSProperties} />
+          <i className="cs-blob" data-drift="0.05" style={{ '--w': '80rem', '--h': '30rem', '--a': 0.14, '--r': '-38deg', left: '-40rem', top: '16%', '--d': '-4s' } as React.CSSProperties} />
+          <i className="cs-blob" data-drift="0.08" style={{ '--w': '100rem', '--h': '34rem', '--a': 0.13, '--r': '-28deg', right: '-46rem', top: '50%', '--d': '-11s' } as React.CSSProperties} />
+          <i className="cs-blob" data-drift="0.04" style={{ '--w': '70rem', '--h': '26rem', '--a': 0.11, '--r': '-16deg', left: '-32rem', bottom: '-2rem', '--d': '-7s' } as React.CSSProperties} />
         </div>
         <nav className="cs-rail" aria-label="In this case study">
           <ol className="cs-index">
@@ -330,7 +348,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
       {/* §5 — THE FOOT */}
       <footer className="cs-foot">
         <div className="cs-glow" aria-hidden="true">
-          <i className="cs-blob" data-drift="0.1" style={{ '--w': '56rem', '--h': '46rem', '--a': 0.16, right: '-18rem', bottom: '-16rem', '--d': '-2s' } as React.CSSProperties} />
+          <i className="cs-blob" data-drift="0.1" style={{ '--w': '84rem', '--h': '30rem', '--a': 0.16, '--r': '-24deg', right: '-30rem', bottom: '-10rem', '--d': '-2s' } as React.CSSProperties} />
         </div>
         {next ? (
           <a className="cs-next" href={nextHref}>
