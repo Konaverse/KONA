@@ -49,13 +49,14 @@ float noise(vec2 p){
 }
 float fbm(vec2 p){
   float v = 0.0, a = 0.5;
-  for (int i = 0; i < 5; i++) { v += a * noise(p); p = p * 2.02 + vec2(11.3, 7.7); a *= 0.5; }
+  for (int i = 0; i < 4; i++) { v += a * noise(p); p = p * 2.02 + vec2(11.3, 7.7); a *= 0.5; }
   return v;
 }
 void main(){
-  /* centred, aspect-true, about ±0.5 across the short side */
-  vec2 p = (gl_FragCoord.xy - 0.5 * uRes) / min(uRes.x, uRes.y);
-  p *= 0.8;
+  /* aspect-true, spanning the WHOLE frame: about ±1.9 across, ±0.9 up,
+     so several features sit side by side and none of them owns the
+     centre (user, 2026-09-12: "it reads as smoke in the centre") */
+  vec2 p = (gl_FragCoord.xy / uRes - 0.5) * vec2(uRes.x / uRes.y, 1.0) * 1.8;
   float t = uT;
 
   /* THE WARP: the field bent by itself, twice, each pass on its own
@@ -65,23 +66,23 @@ void main(){
                 fbm(p + 3.4 * q + vec2(8.3, 2.8) - t * 0.021));
   float f = fbm(p + 3.0 * r);
 
-  /* the value: most of the field rests near the void; a shaped rise
-     to a few peaks */
-  float v = smoothstep(0.36, 0.88, f);
-  v = pow(v, 1.7);
+  /* the value: the field rests near the void and rises to peaks
+     spread across the frame */
+  float v = smoothstep(0.30, 0.82, f);
+  v = pow(v, 1.4);
 
   /* the ramp: void, lift, the muted grey at the peaks */
   vec3 cVoid = vec3(13.0, 16.0, 18.0) / 255.0;
   vec3 cLift = vec3(37.0, 42.0, 44.0) / 255.0;
   vec3 cPeak = vec3(90.0, 97.0, 101.0) / 255.0;
-  vec3 col = mix(cVoid, cLift, smoothstep(0.0, 0.62, v));
-  col = mix(col, cPeak, smoothstep(0.58, 1.0, v) * 0.75);
+  vec3 col = mix(cVoid, cLift, smoothstep(0.0, 0.55, v));
+  col = mix(col, cPeak, smoothstep(0.5, 1.0, v) * 0.9);
 
-  /* a broad slow sheet of light wandering the frame, so the mesh has a
-     side it leans to */
-  vec2 c = vec2(0.32 * sin(t * 0.045), 0.18 * cos(t * 0.037));
-  vec2 d = (p - c) * vec2(0.55, 1.25);
-  col += exp(-dot(d, d) * 2.2) * 0.045;
+  /* a broad diagonal wash that turns very slowly, so the light has a
+     side without a centre */
+  float a = t * 0.02;
+  float wash = 0.5 + 0.5 * sin(dot(p, vec2(cos(a), sin(a))) * 1.1 + t * 0.06);
+  col += wash * 0.028;
 
   /* dither */
   col += (hash(gl_FragCoord.xy + fract(t) * 7.0) - 0.5) * (2.0 / 255.0);
