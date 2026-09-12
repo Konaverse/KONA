@@ -13,8 +13,8 @@ import './contact.css'
  * the first section on paper and the questions dark.
  *
  * §1 THE SPLIT — on paper. Left: the line, the email set large as real
- *    text, the three prompts a first email should answer, then the form
- *    (name, email, message). Right: the calendar, inline, wide and
+ *    text, then the form (name, email, message) — the prompts a first
+ *    email should answer were cut (user, 2026-09-12). Right: the calendar, inline, wide and
  *    short — the user's embed URL plus hide_event_type_details, so the
  *    pane is the date picker alone (user, 2026-09-12: "more wide and
  *    less tall"). Under both: the facts on one hairline.
@@ -49,9 +49,6 @@ export const metadata: Metadata = {
   robots: INDEXABLE ? { index: true, follow: true } : { index: false, follow: true },
   openGraph: { title: `${TITLE} | Konaverse`, description: DESCRIPTION, url: `${SITE_URL}/contact`, type: 'website' },
 }
-
-/** what a useful first email says */
-const PROMPTS = ['What the site is for, and who it is for', 'A date you have in mind', 'A budget range, even a rough one']
 
 /** the facts on the hairline — hours and the reply promise are FIRST DRAFTS */
 const FACTS = [
@@ -148,15 +145,7 @@ export default async function ContactPage({ searchParams }: { searchParams: Prom
               {CONTACT_EMAIL}
             </a>
           </Reveal>
-          <Reveal className="ct-prompts" index={2}>
-            <p className="ct-prompts-l">A useful first email says</p>
-            <ul>
-              {PROMPTS.map((p) => (
-                <li key={p}>{p}</li>
-              ))}
-            </ul>
-          </Reveal>
-          <Reveal index={3}>
+          <Reveal index={2}>
             <ContactForm initial={initial} initialError={initialError} />
           </Reveal>
         </div>

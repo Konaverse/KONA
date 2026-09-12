@@ -2,8 +2,8 @@
    THE CONTACT PAGE — .ct-* (2026-09-12, decided with the user: THE
    SPLIT, a short form, paper first, the questions dark)
 
-   §1 THE SPLIT — one viewport on paper: the line, the email, the three
-      prompts and the form at the left; the calendar, wide and short, as
+   §1 THE SPLIT — one viewport on paper: the line, the email and the
+      form at the left; the calendar, wide and short, as
       a white card at the right; the facts on one hairline under both.
    §2 THE QUESTIONS — one viewport: a dark card set into the paper, the
       heading at the left, eight <details> rows at the right.
@@ -59,46 +59,6 @@
   transition: border-color var(--d-quick) var(--e-settle);
 }
 .ct-mail:hover { border-color: var(--text); }
-.ct-prompts {
-  display: grid;
-  grid-template-columns: 11rem minmax(0, 1fr);
-  gap: 0.6rem 1.6rem;
-  align-items: start;
-  padding-top: 0.4rem;
-}
-.ct-prompts-l {
-  margin: 0;
-  font-size: 0.78rem;
-  line-height: 1.5;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-faint);
-  padding-top: 0.2rem;
-}
-.ct-prompts ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 0.3rem;
-}
-.ct-prompts li {
-  position: relative;
-  padding-left: 1.1rem;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  color: var(--text-muted);
-}
-.ct-prompts li::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0.72rem;
-  width: 0.5rem;
-  height: 1px;
-  background: var(--n-5);
-}
-
 /* THE FORM: hairline fields on the paper, the label as a small cap
    over each; the house button sends */
 .ct-form {
@@ -367,7 +327,6 @@
   .ct-facts { grid-row: 3; grid-auto-flow: row; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem 1.5rem; margin-top: 0; }
   .ct-h1 { font-size: 2.3rem; }
   .ct-mail { font-size: 1.4rem; }
-  .ct-prompts { grid-template-columns: minmax(0, 1fr); }
   .ct-row { grid-template-columns: minmax(0, 1fr); }
   .ct-faq-sec { min-height: 0; padding: 1rem var(--ct-pad) 4rem; }
   .ct-faq { grid-template-columns: minmax(0, 1fr); row-gap: 1.8rem; padding: 1.8rem 1.4rem; }
