@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, type ReactNode } from 'react'
 import { gsap, EASE, DUR, rem } from '@/lib/motion-v4'
+import { createHandLens, within } from '@/lib/hand-lens'
+import HandDisc from '@/components/v4/HandDisc'
 import { getLenis } from '@/components/v4/SmoothScroll'
 
 /**
@@ -45,14 +47,26 @@ import { getLenis } from '@/components/v4/SmoothScroll'
  *     folded back.
  *   · Phones and reduced motion keep the in-flow hero with the cut title
  *     under the window (work.css).
+ *   · STEADY (2026-09-13, user: "a bit shaky when it opens"): the box is
+ *     tweened in whole pixels (a 3D layer cannot be sub-pixel placed —
+ *     see place()), and the reel's parallax drift fades out on the
+ *     grow's curve instead of cutting to zero at its first frame.
  *
  * THE META ROW draws its hairlines from the labels outward as it
  * enters. THE CARDS ARRIVE AS PAPER — the homepage §4 move, verbatim: a
  * per-corner homography written as one matrix3d per cell, the INNER
  * corner of each pair grabbed first so the two cards reach for each
- * other across the gutter. Scrub, not playback. THE HAND over a card:
- * the native cursor goes and a frosted disc that says "View" glides to
- * the pointer; the plate becomes a reel; the spotlight rides the ring.
+ * other across the gutter. Scrub, not playback. THE HAND over a card
+ * (shared with the about page's toolset since 2026-09-13 — src/lib/
+ * hand-lens.ts has the how and the why): the native cursor goes and the
+ * glass disc that says "View" springs to the pointer, the card itself
+ * refracted through its face; the plate becomes a reel; the spotlight
+ * rides the ring. This driver's part: the pointer's last known place, a
+ * hit test of it against every card's live rect each frame (so a card
+ * scrolling under a still trackpad pointer takes the hand at once), the
+ * card's hot state (`is-hot`, the hover rules' class twin — the reel,
+ * the develop, the spotlight, the lift) and its spotlight properties,
+ * mirrored onto the clone so the picture in the glass matches.
  *
  * One ticker, rect math, transform and custom properties, and the one
  * layout tween the expansion needs.
@@ -64,8 +78,7 @@ const SPAN = 0.52
 const TRAVEL = 0.72
 const OUT_X = 0.17
 const DOWN_Y = 0.34
-/** the disc's and the pane's glide toward the pointer, per frame */
-const GLIDE = 0.18
+/** the pane's glide toward the pointer, per frame */
 const TILT_GLIDE = 0.12
 /** the pane's reach, in degrees at the window's edge */
 const TILT_X = 7
@@ -142,7 +155,7 @@ export default function WorkMotion({ children }: { children: ReactNode }) {
     const grid = root.querySelector<HTMLElement>('.wk-grid')
     const cells = Array.from(root.querySelectorAll<HTMLElement>('.wk-cell'))
     const cards = Array.from(root.querySelectorAll<HTMLElement>('.wk-card'))
-    const disc = root.querySelector<HTMLElement>('.wk-view')
+    const disc = root.querySelector<HTMLElement>('.k-hand-disc')
 
     let tl: gsap.core.Timeline | null = null
     let cancelled = false
@@ -223,28 +236,33 @@ export default function WorkMotion({ children }: { children: ReactNode }) {
       hero.style.setProperty('--wk-after', `${AFTER * 100}svh`)
       /* the window leaves the flow at its own rest rect (in the stage's
          coordinates), so the box can be tweened to the viewport */
+      /* WHOLE PIXELS (2026-09-13, user: "a bit shaky when it opens"). The
+         window is a 3D layer (perspective + preserve-3d for the tilt), and
+         Chrome cannot carry a sub-pixel offset through a 3D transform: a
+         fractional left/top/width/height is rounded per frame, and the
+         box's edges and everything inside quiver by a pixel while it
+         grows. So the rest rect is rounded, and the grow tween SNAPS its
+         four numbers to integers every frame. */
+      const rest = { left: 0, top: 0, width: 0, height: 0 }
       const place = () => {
-        const s = stage.getBoundingClientRect()
-        const w = win.getBoundingClientRect()
         gsap.set(win, {
           position: 'absolute',
-          left: w.left - s.left,
-          top: w.top - s.top,
-          width: w.width,
-          height: w.height,
+          left: rest.left,
+          top: rest.top,
+          width: rest.width,
+          height: rest.height,
           margin: 0,
         })
       }
       /* measure in flow first: clear any previous placement */
-      const rest = { left: 0, top: 0, width: 0, height: 0 }
       const measureRest = () => {
         gsap.set(win, { clearProps: 'position,left,top,width,height,margin' })
         const s = stage.getBoundingClientRect()
         const w = win.getBoundingClientRect()
-        rest.left = w.left - s.left
-        rest.top = w.top - s.top
-        rest.width = w.width
-        rest.height = w.height
+        rest.left = Math.round(w.left - s.left)
+        rest.top = Math.round(w.top - s.top)
+        rest.width = Math.round(w.width)
+        rest.height = Math.round(w.height)
         place()
       }
       measureRest()
@@ -268,7 +286,16 @@ export default function WorkMotion({ children }: { children: ReactNode }) {
         grow.fromTo(
           win,
           { left: rest.left, top: rest.top, width: rest.width, height: rest.height, borderRadius: '0.625rem' },
-          { left: 0, top: 0, width: vw, height: vh, borderRadius: '0rem', duration: GROW, ease: GROW_EASE },
+          {
+            left: 0,
+            top: 0,
+            width: vw,
+            height: vh,
+            borderRadius: '0rem',
+            duration: GROW,
+            ease: GROW_EASE,
+            snap: 'left,top,width,height',
+          },
           0.1,
         )
         if (shade) grow.to(shade, { opacity: 1, duration: 0.8, ease: 'sine.out' }, 0.6)
@@ -445,38 +472,42 @@ export default function WorkMotion({ children }: { children: ReactNode }) {
       ty = 0
       onPane = false
     }
+    /* the pointer's last known place on the page; unknown until it has
+       moved once, and unknown again once it has left the window */
     let px = 0
     let py = 0
-    let dx = 0
-    let dy = 0
-    let over = false
-    const cardHandlers = cards.map((c) => {
-      const move = (e: PointerEvent) => {
-        const r = c.getBoundingClientRect()
-        c.style.setProperty('--wk-mx', `${(e.clientX - r.left).toFixed(1)}px`)
-        c.style.setProperty('--wk-my', `${(e.clientY - r.top).toFixed(1)}px`)
-        px = e.clientX
-        py = e.clientY
-        if (!over) {
-          over = true
-          dx = px
-          dy = py
-          root.classList.add('is-view')
-        }
-      }
-      const leave = () => {
-        over = false
-        root.classList.remove('is-view')
-      }
-      return { move, leave }
-    })
+    let known = false
+    const onPointer = (e: PointerEvent) => {
+      if (e.pointerType !== 'mouse' && e.pointerType !== 'pen') return
+      px = e.clientX
+      py = e.clientY
+      known = true
+    }
+    const onGone = () => {
+      known = false
+    }
+    let hot: HTMLElement | null = null
+    /* the lens: a card's clone shows hot and revealed; its spotlight
+       follows the real card's, written each frame */
+    const lens =
+      hover && disc
+        ? createHandLens({
+            disc,
+            onClone: (c) => {
+              c.classList.add('is-in', 'is-hot')
+            },
+            syncClone: (c, s) => {
+              c.style.setProperty('--wk-mx', s.style.getPropertyValue('--wk-mx'))
+              c.style.setProperty('--wk-my', s.style.getPropertyValue('--wk-my'))
+            },
+          })
+        : null
     if (hover) {
       win?.addEventListener('pointermove', onWin)
       win?.addEventListener('pointerleave', offWin)
-      cards.forEach((c, i) => {
-        c.addEventListener('pointermove', cardHandlers[i].move)
-        c.addEventListener('pointerleave', cardHandlers[i].leave)
-      })
+      window.addEventListener('pointermove', onPointer, { passive: true })
+      document.documentElement.addEventListener('pointerleave', onGone)
+      window.addEventListener('blur', onGone)
     }
 
     /* ---- the clock ---- */
@@ -504,13 +535,19 @@ export default function WorkMotion({ children }: { children: ReactNode }) {
           titleWrap.style.transform = `translate3d(0, ${(c * 64 * k).toFixed(2)}px, 0)`
         }
       }
-      /* the reel drifts against the scroll while the window is at rest */
-      if (host && winMedia && !(grow && grow.progress() > 0)) {
+      /* the reel drifts against the scroll while the window is at rest.
+         The drift FADES with the expansion's progress rather than
+         switching off at its first frame: at rest it sits ~10px off,
+         and cutting to 0 the moment the box began to grow was a visible
+         jolt at the open (and again at the end of a fold). The scroll
+         is locked while the sequence runs, so the rect is still and the
+         only motion is the fade, on the grow's own curve. */
+      if (host && winMedia) {
         const r = host.getBoundingClientRect()
         const c = (r.bottom - vh / 2) / vh
-        winMedia.style.transform = `translate3d(0, ${(c * -22 * k).toFixed(2)}px, 0)`
-      } else if (winMedia) {
-        winMedia.style.transform = ''
+        const held = grow ? 1 - grow.progress() : 1
+        const dy = c * -22 * k * held
+        winMedia.style.transform = held > 0 ? `translate3d(0, ${dy.toFixed(2)}px, 0)` : ''
       }
       if (paper && grid) {
         const gridTop = grid.getBoundingClientRect().top
@@ -523,10 +560,26 @@ export default function WorkMotion({ children }: { children: ReactNode }) {
           writePaper(i, ps[i])
         }
       }
-      if (hover && disc && over) {
-        dx += (px - dx) * GLIDE
-        dy += (py - dy) * GLIDE
-        disc.style.transform = `translate3d(${(dx - disc.offsetWidth / 2).toFixed(1)}px, ${(dy - disc.offsetHeight / 2).toFixed(1)}px, 0)`
+      /* THE HAND: which card is under the pointer, every frame */
+      if (lens) {
+        let under: HTMLElement | null = null
+        if (known) {
+          for (const c of cards) {
+            const r = c.getBoundingClientRect()
+            if (within(r, px, py)) {
+              under = c
+              c.style.setProperty('--wk-mx', `${(px - r.left).toFixed(1)}px`)
+              c.style.setProperty('--wk-my', `${(py - r.top).toFixed(1)}px`)
+              break
+            }
+          }
+        }
+        if (under !== hot) {
+          hot?.classList.remove('is-hot')
+          under?.classList.add('is-hot')
+          hot = under
+        }
+        lens.tick(px, py, under, false)
       }
     }
     tick()
@@ -541,16 +594,17 @@ export default function WorkMotion({ children }: { children: ReactNode }) {
       ;(root as HTMLElement & { __offPin?: () => void }).__offPin?.()
       win?.removeEventListener('pointermove', onWin)
       win?.removeEventListener('pointerleave', offWin)
-      cards.forEach((c, i) => {
-        c.removeEventListener('pointermove', cardHandlers[i].move)
-        c.removeEventListener('pointerleave', cardHandlers[i].leave)
-      })
+      window.removeEventListener('pointermove', onPointer)
+      document.documentElement.removeEventListener('pointerleave', onGone)
+      window.removeEventListener('blur', onGone)
+      lens?.destroy()
+      hot?.classList.remove('is-hot')
       cells.forEach((el) => {
         el.style.transform = ''
         el.style.opacity = ''
       })
       grid?.classList.remove('is-paper')
-      root.classList.remove('is-in', 'is-view', 'is-locked')
+      root.classList.remove('is-in', 'is-locked')
       meta?.classList.remove('is-in')
       cards.forEach((c) => c.classList.remove('is-in'))
       if (titleWrap) titleWrap.style.transform = ''
@@ -563,10 +617,8 @@ export default function WorkMotion({ children }: { children: ReactNode }) {
   return (
     <main ref={ref} className="wk">
       {children}
-      {/* the hand's disc over the cards — the word is the affordance */}
-      <div className="wk-view" aria-hidden="true">
-        <span>View</span>
-      </div>
+      {/* the hand's disc over the cards: the glass, the lens, the word */}
+      <HandDisc word="View" />
     </main>
   )
 }
