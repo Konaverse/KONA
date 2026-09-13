@@ -19,16 +19,13 @@ const securityHeaders = [
  * legacy app/(site) pages need no edits to be hidden. The v4 prototypes
  * (/design-system, /proto-*) redirect only in production so they stay
  * usable in dev. Delete a line here the day its page ships.
+ *
+ * 2026-09-12: /services, /work, /about and /contact SHIPPED (their pages
+ * are done and the site links to them), so their lines went. /projects is
+ * the legacy route (the v4 hub is /work); /pricing and /blog wait for
+ * their pages.
  */
-const LAUNCH_REDIRECTS = [
-  "/services",
-  "/projects",
-  "/work",
-  "/about",
-  "/pricing",
-  "/blog",
-  "/contact",
-];
+const LAUNCH_REDIRECTS = ["/projects", "/pricing", "/blog"];
 const PROTO_REDIRECTS = [
   "/design-system",
   "/hero-object",

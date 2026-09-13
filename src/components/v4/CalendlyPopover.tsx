@@ -58,7 +58,8 @@ const SCRIPT = 'https://assets.calendly.com/assets/external/widget.js'
    event's header — logo, title, duration, the note — so the pane is the
    date picker and nothing else; `hide_gdpr_banner=1` drops the cookie
    strip. The panel's own head is the only chrome around it. */
-const EMBED_URL = `${CALENDLY_URL}?hide_event_type_details=1&hide_gdpr_banner=1`
+export const CALENDLY_EMBED_URL = `${CALENDLY_URL}?hide_event_type_details=1&hide_gdpr_banner=1`
+const EMBED_URL = CALENDLY_EMBED_URL
 
 /** the panel's box — Calendly's calendar wants ~320 wide; the month view
  *  is ~520 tall and scrolls inside the pane below that (user, 2026-08-26:
@@ -70,7 +71,8 @@ const MIN_H = 320
 const GAP = 12
 
 let scriptPromise: Promise<void> | null = null
-const loadScript = () => {
+/** shared with the inline calendar on /contact (CalendlyInline.tsx) */
+export const loadCalendlyScript = () => {
   if (window.Calendly) return Promise.resolve()
   if (scriptPromise) return scriptPromise
   scriptPromise = new Promise<void>((resolve, reject) => {
@@ -142,7 +144,7 @@ export default function CalendlyPopover() {
       note.textContent = 'Loading the calendar…'
       note.hidden = false
       try {
-        await loadScript()
+        await loadCalendlyScript()
         if (!open || mounted) return
         window.Calendly?.initInlineWidget({ url: EMBED_URL, parentElement: host })
         mounted = true

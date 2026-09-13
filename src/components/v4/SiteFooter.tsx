@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 import Aurora from '@/components/v4/Aurora'
 import { gsap, EASE } from '@/lib/motion-v4'
-import { CALENDLY_URL, SECTIONS } from '@/lib/site'
+import { ROUTES } from '@/lib/site'
 
 /**
  * THE FOOTER (built 2026-08-24, user-directed: ~150vh, dark, the aurora as
@@ -48,17 +48,18 @@ import { CALENDLY_URL, SECTIONS } from '@/lib/site'
  */
 
 /**
- * ONE-PAGE LAUNCH (2026-08-25): in-page anchors, Pricing/Journal dropped,
- * and Contact opens CALENDLY in a new tab — an interested visitor books a
- * meeting on the spot (user call). Routes return with the inner pages.
+ * THE PAGES (2026-09-12, user): the inner pages exist, so the footer
+ * carries the site map as routes (architecture §8: the footer is the one
+ * place every URL appears). Contact is the page now, not Calendly — the
+ * booking link lives in the CTAs. Pricing and the blog join this list
+ * when their pages ship.
  */
 const PAGES: { label: string; href: string; external?: boolean }[] = [
-  { label: 'Home', href: '/' },
-  { label: 'Studio', href: SECTIONS.studio },
-  { label: 'What we solve', href: SECTIONS.solve },
-  { label: 'Solutions', href: SECTIONS.services },
-  { label: 'Work', href: SECTIONS.work },
-  { label: 'Contact', href: CALENDLY_URL, external: true },
+  { label: 'Home', href: ROUTES.home },
+  { label: 'Services', href: ROUTES.services },
+  { label: 'Work', href: ROUTES.work },
+  { label: 'About', href: ROUTES.about },
+  { label: 'Contact', href: ROUTES.contact },
 ]
 
 const SOCIALS = [
@@ -243,7 +244,7 @@ export default function SiteFooter() {
             <p className="ft-fine t-small">
               &copy; {new Date().getFullYear()} Konaverse. All rights reserved.
             </p>
-            <a className="ft-next" href={SECTIONS.studio}>
+            <a className="ft-next" href={ROUTES.about}>
               <span className="t-small">The studio</span>
               <span className="ft-next-ring" aria-hidden="true">
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" className="ft-next-a ft-next-a1">

@@ -3,6 +3,8 @@
 import { useEffect, useRef } from 'react'
 import { gsap } from '@/lib/motion-v4'
 import type { SheetProject } from '@/components/v4/ProjectSheets'
+import ArrowLink from '@/components/v4/ArrowLink'
+import { ROUTES } from '@/lib/site'
 
 /**
  * §5 ON PHONES — THE DECK (2026-08-26, user: "the title just like the
@@ -27,8 +29,9 @@ import type { SheetProject } from '@/components/v4/ProjectSheets'
  * WHAT IS OURS ON TOP OF IT. The title is the desktop wheel's — "Selected
  * [tile-pill] work", the lit tile following the front card. Each card is
  * the project: its capture whole at the captures' own aspect, index, name,
- * line, year, "Visit site"; the whole card is the link (new tab — leaving
- * the page for a site on a phone is losing it). Captions resolve with the
+ * line, year, "View project"; the whole card is the link, to the project's
+ * case study (2026-09-12, user — it was the live site in a new tab). A
+ * "View all projects" foot sits at the stage's floor, under the cards. Captions resolve with the
  * house reveal (blur + shift), scrubbed inside the card's arrival so
  * scrolling back un-resolves them exactly. The section arrives on the
  * approach: title resolves, the first card rises into the slot.
@@ -283,13 +286,7 @@ export default function WorkDeck({ projects }: { projects: SheetProject[] }) {
         <div className="wd-deck">
           {projects.map((p, i) => (
             <div className="wd-slot" key={p.title} style={{ zIndex: i + 1 }}>
-              <a
-                className="wd-card"
-                href={p.href}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={`${p.title} — visit the site`}
-              >
+              <a className="wd-card" href={p.href} aria-label={`${p.title} — view the project`}>
                 <span className="wd-win">
                   {p.image && (
                     <img
@@ -310,7 +307,7 @@ export default function WorkDeck({ projects }: { projects: SheetProject[] }) {
                   <span className="wd-name t-h2">{p.title}</span>
                   <span className="wd-line t-body">{p.line}</span>
                   <span className="wd-visit t-small">
-                    Visit site <span aria-hidden="true">↗</span>
+                    View project <span aria-hidden="true">→</span>
                   </span>
                 </span>
                 {/* the shade a receded card goes under */}
@@ -318,6 +315,14 @@ export default function WorkDeck({ projects }: { projects: SheetProject[] }) {
               </a>
             </div>
           ))}
+        </div>
+
+        {/* INSIDE the stage, not after it: the driver sets the section's
+            height to the pin's runway, so anything after the sticky stage
+            would fall outside it and be clipped. At the stage's floor the
+            foot sits under the front card. */}
+        <div className="wd-foot">
+          <ArrowLink href={ROUTES.work}>View all projects</ArrowLink>
         </div>
       </div>
     </section>

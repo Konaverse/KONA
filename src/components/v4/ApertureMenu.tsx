@@ -36,7 +36,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { gsap, EASE, DUR, REVEAL, rem } from '@/lib/motion-v4'
-import { SECTIONS } from '@/lib/site'
+import { ROUTES } from '@/lib/site'
 
 /** useLayoutEffect warns when it runs during SSR; swap it out on the server. */
 const useIsoLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
@@ -61,28 +61,26 @@ export interface ApertureMenuProps {
 export default function ApertureMenu({
   brand = 'Konaverse',
   /**
-   * ONE-PAGE LAUNCH (2026-08-25, docs/launch-plan.md §1): every row is an
-   * in-page anchor — SmoothScroll routes it through Lenis while the aperture
-   * closes over it. Pricing and Journal are DROPPED until their pages exist
-   * (user call), not linked to nothing. When the inner pages come back,
-   * restore the routes here AND add them to V4_ROUTES in PageTransition.tsx;
-   * the open-menu-into-the-ghost design (plan §5) lands first.
+   * THE PAGES (2026-09-12, user): the inner pages exist, so every row is a
+   * route — PageTransition carries the click while the aperture closes over
+   * it (the known overlap, see the header). Every route here must also be
+   * in V4_ROUTES (PageTransition.tsx) or the transition silently skips it.
+   * Pricing and the blog return here when their pages exist (user call:
+   * never a row that goes nowhere). Contact is a row AND the bar's
+   * standing link.
    */
-  /* PAGE ORDER, all five (user call 2026-08-26): a one-page site's menu
-     reads like its table of contents. Contact is a row here too now,
-     as well as the bar's standing link. */
   items = [
-    { label: 'Studio', href: SECTIONS.studio },
-    { label: 'What we solve', href: SECTIONS.solve },
-    { label: 'Solutions', href: SECTIONS.services },
-    { label: 'Work', href: SECTIONS.work },
-    { label: 'Contact', href: SECTIONS.contact },
+    { label: 'Home', href: ROUTES.home },
+    { label: 'Services', href: ROUTES.services },
+    { label: 'Work', href: ROUTES.work },
+    { label: 'About', href: ROUTES.about },
+    { label: 'Contact', href: ROUTES.contact },
   ],
   email = 'info@kona-verse.com',
   location = 'Cyprus, working globally',
   giantWord = 'KONAVERSE',
   contactLabel = 'Contact',
-  contactHref = SECTIONS.contact,
+  contactHref = ROUTES.contact,
 }: ApertureMenuProps) {
   const rootRef = useRef<HTMLDivElement | null>(null)
   const barRef = useRef<HTMLDivElement | null>(null)
@@ -249,8 +247,10 @@ export default function ApertureMenu({
    * (2026-08-26, user: "on scroll up the navbar shouldn't appear. The
    * navbar is only a part of the hero" — the phone rule of the same day,
    * now universal; the 2026-08-18 return-on-upward-intent is gone).
-   * Grounded past the top; past the hero's end it hides and stays hidden
-   * in either scroll direction; the open menu still pins it visible.
+   * Past the hero's end it hides and stays hidden in either scroll
+   * direction; the open menu still pins it visible. (The grounded
+   * state — a white plate after 8px — went 2026-09-12: the bar has no
+   * ground at all now, it difference-blends with the page. tokens.css.)
    * House pattern — gsap.ticker + position reads, no scroll listener.
    */
   const pathname = usePathname()
@@ -259,7 +259,6 @@ export default function ApertureMenu({
     if (!bar) return
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     let hidden = false
-    let grounded = false
     /* The hero's end is read off the page; a route without a hero falls
        back to a free zone that is a length of the composition (the hero
        headline's height), so it scales with the picture. Re-read on
@@ -289,11 +288,6 @@ export default function ApertureMenu({
 
     const update = () => {
       const y = window.scrollY
-      const g = y > 8
-      if (g !== grounded) {
-        grounded = g
-        bar.classList.toggle('is-grounded', g)
-      }
       if (!reduce) {
         const inHero = openRef.current || y < heroEnd
         if (inHero && hidden) {

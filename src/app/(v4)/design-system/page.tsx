@@ -233,12 +233,12 @@ export default function DesignSystemPage() {
         >
           <div className="ds-two">
             <div className="ds-demo">
-              <p className="ds-label">Button · still at rest, the edge answers where you arrived</p>
+              <p className="ds-label">Button · still at rest, the flood answers where you arrived</p>
               <div className="ds-stage">
                 <Button href="#" hoverLabel="Let&rsquo;s talk">Start a project</Button>
                 <Button href="#" ghost hoverLabel="Case studies">See the work</Button>
               </div>
-              <p className="ds-note">Nothing moves until you cross the edge — no perpetual animation, no leaning at a nearby cursor. Then everything answers the crossing, from the exact point where you crossed: outside the border, two heads trace the perimeter in opposite directions and meet at the far side; inside it, a disc of page colour floods out and inverts the button, each letter flipping as the edge passes under it; and the label rolls to its second line. Three landings — label, fill, line — one origin, so it reads as one response. Enter from a different side and the whole gesture starts there instead. The ghost floods the other way, to ice-deep.</p>
+              <p className="ds-note">Nothing moves until you cross the edge — no perpetual animation, no leaning at a nearby cursor, and nothing drawn outside the pill. At rest the label carries one small mark on its right that names the destination: an east arrow for the site&rsquo;s own pages, north-east for anything that leaves it, the arrow link&rsquo;s own grammar. Then everything answers the crossing, from the exact point where you crossed. A disc of the other polarity floods out and inverts the button, each letter flipping as the edge passes under it — the primary floods to the page and takes the ghost&rsquo;s hairline as it goes, the ghost floods to ink, so the two simply trade places. And the label rolls up to its second line while the arrow rolls up and out with it, the label slides over, and the house sparkle rolls up into the room on the left: two marks, one per state, one side each. Leave, and the flood drains toward the point you left through.</p>
             </div>
 
             <div className="ds-demo">

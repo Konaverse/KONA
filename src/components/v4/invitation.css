@@ -30,24 +30,6 @@
   gap: var(--s-6) var(--s-7);
   margin-top: clamp(var(--s-8), 9vh, var(--s-10));
 }
-/* the address: real text, quiet, with a drawn underline on hover — the
-   only place this page writes an email, so it may take one flourish */
-.inv-mail {
-  color: var(--text-muted);
-  text-decoration: none;
-  padding-bottom: 0.125rem;
-  background-image: linear-gradient(currentColor, currentColor);
-  background-repeat: no-repeat;
-  background-position: left bottom;
-  background-size: 0% var(--hair);
-  transition:
-    background-size var(--d-base) var(--e-settle),
-    color var(--d-instant) var(--e-settle);
-}
-.inv-mail:hover {
-  color: var(--text);
-  background-size: 100% var(--hair);
-}
 
 /* ---------- the plates ---------- */
 .inv-plates {

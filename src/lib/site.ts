@@ -1,11 +1,22 @@
 /**
- * Site-wide constants for the ONE-PAGE LAUNCH (docs/launch-plan.md §1).
+ * Site-wide constants.
  *
- * Until the inner pages exist, `/` is the whole site: navigation is in-page
- * (the section ids below), every inner URL redirects to `/` (next.config.ts),
- * and the "commit" CTAs open Calendly so an interested visitor books a
- * meeting on the spot (user call, 2026-08-25).
+ * THE INNER PAGES ARE IN (2026-09-12, user: "all of the pages except pricing
+ * and blogs are done"). Navigation is by ROUTES now: the burger, the footer
+ * and the homepage's sections link to the pages, not to in-page anchors.
+ * The one-page launch's SECTIONS stay for the homepage's own landmarks
+ * (SmoothScroll still eases to a hash on `/`). Pricing and the blog are
+ * still redirected home (next.config.ts) and are not linked anywhere.
  */
+
+/** The site's pages, in menu order. */
+export const ROUTES = {
+  home: '/',
+  services: '/services',
+  work: '/work',
+  about: '/about',
+  contact: '/contact',
+} as const
 
 /** The studio's booking link (user, 2026-08-25). */
 export const CALENDLY_URL = 'https://calendly.com/kona-verse/30min'

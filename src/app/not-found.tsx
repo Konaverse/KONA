@@ -3,7 +3,7 @@ import V4Layout from '@/app/(v4)/layout'
 import Reveal from '@/components/v4/Reveal'
 import Button from '@/components/v4/Button'
 import ArrowLink from '@/components/v4/ArrowLink'
-import { SECTIONS } from '@/lib/site'
+import { ROUTES } from '@/lib/site'
 import './not-found.css'
 
 export const metadata: Metadata = {
@@ -40,9 +40,9 @@ export default function NotFound() {
             Back to the site
           </Button>
           <div className="nf-links">
-            <ArrowLink href={SECTIONS.services}>What we do</ArrowLink>
-            <ArrowLink href={SECTIONS.work}>Selected work</ArrowLink>
-            <ArrowLink href={SECTIONS.contact}>Contact</ArrowLink>
+            <ArrowLink href={ROUTES.services}>What we do</ArrowLink>
+            <ArrowLink href={ROUTES.work}>Selected work</ArrowLink>
+            <ArrowLink href={ROUTES.contact}>Contact</ArrowLink>
           </div>
         </Reveal>
       </main>

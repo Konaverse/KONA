@@ -52,31 +52,31 @@ export const metadata: Metadata = {
  * component runs on /work with the full set; these three are the featured
  * subset, per the choreography's "three projects, one sheet each".
  *
- * hrefs point at the LIVE sites until case-study routes exist — the
- * choreography wants each sheet linking to its own case study eventually.
- * YEARS confirmed by the user 2026-08-28: Tzankatian 2026, Los Santos
- * 2025, Lumière 2026.
+ * hrefs are the CASE STUDIES (2026-09-12, user) — the slugs are the ones
+ * src/lib/case-studies.ts serves; the live sites are linked from each
+ * study. YEARS confirmed by the user 2026-08-28: Tzankatian 2026, Los
+ * Santos 2025, Lumière 2026.
  */
 const FEATURED: SheetProject[] = [
   {
     title: 'Dimitris Tzankatian',
     line: 'A videographer’s site that opens like his showreel — every frame with a purpose.',
     year: '2026',
-    href: 'https://dtzankatian.com',
+    href: '/work/dt-zankatian',
     image: '/work/tzankatian.webp',
   },
   {
     title: 'Los Santos Barbershop',
     line: 'Nicosia’s barbershop set in type as sharp as the fades.',
     year: '2025',
-    href: 'https://lossantosbarbers.com',
+    href: '/work/los-santos-barbers',
     image: '/work/lossantos.webp',
   },
   {
     title: 'Lumière Éclat',
     line: 'A scroll-driven story of light and steel.',
     year: '2026',
-    href: 'https://watchweb.vercel.app',
+    href: '/work/lumiere-eclat',
     image: '/work/lumiere.webp',
   },
 ]

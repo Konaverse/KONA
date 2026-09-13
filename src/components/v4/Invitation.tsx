@@ -5,7 +5,7 @@ import Button from '@/components/v4/Button'
 import Reveal from '@/components/v4/Reveal'
 import ScrollFillText from '@/components/v4/ScrollFillText'
 import { gsap, rem } from '@/lib/motion-v4'
-import { CALENDLY_URL } from '@/lib/site'
+import { CALENDLY_URL, ROUTES } from '@/lib/site'
 import './invitation.css'
 
 /**
@@ -16,10 +16,12 @@ import './invitation.css'
  *
  * THE LINE is the section: display scale, filling letter by letter as it
  * travels the viewport (ScrollFillText — the house scroll-fill, so the last
- * thing anyone reads arrives the way §2's claim did). Under it, ONE button
- * and the email as REAL text — no form on the homepage, forms belong on
- * /contact (choreography §9), and a real address is citable text where a
- * "contact us" button is invisible to a crawler.
+ * thing anyone reads arrives the way §2's claim did). Under it, THE TWO
+ * CTAs (architecture §5a; user 2026-09-12): Contact goes to /contact for
+ * the person who wants to write first, Book opens the Calendly popover for
+ * the one who already wants the meeting. The email that stood here went
+ * with the contact page — the address is citable text THERE now, and the
+ * footer still carries it.
  *
  * THE PLATES are the imagery: two framed stills drifting at different rates
  * as the section travels — the parallax is depth, not decoration, so the
@@ -101,12 +103,12 @@ export default function Invitation() {
         />
 
         <Reveal className="inv-act" index={1}>
-          <Button href={CALENDLY_URL} external hoverLabel="Book a call">
-            Start a project
+          <Button href={ROUTES.contact} hoverLabel="Write to us">
+            Contact us
           </Button>
-          <a className="inv-mail t-body" href="mailto:info@kona-verse.com">
-            info@kona-verse.com
-          </a>
+          <Button ghost href={CALENDLY_URL} external hoverLabel="Pick a time">
+            Book a call
+          </Button>
         </Reveal>
       </div>
 

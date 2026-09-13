@@ -5,6 +5,8 @@ import { gsap } from '@/lib/motion-v4'
 import type { SheetProject } from '@/components/v4/ProjectSheets'
 import { createWaveGL } from '@/components/v4/wave-gl'
 import Button from '@/components/v4/Button'
+import ArrowLink from '@/components/v4/ArrowLink'
+import { ROUTES } from '@/lib/site'
 
 /**
  * §5 ON DESKTOP — THE ROWS (2026-08-31, the user's mockups, final:
@@ -16,8 +18,10 @@ import Button from '@/components/v4/Button'
  * paragraph would.
  *
  * THE PIN. Three rows under hairlines, one viewport, pinned. Each row is a
- * project: capture on the left, "Visit site" + the line beside it, the name
- * on the right. ONE row is expanded at a time — its capture large, its
+ * project: capture on the left, "View project" + the line beside it, the
+ * name on the right (2026-09-12: the capture and the button go to the
+ * project's case study, not the live site — user call; a "View all
+ * projects" foot under the pin goes to /work). ONE row is expanded at a time — its capture large, its
  * text block pushed out to the right column under the name; the others are
  * collapsed to a thumb-height strip. Scroll is the clock: as one project's
  * row gives up its height the next row takes it, IN THE SAME FRAME, in the
@@ -531,13 +535,7 @@ export default function WorkRows({ projects }: { projects: SheetProject[] }) {
                   <h3 className="wr-name t-h1">{p.title}</h3>
                   <span className="wr-year t-small">{p.year}</span>
                 </div>
-                <a
-                  className="wr-thumb"
-                  href={p.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label={`${p.title} — visit the site`}
-                >
+                <a className="wr-thumb" href={p.href} aria-label={`${p.title} — view the project`}>
                   {p.image && (
                     /* eager: each is one turn from being the wave's texture */
                     <img
@@ -550,8 +548,8 @@ export default function WorkRows({ projects }: { projects: SheetProject[] }) {
                   )}
                 </a>
                 <div className="wr-body">
-                  <Button href={p.href} external>
-                    Visit site
+                  <Button href={p.href} hoverLabel="Read the story">
+                    View project
                   </Button>
                   <p className="wr-line t-body">{p.line}</p>
                 </div>
@@ -560,6 +558,11 @@ export default function WorkRows({ projects }: { projects: SheetProject[] }) {
           </div>
           <canvas className="wr-gl" aria-hidden="true" />
         </div>
+      </div>
+
+      {/* after the pin, in flow: the way to the whole roster */}
+      <div className="wr-foot">
+        <ArrowLink href={ROUTES.work}>View all projects</ArrowLink>
       </div>
     </section>
   )

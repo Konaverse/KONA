@@ -83,8 +83,11 @@ import { gsap } from '@/lib/motion-v4'
  * copy only exists under the pointer is not the same card as the one beside
  * it — which is the whole ask here.
  *
- * ROUTING. Every card links to /services#slug. Architecture §8 holds: all six
- * land on the hub, the fragment only says which service you came for.
+ * ROUTING (2026-09-12, user): every card IS a link to its own service page,
+ * /services/<slug> — the slugs here are the ones src/lib/service-pages.ts
+ * serves. (Architecture §8 had the cards landing on the hub; the user's
+ * call is the page itself.) The whole card is the anchor: no interactive
+ * element lives inside a plate, so the nesting is valid.
  *
  * FALLBACK. No JS, reduced motion, or narrower than two columns: the paper
  * never arms and the cards do the house reveal instead. Every word is
@@ -363,10 +366,7 @@ export default function ServiceCards() {
               {/* data-fx-host: Fractured takes its hover from the nearest one
                   of these, so the WHOLE card assembles the object, not just
                   the plate the object happens to sit in. */}
-              {/* ONE-PAGE LAUNCH: the card linked to /services#slug; with
-                  no services page it is a plain surface (hover intact). It
-                  goes back to an <a> when the page exists. */}
-              <div className="sc-card" data-fx-host>
+              <a className="sc-card" data-fx-host href={`/services/${s.slug}`}>
                 <span className="sc-glass" aria-hidden="true" />
                 <span className="sc-spot" aria-hidden="true" />
 
@@ -393,7 +393,7 @@ export default function ServiceCards() {
 
                   <p className="sc-para t-body">{s.para}</p>
                 </span>
-              </div>
+              </a>
             </li>
           ))}
         </ul>

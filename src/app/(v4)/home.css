@@ -1159,6 +1159,12 @@
   will-change: transform, opacity, filter;
 }
 .wd.is-scrub .wd-title { margin-bottom: 0; }
+/* the foot: in flow after the deck; pinned, the stage's floor */
+.wd-foot {
+  padding-block: var(--s-6);
+  display: flex;
+  justify-content: flex-end;
+}
 
 /* the deck: in flow a list; pinned, one slot */
 .wd-deck {
@@ -1601,6 +1607,14 @@
   position: relative;
 }
 .wr.is-scrub .wr-rows { height: 100%; }
+/* after the pin, in flow, under the names' column */
+.wr-foot {
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding: var(--s-7) var(--page-pad) var(--s-9);
+  display: flex;
+  justify-content: flex-end;
+}
 
 /* the fallback row: a plain strip — thumb, text, name — under a hairline */
 .wr-row {
