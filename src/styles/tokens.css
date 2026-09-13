@@ -754,123 +754,124 @@ html:has(.k-root)::-webkit-scrollbar {
    ============================================================ */
 
 /* ---------- button ----------
-   REST IS STILL. A perpetually animated border was considered and
-   rejected: it contradicts the system's own "nothing moves on its
-   own" rule, it would spend the accent budget continuously, and an
-   animated gradient outline is the single most over-used device on
-   the web right now. The proximity lean that replaced it has since
-   been cut too — it moved because a cursor was near, which the
-   person moving the cursor already knew, and it competed with the
-   fluid for the same pointer movement.
+   REST IS STILL. No perpetual border, no lean at a nearby cursor:
+   nothing moves until you cross the edge. What rests is a pill, a
+   label, and one small mark on the label's right naming the kind of
+   place it goes — east arrow for the site's own pages, north-east for
+   anything that leaves it, the same grammar as the arrow link.
 
-   PRIMARY AT REST is an ice-deep fill inside a white border. On a
-   white page that border reads as page, so what you see is a plain
-   ice-deep pill — which is the point. The border is not decoration,
-   it is the GAP.
+   HOVER answers the crossing from the exact point where the pointer
+   crossed, two moves in one register (user-directed 2026-08-17,
+   rebuilt 2026-09-13):
 
-   HOVER is the drawn edge AND the flood, both leaving the exact point
-   where the pointer crossed (user-directed, 2026-08-17). Outside the
-   border, two heads travel the perimeter in opposite directions and
-   meet at the far side; inside it, a disc of page colour grows from
-   the same point and inverts the button — fill to white, letters
-   flipping to ice-deep as the disc's edge passes under them. One
-   crossing, two expressions, one origin. Geometry, dash maths and the
-   disc's radius tween are in v4/Button.tsx.
+     THE FLOOD · inside the pill a disc of the other polarity grows from
+     the crossing and inverts the button, each letter flipping as the
+     edge passes under it. The primary floods to the page and takes the
+     ghost's hairline with it — the hairline lives ON the flood layer,
+     so it appears exactly where the disc has passed, never before. The
+     ghost floods to ink. The two variants trade places. On leave the
+     disc drains toward where the pointer LEFT.
 
-   Duration is CONSTANT SPEED, derived from the perimeter, so a wide
-   CTA's line does not travel faster than a narrow one's. It lives in
-   Button.tsx (SPEED, ~710ms on a typical ~440px perimeter) and no
-   longer crosses into CSS — the roll is on --d-base and lands first,
-   the flood second (FLOOD, 0.8 of the draw), the line closes last.
+     THE SWAP · the label rolls up to its second line; the arrow on the
+     right rolls up and out with it; the label slides over; a second
+     mark rolls up into the room on the left. Everything moves UP, on
+     --d-base and --e-settle, the roll's own register.
 
-   The line is --text: the polarity's own type colour. It was --ice-deep,
-   which was the accent showing up as chrome; monochrome, the button is
-   simply the ramp's two ends against each other. Mid-flood the line is
-   the only thing separating an ever-paler fill from the page, so it can
-   never be lighter than the type it is drawn from.
+   NO RING. A line drawn outside the pill was tried at length and cut
+   (user call, 2026-09-13): its distance from the fill never read as one
+   thing across variants and grounds, and the flood plus the swap already
+   answer the crossing. Nothing is drawn outside the box.
 
-   AND IT INVERTS FOR FREE. Because the fill is --text and the letters
-   are --text-invert, k-dark turns the same rule into a paper pill with
-   ink letters — which is what Raycast ships on dark and Vercel ships on
-   light. One declaration, both polarities, no variant. */
+   COLOUR IS THE RAMP'S TWO ENDS AGAINST EACH OTHER. Primary is type-
+   on-page inverted (ink pill, paper label); the ghost is the page with
+   the type at 45% around it. Hover swaps them, and both invert for free
+   under .k-dark because every value here is a role.
+
+   The flood runs at CONSTANT SPEED, derived from the button's size in
+   Button.tsx, so a wide CTA does not fill faster than a narrow one. The
+   roll lands first on --d-base, the flood seals the state after it. */
 .k-btn {
-  --k-btn-bw: 0.1875rem;   /* the white band the line is held off by */
-  /* what the flood floods to, and what the letters flip to inside it.
-     The ghost variant inverts the pair. */
+  --k-btn-ico:  0.875rem;   /* the marks, at --t-small's own size */
+  --k-btn-igap: 0.625rem;   /* mark -> label */
+  /* the ghost's edge, and the edge the primary takes on when flooded:
+     the type at 45%, not a ramp step. The ramp's hairlines are tuned for
+     rules on flat canvas and vanish on the photography and video these
+     buttons sit over. Type at 45% holds on both polarities. */
+  --k-btn-edge: color-mix(in srgb, var(--text) 45%, transparent);
+  /* what the flood floods to, what the letters flip to inside it, and
+     the edge it carries. The ghost variant inverts all three. */
   --k-btn-flood: var(--surface);
   --k-btn-flood-ink: var(--text);
+  --k-btn-flood-edge: var(--k-btn-edge);
   position: relative;
-  display: inline-flex; align-items: center; gap: var(--s-3);
-  padding: var(--s-4) var(--s-6);
-  /* transparent, not white (2026-08-18): the band's job is spacing, and on
-     the hero's gradient a white band read as a sticker halo. Transparent
-     shows whatever ground the button sits on — identical on white pages. */
-  border: var(--k-btn-bw) solid transparent;
+  display: inline-flex; align-items: center;
+  padding: var(--s-4) calc(var(--s-6) - var(--s-1)) var(--s-4) var(--s-6);
+  /* both variants carry the hairline's width so they are the same box;
+     the primary's is transparent */
+  border: var(--hair) solid transparent;
   border-radius: var(--r-full);
   background: var(--text); color: var(--text-invert);
-  /* stop the fill at the padding edge — the same geometry the flood
-     covers. Left to paint under the border, the fill's antialiased rim
-     peeks past the flood as a faint dotted ice-deep ring once the disc
-     has flooded the button white (seen on film, 2026-08-17). Clipped,
-     any sub-pixel mismatch shows the page instead, which is white. */
-  background-clip: padding-box;
   font-family: var(--font-sans); font-size: var(--t-small);
   font-weight: var(--w-medium); line-height: 1;
   text-decoration: none; cursor: pointer;
-  /* clears the drawn line, whose outer edge is 2px past the border box */
-  outline-offset: 6px;
+  outline-offset: 3px;
   transition: transform var(--d-instant) var(--e-settle);
+  -webkit-tap-highlight-color: transparent;
 }
 .k-btn:active { transform: scale(0.985); }
 
-/* the drawn edge. The SVG is LARGER than the button and hangs outside
-   it — 8px on every side — because the line is drawn beyond the border
-   box.
-
-   CENTRED, not pinned. The obvious way to place it is a negative top/
-   left paying back the border width and the pad; that was the first
-   version and it put the whole of any measurement error at the BOTTOM,
-   so the white band read thinner there than at the top. Centring makes
-   it symmetric by construction: it does not need to know the border
-   width, the pad, or whether the height came out fractional, and any
-   residual error splits evenly between the two sides. Borders here are
-   equal on all four edges, so the padding-box centre IS the border-box
-   centre. */
-.k-btn__edge {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none; overflow: visible;
+/* the row: [hover mark] [label] [rest mark]. The hover mark is out of
+   flow so the row's width is label + gap + one mark, and on hover the
+   label SLIDES OVER by exactly that gap-plus-mark, leaving the room the
+   hover mark rolls up into. The rest mark rolls up and out at the same
+   time. Marks live in clipped square slots, so "up and out" is the
+   same move the letters make. */
+.k-btn__row {
+  position: relative;
+  display: flex; align-items: center; gap: var(--k-btn-igap);
 }
-.k-btn__edge path {
-  fill: none; stroke: var(--text); stroke-width: 2;
-  vector-effect: non-scaling-stroke;
-  transition: opacity var(--d-instant) var(--e-settle);
+.k-btn__ico {
+  position: relative; flex: none;
+  width: var(--k-btn-ico); height: var(--k-btn-ico);
+  overflow: hidden;
 }
+.k-btn__ico--l {
+  position: absolute; left: 0; top: 50%;
+  transform: translateY(-50%);
+}
+.k-btn__ico-in {
+  position: absolute; inset: 0;
+  display: block;
+  transition: transform var(--d-base) var(--e-settle);
+}
+.k-btn__ico-in svg { display: block; width: 100%; height: 100%; }
+/* the hover mark waits below its slot; the rest mark sits in it */
+.k-btn__ico--l .k-btn__ico-in { transform: translateY(115%); transition-delay: 60ms; }
 
 /* the roll. Both labels are absolutely positioned; an invisible sizer
-   holds the width of whichever is longer so the button never resizes
-   mid-hover. The roll exists TWICE — once in the button's own colour,
-   once inside the flood in the flood ink — and the hover selectors
-   below match both copies, so they roll in lockstep and only the
-   colour differs across the disc's edge. Per-letter stagger is 22ms:
-   a ripple across a short label, where 80ms would read as a wave.
-
-   CENTRED. The sizer is the LONGER of the two labels, so a flex-start
-   line leaves the shorter one hanging off to the left — which is what
-   made the hover label look misaligned while the rest label, usually
-   the longer one, looked fine.
-
-   The roll stays on --d-base rather than tracking the draw. The line is
-   now slow enough that a label rolling for the same 700ms would read as
-   sluggish; the label lands first and the line closing after it is what
-   seals the state. */
-.k-btn__roll { position: relative; display: block; overflow: hidden; }
-.k-btn__sizer { display: block; visibility: hidden; white-space: nowrap; }
+   holds the width of whichever is WIDER so the button never resizes or
+   clips mid-hover. Per-letter stagger is 22ms: a ripple across a short
+   label, where 80ms would read as a wave. The roll exists TWICE — once
+   in the button's own colour, once inside the flood in the flood's ink —
+   and the hover selectors below match both, so the copies move in
+   lockstep and only the colour differs across the disc's edge. */
+.k-btn__roll {
+  position: relative; display: block; overflow: hidden;
+  transition: transform var(--d-base) var(--e-settle);
+}
+/* both labels, stacked in one cell, so the roll is as wide as the WIDER
+   one as rendered, not the one with more letters */
+.k-btn__sizer { display: grid; visibility: hidden; }
+.k-btn__sizer > span { grid-area: 1 / 1; white-space: nowrap; }
+/* each line hugs ITS mark: the rest line sits against the arrow on the
+   right, the hover line against the sparkle on the left, so the mark
+   and its label read as one unit whichever label is the longer */
 .k-btn__line {
   position: absolute; inset: 0;
-  display: flex; justify-content: center; white-space: nowrap;
+  display: flex; white-space: nowrap;
 }
+.k-btn__line--a { justify-content: flex-end; }
+.k-btn__line--b { justify-content: flex-start; }
 .k-btn__line span {
   display: inline-block;
   transition: transform var(--d-base) var(--e-settle);
@@ -878,24 +879,21 @@ html:has(.k-root)::-webkit-scrollbar {
 }
 .k-btn__line--b span { transform: translateY(115%); }
 
-/* the flood. A disc of page colour grows from the pointer's entry
-   point — clip-path: circle() driven by three variables Button.tsx
-   tweens — and inverts the button from the inside. The layer is a
-   full copy of the roll on the flooded ground; the hard clip edge is
-   what flips each letter exactly as the disc passes under it.
+/* the flood. A disc of the other polarity grows from the pointer's
+   entry point — clip-path: circle() driven by three variables Button.tsx
+   tweens — and inverts the button from the inside. It covers the whole
+   BORDER box and carries its own hairline, so the edge the flooded
+   state needs arrives with the disc and nothing of the rest state
+   survives at the fill's edge.
 
-   It spans the PADDING BOX (inset: 0 on an absolute child resolves
-   against the padding edge), so the white border band stays out of
-   the flood and keeps holding the drawn line off whatever colour the
-   fill currently is.
-
-   MIRRORED LAYOUT: the padding and flex here repeat .k-btn's own, so
-   the copy of the roll lands exactly over the original. If .k-btn's
+   MIRRORED LAYOUT: the border and padding here repeat .k-btn's own, so
+   the copy of the row lands exactly over the original. If .k-btn's
    padding changes, this must change with it. */
 .k-btn__flood {
-  position: absolute; inset: 0;
+  position: absolute; inset: calc(-1 * var(--hair));
   display: flex; align-items: center;
-  padding: var(--s-4) var(--s-6);
+  padding: var(--s-4) calc(var(--s-6) - var(--s-1)) var(--s-4) var(--s-6);
+  border: var(--hair) solid var(--k-btn-flood-edge);
   border-radius: var(--r-full);
   background: var(--k-btn-flood);
   color: var(--k-btn-flood-ink);
@@ -903,18 +901,19 @@ html:has(.k-root)::-webkit-scrollbar {
   clip-path: circle(var(--k-btn-fr, 0px) at var(--k-btn-fx, 50%) var(--k-btn-fy, 100%));
 }
 
-/* button · ghost. No dark fill to hold the line off, so it keeps a
-   hairline border and takes the same drawn edge just outside it.
-   Its flood runs the other way: type-on-page at rest, page-on-type
-   under the disc — the same inversion, approached from the page side. */
+/* button · ghost. The page with the type at 45% around it. Its flood
+   runs the other way: ink under the disc, page-coloured letters, and
+   the edge goes ink with it — the same inversion, approached from the
+   page side. */
 .k-btn-ghost {
-  --k-btn-bw: var(--hair);
   --k-btn-flood: var(--text);
   --k-btn-flood-ink: var(--text-invert);
-  background: transparent; color: var(--text); border-color: var(--hairline);
+  --k-btn-flood-edge: var(--text);
+  background: transparent; color: var(--text);
+  border-color: var(--k-btn-edge);
 }
 
-/* THE ROLL, written twice on purpose. :hover has to sit inside
+/* THE SWAP, written twice on purpose. :hover has to sit inside
    @media (hover: hover) or it sticks after a tap on touch — the button
    keeps showing the second label until something else is tapped.
    :focus-visible has to stay outside that query, or keyboard users on
@@ -922,25 +921,30 @@ html:has(.k-root)::-webkit-scrollbar {
 @media (hover: hover) {
   .k-btn:hover .k-btn__line--a span { transform: translateY(-115%); }
   .k-btn:hover .k-btn__line--b span { transform: translateY(0); }
+  .k-btn:hover .k-btn__roll { transform: translateX(calc(var(--k-btn-ico) + var(--k-btn-igap))); }
+  .k-btn:hover .k-btn__ico--r .k-btn__ico-in { transform: translateY(-115%); }
+  .k-btn:hover .k-btn__ico--l .k-btn__ico-in { transform: translateY(0); }
 }
 .k-btn:focus-visible .k-btn__line--a span { transform: translateY(-115%); }
 .k-btn:focus-visible .k-btn__line--b span { transform: translateY(0); }
+.k-btn:focus-visible .k-btn__roll { transform: translateX(calc(var(--k-btn-ico) + var(--k-btn-igap))); }
+.k-btn:focus-visible .k-btn__ico--r .k-btn__ico-in { transform: translateY(-115%); }
+.k-btn:focus-visible .k-btn__ico--l .k-btn__ico-in { transform: translateY(0); }
 
-/* reduced motion: no roll, and the line appears rather than draws. JS
-   bails before touching the dasharray in this mode, so the inline
-   `0 99999` from the markup would otherwise leave it permanently
-   invisible — the !important overrides that inline style, not a rule. */
+/* reduced motion: no roll, no swap, and the flood appears rather than
+   grows — JS never tweens the radius in this mode, so the state shows
+   by unclipping instead. */
 @media (prefers-reduced-motion: reduce) {
   .k-btn__line--b { display: none; }
-  .k-btn__edge path { stroke-dasharray: none !important; opacity: 0; }
-  .k-btn:focus-visible .k-btn__edge path { opacity: 1; }
-  /* the flood appears rather than grows — JS never tweens the radius
-     in this mode, so the state shows by unclipping instead */
+  .k-btn__ico--l { display: none; }
   .k-btn:focus-visible .k-btn__flood { clip-path: none; }
+  .k-btn:focus-visible .k-btn__roll,
+  .k-btn:focus-visible .k-btn__ico--r .k-btn__ico-in { transform: none; }
 }
 @media (prefers-reduced-motion: reduce) and (hover: hover) {
-  .k-btn:hover .k-btn__edge path { opacity: 1; }
   .k-btn:hover .k-btn__flood { clip-path: none; }
+  .k-btn:hover .k-btn__roll,
+  .k-btn:hover .k-btn__ico--r .k-btn__ico-in { transform: none; }
 }
 
 /* ---------- arrow link ----------
@@ -1562,12 +1566,36 @@ html.lenis, html.lenis body { height: auto; }
    perceptible than a static one, so this is tested before any
    ring is added on top of it.
    ============================================================ */
-.k-nav-root { position: relative; z-index: 50; }
+/* NO STACKING CONTEXT on the root (2026-09-12): the bar below blends
+   with the page, and mix-blend-mode only sees the backdrop inside the
+   nearest ancestor stacking context. A z-index here made the root one,
+   so the bar could only blend against its own empty ground and the
+   effect silently did nothing (the trap FluidCursor.tsx documents).
+   The layers carry their own z instead: bar 50, aperture 51. */
+.k-nav-root { position: relative; }
 
+/* ---------- the bar (2026-09-12, user): NO GROUND, EVER. ----------
+   The chrome is painted WHITE and the bar blends with difference, so
+   over paper it reads as ink, over the void as light, and over a
+   photograph it goes per-pixel negative. Always visible, no plate.
+   Consequences that are not obvious:
+     · everything in here must be WHITE. Difference of black with any
+       ground IS that ground — a black glyph vanishes. The mark is a
+       dark PNG on transparency, so its bar copy is inverted; the copy
+       in the open aperture (light surface) stays dark.
+     · "muted" is white at partial alpha: the blend runs at full
+       strength, then the alpha lets the ground back in, so it lands
+       as a mid grey against either polarity (0.62 matches n-7 on
+       paper and n-5 on the void).
+     · the fluid trail (z 55, also difference) still sits over it and
+       inverts it a second time where it passes — same as the rest of
+       the page. */
 .k-nav-bar {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 2;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
   display: flex; align-items: center; gap: var(--s-5);
   padding: var(--s-5) var(--page-pad);
+  color: #fff;
+  mix-blend-mode: difference;
 }
 .k-nav-brand {
   margin-right: auto;
@@ -1576,14 +1604,25 @@ html.lenis, html.lenis body { height: auto; }
 }
 /* the mark (2026-08-28): height only, the PNG keeps its own ratio */
 .k-nav-mark { display: block; height: 1.75rem; width: auto; }
+/* the bar's copy goes white for the blend (see the note above) */
+.k-nav-bar .k-nav-mark { filter: invert(1); }
 .k-nav-contact {
   font-size: var(--t-small); color: var(--text-muted); text-decoration: none;
   transition: color var(--d-instant) var(--e-settle);
 }
 .k-nav-contact:hover { color: var(--text); }
+.k-nav-bar .k-nav-contact { color: rgba(255, 255, 255, 0.62); }
+.k-nav-bar .k-nav-contact:hover { color: #fff; }
+.k-nav-bar .k-navlink__line--b { color: #fff; }
+/* the burger in white: ring at 0.2 lands near the hairline on both
+   grounds; the hover wash at 0.1 is a faint tint either way */
+.k-nav-bar .k-burger { border-color: rgba(255, 255, 255, 0.2); }
+.k-nav-bar .k-burger i { background: #fff; }
+.k-nav-bar .k-burger:hover,
+.k-nav-bar .k-burger:focus-visible { border-color: #fff; background: rgba(255, 255, 255, 0.1); }
 
 .k-aperture {
-  position: fixed; inset: 0; z-index: 3;
+  position: fixed; inset: 0; z-index: 51;
   display: flex; flex-direction: column;
   overflow: hidden;
   background: var(--surface-raised);
@@ -1845,27 +1884,18 @@ html.lenis, html.lenis body { height: auto; }
    be buried behind a click. */
 
 /* ---------- nav scroll behaviour (2026-08-18, homepage pass) ----------
-   Three states, all class-toggled from ApertureMenu's ticker:
-     at top        -- transparent, sitting on the hero
-     scrolled      -- .is-grounded: solid surface + a hairline (as a 1px
-                      shadow, so it costs no layout), because a fixed bar
-                      over body copy is unreadable without ground
-     scrolling down-- .is-hidden: the bar leaves; scrolling up brings it
-                      back. The menu being open pins it visible.
+   Two states, class-toggled from ApertureMenu's ticker:
+     in the hero   -- transparent, blending (the bar's own block above)
+     past the hero -- .is-hidden: the bar leaves and stays gone. The
+                      menu being open pins it visible.
+   .is-grounded (the near-solid white plate + hairline after 8px of
+   scroll) is GONE (2026-09-12, user: no background) — the difference
+   blend is what keeps the chrome legible over anything.
    NO backdrop-filter here, deliberately: a backdrop-filter layer
    re-rasterised the WebGL fluid out of existence once already (the
-   lens, checklist 3.x). Solid surface or nothing. */
+   lens, checklist 3.x). */
 .k-nav-bar {
-  transition:
-    transform var(--d-base) var(--e-settle),
-    background-color var(--d-quick) var(--e-settle),
-    box-shadow var(--d-quick) var(--e-settle);
-}
-.k-nav-bar.is-grounded {
-  /* near-solid, not backdrop-filter: over the hero's gradient it softens,
-     over the white page it reads as solid surface */
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 1px 0 var(--hairline);
+  transition: transform var(--d-base) var(--e-settle);
 }
 .k-nav-bar.is-hidden { transform: translateY(-102%); }
 @media (prefers-reduced-motion: reduce) {
@@ -2152,7 +2182,6 @@ html.lenis, html.lenis body { height: auto; }
   .ft-link,
   .ft-mail,
   .inv-soc,
-  .inv-mail,
   .k-nav-brand,
   .k-nav-contact {
     padding-block: 0.95rem;
@@ -2299,3 +2328,132 @@ html.lenis, html.lenis body { height: auto; }
   opacity: 0.12;
 }
 
+
+/* ============================================================
+   THE HAND'S DISC — the glass that follows the pointer over a thing
+   you can act on (HandDisc.tsx + src/lib/hand-lens.ts): "Drag" over the
+   about page's toolset row, "View" over the work hub's cards. Fixed,
+   moved by the driver (its outer translate is the spring's position);
+   its FACE carries the scale and the stretch; the word scales alone so
+   it never distorts. While the hand is over a target the driver puts
+   k-hand on <html>: the hovered element's own cursor rule only
+   re-evaluates when the mouse moves, and a row scrolling under a still
+   pointer must lose the cursor at once.
+   ============================================================ */
+html.k-hand,
+html.k-hand * { cursor: none !important; }
+
+.k-hand-def {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+.k-hand-disc {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 40;
+  width: 6.6rem;
+  height: 6.6rem;
+  display: grid;
+  place-items: center;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  will-change: transform;
+}
+/* THE GLASS — Apple's. Inside the face sits THE LENS: a clone of the
+   target (the driver lays it over the real one every frame) clipped to
+   the circle and run through the SVG displacement filter, so whatever
+   the disc crosses is refracted — magnified a touch at the centre, bent
+   and compressed toward the rim, its edges splitting into colour where
+   the bend is strongest, then softly blurred. The face under it keeps a
+   plain backdrop blur for the sliver of disc that can hang past the
+   target's edge (Chrome runs no url() filter as a backdrop-filter).
+   No painted ring: the depth is the bend itself plus the shading of a
+   thick disc — a bright top catch, a dark shade gathering at the foot,
+   an inner glow, a soft drop. Over it the SPLAY: a specular streak
+   across the upper left and a hot point where the light lands. */
+.k-hand-face {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-full);
+  overflow: hidden;
+  background:
+    radial-gradient(120% 120% at 32% 24%, rgb(255 255 255 / 0.3), rgb(255 255 255 / 0.04) 52%, rgb(255 255 255 / 0) 72%),
+    radial-gradient(100% 100% at 50% 100%, rgb(13 16 18 / 0.16), rgb(13 16 18 / 0) 60%),
+    linear-gradient(160deg, rgb(255 255 255 / 0.1), rgb(255 255 255 / 0.02));
+  backdrop-filter: blur(0.2rem) saturate(1.3) brightness(1.06);
+  -webkit-backdrop-filter: blur(0.2rem) saturate(1.3) brightness(1.06);
+  box-shadow:
+    inset 0 0.1rem 0.16rem rgb(255 255 255 / 0.85),
+    inset 0 -0.9rem 1.3rem -0.5rem rgb(13 16 18 / 0.4),
+    inset 0 0 0 1px rgb(255 255 255 / 0.36),
+    inset 0 0 1.6rem rgb(255 255 255 / 0.1),
+    0 1.5rem 2.6rem -0.9rem rgb(13 16 18 / 0.55),
+    0 0.14rem 0.4rem rgb(13 16 18 / 0.16);
+  transform: scale(0);
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+/* the lens: the circle clip, the filtered box (wider than the circle —
+   the bend at the rim samples from out here), the clone in its wrapper.
+   The tint over it is the glass's own body colour. */
+.k-hand-lens {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: var(--r-full);
+  overflow: hidden;
+}
+.k-hand-fx {
+  position: absolute;
+  inset: -30%;
+  filter: url(#k-lens);
+  will-change: filter;
+}
+.k-hand-fx::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, rgb(255 255 255 / 0.12), rgb(255 255 255 / 0.03));
+}
+.k-hand-clone-w {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+.k-hand-clone {
+  margin: 0;
+  pointer-events: none;
+}
+.k-hand-face::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: var(--r-full);
+  background:
+    radial-gradient(16% 16% at 30% 22%, rgb(255 255 255 / 0.95), rgb(255 255 255 / 0) 100%),
+    linear-gradient(118deg, rgb(255 255 255 / 0) 30%, rgb(255 255 255 / 0.48) 44%, rgb(255 255 255 / 0.1) 51%, rgb(255 255 255 / 0) 60%);
+  mix-blend-mode: screen;
+  opacity: 0.85;
+}
+/* the word in DIFFERENCE, like the nav: ink where the disc crosses
+   paper, light on the void, never lost on either */
+.k-hand-word {
+  position: relative;
+  display: block;
+  color: #fff;
+  mix-blend-mode: difference;
+  transform: scale(var(--k-sc, 0));
+  opacity: var(--k-sc, 0);
+  will-change: transform, opacity;
+}
+@media (hover: none) {
+  .k-hand-disc,
+  .k-hand-def { display: none; }
+}
