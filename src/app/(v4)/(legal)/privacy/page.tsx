@@ -22,8 +22,11 @@ export const metadata: Metadata = {
  * (leads arrive by email and Calendly), analytics are Google Analytics
  * behind consent plus Ahrefs (cookieless), and Resend/Cloudinary no longer
  * touch a visitor. Everything else carries over from the April 2025 text.
+ *
+ * 2026-09-12: the contact form is BACK on /contact (site-architecture
+ * §5a), delivered by Resend — §2 lists the form, §5 names Resend again.
  */
-const UPDATED = 'August 2026'
+const UPDATED = 'September 2026'
 
 export default function PrivacyPage() {
   return (
@@ -64,6 +67,10 @@ export default function PrivacyPage() {
         <p>Information you give us, when you:</p>
         <LegalList>
           <li>Email us — your name, your email address and whatever you write.</li>
+          <li>
+            Use the form on our contact page — your name, your email address and your message,
+            delivered to us as an email.
+          </li>
           <li>
             Book a call through Calendly — your name, your email address and any notes you add to
             the booking.
@@ -119,6 +126,11 @@ export default function PrivacyPage() {
             <strong>Vercel</strong> — hosts the website. Standard server logs may be processed by
             Vercel.{' '}
             <LegalExt href="https://vercel.com/legal/privacy-policy">Vercel privacy policy</LegalExt>
+          </li>
+          <li>
+            <strong>Resend</strong> — delivers the messages sent through our contact form to our
+            inbox. Your name, email address and message pass through Resend to reach us.{' '}
+            <LegalExt href="https://resend.com/legal/privacy-policy">Resend privacy policy</LegalExt>
           </li>
           <li>
             <strong>Calendly</strong> — handles call bookings. The details you enter when booking
