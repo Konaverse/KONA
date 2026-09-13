@@ -127,7 +127,7 @@ export default function ServicesHubPage() {
       {/* the entrance parks everything at opacity 0 (hub.css .sh-ent); the
           no-JS page undoes it, and the bend's final state is CSS too */}
       <noscript>
-        <style>{`.sh-ent,.sh-row-link,.sh-row-no,.sh-row-more{opacity:1!important;transform:none!important;filter:none!important}.sh-row::before{transform:none!important}`}</style>
+        <style>{`.sh-ent{opacity:1!important;transform:none!important;filter:none!important}`}</style>
       </noscript>
 
       {/* §1 — THE HERO, sticky: the index scrolls over it */}
@@ -202,27 +202,36 @@ export default function ServicesHubPage() {
                   <a className="sh-row-link" href={`/services/${p.slug}`}>{p.name}</a>
                 </span>
               </h2>
-              {/* THE EDITORIAL BLOCK: the plate, the text, the mini cards */}
-              <div className="sh-row-more">
-                <figure className="sh-more-fig">
-                  <img src={p.visual} alt="" draggable={false} loading="lazy" decoding="async" style={{ objectPosition: p.visualPos }} />
-                  <figcaption>{p.tagline}</figcaption>
-                </figure>
-                <div className="sh-more-text">
+              {/* THE TREAD (2026-09-13) — the step's flat, an editorial
+                  spread under the title: left the promise, the blurb and
+                  the way in; right the plate, the service's own poster
+                  with its number printed on it, cut by the page's right
+                  edge rather than framed by the card; along the foot the
+                  three facts as one hairline strip — the case study's
+                  meta row, so a fact reads the same everywhere. The
+                  title above is the same link as the button, so the tree
+                  reads it twice on purpose (user: "make the CTA clear"). */}
+              <div className="sh-tread">
+                <div className="sh-tread-copy">
+                  <p className="sh-pull">{p.tagline}</p>
                   <p className="sh-blurb">{p.blurb}</p>
-                  <p className="sh-more-body">{p.plate.beats[0].body}</p>
-                  {/* THE CTA — the service's page, said plainly (user,
-                      2026-09-09: "make the CTA clear"); the title above is
-                      the same link, so the tree reads it twice on purpose */}
-                  <div className="sh-more-cta">
+                  <div className="sh-tread-cta">
                     <Button href={`/services/${p.slug}`} hoverLabel="View the service">
                       {`Explore ${p.name}`}
                     </Button>
                   </div>
                 </div>
-                <dl className="sh-tiles">
+                <figure className="sh-plate">
+                  <img src={p.visual} alt="" draggable={false} loading="lazy" decoding="async" style={{ objectPosition: p.visualPos }} />
+                  <span className="sh-plate-no" aria-hidden="true">
+                    <span className="sh-plate-no-in">{no(i)}</span>
+                  </span>
+                  <figcaption className="sh-plate-cap">{p.plate.headline}</figcaption>
+                  <i className="sh-plate-glint" aria-hidden="true" />
+                </figure>
+                <dl className="sh-spec">
                   {p.facts.map((f) => (
-                    <div key={f.label} className="sh-tile">
+                    <div key={f.label} className="sh-spec-it">
                       <dt>{f.label}</dt>
                       <dd>{f.value}</dd>
                     </div>
