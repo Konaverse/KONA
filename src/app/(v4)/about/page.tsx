@@ -33,15 +33,29 @@ import './about.css'
  *
  * §3 WHO WE ARE — THE PICTURE. A fixed composition on paper, every
  * length rem (the picture rule): the title in three stepped words, a
- * watermark sentence in the faint step behind everything, and the two
- * of them as MIRRORED BLOCKS — a dark plate bleeding off the page edge
- * with the role written inside it, tilted and cut by the figure; the
- * cutout standing on the plate's bottom edge and rising above it; the
- * bio beside; the name below; the framed portrait on the other side.
- * Konstantinos's plate bleeds LEFT, Nabil's RIGHT. Each block reveals
- * once as it enters (the plate draws from its bleeding edge, the figure
- * rises, the rest resolves); the watermark lags the scroll a little.
- * AboutWho.tsx.
+ * two of them as MIRRORED BLOCKS — a dark plate bleeding off the page
+ * edge with the role written inside it, tilted and cut by the figure;
+ * the cutout standing on the plate's bottom edge and rising above it;
+ * the bio beside; the name below; the framed portrait on the other
+ * side. Konstantinos's plate bleeds LEFT, Nabil's RIGHT.
+ *
+ * SECOND PASS (2026-09-13, user: the title did not connect to the
+ * site, the watermark had to go, the portraits stopped moving, and the
+ * section wanted enriching): the title is the site's own voice now — a
+ * kicker over "Who we are" in light lowercase at the page pad, its
+ * three words still collapsing onto one line at three rates, set in
+ * DIFFERENCE so the figure and the climbing portrait cut through it
+ * (the work hub's "selected work" grammar). The watermark is gone; in
+ * its place THE LEDGER — each plate's two edges carried across the page
+ * as hairlines, the person's index at the far end — so the plate reads
+ * as a stripe of the page, not a box on it. Each person gained a LINE
+ * in their own voice (scroll-fill, the house display grammar) and a
+ * DOSSIER of three hairline rows (role, what they own, their tools),
+ * both in the free paper under the name. The portraits climb at a
+ * constant rate for as long as the section is on screen and develop
+ * from mono to colour over the climb. Each block reveals once as it
+ * enters (the ledger and the plate draw, the figure rises, the rest
+ * resolves). AboutWho.tsx.
  *
  * §4 WE REFUSE TO DO — one dark card (REBUILT 2026-09-11, user: "a big
  * card with nice layout, clean design, premium"): the bosra plate as
@@ -113,6 +127,14 @@ const PEOPLE = [
     portrait: '/people/konstantinos-portrait.webp',
     bio:
       'Konstantinos is the technical architect. He builds the sites: the code, the performance, the integrations, and the part nobody sees that makes the part everybody sees work. Next.js, WebGL, the 3D pipeline, the search work — if it has to load in under a second and move at sixty frames, it goes through him.',
+    /** the line in his own voice — FIRST DRAFT, cut from the bio */
+    quote: 'If it has to load in under a second and move at sixty frames, it goes through me.',
+    /** the dossier — nothing here the bio and the toolset do not already say */
+    dossier: [
+      ['Role', 'Technical architect'],
+      ['Owns', 'The code, the performance, the integrations, the 3D pipeline, the search work'],
+      ['Tools', 'Next.js, Three.js, GSAP, Blender'],
+    ],
   },
   {
     id: 'nabil',
@@ -123,6 +145,12 @@ const PEOPLE = [
     portrait: '/people/nabil-portrait.webp',
     bio:
       'Nabil is the creative director. He decides what a site looks like and how it moves: the layout, the type, the imagery, the motion. He starts from the brand, never from a template, and does not stop until the page has a character someone will remember.',
+    quote: 'Start from the brand, never from a template, and do not stop until the page has a character.',
+    dossier: [
+      ['Role', 'Creative director'],
+      ['Owns', 'The layout, the type, the imagery, the motion'],
+      ['Tools', 'Figma, After Effects, Blender'],
+    ],
   },
 ] as const
 
@@ -169,9 +197,9 @@ const YEARS = [
   { year: '2026', label: 'The redesign', plate: '/work/corridor.webp', text: 'The site you are reading, rebuilt in black and white from the first pixel.' },
 ]
 
-/** the watermark behind §3 — a real sentence, set faint */
-const MARK =
-  'We build for those who appreciate design that steps out of the norm and challenges the standards'
+/** the last digit of each year: the odometer's stops (module-level so
+ *  the array is stable across renders) */
+const YEAR_DIGITS = YEARS.map((y) => Number(y.year.slice(3)))
 
 export default function AboutPage() {
   const jsonLd = {
@@ -213,7 +241,7 @@ export default function AboutPage() {
       {/* the entrances park things at opacity 0 or behind a crop edge;
           the no-JS page undoes every one of them */}
       <noscript>
-        <style>{`.ab-ent,.ab-w,.ab-fig,.ab-bio,.ab-name,.ab-port,.ab-plate,.ab-plate-w,.ab-ref-h,.ab-ref-p,.ab-row{opacity:1!important;transform:none!important;filter:none!important;clip-path:none!important}.ab-pill{width:var(--ab-pill-rest)!important;margin-left:.22em!important}.ab-band::before{transform:none!important}.ab-row-what::after{transform:none!important}.ab-person-r .ab-port{top:100rem!important}.ab-tools-vp{overflow-x:auto!important}.ab-tool,.ab-tools-w,.ab-tools-t{opacity:1!important;transform:none!important}.ab-tl-list{position:static!important;width:auto!important;height:auto!important;clip:auto!important;overflow:visible!important;padding:0 var(--ab-pad) 4rem!important}.ab-time{--ab-tl-len:auto}.ab-tl-stage{position:static!important;height:auto!important}`}</style>
+        <style>{`.ab-ent,.ab-w,.ab-who-k,.ab-fig,.ab-bio,.ab-name,.ab-port,.ab-plate,.ab-plate-w,.ab-dossier,.ab-ledger-l,.ab-ref-h,.ab-ref-p,.ab-row{opacity:1!important;transform:none!important;filter:none!important;clip-path:none!important}.ab-pill{width:var(--ab-pill-rest)!important;margin-left:.22em!important}.ab-band::before{transform:none!important}.ab-row-what::after{transform:none!important}.ab-person-r .ab-port{top:100rem!important}.ab-tools-vp{overflow-x:auto!important}.ab-tool,.ab-tools-w,.ab-tools-t{opacity:1!important;transform:none!important}.ab-tl-list{position:static!important;width:auto!important;height:auto!important;clip:auto!important;overflow:visible!important;padding:0 var(--ab-pad) 4rem!important}.ab-time{--ab-tl-len:auto}.ab-tl-stage{position:static!important;height:auto!important}`}</style>
       </noscript>
 
       {/* §1 — THE HERO: the sentence, the plate in its second line, the
@@ -260,16 +288,25 @@ export default function AboutPage() {
 
       {/* §3 — WHO WE ARE: the picture */}
       <AboutWho>
+        {/* the head: the house kicker, then the title in the site's light
+            lowercase voice — one line in layout; the driver holds the
+            words down at three rates until they meet */}
+        <p className="ab-who-k">The two behind the work</p>
         <h2 className="ab-who-t">
           <span className="ab-who-m"><span className="ab-w">Who</span></span>
           <span className="ab-who-m"><span className="ab-w">we</span></span>
           <span className="ab-who-m"><span className="ab-w">are</span></span>
         </h2>
 
-        <p className="ab-mark" aria-hidden="true">{MARK}</p>
-
         {PEOPLE.map((p, i) => (
           <article key={p.id} className={`ab-person ab-person-${i === 0 ? 'l' : 'r'}`} id={p.id}>
+            {/* THE LEDGER: the plate's two edges carried across the page
+                as hairlines, the index at the far end */}
+            <div className="ab-ledger" aria-hidden="true">
+              <i className="ab-ledger-l ab-ledger-l1" />
+              <i className="ab-ledger-l ab-ledger-l2" />
+              <span className="ab-index">{String(i + 1).padStart(2, '0')}</span>
+            </div>
             {/* the plate: dark, bleeding off the page, the role inside it */}
             <div className="ab-plate" aria-hidden="true">
               <span className="ab-plate-w">
@@ -289,10 +326,7 @@ export default function AboutPage() {
               draggable={false}
             />
             <p className="ab-bio">{p.bio}</p>
-            <h3 className="ab-name">
-              {p.name}
-              <span className="ab-role">{p.role}</span>
-            </h3>
+            <h3 className="ab-name">{p.name}</h3>
             <figure className="ab-port">
               <img
                 src={p.portrait}
@@ -304,6 +338,18 @@ export default function AboutPage() {
                 draggable={false}
               />
             </figure>
+            {/* THE LINE, in their own voice, filling as it climbs; THE
+                DOSSIER, three hairline rows — the role moved here from
+                under the name */}
+            <ScrollFillText as="p" className="ab-quote" text={p.quote} />
+            <dl className="ab-dossier">
+              {p.dossier.map(([k, v]) => (
+                <div key={k}>
+                  <dt>{k}</dt>
+                  <dd>{v}</dd>
+                </div>
+              ))}
+            </dl>
           </article>
         ))}
       </AboutWho>
@@ -336,7 +382,7 @@ export default function AboutPage() {
       <AboutTools>
         <h2 className="ab-tools-t">
           <span className="ab-tools-m">
-            <span className="ab-tools-w"><em>our</em> toolset</span>
+            <span className="ab-tools-w"><em>Our</em> toolset</span>
           </span>
         </h2>
         <div className="ab-tools-vp">
@@ -358,7 +404,7 @@ export default function AboutPage() {
       </AboutTools>
 
       {/* §6 — HOW IT WENT: the pinned roll */}
-      <AboutTimeline count={YEARS.length}>
+      <AboutTimeline count={YEARS.length} digits={YEAR_DIGITS}>
         {/* the accessible content: the four entries as a plain list */}
         <ol className="ab-tl-list">
           {YEARS.map((y) => (
@@ -372,7 +418,7 @@ export default function AboutPage() {
         </ol>
 
         <div className="ab-tl-stage" aria-hidden="true">
-          <h2 className="ab-tl-t">how it <em>went</em></h2>
+          <h2 className="ab-tl-t">How it <em>went</em></h2>
 
           {/* the label above the rolling digit */}
           <div className="ab-tl-labels">
@@ -385,9 +431,13 @@ export default function AboutPage() {
           <div className="ab-tl-year">
             <span className="ab-tl-hold">{YEARS[0].year.slice(0, 3)}</span>
             <span className="ab-tl-digits">
-              {YEARS.map((y) => (
-                <span key={y.year} className="ab-tl-digit">{y.year.slice(3)}</span>
-              ))}
+              {/* the odometer: all ten digits in a strip; the strip slides
+                  to the year's last digit, passing the ones between */}
+              <span className="ab-tl-strip">
+                {Array.from({ length: 10 }, (_, d) => (
+                  <span key={d} className="ab-tl-digit">{d}</span>
+                ))}
+              </span>
             </span>
           </div>
 

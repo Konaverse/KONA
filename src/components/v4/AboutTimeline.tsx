@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, type ReactNode } from 'react'
-import { gsap, EASE, rem } from '@/lib/motion-v4'
+import { gsap, EASE } from '@/lib/motion-v4'
 import { getLenis } from '@/components/v4/SmoothScroll'
 
 /**
@@ -17,13 +17,24 @@ import { getLenis } from '@/components/v4/SmoothScroll'
  * scrubbed — the change is a MOVE, run once per index change, in the
  * direction the hand went.
  *
- * THE ROLL — one instrument, four voices. When the index changes, the
- * year's last digit, the entry's label, the plate and the caption all
- * roll on the same clock: the leaving voice travels up out of its crop,
- * the arriving one rises in from below, a touch of blur in transit
- * (the hub's letter roll, widened to a picture). Scrolling back rolls
- * the other way. The plate's roll carries a slight scale so the picture
- * reads as sliding under the frame rather than a card being swapped.
+ * THE DIGIT — AN ODOMETER (2026-09-13, user: "the number changing needs
+ * optimizing"). The year's last digit is no longer a stack of layers
+ * swapped by visibility: it is one strip of the ten digits, and the
+ * strip slides one em per digit to the year's digit. 2 → 5 passes 3 and
+ * 4 on the way,
+ * like a counter; scrolling back runs it down. One transform on one
+ * element, so a fast scroll that lands mid-roll simply retargets the
+ * tween (overwrite) — nothing is left half-visible, and there is no
+ * blur filter re-rasterising an 11rem glyph every frame.
+ *
+ * THE OTHER VOICES. The label, the plate and the caption still roll as
+ * layers: the leaving one travels up out of its crop, the arriving one
+ * rises in from below, on the same clock as the digit. Interrupt-safe:
+ * a new roll hides every layer that is neither leaving nor arriving,
+ * and an arriving layer caught mid-transit continues from where it is.
+ * No blur in transit — the plate's roll carries a slight scale instead,
+ * so the picture reads as sliding under the frame (and under the
+ * frame's grain, which is on the frame, not the plate — about.css).
  *
  * THE BADGE. The dark disc on the plate's corner says what to do and
  * shows where you are: a ring around it fills with the index, and a
@@ -41,7 +52,16 @@ const HOLD = 0.3
 /** one roll's travel */
 const ROLL = 0.9
 
-export default function AboutTimeline({ children, count }: { children: ReactNode; count: number }) {
+export default function AboutTimeline({
+  children,
+  count,
+  digits: yearDigits,
+}: {
+  children: ReactNode
+  count: number
+  /** the last digit of each year, in entry order */
+  digits: number[]
+}) {
   const ref = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
@@ -53,13 +73,14 @@ export default function AboutTimeline({ children, count }: { children: ReactNode
 
     /* the voices, each a list of layers in entry order */
     const voice = (sel: string) => Array.from(root.querySelectorAll<HTMLElement>(sel))
-    const digits = voice('.ab-tl-digit')
+    const strip = root.querySelector<HTMLElement>('.ab-tl-strip')
     const labels = voice('.ab-tl-label')
     const plates = voice('.ab-tl-plate')
     const caps = voice('.ab-tl-cap')
     const ring = root.querySelector<SVGCircleElement>('.ab-tl-ring')
     const badge = root.querySelector<HTMLElement>('.ab-tl-badge')
     const n = count
+    const layers: HTMLElement[][] = [labels, plates, caps]
 
     /* the wrapper's height is the pin's length: the first viewport plus a
        step per change plus the hold */
@@ -68,54 +89,70 @@ export default function AboutTimeline({ children, count }: { children: ReactNode
     let index = 0
     let tl: gsap.core.Timeline | null = null
 
+    const progress = (i: number) => 1 - (n > 1 ? i / (n - 1) : 1)
+
+    /* the resting frame for entry i: one layer per voice, the strip on
+       the digit, the ring at the index */
     const show = (i: number) => {
-      ;[digits, labels, plates, caps].forEach((v) =>
+      layers.forEach((v) =>
         v.forEach((el, j) => {
           el.style.visibility = j === i ? 'visible' : 'hidden'
-          el.style.transform = ''
-          el.style.filter = ''
+          gsap.set(el, { clearProps: 'transform' })
         }),
       )
-      if (ring) ring.style.strokeDashoffset = String(1 - (n > 1 ? i / (n - 1) : 1))
+      if (strip) gsap.set(strip, { y: `${-(yearDigits[i] ?? 0)}em` })
+      if (ring) gsap.set(ring, { strokeDashoffset: progress(i) })
     }
 
     const roll = (from: number, to: number) => {
       const dir = to > from ? 1 : -1
-      const k = rem()
       tl?.kill()
       tl = gsap.timeline({
+        defaults: { overwrite: 'auto' },
         onComplete: () => {
           show(to)
           tl = null
         },
       })
+
+      /* the digit: the strip slides to the year's digit, through the
+         ones between — the counter's own direction, not the hand's */
+      if (strip) {
+        tl.to(strip, { y: `${-(yearDigits[to] ?? 0)}em`, duration: ROLL, ease: EASE.arc }, 0)
+      }
+
       const pairs: [HTMLElement[], number][] = [
-        [digits, 0],
         [labels, 0.05],
-        [caps, 0.08],
         [plates, 0.04],
+        [caps, 0.08],
       ]
       pairs.forEach(([v, at]) => {
         const a = v[from]
         const b = v[to]
         if (!a || !b) return
         const isPlate = v === plates
-        tl!.set(b, { visibility: 'visible', yPercent: 104 * dir, filter: 'blur(0px)', scale: isPlate ? 1.06 : 1 }, at)
+        /* anything that is neither leaving nor arriving is parked — this
+           is what a killed roll would otherwise leave half-way up */
+        v.forEach((el) => {
+          if (el !== a && el !== b) {
+            el.style.visibility = 'hidden'
+            gsap.set(el, { clearProps: 'transform' })
+          }
+        })
+        /* the arriving layer starts below the crop unless it is already
+           in transit from an interrupted roll — then it continues */
+        if (b.style.visibility !== 'visible') {
+          gsap.set(b, { visibility: 'visible', yPercent: 104 * dir, scale: isPlate ? 1.06 : 1 })
+        }
         tl!.to(a, { yPercent: -104 * dir, duration: ROLL, ease: EASE.arc, scale: isPlate ? 0.96 : 1 }, at)
         tl!.to(b, { yPercent: 0, duration: ROLL, ease: EASE.arc, scale: 1 }, at)
-        const blur = `blur(${(isPlate ? 4 : 2.5) * k}px)`
-        tl!.to([a, b], { filter: blur, duration: ROLL * 0.45, ease: 'sine.inOut' }, at)
-        tl!.to([a, b], { filter: 'blur(0px)', duration: ROLL * 0.55, ease: 'sine.out' }, at + ROLL * 0.45)
       })
       if (ring) {
-        tl.to(ring, { strokeDashoffset: 1 - (n > 1 ? to / (n - 1) : 1), duration: ROLL, ease: EASE.arc }, 0)
+        tl.to(ring, { strokeDashoffset: progress(to), duration: ROLL, ease: EASE.arc }, 0)
       }
     }
 
     show(0)
-    if (reduce) {
-      /* no roll: a hard cut on the same index rule */
-    }
 
     const stepPx = () => window.innerHeight * STEP
     const tick = () => {
@@ -150,16 +187,17 @@ export default function AboutTimeline({ children, count }: { children: ReactNode
       gsap.ticker.remove(tick)
       tl?.kill()
       badge?.removeEventListener('click', onBadge)
-      ;[digits, labels, plates, caps].forEach((v) =>
+      layers.forEach((v) =>
         v.forEach((el) => {
           el.style.visibility = ''
-          el.style.transform = ''
-          el.style.filter = ''
+          gsap.set(el, { clearProps: 'transform' })
         }),
       )
+      if (strip) gsap.set(strip, { clearProps: 'transform' })
+      if (ring) gsap.set(ring, { clearProps: 'strokeDashoffset' })
       root.style.removeProperty('--ab-tl-len')
     }
-  }, [count])
+  }, [count, yearDigits])
 
   return (
     <section ref={ref} className="ab-time" aria-label="How it went">

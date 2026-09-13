@@ -1,7 +1,9 @@
 'use client'
 
 import { useEffect, useRef, type ReactNode } from 'react'
-import { gsap, rem } from '@/lib/motion-v4'
+import { gsap } from '@/lib/motion-v4'
+import { createHandLens, within } from '@/lib/hand-lens'
+import HandDisc from '@/components/v4/HandDisc'
 
 /**
  * OUR TOOLSET — THE DRAG TRACK (2026-09-11, the user's frame "toolset
@@ -15,21 +17,26 @@ import { gsap, rem } from '@/lib/motion-v4'
  * pan-y` leaves vertical swipes to the page). Transform only, on the
  * shared ticker. No library.
  *
- * THE HAND. Over the track the native cursor goes and a frosted disc
- * follows the pointer — glass over the cards, the word inside it — and
- * settles a little smaller while the hand is holding the track. It
- * glides to the pointer rather than snapping. Hover devices only.
+ * THE HAND (second pass 2026-09-13; shared with the work hub since the
+ * same day — src/lib/hand-lens.ts has the how and the why). Over the
+ * track the native cursor goes and the glass disc follows the pointer,
+ * "Drag" inside it, the row itself refracted through its face. This
+ * driver's part: the pointer's last known place (a page-level
+ * pointermove), the hit test of that point against the row's live rect
+ * every frame (so the row scrolling under a still trackpad pointer shows
+ * and hides the disc without a move — user, 2026-09-13), the clone's
+ * preparation (its reveal forced in) and the mirroring of the track's
+ * drag onto the clone's track each frame.
  *
- * No JS: the row scrolls natively (the noscript rule in page.tsx makes
- * the viewport overflow-x: auto).
+ * Hover devices only. No JS: the row scrolls natively (the noscript
+ * rule in page.tsx makes the viewport overflow-x: auto).
  */
 
 /** velocity decay per frame once the hand lets go */
 const FRICTION = 0.94
 /** how far past the end the track can be pulled, as a share of the pull */
 const RUBBER = 0.32
-/** the glide of the disc toward the pointer, per frame */
-const GLIDE = 0.18
+
 
 export default function AboutTools({ children }: { children: ReactNode }) {
   const ref = useRef<HTMLElement | null>(null)
@@ -39,13 +46,13 @@ export default function AboutTools({ children }: { children: ReactNode }) {
     if (!root) return
     const viewport = root.querySelector<HTMLElement>('.ab-tools-vp')
     const track = root.querySelector<HTMLElement>('.ab-tools-track')
-    const disc = root.querySelector<HTMLElement>('.ab-drag')
+    const disc = root.querySelector<HTMLElement>('.k-hand-disc')
     if (!viewport || !track) return
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const hover = window.matchMedia('(hover: hover)').matches
+    const html = document.documentElement
 
     /* the cards reveal once as the row enters */
-    const cards = Array.from(root.querySelectorAll<HTMLElement>('.ab-tool'))
     const title = root.querySelector<HTMLElement>('.ab-tools-t')
     const io = new IntersectionObserver(
       (entries) => {
@@ -119,29 +126,40 @@ export default function AboutTools({ children }: { children: ReactNode }) {
     viewport.addEventListener('click', onClick, true)
 
     /* ---- THE HAND ---- */
+    /* the pointer's last known place on the page; unknown until it has
+       moved once, and unknown again once it has left the window */
     let px = 0
     let py = 0
-    let dx = 0
-    let dy = 0
-    let over = false
-    const onEnter = () => {
-      over = true
-      root.classList.add('is-hand')
-    }
-    const onLeave = () => {
-      over = false
-      root.classList.remove('is-hand')
-    }
-    const onPoint = (e: PointerEvent) => {
+    let known = false
+    const onPointer = (e: PointerEvent) => {
+      if (e.pointerType !== 'mouse' && e.pointerType !== 'pen') return
       px = e.clientX
       py = e.clientY
-      if (!over) onEnter()
+      known = true
+    }
+    const onGone = () => {
+      known = false
     }
     if (hover && disc) {
-      viewport.addEventListener('pointerenter', onEnter)
-      viewport.addEventListener('pointerleave', onLeave)
-      viewport.addEventListener('pointermove', onPoint)
+      window.addEventListener('pointermove', onPointer, { passive: true })
+      html.addEventListener('pointerleave', onGone)
+      window.addEventListener('blur', onGone)
     }
+    /* the lens: the clone of the row shows revealed, and follows the drag */
+    const lens =
+      hover && disc
+        ? createHandLens({
+            disc,
+            onClone: (c) => {
+              c.removeAttribute('style')
+              c.classList.add('is-in')
+            },
+            syncClone: (c) => {
+              const t = c.querySelector<HTMLElement>('.ab-tools-track')
+              if (t) t.style.transform = track.style.transform
+            },
+          })
+        : null
 
     const tick = () => {
       if (!dragging) {
@@ -161,23 +179,14 @@ export default function AboutTools({ children }: { children: ReactNode }) {
       }
       track.style.transform = `translate3d(${x.toFixed(2)}px, 0, 0)`
 
-      if (hover && disc) {
-        /* the disc glides to the hand; snaps in from where the hand is
-           if it has just arrived */
-        if (over && dx === 0 && dy === 0) {
-          dx = px
-          dy = py
-        }
-        dx += (px - dx) * GLIDE
-        dy += (py - dy) * GLIDE
-        disc.style.transform = `translate3d(${(dx - disc.offsetWidth / 2).toFixed(1)}px, ${(dy - disc.offsetHeight / 2).toFixed(1)}px, 0)`
-      }
+      if (!lens) return
+
+      /* PRESENCE: the hand against the row's live rect, every frame */
+      const under = known && within(viewport.getBoundingClientRect(), px, py) ? viewport : null
+      lens.tick(px, py, under, dragging)
     }
     if (!reduce) gsap.ticker.add(tick)
     else track.style.transform = ''
-    /* keep k referenced for the picture rule: sizes below are rem-based
-       and resolved by CSS; the driver moves in px it measured */
-    void rem
 
     return () => {
       io.disconnect()
@@ -187,22 +196,20 @@ export default function AboutTools({ children }: { children: ReactNode }) {
       viewport.removeEventListener('pointerup', onUp)
       viewport.removeEventListener('pointercancel', onUp)
       viewport.removeEventListener('click', onClick, true)
-      viewport.removeEventListener('pointerenter', onEnter)
-      viewport.removeEventListener('pointerleave', onLeave)
-      viewport.removeEventListener('pointermove', onPoint)
+      window.removeEventListener('pointermove', onPointer)
+      html.removeEventListener('pointerleave', onGone)
+      window.removeEventListener('blur', onGone)
       track.style.transform = ''
-      root.classList.remove('is-hand')
       viewport.classList.remove('is-holding')
+      lens?.destroy()
     }
   }, [])
 
   return (
     <section ref={ref} className="ab-tools" aria-label="Our toolset">
       {children}
-      {/* the hand's disc — the word inside it is the affordance */}
-      <div className="ab-drag" aria-hidden="true">
-        <span>Drag</span>
-      </div>
+      {/* the hand's disc: the glass, the lens, the word */}
+      <HandDisc word="Drag" />
     </section>
   )
 }
