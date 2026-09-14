@@ -150,9 +150,13 @@ const GAP = '0.26em'
  *  nowhere."). The three lines are laid out where they rest and each one
  *  rises straight up into place through its own line-box mask — one long
  *  glass ease, the lines following each other down the sentence. Nothing
- *  travels between lines. A beat later the pills sew in (ENTRY), which is
- *  the same FLIP the walk uses. The START is the gate below (`k-hero-open`),
- *  untouched — the user: "the timing that it starts is perfect".
+ *  travels between lines. The pills sew in (ENTRY) ON THE SAME TIMELINE —
+ *  the FLIP the walk uses, launched in the same call as the reveal, so the
+ *  words rise and the pills push in one breath (2026-09-14, user: "once it
+ *  appears the expansion happens right away, no delays" — until then the
+ *  pills waited a 0.3s beat on the three still lines). The START is the
+ *  gate below (`k-hero-open`), which HeroPeel now fires partway through
+ *  its carve rather than at its end.
  *  (The stacked-on-the-middle-line entrance it replaces is in the
  *  choreography doc's record, 2026-08-26 desktop touch-ups.) */
 const ENTER = {
@@ -160,8 +164,6 @@ const ENTER = {
   reveal: 1.0,
   /** the lines lift one after another */
   lineStep: 0.12,
-  /** the pause on the three still lines before the pills sew in */
-  beat: 0.3,
 }
 /** dwell on a composition before the next one, randomised per beat */
 const HOLD_MIN = 2600
@@ -394,36 +396,37 @@ export default function HeroTitle() {
       return tl
     }
 
-    // ---- THE ENTRANCE — see ENTER. Nothing is frozen and nothing changes
-    // line: the flow stays in its pre layout (the three lines) and each
-    // word rises through its own line box in place — yPercent 100→0 with a
-    // bottom clip-path inset 100%→0% on the same ease, which is exactly a
-    // static mask at the line (the visible part of a box translated down by
-    // (1-p)·H is its top p·H). Every word on a line shares one start, so
-    // the line lifts as one; the lines follow each other down the
-    // sentence, and the sew follows the last. ----
-    let sewCall: gsap.core.Tween | null = null
-    const sew = () => {
-      if (!live) return
+    // ---- THE ENTRANCE — see ENTER. ONE timeline, two motions on it:
+    //  · the SEW: the FLIP from the pre layout (three forced lines, pills
+    //    at zero width) to ENTRY — the pills expand and push the words
+    //    along, "make" climbs a line. This is morph(), untouched.
+    //  · the REVEAL: each word rises through its own line box in place —
+    //    yPercent 100→0 with a bottom clip-path inset 100%→0% on the same
+    //    ease, which is exactly a static mask at the line (the visible
+    //    part of a box translated down by (1-p)·H is its top p·H). Every
+    //    word on a line shares one start; the lines follow each other
+    //    down the sentence.
+    // The two never write the same property: the FLIP moves x/y/width,
+    // the reveal yPercent/clip, and GSAP composes the transform. Rows are
+    // read off the pre layout BEFORE the sew re-breaks it, so the lift
+    // order is the three lines the user sees. ----
+    const enter = () => {
+      if (running) running.progress(1).kill()
+      const rows = readRows()
       comp = ENTRY
       /* the pills' push — HeroPortrait brings the copy in on this */
       window.dispatchEvent(new Event('k-hero-sew'))
-      morph(
+      const tl = morph(
         () => {
           flow.classList.remove('is-pre')
           applyComp(ENTRY)
         },
         { sew: true },
       )
-    }
-    const enter = () => {
-      if (running) running.progress(1).kill()
-      const rows = readRows()
-      const tl = gsap.timeline()
       words.forEach((el) => {
         tl.fromTo(
           el,
-          { opacity: 1, yPercent: 100, clipPath: 'inset(0px 0px 100% 0px)' },
+          { yPercent: 100, clipPath: 'inset(0px 0px 100% 0px)' },
           {
             yPercent: 0,
             clipPath: 'inset(0px 0px 0% 0px)',
@@ -433,18 +436,17 @@ export default function HeroTitle() {
           rows[items.indexOf(el)] * ENTER.lineStep,
         )
       })
-
-      running = tl
+      /* morph's own onComplete unfreezes the flow and clears transforms;
+         the reveal's clip is the one thing it does not know about */
+      const land = tl.eventCallback('onComplete')
       tl.eventCallback('onComplete', () => {
-        running = null
-        /* opacity stays inline at 1: the flow is still `is-pre` (words 0) */
-        gsap.set(words, { clearProps: 'transform,clipPath' })
-        sewCall = gsap.delayedCall(ENTER.beat, sew)
+        land?.()
+        gsap.set(words, { clearProps: 'clipPath' })
       })
       return tl
     }
     /** the entrance's length, for the walk's first hold */
-    const ENTER_TOTAL = 2 * ENTER.lineStep + ENTER.reveal + ENTER.beat + DUR.cinema
+    const ENTER_TOTAL = Math.max(2 * ENTER.lineStep + ENTER.reveal, LOCK + DUR.cinema)
 
     // ---- the walk: a shuffled bag of compositions, never twice in a row ----
     let bag: Comp[] = []
@@ -507,7 +509,6 @@ export default function HeroTitle() {
       clearTimeout(fallback)
       if (timer) clearTimeout(timer)
       io?.disconnect()
-      sewCall?.kill()
       running?.kill()
       gsap.killTweensOf(items)
     }

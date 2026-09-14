@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import HubHero from '@/components/v4/HubHero'
 import HubList from '@/components/v4/HubList'
-import ScrollFillText from '@/components/v4/ScrollFillText'
+import BlockReveal from '@/components/v4/BlockReveal'
 import Button from '@/components/v4/Button'
 import Invitation from '@/components/v4/Invitation'
 import { SERVICE_PAGES } from '@/lib/service-pages'
@@ -190,7 +190,7 @@ export default function ServicesHubPage() {
       <HubList>
         <div className="sh-lead">
           <span className="sh-lead-l">Services</span>
-          <ScrollFillText as="p" className="sh-lead-p" text={LEAD} />
+          <BlockReveal as="p" className="sh-lead-p" text={LEAD} />
         </div>
 
         <ol className="sh-list">

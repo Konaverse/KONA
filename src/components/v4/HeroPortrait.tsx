@@ -5,6 +5,7 @@ import Button from '@/components/v4/Button'
 import HeroTitle from '@/components/v4/HeroTitle'
 import { gsap, EASE, DUR } from '@/lib/motion-v4'
 import { CALENDLY_URL } from '@/lib/site'
+import { SHAPE_PATH } from '@/lib/hero-shape'
 
 /**
  * SECTION 1 — ARRIVAL, VARIANT B ("the staircase"), 2026-08-18 night.
@@ -34,10 +35,6 @@ import { CALENDLY_URL } from '@/lib/site'
  * The paragraph is PLACEHOLDER copy; the headline is the user's own line.
  */
 
-const SHAPE_PATH =
-  'M 548 0 H 787 A 28 28 0 0 1 815 28 V 162 A 28 28 0 0 1 787 190 H 573 ' +
-  'A 28 28 0 0 0 545 218 V 347 A 28 28 0 0 1 517 375 H 28 A 28 28 0 0 1 0 347 ' +
-  'V 183 A 28 28 0 0 1 28 155 H 492 A 28 28 0 0 0 520 127 V 28 A 28 28 0 0 1 548 0 Z'
 
 export default function HeroPortrait() {
   const rootRef = useRef<HTMLElement | null>(null)

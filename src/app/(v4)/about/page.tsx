@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
-import AboutHero from '@/components/v4/AboutHero'
+import AboutGridHero from '@/components/v4/AboutGridHero'
 import AboutWho from '@/components/v4/AboutWho'
 import AboutRefuse from '@/components/v4/AboutRefuse'
 import AboutTools from '@/components/v4/AboutTools'
 import AboutTimeline from '@/components/v4/AboutTimeline'
 import ScrollFillText from '@/components/v4/ScrollFillText'
+import BlockReveal from '@/components/v4/BlockReveal'
 import Invitation from '@/components/v4/Invitation'
 import { SITE_URL } from '@/lib/site'
 import './about.css'
@@ -17,15 +18,17 @@ import './about.css'
  * page here — the E-E-A-T anchor every blog byline points back to. It
  * repeats nothing the homepage owns (process is §7, price is §8).
  *
- * §1 THE HERO — one sentence in three lines, light weight: "designing
- * with / ideas [plate] that / connect". The plate sits INLINE in the
- * second line — the homepage hero's dark-grain pill, the bosra
- * colonnade — and the third line runs on a full-bleed dark band, the
- * one polarity flip on the page, carried by its own seam (the band
- * wipes in from the left as the word rises). On load the lines rise
- * through their masks, then the pill opens after "ideas" as an aperture
- * — the homepage pills' own move — and "that" is carried right by it.
- * AboutHero.tsx.
+ * §1 THE HERO — THE GRID (2026-09-14, user: the studioaton.webflow.io
+ * hero, "the same animation exactly", with their own pictures). A
+ * 300svh runway with a 100svh sticky box: a three-row grid of tiles
+ * scaled so the centre one fills the screen, the title lifted to the
+ * middle with its words a third larger. Scrolling scales the grid down
+ * to the mosaic, lands the title at the foot, fades the cue and draws
+ * a rule between the words; the rows slide apart as the section leaves.
+ * Every number is the original's, read off its own GSAP instances
+ * (extract/aton-hero/). AboutGridHero.tsx. The sentence hero it
+ * replaces (AboutHero.tsx, "designing with / ideas [plate] that /
+ * connect") is parked, unimported.
  *
  * §2 THE STATEMENT — two paragraphs, the studio's aim in the heavier
  * voice and what it does in the light one, filling letter by letter as
@@ -241,45 +244,24 @@ export default function AboutPage() {
       {/* the entrances park things at opacity 0 or behind a crop edge;
           the no-JS page undoes every one of them */}
       <noscript>
-        <style>{`.ab-ent,.ab-w,.ab-who-k,.ab-fig,.ab-bio,.ab-name,.ab-port,.ab-plate,.ab-plate-w,.ab-dossier,.ab-ledger-l,.ab-ref-h,.ab-ref-p,.ab-row{opacity:1!important;transform:none!important;filter:none!important;clip-path:none!important}.ab-pill{width:var(--ab-pill-rest)!important;margin-left:.22em!important}.ab-band::before{transform:none!important}.ab-row-what::after{transform:none!important}.ab-person-r .ab-port{top:100rem!important}.ab-tools-vp{overflow-x:auto!important}.ab-tool,.ab-tools-w,.ab-tools-t{opacity:1!important;transform:none!important}.ab-tl-list{position:static!important;width:auto!important;height:auto!important;clip:auto!important;overflow:visible!important;padding:0 var(--ab-pad) 4rem!important}.ab-time{--ab-tl-len:auto}.ab-tl-stage{position:static!important;height:auto!important}`}</style>
+        <style>{`.ab-ent,.ab-w,.ab-who-k,.ab-fig,.ab-bio,.ab-name,.ab-port,.ab-plate,.ab-plate-w,.ab-dossier,.ab-ledger-l,.ab-ref-h,.ab-ref-p,.ab-row{opacity:1!important;transform:none!important;filter:none!important;clip-path:none!important}.ab-pill{width:var(--ab-pill-rest)!important;margin-left:.22em!important}.ab-band::before{transform:none!important}.ab-row-what::after{transform:none!important}.ab-person-r .ab-port{top:100rem!important}.ab-tools-vp{overflow-x:auto!important}.ab-tool,.ab-tools-w,.ab-tools-t{opacity:1!important;transform:none!important}.ab-tl-list{position:static!important;width:auto!important;height:auto!important;clip:auto!important;overflow:visible!important;padding:0 var(--ab-pad) 4rem!important}.ab-time{--ab-tl-len:auto}.ab-tl-stage{position:static!important;height:auto!important}.ag{height:100svh!important}`}</style>
       </noscript>
 
-      {/* §1 — THE HERO: the sentence, the plate in its second line, the
-          third line on the band */}
-      <AboutHero>
-        <h1 className="ab-h1">
-          <span className="ab-mask">
-            <span className="ab-ln ab-ent">designing with</span>
-          </span>
-          <span className="ab-mask">
-            <span className="ab-ln ab-ent">
-              ideas
-              {/* THE PLATE — decorative, inline, the sentence reads whole
-                  without it. Width is the entrance's; --ab-pill-rest is
-                  the resting width so CSS alone holds the composition. */}
-              <span className="ab-pill" aria-hidden="true">
-                <img src="/home/bosra-1200.webp" alt="" draggable={false} />
-                <i className="ab-glint" />
-              </span>
-              that
-            </span>
-          </span>
-          <span className="ab-band">
-            <span className="ab-mask">
-              <span className="ab-ln ab-ent">connect</span>
-            </span>
-          </span>
-        </h1>
-      </AboutHero>
+      {/* §1 — THE HERO: the grid (2026-09-14) — one picture full-bleed,
+          the mosaic it belongs to revealed on scroll, the title landing
+          at the foot. AboutGridHero.tsx. */}
+      <AboutGridHero />
 
-      {/* §2 — THE STATEMENT, two voices */}
+      {/* §2 — THE STATEMENT, two voices, each wiped in line by line
+          (BlockReveal, 2026-09-14 — the scroll-fill it replaces here
+          stays on the people's lines and the invitation) */}
       <section className="ab-state" aria-label="What we do">
-        <ScrollFillText
+        <BlockReveal
           as="p"
           className="ab-aim"
           text="We aim to fill the internet with websites that convey a strong character and personality through it."
         />
-        <ScrollFillText
+        <BlockReveal
           as="p"
           className="ab-do"
           text="We design websites that provide immersive experiences to the visitors."

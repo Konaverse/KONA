@@ -2024,16 +2024,18 @@
 .sc {
   /* ONE radius, and one inner radius derived from it. Cards use the first,
      the media plate the second, the chip is the only pill (shape lock). */
-  --sc-r: clamp(1rem, 1.2vw, 1.375rem);
+  --sc-r: var(--r-lg);
   --sc-pad: clamp(1.3rem, 1.9vw, 2.1rem);
   --sc-gap: clamp(0.9rem, 1.2vw, 1.5rem);
   position: relative;
   z-index: 2;
-  /* §3's burial, carried through every version of this section: §4 rises as
-     an opaque sheet over the portrait while it keeps drifting at ~0.45x */
-  margin-top: -100svh;
-  /* `k-dark` is on the section in ServiceCards.tsx, so this resolves to the
-     void and every role under it flips with one class */
+  /* §3's BURIAL IS GONE (2026-09-14): this section used to rise as an
+     opaque sheet over §3's sticky photograph (margin-top: -100svh); §3
+     is a paragraph on paper now and this follows it in flow. */
+  /* PAPER (2026-09-14, user: "white like the hero"). `k-dark` used to sit
+     on this section, resolving this to the void; it now sits on each
+     .sc-card in ServiceCards.tsx, so the ground is the hero's white and
+     only the cards are dark. */
   background: var(--surface);
   /* THE LIT LEADING EDGE IS GONE (2026-08-26, user: "a white edge on the
      top of the section with a white shadow on it, that needs to leave").
@@ -2057,9 +2059,7 @@
   max-width: 97.5rem;
   margin-inline: auto;
   padding-inline: var(--page-pad);
-  /* the top clears the seam by a viewport-relative beat, so the heading
-     never arrives while the sheet is still crossing the portrait */
-  padding-block: clamp(7rem, 16vh, 11rem) var(--section-y);
+  padding-block: var(--section-y);
 }
 
 /* ---------- the header ----------
@@ -2145,8 +2145,10 @@
   gap: var(--s-5);
   padding: var(--sc-pad);
   border-radius: var(--sc-r);
+  /* PAPER (2026-09-14, second pass): the raised step with a hairline
+     ring and the light polarity's lift — the work stack's material */
   background: var(--surface-raised);
-  box-shadow: var(--lift-2);
+  box-shadow: inset 0 0 0 1px var(--hairline), var(--lift-2);
   color: var(--text);
   text-decoration: none;
   touch-action: manipulation;
@@ -2161,7 +2163,7 @@
     /* NO drop shadow, on the dark polarity's own rule: a shadow on a
        near-black ground is invisible, and depth here is the surface ladder
        plus a brighter ring and a stronger top-edge catch */
-    box-shadow: var(--lift-4);
+    box-shadow: inset 0 0 0 1px var(--hairline-strong), var(--lift-4);
   }
 }
 .sc-card:focus-visible {
@@ -2245,25 +2247,16 @@
      pushed until the plate is unmistakably polished black glass catching
      this card's key light: a specular at --lx/--ly and one broad raking
      gradient across it, both static paint, costing nothing per frame. */
-  background:
-    radial-gradient(
-      115% 85% at var(--lx) var(--ly),
-      rgb(226 238 246 / 0.17) 0%,
-      rgb(226 238 246 / 0.05) 38%,
-      rgb(226 238 246 / 0) 68%
-    ),
-    linear-gradient(158deg, rgb(226 238 246 / 0.05) 0%, rgb(226 238 246 / 0) 62%),
-    #000;
-  box-shadow:
-    inset 0 0 0 var(--hair) rgb(255 255 255 / 0.08),
-    inset 0 1px 0 rgb(255 255 255 / 0.12);
+  /* A BLACK WINDOW IN PAPER (2026-09-14): the hero's own arrangement.
+     Pure black because every object is rendered on black; the key-light
+     specular is gone — on paper the plate is a window, not a lit panel */
+  background: #000;
+  box-shadow: inset 0 0 0 var(--hair) rgb(255 255 255 / 0.06);
   transition: box-shadow var(--d-base) var(--e-settle);
 }
 @media (hover: hover) {
   .sc-card:hover .sc-media {
-    box-shadow:
-      inset 0 0 0 var(--hair) rgb(255 255 255 / 0.14),
-      inset 0 1px 0 rgb(255 255 255 / 0.2);
+    box-shadow: inset 0 0 0 var(--hair) rgb(255 255 255 / 0.12);
   }
 }
 
@@ -2294,11 +2287,6 @@
   pointer-events: none;
   background:
     radial-gradient(
-      120% 90% at var(--lx) var(--ly),
-      rgb(226 238 246 / 0.1) 0%,
-      rgb(226 238 246 / 0) 62%
-    ),
-    radial-gradient(
       86% 76% at 50% 52%,
       rgb(6 8 9 / 0.62) 0%,
       rgb(6 8 9 / 0.3) 58%,
@@ -2317,51 +2305,61 @@
   z-index: 4;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto auto;
   column-gap: var(--s-5);
-  align-items: center;
+  row-gap: 0.35rem;
+  align-items: end;
+}
+/* the index: the hub's own numeral, so the card and the row it links to
+   are the same thing */
+.sc-no {
+  grid-column: 1;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 0.35rem;
 }
 .sc-name {
   grid-column: 1;
   margin: 0;
-  font-size: clamp(1.2rem, 1.55vw, 1.6rem);
-  font-weight: var(--w-medium);
-  letter-spacing: var(--ls-h3);
+  font-size: clamp(1.5rem, 2.1vw, 2.15rem);
+  font-weight: var(--w-light);
+  letter-spacing: var(--ls-h2);
   line-height: var(--lh-tight);
   text-wrap: balance;
 }
 .sc-para {
   grid-column: 1;
-  margin: var(--s-3) 0 0;
-  max-width: 52ch;
+  margin: 0.35rem 0 0;
+  max-width: 44ch;
   color: var(--text-muted);
   font-size: clamp(0.9rem, 0.95vw, 1rem);
   line-height: var(--lh-snug);
 }
 
-/* the chip, on the house's arrow grammar (tokens.css .k-arrow-link): a plain
-   line at rest, an east arrow once you are about to act on it, stepping
-   forward along its own axis as it resolves. Touch never gets a hover, so
-   there the resolved arrow is the default. */
+/* the arrow, on the house grammar (tokens.css .k-arrow-link): a word and
+   a plain line at rest; on hover the head grows out of the line's tip and
+   the whole steps east. Touch never gets a hover, so there the arrow is
+   the default. */
 .sc-chip {
   grid-column: 2;
-  grid-row: 1 / span 2;
-  align-self: center;
-  display: grid;
-  place-items: center;
-  width: clamp(2.1rem, 2.4vw, 2.5rem);
-  height: clamp(2.1rem, 2.4vw, 2.5rem);
-  border-radius: var(--r-full);
-  background: rgb(226 238 246 / 0.06);
-  box-shadow: inset 0 0 0 var(--hair) rgb(255 255 255 / 0.12);
+  grid-row: 1 / span 3;
+  align-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   color: var(--text-muted);
-  transition:
-    color var(--d-base) linear,
-    background-color var(--d-base) linear,
-    box-shadow var(--d-base) var(--e-settle);
+  transition: color var(--d-base) linear;
+}
+.sc-chip-l {
+  font-size: var(--t-small);
+  line-height: 1;
+  white-space: nowrap;
 }
 .sc-chip svg {
   display: block;
-  width: 0.95rem;
+  width: 1rem;
   height: auto;
   overflow: visible;
   transform-box: view-box;
@@ -2380,11 +2378,7 @@
   .sc-card:hover .sc-chip svg,
   .sc-card:focus-visible .sc-chip svg { transform: translateX(0.1875rem); }
   .sc-card:hover .sc-chip,
-  .sc-card:focus-visible .sc-chip {
-    color: var(--text);
-    background: rgb(226 238 246 / 0.12);
-    box-shadow: inset 0 0 0 var(--hair) rgb(255 255 255 / 0.22);
-  }
+  .sc-card:focus-visible .sc-chip { color: var(--text); }
 }
 
 /* ---------- narrower than two columns ----------
@@ -2664,4 +2658,375 @@
   .so-lift,
   .so-float,
   .so-spin { transform: none !important; }
+}
+
+/* ============================================================
+   §5 — THE STACK (WorkStack.tsx, 2026-09-14). studioaton.webflow.io's
+   Latest projects rebuilt from measurement: a centred two-line head
+   that sinks under the cards, a column of cards each sticky at
+   --ws-stick that shrink to 0.7 as the next rides over, a button.
+   On paper. Replaces the rows (WorkRows, .wr) and the deck (WorkDeck,
+   .wd), both parked in the tree.
+   ============================================================ */
+.ws {
+  /* the card: 1012x600 at 1440 → 70.3vw at 1012:600; sticks 90px
+     (10svh) from the top; 16px between cards */
+  --ws-w: min(70.3vw, 64rem);
+  --ws-stick: 10svh;
+  --ws-gap: 1rem;
+  position: relative;
+  z-index: 2;
+  padding: clamp(5rem, 15vh, 8.5rem) 0;
+  background: var(--surface);
+  color: var(--text);
+}
+.ws-page {
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding-inline: var(--page-pad);
+}
+/* the head: count left, title centred, dot right — one row, the
+   marks on the title's first line's middle */
+.ws-head {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: start;
+  will-change: transform, opacity;
+}
+.ws-mark {
+  grid-column: 1;
+  margin: 0;
+  padding-top: calc(0.45 * 0.9 * 12.5vw - 0.7em);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.ws-title {
+  grid-column: 2;
+  margin: 0;
+  display: grid;
+  text-align: center;
+  font-size: 12.5vw;
+  font-weight: var(--w-semi);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+}
+.ws-tl { display: block; }
+.ws-dot {
+  grid-column: 3;
+  justify-self: end;
+  width: 0.75rem;
+  height: 0.75rem;
+  margin-top: calc(0.45 * 0.9 * 12.5vw - 0.375rem);
+  border-radius: var(--r-full);
+  background: var(--text-muted);
+}
+
+/* the column */
+.ws-hold {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  width: var(--ws-w);
+  display: grid;
+  row-gap: var(--ws-gap);
+}
+.ws-card {
+  position: sticky;
+  top: var(--ws-stick);
+  aspect-ratio: 1012 / 600;
+  will-change: transform;
+  transform-origin: 50% 50%;
+}
+.ws-link {
+  position: relative;
+  display: block;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  background: var(--surface-inset);
+  color: inherit;
+  text-decoration: none;
+}
+.ws-link img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--d-slow) var(--e-glass);
+}
+@media (hover: hover) {
+  .ws-link:hover img { transform: scale(1.03); }
+}
+/* the name, centred on the card as the original centres its client
+   logos — but ours are website captures, light with dark patches, so
+   the name sits in a solid ink pill (the original's own button
+   material) rather than in difference, which went muddy over them.
+   Solid, not frosted: the card is mid-scale every frame it is stuck,
+   and a backdrop blur would re-raster with it. */
+.ws-name {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  padding: var(--s-5);
+  pointer-events: none;
+}
+.ws-name-t {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6em;
+  padding: 0.7em 1.15em;
+  border-radius: var(--r-full);
+  background: var(--ink);
+  color: var(--n-0);
+  font-size: clamp(1rem, 1.25vw, 1.25rem);
+  font-weight: var(--w-medium);
+  letter-spacing: -0.005em;
+  line-height: 1;
+  white-space: nowrap;
+}
+.ws-name-y {
+  display: inline;
+  margin-left: 0.6em;
+  color: var(--n-5);
+  font-size: 0.8em;
+}
+.ws-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(3rem, 8vh, 5rem);
+}
+
+@media (max-width: 57.5rem) {
+  .ws { --ws-w: 100%; --ws-stick: 4.5rem; }
+  .ws-title { font-size: clamp(3rem, 16vw, 6rem); }
+  .ws-mark, .ws-dot { display: none; }
+  .ws-head { grid-template-columns: 1fr; }
+  .ws-title { grid-column: 1; }
+  .ws-card { aspect-ratio: 4 / 3; }
+}
+
+
+/* ============================================================
+   §3 — WHAT WE SOLVE, THE STATEMENT (2026-09-14). One paragraph on
+   paper in the light display voice — the About statement's measure —
+   wiped in line by line (BlockReveal; the bar is ink here). Replaces
+   the credit roll over the photograph (.sv, SolveCredits.tsx, parked).
+   ============================================================ */
+.sv2 {
+  position: relative;
+  z-index: 2;
+  padding: clamp(7rem, 18vh, 12rem) 0;
+  background: var(--surface);
+  color: var(--text);
+}
+.sv2-page {
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding-inline: var(--page-pad);
+}
+.sv2-k {
+  margin: 0 0 var(--s-6);
+  color: var(--text-muted);
+}
+.sv2-p {
+  margin: 0;
+  max-width: 64rem;
+  font-size: clamp(2rem, 4.2vw, 4.1rem);
+  font-weight: var(--w-light);
+  line-height: 1.16;
+  letter-spacing: var(--ls-h1);
+  text-wrap: pretty;
+}
+@media (max-width: 57.5rem) {
+  .sv2 { padding: 5rem 0; }
+  .sv2-p { font-size: clamp(1.85rem, 7.4vw, 2.6rem); }
+}
+
+/* ============================================================
+   §5 — THE LIST (WorkList.tsx, 2026-09-14). igniteagency.com's selected
+   work rebuilt from measurement: a marquee head drifting and scrubbed,
+   hairline rows that flood with ink from the bottom on hover while the
+   name steps right, the pill gives way to the link, and a preview
+   chases the cursor. On paper. Replaces the stack (WorkStack, .ws),
+   parked with the rows and the deck.
+   ============================================================ */
+.wl {
+  --wl-ease: cubic-bezier(0.075, 0.82, 0.165, 1);
+  position: relative;
+  z-index: 2;
+  padding: clamp(4rem, 9vh, 6.5rem) 0 clamp(5rem, 12vh, 8rem);
+  background: var(--surface);
+  color: var(--text);
+  overflow-x: clip;
+}
+/* the marquee: one line, repeated; the track is moved by JS */
+.wl-marq {
+  overflow: hidden;
+  margin-bottom: clamp(3rem, 7vh, 5rem);
+}
+.wl-marq-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+.wl-marq-t {
+  display: block;
+  padding-right: 0.28em;
+  font-size: 13.5vw;
+  font-weight: var(--w-semi);
+  line-height: 0.85;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.wl-page {
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding-inline: var(--page-pad);
+}
+.wl-k {
+  margin: 0 0 var(--s-6);
+  font-weight: var(--w-regular);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.wl-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--hairline-strong);
+}
+.wl-row {
+  position: relative;
+  border-bottom: 1px solid var(--hairline-strong);
+}
+.wl-row:hover { z-index: 3; }
+.wl-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-5);
+  min-height: 6.1rem;
+  padding: 1.5rem 0;
+  color: var(--text);
+  text-decoration: none;
+  transition: color 0.4s;
+}
+/* the overlay: ink, growing up from the bottom edge */
+.wl-ov {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--ink);
+  transform: scaleY(0);
+  transform-origin: 50% 100%;
+  transition: transform 0.6s var(--wl-ease);
+  pointer-events: none;
+}
+.wl-name {
+  position: relative;
+  z-index: 1;
+  font-size: clamp(1.5rem, 2.6vw, 2.35rem);
+  font-weight: var(--w-regular);
+  letter-spacing: var(--ls-h2);
+  line-height: 1.3;
+  transition: transform 0.4s, color 0.4s;
+}
+/* the right slot: clipped, the pill and the link trade places */
+.wl-right {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: flex-end;
+  height: 2.5rem;
+  /* the slot is the row's slack (the original's right wrapper), so the
+     link that slides in has room; clipped, so the trade is a wipe */
+  overflow: clip;
+}
+.wl-name { flex: 0 0 auto; }
+.wl-tag,
+.wl-cta {
+  display: inline-flex;
+  align-items: center;
+  height: 2.5rem;
+  transition: transform 0.6s var(--wl-ease);
+}
+.wl-tag {
+  padding: 0 1em;
+  border: 1.5px solid currentColor;
+  border-radius: var(--r-full);
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.wl-cta {
+  position: absolute;
+  top: 0;
+  right: 0;
+  gap: 0.6rem;
+  font-size: 1rem;
+  white-space: nowrap;
+  transform: translateY(100%);
+}
+.wl-cta svg {
+  width: 1.05rem;
+  height: auto;
+}
+/* the preview: 16:9, centred on the row's height, its x written by JS
+   from the cursor; scale is the driver's too, so the two transforms
+   never meet on the CSS side */
+.wl-prev {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  z-index: 2;
+  width: min(32rem, 40vw);
+  aspect-ratio: 16 / 9;
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--r-md);
+  background: var(--ink);
+  /* centred by the driver (xPercent/yPercent −50): GSAP neutralises the
+     individual `translate` property when it writes a transform, so the
+     centring cannot live in CSS */
+  transform: translate(-50%, -50%) scale(0);
+  transform-origin: 50% 50%;
+  pointer-events: none;
+  will-change: transform;
+}
+.wl-prev img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+@media (hover: hover) {
+  .wl-link:hover { color: var(--n-0); }
+  .wl-link:hover .wl-ov { transform: scaleY(1); }
+  .wl-link:hover .wl-name { transform: translateX(1rem); }
+  .wl-link:hover .wl-tag { transform: translateY(-100%); }
+  .wl-link:hover .wl-cta { transform: translateY(0); }
+}
+@media not (hover: hover) {
+  .wl-prev { display: none; }
+}
+.wl-foot {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(3rem, 8vh, 5rem);
+}
+@media (max-width: 57.5rem) {
+  .wl-marq-t { font-size: 18vw; }
+  .wl-link { min-height: 4.5rem; padding: 1.1rem 0; }
+  .wl-name { font-size: 1.35rem; }
+  .wl-tag { font-size: 0.75rem; height: 2rem; padding: 0 0.8em; }
+  .wl-right { height: 2rem; }
+  .wl-cta { display: none; }
 }

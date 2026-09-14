@@ -4,6 +4,7 @@ import CaseMotion from '@/components/v4/CaseMotion'
 import Button from '@/components/v4/Button'
 import ArrowLink from '@/components/v4/ArrowLink'
 import Reveal from '@/components/v4/Reveal'
+import BlockReveal from '@/components/v4/BlockReveal'
 import { CASE_STUDIES, getCaseStudy, type CaseBlock } from '@/lib/case-studies'
 import { WORK_PROJECTS } from '@/lib/work-projects'
 import { CALENDLY_URL, CONTACT_EMAIL, SITE_URL } from '@/lib/site'
@@ -305,9 +306,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
         <div className="cs-body">
           {study.sections.map((s) => (
             <section key={s.id} id={s.id} className="cs-sec" aria-labelledby={`${s.id}-h`}>
-              <Reveal masked as="h2" className="cs-h2">
-                <span id={`${s.id}-h`}>{s.title}</span>
-              </Reveal>
+              <BlockReveal as="h2" className="cs-h2" id={`${s.id}-h`} text={s.title} />
               {s.blocks.map((b, i) => (
                 <Block key={s.id + b.kind + i} block={b} i={i} />
               ))}
@@ -315,9 +314,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
           ))}
           {/* BLOCK 5 — required */}
           <section id="result" className="cs-sec" aria-labelledby="result-h">
-            <Reveal masked as="h2" className="cs-h2">
-              <span id="result-h">Result</span>
-            </Reveal>
+            <BlockReveal as="h2" className="cs-h2" id="result-h" text="Result" />
             {study.result.stats?.length ? (
               <ul className="cs-stats">
                 {study.result.stats.map((st, j) => (

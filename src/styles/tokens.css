@@ -740,6 +740,35 @@ html:has(.k-root)::-webkit-scrollbar {
 .k-mask > .k-reveal          { transform: translateY(110%); }
 .k-mask > .k-reveal.is-in    { transform: none; }
 
+/* THE BLOCK WIPE (BlockReveal.tsx, 2026-09-14) — the third expression,
+   for MULTI-LINE STATEMENTS entering on scroll: each line is a clipped
+   block; a bar of the polarity's text colour sweeps over it from the
+   left, the text snaps on beneath, the bar sweeps off to the right.
+   The element ships plain; the driver builds these and tears them
+   down again once the wipe has played. */
+.k-wipe.is-wipe .k-wipe-l {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  /* the bar is the LINE's width, not the column's: the reference's
+     wrappers each fit their own text */
+  width: fit-content;
+  max-width: 100%;
+  /* descenders breathe under the crop edge */
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+.k-wipe.is-wipe .k-wipe-t { display: block; opacity: 0; }
+.k-wipe.is-wipe .k-wipe-b {
+  position: absolute;
+  inset: 0;
+  background: var(--text);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  will-change: transform;
+}
+
 /* Stagger. Set --i per child (0,1,2,3). Four steps is the ceiling —
    the choreography's rule, and past it the last item lands after the
    reader has already moved on. */

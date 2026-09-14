@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 import Button from '@/components/v4/Button'
 import Reveal from '@/components/v4/Reveal'
-import ScrollFillText from '@/components/v4/ScrollFillText'
+import BlockReveal from '@/components/v4/BlockReveal'
 import { gsap, rem } from '@/lib/motion-v4'
 import { CALENDLY_URL, ROUTES } from '@/lib/site'
 import './invitation.css'
@@ -14,9 +14,9 @@ import './invitation.css'
  * the CTA is Start a project into contact; notes/links sideways or vertical
  * for the socials").
  *
- * THE LINE is the section: display scale, filling letter by letter as it
- * travels the viewport (ScrollFillText — the house scroll-fill, so the last
- * thing anyone reads arrives the way §2's claim did). Under it, THE TWO
+ * THE LINE is the section: display scale, wiped in line by line as it
+ * enters (BlockReveal, 2026-09-14 — until then the house scroll-fill,
+ * ScrollFillText, filled it letter by letter). Under it, THE TWO
  * CTAs (architecture §5a; user 2026-09-12): Contact goes to /contact for
  * the person who wants to write first, Book opens the Calendly popover for
  * the one who already wants the meeting. The email that stood here went
@@ -96,7 +96,9 @@ export default function Invitation() {
       </div>
 
       <div className="k-page inv-body">
-        <ScrollFillText
+        {/* the line wipes in (BlockReveal, 2026-09-14, user) — it was the
+            scroll-fill until then */}
+        <BlockReveal
           as="h2"
           className="t-display inv-line"
           text="Make yours the site they remember."

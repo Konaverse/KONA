@@ -1202,3 +1202,159 @@
   .ab-tl-cap { padding: 0.9rem 1rem; font-size: 0.88rem; }
   .ab-tl-badge { display: none; }
 }
+
+/* ============================================================
+   §1 · THE HERO — THE GRID (AboutGridHero.tsx, 2026-09-14). The
+   studioaton.webflow.io hero rebuilt from measurement: a 300svh
+   runway, a 100svh sticky box, a three-row tile grid scaled about
+   the viewport's centre, the title at the foot. CSS holds the OPENING
+   frame (the grid at 2.2, the title lifted, the words larger, the rule
+   at zero); the driver writes inline from there. `is-still` (reduced
+   motion) holds the LANDED frame with the runway collapsed. The
+   sentence hero it replaces (.ab-hero, AboutHero.tsx) stays above for
+   the record.
+   ============================================================ */
+.ag {
+  /* the tile: 45.8vw wide at 16:10 — the width the centre tile needs so
+     that 2.2x of it is the viewport (measured 659px at 1440) */
+  --ag-w: 45.8vw;
+  --ag-h: calc(var(--ag-w) / 1.6);
+  --ag-gap: 1rem;
+  --ag-scale0: 2.2;
+  position: relative;
+  height: 300svh;
+  background: var(--surface);
+  color: var(--text);
+}
+.ag-box {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+.ag-wrap {
+  position: absolute;
+  inset: 0;
+  transform: scale(var(--ag-scale0));
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+.ag-grid {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  width: calc(3 * var(--ag-w) + 2 * var(--ag-gap));
+  display: grid;
+  grid-template-rows: repeat(3, var(--ag-h));
+  gap: var(--ag-gap);
+}
+.ag-row {
+  display: grid;
+  gap: var(--ag-gap);
+  will-change: transform;
+}
+.ag-row-lg { grid-template-columns: repeat(3, var(--ag-w)); }
+.ag-row-sm { grid-template-columns: repeat(2, calc((3 * var(--ag-w) + var(--ag-gap)) / 2)); }
+.ag-tile {
+  position: relative;
+  height: var(--ag-h);
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  background: var(--surface-raised);
+}
+.ag-tile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* the title: at the foot, lifted 40svh for the opening */
+.ag-tw {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 2.25rem 1.5vw;
+  transform: translateY(-40svh);
+  will-change: transform;
+  /* DIFFERENCE (the WHO WE ARE title's grammar): the user's opening
+     picture is near-white and the landed tiles are mixed, so white
+     type is cut by whatever it sits on — ink on the light picture,
+     paper on the dark ground — instead of vanishing on either */
+  mix-blend-mode: difference;
+  color: #fff;
+}
+.ag-title {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 2rem 0;
+  font-size: 12.5vw;
+  font-weight: var(--w-semi);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  color: inherit;
+}
+.ag-word {
+  display: block;
+  white-space: nowrap;
+  transform: scale(1.3);
+  /* each word grows from its OUTER edge toward the middle. The original
+     scales about the centre, which its two short words can afford; ours
+     are copy-dependent and a centre scale pushes both past the viewport
+     at the opening (the first letters were cut). Anchored at the edges,
+     the opening's larger words always stay on screen. */
+  transform-origin: 0 50%;
+  will-change: transform;
+}
+.ag-word:last-child { transform-origin: 100% 50%; }
+.ag-line {
+  display: block;
+  flex: 0 0 auto;
+  width: 0;
+  height: 3px;
+  background: currentColor;
+}
+.ag-cue {
+  position: absolute;
+  inset: auto 0 3.5rem;
+  margin: 0;
+  text-align: center;
+  font-weight: var(--w-medium);
+  letter-spacing: 0.012em;
+  mix-blend-mode: difference;
+  color: #fff;
+}
+
+/* the landed frame, held still */
+.ag.is-still { height: 100svh; }
+.ag.is-still .ag-wrap { transform: none; }
+.ag.is-still .ag-tw { transform: none; }
+.ag.is-still .ag-word { transform: none; }
+.ag.is-still .ag-line { width: 15%; }
+.ag.is-still .ag-cue { display: none; }
+
+/* phones: the words stack, the tiles go squarer (measured 298x276 at
+   390) and the middle one still opens full-bleed */
+@media (max-width: 57.5rem) {
+  .ag {
+    --ag-w: 76vw;
+    --ag-h: calc(var(--ag-w) / 1.08);
+  }
+  .ag-title {
+    /* stacked: the driver's fit rule (AboutGridHero.tsx) reads this
+       and fits the longest word instead of the pair */
+    --ag-stack: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+    font-size: clamp(3.5rem, 22vw, 7.5rem);
+    padding: 1.5rem 0;
+  }
+  .ag-tw { padding: 1.5rem 1.25rem; }
+  .ag-word,
+  .ag-word:last-child { transform-origin: 0 50%; }
+  .ag-line { height: 2px; }
+}

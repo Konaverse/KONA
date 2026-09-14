@@ -302,43 +302,12 @@ export default function ServiceCards() {
     }
   }, [])
 
-  /* ---- the cursor lens: one listener for six cards ---- */
-  useEffect(() => {
-    const root = rootRef.current
-    if (!root) return
-    const grid = root.querySelector<HTMLElement>('.sc-grid')
-    if (!grid) return
-    if (!window.matchMedia('(hover: hover)').matches) return
-
-    let raf = 0
-    let pending: { el: HTMLElement; x: number; y: number } | null = null
-    const flush = () => {
-      raf = 0
-      if (!pending) return
-      pending.el.style.setProperty('--mx', `${pending.x}%`)
-      pending.el.style.setProperty('--my', `${pending.y}%`)
-      pending = null
-    }
-    const onMove = (e: PointerEvent) => {
-      const card = (e.target as HTMLElement | null)?.closest<HTMLElement>('.sc-card')
-      if (!card) return
-      const r = card.getBoundingClientRect()
-      pending = {
-        el: card,
-        x: ((e.clientX - r.left) / r.width) * 100,
-        y: ((e.clientY - r.top) / r.height) * 100,
-      }
-      if (!raf) raf = requestAnimationFrame(flush)
-    }
-    grid.addEventListener('pointermove', onMove, { passive: true })
-    return () => {
-      grid.removeEventListener('pointermove', onMove)
-      if (raf) cancelAnimationFrame(raf)
-    }
-  }, [])
+  /* the cursor lens that lived here (one pointermove listener writing
+     --mx/--my per card) went with the glass pane on 2026-09-14: on
+     paper the card has no lens to light */
 
   return (
-    <section className="sc k-dark" id="services" ref={rootRef} aria-labelledby="sc-h">
+    <section className="sc" id="services" ref={rootRef} aria-labelledby="sc-h">
       <div className="sc-page">
         <header className="sc-head">
           <h2 className="t-h2 sc-title" id="sc-h">
@@ -366,9 +335,17 @@ export default function ServiceCards() {
               {/* data-fx-host: Fractured takes its hover from the nearest one
                   of these, so the WHOLE card assembles the object, not just
                   the plate the object happens to sit in. */}
+              {/* PAPER CARDS (2026-09-14, second pass — user: the dark
+                  glass cards "don't match the rest of the page"). The card
+                  is paper with a hairline ring, the hero's own arrangement
+                  of a black window in a white shape: the PLATE stays pure
+                  black because every object is rendered on black, but the
+                  glass pane, the cursor lens and the six key-light angles
+                  are gone — on paper the object is the identity. The name
+                  is in the display voice, an index numbers the card as the
+                  hub's rows do, and the chip is the house arrow: a line at
+                  rest, an east arrow on hover. */}
               <a className="sc-card" data-fx-host href={`/services/${s.slug}`}>
-                <span className="sc-glass" aria-hidden="true" />
-                <span className="sc-spot" aria-hidden="true" />
 
                 {/* THE PLATE IS A SLOT. A service names its object in
                     services-data.tsx or names none at all; with none it
@@ -382,16 +359,19 @@ export default function ServiceCards() {
                 </span>
 
                 <span className="sc-body">
+                  <span className="sc-no" aria-hidden="true">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
                   <h3 className="sc-name">{s.name}</h3>
+                  <p className="sc-para t-body">{s.para}</p>
 
                   <span className="sc-chip" aria-hidden="true">
+                    <span className="sc-chip-l">Explore</span>
                     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
                       <path d="M2 8 L13 8" />
                       <path className="sc-chip-head" d="M9 4.5 L13 8 L9 11.5" />
                     </svg>
                   </span>
-
-                  <p className="sc-para t-body">{s.para}</p>
                 </span>
               </a>
             </li>

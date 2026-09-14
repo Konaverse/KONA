@@ -89,6 +89,16 @@ import { gsap, EASE, DUR, rem } from '@/lib/motion-v4'
  *  "arrive, then open" beat; the headline's entrance waits behind it */
 const OPEN_HOLD = 0.7
 
+/** THE OPEN ANNOUNCES EARLY (2026-09-14, user: "once the shape makes some
+ *  space for the text to appear then it appears — same transition, no
+ *  delays"). The carve used to announce `k-hero-open` only when it had
+ *  fully settled, so the headline rose into a shape that had been still
+ *  for a beat and read as a separate act. Now it announces the moment
+ *  uMorph has come down to this value — the staircase is that far in
+ *  shape, its top-left quadrant already clear — and the headline rises
+ *  through the last of the settle. 0 would be the old behaviour. */
+const OPEN_AT = 0.3
+
 /** THE FOLD'S SECOND STRETCH: how much of the claim's approach (in
  *  viewport heights) the scrub runs across — the fold lands when the
  *  claim's top is (1 − APPROACH)·vh from the top edge. Desktop went
@@ -567,11 +577,12 @@ export default function HeroPeel() {
        for the heading"). Until today the carve launched on HeroTitle's
        sew — the pills' push was the cause of the shape. Now the shape
        comes first: the cover reads full-bleed for OPEN_HOLD, carves down
-       to the staircase (settle, cinema), and the moment it is in shape
-       `k-hero-open` fires — HeroTitle's stacked reveal waits on exactly
-       that, and the pills follow the headline. One clock still, but the
-       container now sets it. A scroll that hurries the carve announces
-       the open too, so the headline can never be left waiting. */
+       to the staircase (settle, cinema), and once it is OPEN_AT of the
+       way in shape `k-hero-open` fires — HeroTitle's reveal waits on
+       exactly that, and the pills push in the same breath as the words
+       (2026-09-14). One clock still, but the container now sets it. A
+       scroll that hurries the carve announces the open too, so the
+       headline can never be left waiting. */
     const announceOpen = () => {
       if (opened || dead) return
       opened = true
@@ -584,6 +595,9 @@ export default function HeroPeel() {
         m: 0,
         duration: DUR.cinema,
         ease: EASE.settle,
+        onUpdate: () => {
+          if (intro.m <= OPEN_AT) announceOpen()
+        },
         onComplete: announceOpen,
       })
     }

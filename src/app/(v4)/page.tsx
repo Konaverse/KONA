@@ -3,11 +3,10 @@ import type { Metadata } from 'next'
 import HeroPortrait from '@/components/v4/HeroPortrait'
 import HeroPeel from '@/components/v4/HeroPeel'
 import ClaimEntrance from '@/components/v4/ClaimEntrance'
-import SolveCredits from '@/components/v4/SolveCredits'
+import BlockReveal from '@/components/v4/BlockReveal'
 import ServiceCards from '@/components/v4/ServiceCards'
-import type { SheetProject } from '@/components/v4/ProjectSheets'
-import WorkRows from '@/components/v4/WorkRows'
-import WorkDeck from '@/components/v4/WorkDeck'
+import WorkList from '@/components/v4/WorkList'
+import { CASE_STUDIES } from '@/lib/case-studies'
 import Invitation from '@/components/v4/Invitation'
 import { SITE_URL } from '@/lib/site'
 import './home.css'
@@ -45,41 +44,10 @@ export const metadata: Metadata = {
   },
 }
 
-/**
- * §5's three featured projects — REAL WORK as of 2026-08-24 (user-supplied
- * links). Artwork is each live site's own hero, captured at 1440x1000@2x
- * (tools/shot.js's sibling recipe) and encoded to public/work/. The same
- * component runs on /work with the full set; these three are the featured
- * subset, per the choreography's "three projects, one sheet each".
- *
- * hrefs are the CASE STUDIES (2026-09-12, user) — the slugs are the ones
- * src/lib/case-studies.ts serves; the live sites are linked from each
- * study. YEARS confirmed by the user 2026-08-28: Tzankatian 2026, Los
- * Santos 2025, Lumière 2026.
- */
-const FEATURED: SheetProject[] = [
-  {
-    title: 'Dimitris Tzankatian',
-    line: 'A videographer’s site that opens like his showreel — every frame with a purpose.',
-    year: '2026',
-    href: '/work/dt-zankatian',
-    image: '/work/tzankatian.webp',
-  },
-  {
-    title: 'Los Santos Barbershop',
-    line: 'Nicosia’s barbershop set in type as sharp as the fades.',
-    year: '2025',
-    href: '/work/los-santos-barbers',
-    image: '/work/lossantos.webp',
-  },
-  {
-    title: 'Lumière Éclat',
-    line: 'A scroll-driven story of light and steel.',
-    year: '2026',
-    href: '/work/lumiere-eclat',
-    image: '/work/lumiere.webp',
-  },
-]
+/* §5's FEATURED list (three SheetProjects for the rows/deck/stack) left
+   with WorkList (2026-09-14): the list draws every project from
+   src/lib/work-projects.ts. */
+
 
 /**
  * The v4 homepage, rebuilt section by section against
@@ -87,6 +55,13 @@ const FEATURED: SheetProject[] = [
  *
  * All copy is PLACEHOLDER — the user writes the real lines (checklist 6.6).
  */
+/** §3's statement — the four symptoms the credit roll used to scatter
+ *  (a template look, visitors leaving early, a site the business outgrew,
+ *  invisibility in search), said once, as the client would. FIRST DRAFT —
+ *  the user writes the real line. */
+const SOLVE_LINE =
+  'Your site looks like everyone else’s. Visitors leave before they understand what you do. It has not kept up with the business, and where people actually search, you are nowhere. That is what we solve.'
+
 const CLAIM_LINE =
   'Konaverse is a web studio for brands that want their site to carry the story, not just the information.'
 
@@ -158,7 +133,20 @@ export default function HomePage() {
         <ClaimEntrance />
       </section>
 
-      <SolveCredits />
+      {/* §3 — WHAT WE SOLVE, AS ONE STATEMENT (2026-09-14, user: "remove
+          that picture completely and create those texts as one big new
+          text with good meaning, a large nice minimal paragraph with the
+          revealing animation"). The credit roll over the Bosra plate
+          (SolveCredits.tsx — four problems scattered over a sticky
+          photograph, drifting at four speeds) is parked, unimported; its
+          four symptoms are now one paragraph on paper, wiped in line by
+          line (BlockReveal). `#solve` stays for the nav anchor. */}
+      <section className="sv2" id="solve" aria-labelledby="sv2-h">
+        <div className="sv2-page">
+          <p className="sv2-k t-small">What we solve</p>
+          <BlockReveal as="h2" className="sv2-p" id="sv2-h" text={SOLVE_LINE} />
+        </div>
+      </section>
 
       {/* §4 — the cards: two columns, three rows, six identical cards, each
           carrying its own light, entering as paper (per-corner matrix3d,
@@ -167,21 +155,13 @@ export default function HomePage() {
           the tree, unimported, for comparison. */}
       <ServiceCards />
 
-      {/* §5 — TWO FORMS, ONE LANDMARK. Desktop: THE ROWS (WorkRows,
-          2026-08-31, the user's final mockups — the IMMERSIVENESS /
-          THROUGH — WORK head arriving word by word, then three rows
-          pinned in one viewport, the expanded project trading its
-          height to the next through wave-gl.ts's jelly resize;
-          replaced the wheel, WorkWheel, which stays in the tree
-          unimported). Phones: THE DECK (WorkDeck — each project a
-          card, the cards stacking on scroll on the pitch deck's
-          mechanic). CSS shows exactly one; each driver returns early
-          when it is the hidden one. The wrapper carries `#work` so the
-          nav anchor lands on whichever is displayed. */}
-      <div id="work">
-        <WorkRows projects={FEATURED} />
-        <WorkDeck projects={FEATURED} />
-      </div>
+      {/* §5 — THE LIST (WorkList, 2026-09-14): igniteagency.com's selected
+          work rebuilt from measurement — a marquee head, hairline rows
+          that flood with ink on hover, a preview chasing the cursor. All
+          four projects, linking to their case studies. The section carries
+          `#work`. The stack (WorkStack), the rows (WorkRows) and the deck
+          (WorkDeck) stay in the tree unimported. */}
+      <WorkList studies={CASE_STUDIES.map((c) => c.slug)} />
 
       {/* §7 (Process) is UNMOUNTED for a user experiment (2026-08-24) — not
           deleted. To restore: re-import Process, mount it here, put `buried`
