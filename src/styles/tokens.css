@@ -1976,96 +1976,83 @@ html.lenis, html.lenis body { height: auto; }
 }
 
 /* ============================================================
-   THE FOOTER — dark, the aurora as its sky, revealed from
-   behind the page (SiteFooter.tsx; 2026-08-24).
+   THE FOOTER — the void, one statement, the site map, one bar
+   (SiteFooter.tsx; rebuilt 2026-09-16, user: "something better
+   to describe us … black, minimal").
    ------------------------------------------------------------
    Lives HERE, not in a route stylesheet, because the footer is
-   mounted in the (v4) layout on every route — same lesson .au
-   already carries.
+   mounted in the (v4) layout on every route.
+
+   THE GROUND is the house void — --surface under .k-dark, n-11 —
+   and nothing on it: no sky, no wordmark, no picture. The
+   description is the piece; the map, the address and the bar
+   sit around it with the site's own spacing and one hairline.
 
    THE UNDER-REVEAL is self-contained: .ft-inner is counter-
-   translated by −0.45 × max(0, rect.top) — dragged through the
-   reveal, FLUSH the instant the section above has fully left
-   (the timing contract; see SiteFooter.tsx) — and .ft's
-   `overflow: clip` cuts it at the seam, so no page above needs
-   a z-raise for this to hold. The sky does NOT move: the
-   content slides over a held aurora, which is the depth cue.
-   At rest the footer shows its last 100svh; only the first
-   20svh is transit-flavoured now, so the whole stack sits low.
+   translated by −0.45 × the seam's remaining travel (see
+   SiteFooter.tsx) — the content slides up from behind the page
+   above, slower than the hand, and lands flush at page end —
+   and .ft's `overflow: clip` cuts it at the seam, so no page
+   above needs a z-raise for this to hold.
    ============================================================ */
 .ft {
   position: relative;
-  min-height: 120svh;
   background: var(--surface);
   color: var(--text);
   overflow: clip;
 }
-.ft-sky {
-  position: absolute;
-  inset: 0;
-  /* the no-WebGL / no-JS ground: still a field with a light in it.
-     The same two washes the aurora paints, as flat gradients. */
-  background:
-    radial-gradient(120% 80% at 38% 96%, rgb(46 95 138 / 0.20), transparent 62%),
-    radial-gradient(90% 70% at 62% 4%, rgb(162 170 174 / 0.08), transparent 60%),
-    var(--n-11);
-}
-.ft-sky .au {
-  position: absolute;
-  inset: 0;
-  /* dimmed toward the void it already renders — one compositor multiply,
-     and what keeps the wordmark legible over the curtains' hot centre */
-  opacity: 0.75;
-}
-/* the sitemap band may never sit on the aurora's bright field */
-.ft-scrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgb(13 16 18 / 0.88),
-    rgb(13 16 18 / 0.42) 36%,
-    transparent 64%
-  );
-}
-
 .ft-inner {
   position: relative;
-  z-index: 1;
   display: flex;
   flex-direction: column;
-  min-height: 120svh;
-  /* deep enough that the identity and the site map clear the 20svh
-     rest-state crop — the "pushed down" the 120svh cut asked for */
-  padding-top: clamp(8rem, 23svh, 15rem);
+  /* presence: the footer owns most of the last viewport */
+  min-height: 82svh;
+  padding-top: clamp(6rem, 17svh, 11rem);
 }
 
-/* ---------- identity + the site map ---------- */
+/* ---------- the statement + the site map ---------- */
 .ft-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--s-8);
+  display: grid;
+  grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+  column-gap: clamp(var(--s-8), 8vw, var(--s-11));
+  align-items: start;
   width: 100%;
 }
-.ft-logo {
-  display: block;
-  width: 2.75rem;
-  height: 2.75rem;
-  object-fit: contain;
-  /* one asset for both grounds: the mark is ink on transparent, the
-     footer is dark, so it is inverted here (2026-08-28) */
-  filter: invert(1);
+.ft-claim {
+  margin: 0;
+  max-width: 17ch;
 }
-.ft-tagline {
-  margin: var(--s-5) 0 0;
-  max-width: 30ch;
+.ft-about {
+  margin: var(--s-7) 0 0;
+  max-width: 44ch;
   color: var(--text-muted);
 }
-.ft-cols {
+
+/* the address — same drawn underline as §9's */
+.ft-mail {
+  display: inline-block;
+  margin-top: var(--s-8);
+  color: var(--text);
+  font-weight: var(--w-light);
+  text-decoration: none;
+  padding-bottom: 0.25rem;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 0% var(--hair);
+  transition: background-size var(--d-base) var(--e-settle);
+}
+.ft-mail:hover {
+  background-size: 100% var(--hair);
+}
+
+.ft-nav {
   display: grid;
-  grid-template-columns: repeat(3, minmax(8rem, auto));
-  gap: var(--s-6) clamp(var(--s-7), 6vw, var(--s-10));
+  grid-template-columns: repeat(2, minmax(6.5rem, max-content));
+  gap: var(--s-6) clamp(var(--s-7), 5vw, var(--s-10));
+  justify-content: end;
+  /* the first link's x-height meets the claim's first line */
+  padding-top: 0.45rem;
 }
 .ft-col {
   list-style: none;
@@ -2084,77 +2071,44 @@ html.lenis, html.lenis body { height: auto; }
   color: var(--text);
 }
 
-/* ---------- the address — same drawn underline as §9's ---------- */
-/* the two autos split the leftover sky between them, which is what pushes
-   the address BELOW the rest-state crop line (the footer shows its last
-   100svh at page end; content in the first 50svh is transit-only, and a
-   line straddling the seam arrives half-cut) */
-.ft-mid {
-  margin-top: auto;
-  /* biased a little below the sky's midpoint (user call) */
-  padding-top: 5svh;
-}
-.ft-mail {
-  display: inline-block;
-  color: var(--text);
-  font-weight: var(--w-light);
-  text-decoration: none;
-  padding-bottom: 0.25rem;
-  background-image: linear-gradient(currentColor, currentColor);
-  background-repeat: no-repeat;
-  background-position: left bottom;
-  background-size: 0% var(--hair);
-  transition: background-size var(--d-base) var(--e-settle);
-}
-.ft-mail:hover {
-  background-size: 100% var(--hair);
-}
-
-/* ---------- the wordmark + the bar ---------- */
-.ft-foot {
-  margin-top: auto; /* pinned to the footer's floor */
-}
-.ft-word {
-  display: flex;
-  justify-content: space-between;
-  /* the floor: below the hairline, and sunk a LITTLE past the footer's
-     bottom edge — .ft's overflow clip is what does the cropping. The
-     letters' own rise still happens inside this box's overflow. */
-  margin: var(--s-5) 0 -0.11em;
-  padding: 0 var(--page-pad);
-  overflow: hidden; /* the crop edge the letters rise out of — a real one */
-  font-size: clamp(4rem, 13.2vw, 13rem);
-  line-height: 0.98;
-  font-weight: var(--w-light);
-  letter-spacing: -0.02em;
-  text-transform: uppercase; /* display form only — aria-label stays "Konaverse" */
-  user-select: none;
-}
-.ft-lbox {
-  display: block;
-}
-.ft-l {
-  display: block;
-  transform: translateY(108%); /* parked below the crop; the scrub raises it */
-}
-@media (prefers-reduced-motion: reduce), (scripting: none) {
-  .ft-l {
-    transform: none;
-  }
-}
-
+/* ---------- the bar ---------- */
 .ft-bar {
+  /* a flex item with auto inline margins (.k-page) shrink-wraps instead
+     of stretching, so the width is stated */
+  width: 100%;
+  margin-top: auto; /* pinned to the footer's floor */
+  padding-top: clamp(var(--s-9), 12svh, var(--s-11));
+}
+.ft-bar-in {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: var(--s-6);
   padding-block: var(--s-6);
-  /* the hairline now sits UNDER the bar — the wordmark lives below it */
-  border-bottom: var(--hair) solid var(--hairline-strong);
+  border-top: var(--hair) solid var(--hairline-strong);
 }
 .ft-fine {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-4);
   margin: 0;
   color: var(--text-faint);
+}
+.ft-logo {
+  display: block;
+  width: 1.75rem;
+  height: 1.75rem;
+  object-fit: contain;
+  /* one asset for both grounds: the mark is ink on transparent, the
+     footer is the void, so it is inverted here */
+  filter: invert(1);
+}
+.ft-legal {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: var(--s-6);
 }
 
 /* the next-page arrow: the glyph leaves right and re-enters from the
@@ -2218,29 +2172,36 @@ html.lenis, html.lenis body { height: auto; }
 }
 
 @media (max-width: 57.5rem) {
-  .ft,
   .ft-inner {
     min-height: 0;
+    padding-top: clamp(5rem, 14svh, 8rem);
   }
   .ft-top {
-    flex-direction: column;
-    gap: var(--s-7);
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--s-8);
   }
-  .ft-cols {
-    grid-template-columns: repeat(2, minmax(8rem, auto));
+  .ft-claim {
+    max-width: 14ch;
   }
   .ft-mail {
+    margin-top: var(--s-7);
     font-size: var(--t-h3);
   }
-  .ft-word {
-    font-size: clamp(2.6rem, 12vw, 5rem);
-    /* ON THE FLOOR, SUNK A LITTLE MORE (2026-08-26, user: "totally at
-       the bottom connecting to the bottom edge … even a little covered").
-       The 18svh lift that briefly sat here existed only so the scrubbed
-       rise had scroll to play in; on phones the rise is now a one-shot
-       entrance fired as the word's box enters (SiteFooter), so the word
-       can live at the edge like the desktop one. */
-    margin-bottom: -0.16em;
+  .ft-nav {
+    justify-content: start;
+    padding-top: 0;
+  }
+  .ft-bar {
+    padding-top: var(--s-9);
+  }
+  .ft-bar-in {
+    flex-wrap: wrap;
+    row-gap: var(--s-5);
+  }
+  /* the legal links take their own row under the mark and the arrow */
+  .ft-legal {
+    order: 3;
+    flex-basis: 100%;
   }
 }
 

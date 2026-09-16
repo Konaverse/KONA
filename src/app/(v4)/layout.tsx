@@ -32,7 +32,7 @@ export default function V4Layout({ children }: { children: React.ReactNode }) {
           aperture menu already takes this stance (it renders OPEN without JS);
           the reveal has to as well. */}
       <noscript>
-        <style>{`.k-reveal{opacity:1!important;filter:none!important;transform:none!important}.ft-l{transform:none!important}`}</style>
+        <style>{`.k-reveal{opacity:1!important;filter:none!important;transform:none!important}`}</style>
       </noscript>
 
       <div className="k-grain" />
