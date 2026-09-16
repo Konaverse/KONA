@@ -1,10 +1,9 @@
 import type { Metadata } from 'next'
 import AboutGridHero from '@/components/v4/AboutGridHero'
-import AboutWho from '@/components/v4/AboutWho'
-import AboutRefuse from '@/components/v4/AboutRefuse'
+import AboutPeople, { type Person } from '@/components/v4/AboutPeople'
+import AboutOpen, { type Beat } from '@/components/v4/AboutOpen'
 import AboutTools from '@/components/v4/AboutTools'
 import AboutTimeline from '@/components/v4/AboutTimeline'
-import ScrollFillText from '@/components/v4/ScrollFillText'
 import BlockReveal from '@/components/v4/BlockReveal'
 import Invitation from '@/components/v4/Invitation'
 import { SITE_URL } from '@/lib/site'
@@ -12,7 +11,7 @@ import './about.css'
 
 /**
  * THE ABOUT PAGE — /about (2026-09-11, the user's frame "About Page.png":
- * a hero, a statement, WHO WE ARE, WE REFUSE TO DO). Its job is the one no
+ * a hero, a statement, WHO WE ARE, and — since 2026-09-16 — WHAT WE MAKE). Its job is the one no
  * other page does: the two Person entities the root layout declares
  * (`/#konstantinos`, `/#nabil`) get their faces, their bios and their
  * page here — the E-E-A-T anchor every blog byline points back to. It
@@ -34,39 +33,27 @@ import './about.css'
  * voice and what it does in the light one, filling letter by letter as
  * they climb (the house scroll fill).
  *
- * §3 WHO WE ARE — THE PICTURE. A fixed composition on paper, every
- * length rem (the picture rule): the title in three stepped words, a
- * two of them as MIRRORED BLOCKS — a dark plate bleeding off the page
- * edge with the role written inside it, tilted and cut by the figure;
- * the cutout standing on the plate's bottom edge and rising above it;
- * the bio beside; the name below; the framed portrait on the other
- * side. Konstantinos's plate bleeds LEFT, Nabil's RIGHT.
+ * §3 THE PEOPLE — THREE CARDS (2026-09-16, user: three people now;
+ * after a day of pinned stages — letter flips over a slatted
+ * shutter, a drum, a GL funnel, all rejected — "something simpler but
+ * we'll do it perfectly"). A 200svh section, not pinned, on the void:
+ * three cards of one size — portrait, hairline, name, role; no
+ * description, no numbering — placed about the centre line, high left / lower right
+ * / lower still near the centre, each riding the scroll at its own
+ * rate so they fan apart on the way in and gather on the way out; at
+ * the midpoint all three faces are in the frame. The page fades to
+ * the void as the section arrives and back to paper as it leaves
+ * (`--ab-dark` on the root, mixed in about.css). AboutPeople.tsx. THE
+ * PICTURE it replaces (AboutWho.tsx — the mirrored plates, the
+ * ledger, the climbing portraits, the dossiers) is parked,
+ * unimported, like the sentence hero.
  *
- * SECOND PASS (2026-09-13, user: the title did not connect to the
- * site, the watermark had to go, the portraits stopped moving, and the
- * section wanted enriching): the title is the site's own voice now — a
- * kicker over "Who we are" in light lowercase at the page pad, its
- * three words still collapsing onto one line at three rates, set in
- * DIFFERENCE so the figure and the climbing portrait cut through it
- * (the work hub's "selected work" grammar). The watermark is gone; in
- * its place THE LEDGER — each plate's two edges carried across the page
- * as hairlines, the person's index at the far end — so the plate reads
- * as a stripe of the page, not a box on it. Each person gained a LINE
- * in their own voice (scroll-fill, the house display grammar) and a
- * DOSSIER of three hairline rows (role, what they own, their tools),
- * both in the free paper under the name. The portraits climb at a
- * constant rate for as long as the section is on screen and develop
- * from mono to colour over the climb. Each block reveals once as it
- * enters (the ledger and the plate draw, the figure rises, the rest
- * resolves). AboutWho.tsx.
- *
- * §4 WE REFUSE TO DO — one dark card (REBUILT 2026-09-11, user: "a big
- * card with nice layout, clean design, premium"): the bosra plate as
- * its ground under a scrim, the heading and a short intro in the left
- * column, the five refusals as hairline rows on the right — the refused
- * thing in the light weight, what we do instead beside it in the muted
- * step. Each row rises as it enters and the refused phrase is STRUCK
- * a beat later. AboutRefuse.tsx.
+ * §4 WHAT WE MAKE — THE OPENING (2026-09-16, the user's recording; it
+ * replaces WE REFUSE TO DO, removed the same day): a dark ground with
+ * the title and a circle of the picture; pinned, the circle grows to
+ * the viewport and covers the title, then the picture zooms on under
+ * a darkening veil while one sentence, in four parts, scrolls up over
+ * it; the toolset slides over the held picture. AboutOpen.tsx.
  *
  * §5 OUR TOOLSET (2026-09-11, the user's frame "toolset section.png") —
  * a row of cards wider than the page, DRAGGED by the hand, not pinned:
@@ -86,9 +73,9 @@ import './about.css'
  * §7 THE INVITATION follows in flow and carries the footer out.
  *
  * SERVER-RENDERED, every word in the raw HTML (SEO plan D5): the h1
- * sentence, the statement, both names as h3 with the roles, both bios,
- * the five refusals. The drivers are enhancements; the layout is the
- * fallback and the noscript rule lifts the entrance.
+ * sentence, the statement, the three names as h3 with the roles, the
+ * three bios, the five refusals. The drivers are enhancements; the
+ * layout is the fallback and the noscript rule lifts the entrance.
  *
  * NOT INDEXED YET — KONA_OPEN_ROUTES=/about in .env.local lifts the
  * launch redirect locally. Flip INDEXABLE, drop the redirect and list
@@ -101,7 +88,7 @@ const INDEXABLE = false
 
 const TITLE = 'About Konaverse'
 const DESCRIPTION =
-  'Konaverse is two people in Cyprus — Konstantinos Kyprianou, technical architect, and Nabil Al Jbawi, creative director — designing and building websites with a character of their own.'
+  'Konaverse is three people in Cyprus — Konstantinos Kyprianou, technical architect, Nabil Al Jbawi, creative director, and Andreas Kyriakou — designing and building websites with a character of their own.'
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -116,68 +103,67 @@ export const metadata: Metadata = {
   },
 }
 
-/** the two of them — the Person entities' visible half. `id` is the
- *  root layout's schema id, so the page's nodes MERGE into the existing
- *  entity instead of duplicating it. */
-const PEOPLE = [
+/** the three of them — the Person entities' visible half. `id` is the
+ *  root layout's schema id for the two founders, so the page's nodes
+ *  MERGE into the existing entities instead of duplicating them;
+ *  Andreas's node is new here (the root layout does not declare him
+ *  yet). */
+const PEOPLE: readonly Person[] = [
   {
     id: 'konstantinos',
     name: 'Konstantinos Kyprianou',
     role: 'Technical Architect & Co-Founder',
-    /** the word inside the plate */
-    plate: ['the', 'developer'],
-    cutout: '/people/konstantinos-cutout.webp',
     portrait: '/people/konstantinos-portrait.webp',
+    bg: '/people/konstantinos-bg.webp',
+    cut: '/people/konstantinos-cut.webp',
     bio:
       'Konstantinos is the technical architect. He builds the sites: the code, the performance, the integrations, and the part nobody sees that makes the part everybody sees work. Next.js, WebGL, the 3D pipeline, the search work — if it has to load in under a second and move at sixty frames, it goes through him.',
-    /** the line in his own voice — FIRST DRAFT, cut from the bio */
-    quote: 'If it has to load in under a second and move at sixty frames, it goes through me.',
-    /** the dossier — nothing here the bio and the toolset do not already say */
-    dossier: [
-      ['Role', 'Technical architect'],
-      ['Owns', 'The code, the performance, the integrations, the 3D pipeline, the search work'],
-      ['Tools', 'Next.js, Three.js, GSAP, Blender'],
-    ],
   },
   {
     id: 'nabil',
     name: 'Nabil Al Jbawi',
     role: 'Creative Director & Co-Founder',
-    plate: ['the', 'designer'],
-    cutout: '/people/nabil-cutout.webp',
     portrait: '/people/nabil-portrait.webp',
+    bg: '/people/nabil-bg.webp',
+    cut: '/people/nabil-cut.webp',
     bio:
       'Nabil is the creative director. He decides what a site looks like and how it moves: the layout, the type, the imagery, the motion. He starts from the brand, never from a template, and does not stop until the page has a character someone will remember.',
-    quote: 'Start from the brand, never from a template, and do not stop until the page has a character.',
-    dossier: [
-      ['Role', 'Creative director'],
-      ['Owns', 'The layout, the type, the imagery, the motion'],
-      ['Tools', 'Figma, After Effects, Blender'],
-    ],
   },
-] as const
+  {
+    /* Co-founder (user, 2026-09-16); what he owns is not said yet, so
+       the role is the bare title and THE BIO IS A PLACEHOLDER (unseen
+       on the page — the cards show name and role only — but it feeds
+       the schema's Person description). The portrait is the user's
+       "1.png", cropped to the set's 5:6 (public/people/andreas-portrait.webp). */
+    id: 'andreas',
+    name: 'Andreas Kyriakou',
+    role: 'Co-Founder',
+    portrait: '/people/andreas-portrait.webp',
+    bg: '/people/andreas-bg.webp',
+    cut: '/people/andreas-cut.webp',
+    bio:
+      'Andreas is the third of us. What he owns, and the line in his own voice, go here once they are written — for now this paragraph stands in so the stage has three people to move through.',
+  },
+]
 
-/** the refusals — the section people quote. FIRST DRAFT. */
-const REFUSALS = [
+/** THE OPENING's sentence — one line in four parts, each with its
+ *  proof under it. FIRST DRAFT. */
+const OPEN_BEATS: Beat[] = [
   {
-    no: 'Templates',
-    why: 'Every site starts from your brand and a blank file. A theme is someone else’s decisions.',
+    line: 'Websites people remember.',
+    note: 'Not for a trick. For the feeling of having been somewhere.',
   },
   {
-    no: 'Stock photography',
-    why: 'If the picture is not yours, it does not go on the page. We shoot it, render it or draw it.',
+    line: 'Remembered for how they move,',
+    note: 'Motion is designed in from the first sketch, never plugged in after.',
   },
   {
-    no: 'Page builders',
-    why: 'Hand-written code, server-rendered. It is why the sites load fast and move at sixty frames.',
+    line: 'for how fast they arrive,',
+    note: 'Hand-written code, rendered on the server. Sixty frames on every scroll.',
   },
   {
-    no: 'Hero sliders',
-    why: 'One idea, said once. A carousel is a decision nobody made.',
-  },
-  {
-    no: 'Lifeless pages',
-    why: 'If nothing moves, nothing is remembered. Motion is part of the design, not a plug-in.',
+    line: 'and for being unmistakably yours.',
+    note: 'No templates, no stock. Every site starts from your brand and a blank file.',
   },
 ]
 
@@ -244,7 +230,7 @@ export default function AboutPage() {
       {/* the entrances park things at opacity 0 or behind a crop edge;
           the no-JS page undoes every one of them */}
       <noscript>
-        <style>{`.ab-ent,.ab-w,.ab-who-k,.ab-fig,.ab-bio,.ab-name,.ab-port,.ab-plate,.ab-plate-w,.ab-dossier,.ab-ledger-l,.ab-ref-h,.ab-ref-p,.ab-row{opacity:1!important;transform:none!important;filter:none!important;clip-path:none!important}.ab-pill{width:var(--ab-pill-rest)!important;margin-left:.22em!important}.ab-band::before{transform:none!important}.ab-row-what::after{transform:none!important}.ab-person-r .ab-port{top:100rem!important}.ab-tools-vp{overflow-x:auto!important}.ab-tool,.ab-tools-w,.ab-tools-t{opacity:1!important;transform:none!important}.ab-tl-list{position:static!important;width:auto!important;height:auto!important;clip:auto!important;overflow:visible!important;padding:0 var(--ab-pad) 4rem!important}.ab-time{--ab-tl-len:auto}.ab-tl-stage{position:static!important;height:auto!important}.ag{height:100svh!important}`}</style>
+        <style>{`.ab-ent{opacity:1!important;transform:none!important;filter:none!important}.ab-pill{width:var(--ab-pill-rest)!important;margin-left:.22em!important}.ab-band::before{transform:none!important}.ab-op-stage{position:static!important;height:auto!important;padding:8rem 0 0}.ab-op-t{position:static!important;padding:0 var(--ab-pad) 3rem}.ab-op-box{position:relative!important;width:100%!important;height:70svh!important;border-radius:0!important;transform:none!important;contain:none!important}.ab-op-veil{display:none!important}.ab-op-beats{margin-top:0!important;padding:4rem 0 100svh!important}.ab-op-beat{height:auto!important;padding:3rem var(--ab-pad)!important}.ab-ppl-cap,.ab-ppl-pic img{opacity:1!important;transform:none!important}.k-pix{display:none!important}.ab-tools-vp{overflow-x:auto!important}.ab-tool,.ab-tools-w,.ab-tools-t{opacity:1!important;transform:none!important}.ab-tl-list{position:static!important;width:auto!important;height:auto!important;clip:auto!important;overflow:visible!important;padding:0 var(--ab-pad) 4rem!important}.ab-time{--ab-tl-len:auto}.ab-tl-stage{position:static!important;height:auto!important}.ag{height:100svh!important}`}</style>
       </noscript>
 
       {/* §1 — THE HERO: the grid (2026-09-14) — one picture full-bleed,
@@ -268,97 +254,17 @@ export default function AboutPage() {
         />
       </section>
 
-      {/* §3 — WHO WE ARE: the picture */}
-      <AboutWho>
-        {/* the head: the house kicker, then the title in the site's light
-            lowercase voice — one line in layout; the driver holds the
-            words down at three rates until they meet */}
-        <p className="ab-who-k">The two behind the work</p>
-        <h2 className="ab-who-t">
-          <span className="ab-who-m"><span className="ab-w">Who</span></span>
-          <span className="ab-who-m"><span className="ab-w">we</span></span>
-          <span className="ab-who-m"><span className="ab-w">are</span></span>
-        </h2>
+      {/* §3 — THE PEOPLE: the stage, scrolled through */}
+      <AboutPeople people={PEOPLE} />
 
-        {PEOPLE.map((p, i) => (
-          <article key={p.id} className={`ab-person ab-person-${i === 0 ? 'l' : 'r'}`} id={p.id}>
-            {/* THE LEDGER: the plate's two edges carried across the page
-                as hairlines, the index at the far end */}
-            <div className="ab-ledger" aria-hidden="true">
-              <i className="ab-ledger-l ab-ledger-l1" />
-              <i className="ab-ledger-l ab-ledger-l2" />
-              <span className="ab-index">{String(i + 1).padStart(2, '0')}</span>
-            </div>
-            {/* the plate: dark, bleeding off the page, the role inside it */}
-            <div className="ab-plate" aria-hidden="true">
-              <span className="ab-plate-w">
-                {p.plate[0]}
-                <br />
-                {p.plate[1]}
-              </span>
-            </div>
-            <img
-              className="ab-fig"
-              src={p.cutout}
-              alt=""
-              width={900}
-              height={i === 0 ? 1649 : 1686}
-              loading={i === 0 ? 'eager' : 'lazy'}
-              decoding="async"
-              draggable={false}
-            />
-            <p className="ab-bio">{p.bio}</p>
-            <h3 className="ab-name">{p.name}</h3>
-            <figure className="ab-port">
-              <img
-                src={p.portrait}
-                alt={p.name}
-                width={1000}
-                height={1200}
-                loading="lazy"
-                decoding="async"
-                draggable={false}
-              />
-            </figure>
-            {/* THE LINE, in their own voice, filling as it climbs; THE
-                DOSSIER, three hairline rows — the role moved here from
-                under the name */}
-            <ScrollFillText as="p" className="ab-quote" text={p.quote} />
-            <dl className="ab-dossier">
-              {p.dossier.map(([k, v]) => (
-                <div key={k}>
-                  <dt>{k}</dt>
-                  <dd>{v}</dd>
-                </div>
-              ))}
-            </dl>
-          </article>
-        ))}
-      </AboutWho>
-
-      {/* §4 — WE REFUSE TO DO: the dark card, the glass, the list */}
-      <AboutRefuse>
-        <img className="ab-ref-bg" src="/home/bosra-2000.webp" alt="" loading="lazy" decoding="async" aria-hidden="true" />
-        <div className="ab-ref-l">
-          <h2 className="ab-ref-h">
-            We refuse
-            <br />
-            to do
-          </h2>
-          <p className="ab-ref-p">
-            Five things you will not find in a site we build, and what you get instead.
-          </p>
-        </div>
-        <ol className="ab-rows">
-          {REFUSALS.map((r, i) => (
-            <li key={r.no} className="ab-row" style={{ '--i': i } as React.CSSProperties}>
-              <span className="ab-row-no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-              <span className="ab-row-what">{r.no}</span>
-              <span className="ab-row-why">{r.why}</span>
-            </li>
-          ))}
-        </ol>
-      </AboutRefuse>
+      {/* §4 — WHAT WE MAKE: the opening */}
+      <AboutOpen
+        title="What we make,"
+        sub="in one sentence."
+        picture="/home/bosra-2000.webp"
+        alt="The columns of the theatre at Bosra"
+        beats={OPEN_BEATS}
+      />
 
       {/* §5 — OUR TOOLSET: the drag track */}
       <AboutTools>
