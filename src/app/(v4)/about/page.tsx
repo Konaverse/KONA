@@ -62,13 +62,14 @@ import './about.css'
  * the row the cursor becomes a frosted disc that says "Drag".
  * AboutTools.tsx.
  *
- * §6 HOW IT WENT (same day, "timeline section.png") — the pinned
- * timeline: "202" holds and only the last digit ROLLS; the label, the
- * plate and the caption roll with it on one clock as the hand scrolls
- * through the four years; a badge on the plate's corner says "Scroll
- * to explore" and fills a ring with the progress. The accessible
- * content is a plain list of the four entries; the rolling layers are
- * decoration. AboutTimeline.tsx.
+ * §6 HOW IT WENT — THE TRAVEL (2026-09-16, user: "more functional and
+ * motion-filled… no eyebrows, no unnecessary small numbering, no
+ * hairlines. Pure motion"; it replaces the pinned roll of 09-11): one
+ * pinned viewport, the four entries on a horizontal track panned by
+ * the hand, each a tall plate with its caption; the years run along
+ * the foot on a slower track in the difference blend; each entry
+ * grows, turns to colour and speaks as it reaches the centre.
+ * AboutTimeline.tsx.
  *
  * §7 THE INVITATION follows in flow and carries the footer out.
  *
@@ -188,7 +189,6 @@ const YEARS = [
 
 /** the last digit of each year: the odometer's stops (module-level so
  *  the array is stable across renders) */
-const YEAR_DIGITS = YEARS.map((y) => Number(y.year.slice(3)))
 
 export default function AboutPage() {
   const jsonLd = {
@@ -230,7 +230,7 @@ export default function AboutPage() {
       {/* the entrances park things at opacity 0 or behind a crop edge;
           the no-JS page undoes every one of them */}
       <noscript>
-        <style>{`.ab-ent{opacity:1!important;transform:none!important;filter:none!important}.ab-pill{width:var(--ab-pill-rest)!important;margin-left:.22em!important}.ab-band::before{transform:none!important}.ab-op-stage{position:static!important;height:auto!important;padding:8rem 0 0}.ab-op-t{position:static!important;padding:0 var(--ab-pad) 3rem}.ab-op-box{position:relative!important;width:100%!important;height:70svh!important;border-radius:0!important;transform:none!important;contain:none!important}.ab-op-veil{display:none!important}.ab-op-beats{margin-top:0!important;padding:4rem 0 100svh!important}.ab-op-beat{height:auto!important;padding:3rem var(--ab-pad)!important}.ab-ppl-cap,.ab-ppl-pic img{opacity:1!important;transform:none!important}.k-pix{display:none!important}.ab-tools-vp{overflow-x:auto!important}.ab-tool,.ab-tools-w,.ab-tools-t{opacity:1!important;transform:none!important}.ab-tl-list{position:static!important;width:auto!important;height:auto!important;clip:auto!important;overflow:visible!important;padding:0 var(--ab-pad) 4rem!important}.ab-time{--ab-tl-len:auto}.ab-tl-stage{position:static!important;height:auto!important}.ag{height:100svh!important}`}</style>
+        <style>{`.ab-ent{opacity:1!important;transform:none!important;filter:none!important}.ab-pill{width:var(--ab-pill-rest)!important;margin-left:.22em!important}.ab-band::before{transform:none!important}.ab-op-stage{position:static!important;height:auto!important;padding:8rem 0 0}.ab-op-t{position:static!important;padding:0 var(--ab-pad) 3rem}.ab-op-box{position:relative!important;width:100%!important;height:70svh!important;border-radius:0!important;transform:none!important;contain:none!important}.ab-op-veil{display:none!important}.ab-op-beats{margin-top:0!important;padding:4rem 0 100svh!important}.ab-op-beat{height:auto!important;padding:3rem var(--ab-pad)!important}.ab-ppl-cap,.ab-ppl-pic img{opacity:1!important;transform:none!important}.k-pix{display:none!important}.ab-tools-vp{overflow-x:auto!important}.ab-tool,.ab-tools-w,.ab-tools-t{opacity:1!important;transform:none!important}.ab-time{height:auto!important}.ab-tl-stage{position:static!important;height:auto!important;overflow:visible!important;padding:6rem var(--ab-pad) 4rem}.ab-tl-t{position:static!important;margin-bottom:3rem}.ab-tl-track{position:static!important}.ab-tl-entry{position:static!important;margin:0 0 4rem}.ab-tl-img-colour{opacity:1!important}.ab-tl-when{position:static!important;display:block;width:auto!important;height:auto!important;clip:auto!important;margin-bottom:.4rem;font-size:3.4rem}.ab-tl-years{display:none!important}.ag{height:100svh!important}`}</style>
       </noscript>
 
       {/* §1 — THE HERO: the grid (2026-09-14) — one picture full-bleed,
@@ -292,65 +292,7 @@ export default function AboutPage() {
       </AboutTools>
 
       {/* §6 — HOW IT WENT: the pinned roll */}
-      <AboutTimeline count={YEARS.length} digits={YEAR_DIGITS}>
-        {/* the accessible content: the four entries as a plain list */}
-        <ol className="ab-tl-list">
-          {YEARS.map((y) => (
-            <li key={y.year}>
-              <h3>
-                <span>{y.year}</span> {y.label}
-              </h3>
-              <p>{y.text}</p>
-            </li>
-          ))}
-        </ol>
-
-        <div className="ab-tl-stage" aria-hidden="true">
-          <h2 className="ab-tl-t">How it <em>went</em></h2>
-
-          {/* the label above the rolling digit */}
-          <div className="ab-tl-labels">
-            {YEARS.map((y) => (
-              <span key={y.year} className="ab-tl-label">{y.label}</span>
-            ))}
-          </div>
-
-          {/* the year: "202" holds, the last digit rolls */}
-          <div className="ab-tl-year">
-            <span className="ab-tl-hold">{YEARS[0].year.slice(0, 3)}</span>
-            <span className="ab-tl-digits">
-              {/* the odometer: all ten digits in a strip; the strip slides
-                  to the year's last digit, passing the ones between */}
-              <span className="ab-tl-strip">
-                {Array.from({ length: 10 }, (_, d) => (
-                  <span key={d} className="ab-tl-digit">{d}</span>
-                ))}
-              </span>
-            </span>
-          </div>
-
-          {/* the plate, the caption, the badge */}
-          <div className="ab-tl-frame">
-            {YEARS.map((y) => (
-              <img key={y.year} className="ab-tl-plate" src={y.plate} alt="" loading="lazy" decoding="async" draggable={false} />
-            ))}
-          </div>
-          <div className="ab-tl-chip">
-            {YEARS.map((y) => (
-              <p key={y.year} className="ab-tl-cap">{y.text}</p>
-            ))}
-          </div>
-          <button type="button" className="ab-tl-badge">
-            <svg className="ab-tl-ringsvg" viewBox="0 0 100 100" aria-hidden="true">
-              <circle className="ab-tl-track" cx="50" cy="50" r="48" />
-              <circle className="ab-tl-ring" cx="50" cy="50" r="48" pathLength="1" />
-            </svg>
-            <span className="ab-tl-arrow">↓</span>
-            <span className="ab-tl-say">Scroll to<br />explore</span>
-            <span className="ab-tl-arrow">↓</span>
-          </button>
-        </div>
-      </AboutTimeline>
+      <AboutTimeline eras={YEARS} />
 
       {/* §7 — THE INVITATION */}
       <div className="ab-cta">

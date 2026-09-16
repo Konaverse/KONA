@@ -502,13 +502,18 @@
   animation: none !important;
 }
 
-/* ---------- §6 · HOW IT WENT — the pinned roll ----------
-   (2026-09-11, the user's frame "timeline section.png"). The wrapper is
-   the pin's length (--ab-tl-len, written by AboutTimeline); the stage
-   is sticky and one viewport high. Sized to the reference viewport
-   (730px = 45.6rem): the title under the nav, the year bottom-left,
-   the plate right with the chip on its left edge and the badge on its
-   bottom-right corner. Every voice that rolls sits in a crop box. */
+/* ---------- §6 · HOW IT WENT — THE TRAVEL ----------
+   (AboutTimeline.tsx, 2026-09-16, user: "more functional and
+   motion-filled… no eyebrows, no unnecessary small numbering, no
+   hairlines. Pure motion".) The wrapper is the pin's length
+   (--ab-tl-len, written by the driver); the stage is sticky and one
+   viewport high. On it: the title at the gutter; the TRACK — the
+   entries a stride apart, each a tall plate with its caption beside
+   it, panned by the driver; and the BAND — the years along the foot
+   on a track 0.6 as long, in the difference blend, so they read as
+   ink on the paper and as light where they cross a picture. The
+   driver measures the strides off this layout: the numbers live here
+   only. Sized to the reference viewport (730px = 45.6rem). */
 .ab-time {
   position: relative;
   /* on its own ground and above the opening's pinned picture (§4):
@@ -518,34 +523,25 @@
   z-index: 2;
   background: var(--ab-ground);
   height: var(--ab-tl-len, 100svh);
+  --ab-tl-stride: 50rem;
+  --ab-tl-plate-w: 18rem;
+  --ab-tl-plate-h: 27rem;
 }
-/* the accessible list — off-screen unless there is no JS */
-.ab-tl-list {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-  list-style: none;
-}
-.ab-tl-list li { margin: 0 0 2rem; white-space: normal; }
-.ab-tl-list h3 { margin: 0 0 0.4rem; font-size: 2rem; font-weight: var(--w-regular); }
-.ab-tl-list h3 span { color: var(--text-muted); margin-right: 0.5em; }
-.ab-tl-list p { margin: 0; max-width: 40rem; color: var(--text-muted); }
-
 .ab-tl-stage {
   position: sticky;
   top: 0;
   height: 100svh;
   overflow: hidden;
+  /* the ground is ON the stage: a sticky box is its own stacking
+     context, and the band's difference blend can only see a backdrop
+     inside it — without this the years come out white on paper */
+  background: var(--ab-ground);
 }
 .ab-tl-t {
   position: absolute;
   left: var(--ab-pad);
   top: 5.6rem;
+  z-index: 1;
   margin: 0;
   font-size: 6.8rem;
   font-weight: var(--w-light);
@@ -554,197 +550,127 @@
   color: var(--text);
   white-space: nowrap;
 }
-/* the crops: one box per voice, the layers stacked inside it */
-.ab-tl-labels,
-.ab-tl-digits,
-.ab-tl-frame,
-.ab-tl-chip {
-  position: absolute;
-  overflow: hidden;
-}
-.ab-tl-label,
-.ab-tl-plate,
-.ab-tl-cap {
-  position: absolute;
-  inset: 0;
-  visibility: hidden;
-  will-change: transform;
-}
-.ab-tl-label:first-child,
-.ab-tl-plate:first-child,
-.ab-tl-cap:first-child { visibility: visible; }
 
-.ab-tl-labels {
-  left: 22.9rem;
-  top: 17.6rem;
-  width: 26rem;
-  height: 2rem;
-}
-.ab-tl-label {
-  font-size: 1.15rem;
-  line-height: 2rem;
-  color: var(--text-muted);
-  white-space: nowrap;
-}
-.ab-tl-year {
-  position: absolute;
-  left: 3.6rem;
-  top: 19.6rem;
-  display: flex;
-  font-size: 11.6rem;
-  font-weight: var(--w-light);
-  line-height: 1;
-  letter-spacing: -0.04em;
-  color: var(--text);
-}
-.ab-tl-hold { color: var(--text-muted); }
-.ab-tl-digits {
-  position: relative;
-  width: 0.62em;
-  height: 1em;
-  /* the crop is the digit's own line, with a hair of slack for the
-     glyph's overshoot */
-  margin: -0.04em 0;
-  padding: 0.04em 0;
-  box-sizing: content-box;
-}
-/* the odometer (2026-09-13): the ten digits stacked in one strip, each
-   exactly one em tall; AboutTimeline slides the strip by whole ems, so
-   the crop shows one digit and the ones between pass through on a roll */
-.ab-tl-strip {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0.04em;
-  display: block;
-  will-change: transform;
-}
-.ab-tl-digit {
-  display: block;
-  height: 1em;
-  line-height: 1;
-  text-align: left;
-}
-.ab-tl-frame {
-  left: 50rem;
-  top: 10rem;
-  width: 33rem;
-  height: 31rem;
-  border-radius: var(--r-lg);
-  background: var(--n-10);
-  box-shadow: var(--lift-5);
-}
-/* the frame is the dark-grain pill's material (user, 2026-09-13: "the
-   images swiping need to always have the black grain"): the grain sits
-   on the FRAME, above every plate, so it holds still while the pictures
-   slide under it — and never leaves with a plate. Same grain, same
-   overlay, same lit top edge as the hero's pills. */
-.ab-tl-frame {
-  isolation: isolate;
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.16),
-    inset 0 0 0 1px rgb(255 255 255 / 0.08),
-    var(--lift-5);
-}
-.ab-tl-frame::after {
-  content: '';
+/* THE TRACK */
+.ab-tl-track {
   position: absolute;
   inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  opacity: 0.5;
-  mix-blend-mode: overlay;
-  background-image: var(--ab-grain);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  will-change: transform;
+}
+.ab-tl-entry {
+  position: absolute;
+  /* the plate's centre sits a stride per index from the stage's centre */
+  left: calc(50% + var(--i) * var(--ab-tl-stride) - var(--ab-tl-plate-w) / 2);
+  top: 13rem;
+  display: flex;
+  align-items: center;
+  gap: 2.4rem;
 }
 .ab-tl-plate {
+  position: relative;
+  flex: 0 0 auto;
+  width: var(--ab-tl-plate-w);
+  height: var(--ab-tl-plate-h);
+  margin: 0;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--n-10);
+  will-change: transform;
+}
+.ab-tl-img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: grayscale(1) brightness(0.9) contrast(1.06);
+  will-change: transform;
 }
-.ab-tl-chip {
-  left: 40rem;
-  top: 13.2rem;
-  width: 22rem;
-  height: 7.4rem;
-  border-radius: var(--r-md);
-  background: rgb(90 97 101 / 0.55);
-  backdrop-filter: blur(1rem);
-  -webkit-backdrop-filter: blur(1rem);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.28),
-    inset 0 0 0 1px rgb(255 255 255 / 0.14);
-}
+.ab-tl-img-mono { filter: grayscale(1) brightness(0.96); }
+.ab-tl-img-colour { opacity: 0; }
 .ab-tl-cap {
+  width: 22rem;
+  will-change: transform, opacity;
+}
+.ab-tl-name {
+  margin: 0 0 0.9rem;
+  font-size: 2.3rem;
+  font-weight: var(--w-light);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+/* the entry's own year: for readers and the still state; the band is
+   the visible year under motion */
+.ab-tl-when {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.ab-tl-text {
   margin: 0;
-  padding: 1.15rem 1.4rem;
-  font-size: 0.92rem;
-  line-height: 1.38;
-  color: var(--n-0);
-}
-/* the badge: the void disc on the plate's corner, a ring of progress
-   around it */
-.ab-tl-badge {
-  position: absolute;
-  left: 74rem;
-  top: 33.4rem;
-  width: 11rem;
-  height: 11rem;
-  padding: 0;
-  border: 0;
-  border-radius: var(--r-full);
-  background: var(--n-11);
-  color: var(--n-0);
-  font: inherit;
   font-size: 1rem;
-  line-height: 1.2;
-  display: grid;
-  place-items: center;
-  align-content: center;
-  row-gap: 0.35rem;
-  cursor: pointer;
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.14),
-    0 1.25rem 2.5rem -1rem rgb(13 16 18 / 0.5);
-  transition: transform var(--d-base) var(--e-settle);
-}
-@media (hover: hover) {
-  .ab-tl-badge:hover { transform: scale(1.04); }
-}
-.ab-tl-say { text-align: center; }
-.ab-tl-arrow {
-  font-size: 1.1rem;
-  line-height: 1;
-  animation: ab-tl-nudge 2.4s ease-in-out infinite;
-}
-.ab-tl-arrow:last-child { animation-delay: 0.2s; }
-@keyframes ab-tl-nudge {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(0.2em); }
-}
-.ab-tl-ringsvg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  transform: rotate(-90deg);
-  pointer-events: none;
-}
-.ab-tl-track,
-.ab-tl-ring {
-  fill: none;
-  stroke-width: 1.5;
-}
-.ab-tl-track { stroke: rgb(255 255 255 / 0.12); }
-.ab-tl-ring {
-  stroke: rgb(255 255 255 / 0.7);
-  stroke-linecap: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
+  line-height: 1.5;
+  color: var(--text-muted);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .ab-tl-arrow { animation: none; }
+/* THE BAND */
+.ab-tl-years {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.6rem;
+  z-index: 2;
+  height: 12rem;
+  color: #fff;
+  mix-blend-mode: difference;
+  pointer-events: none;
+  will-change: transform;
+}
+.ab-tl-year {
+  position: absolute;
+  left: calc(50% + var(--i) * var(--ab-tl-stride) * 0.6);
+  top: 0;
+  transform: translateX(-50%);
+  font-size: 12rem;
+  font-weight: var(--w-light);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+
+/* the still state (reduced motion; the noscript in page.tsx says the
+   same): nothing pinned, the entries stacked, each with its year */
+.ab-time.is-still { height: auto; }
+.ab-time.is-still .ab-tl-stage { position: static; height: auto; overflow: visible; padding: 6rem var(--ab-pad) 4rem; }
+.ab-time.is-still .ab-tl-t { position: static; margin-bottom: 3rem; }
+.ab-time.is-still .ab-tl-track { position: static; }
+.ab-time.is-still .ab-tl-entry { position: static; margin: 0 0 4rem; }
+.ab-time.is-still .ab-tl-img-colour { opacity: 1; }
+.ab-time.is-still .ab-tl-when { position: static; display: block; width: auto; height: auto; clip: auto; margin-bottom: 0.4rem; font-size: 3.4rem; letter-spacing: -0.04em; }
+.ab-time.is-still .ab-tl-years { display: none; }
+
+@media (max-width: 57.5rem) {
+  .ab-time {
+    --ab-tl-stride: 78vw;
+    --ab-tl-plate-w: 60vw;
+    --ab-tl-plate-h: 88vw;
+  }
+  .ab-tl-t { top: 4.6rem; font-size: 2.8rem; }
+  .ab-tl-entry { top: 8.6rem; flex-direction: column; align-items: flex-start; gap: 1.4rem; width: var(--ab-tl-plate-w); }
+  .ab-tl-cap { width: 100%; }
+  .ab-tl-name { font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .ab-tl-text { font-size: 0.9rem; }
+  .ab-tl-years { height: 4.4rem; bottom: 4rem; }
+  .ab-tl-year { font-size: 4.4rem; }
+  .ab-time.is-still .ab-tl-stage { padding: 4rem var(--ab-pad) 2rem; }
+  .ab-time.is-still .ab-tl-entry { width: auto; }
+  .ab-time.is-still .ab-tl-plate { width: 100%; height: auto; aspect-ratio: 2 / 3; }
 }
 
 @media (max-width: 57.5rem) {
@@ -764,29 +690,6 @@
   .ab-tool-line { grid-column: 1; grid-row: 4; text-align: left; font-size: 0.82rem; }
 
   .ab-tools { padding-bottom: 5rem; }
-  .ab-tl-stage { padding: 5.5rem var(--ab-pad) 0; }
-  .ab-tl-t { position: static; font-size: 2.8rem; margin-bottom: 1.2rem; }
-  .ab-tl-labels { position: static; width: auto; height: 1.6rem; }
-  .ab-tl-label { font-size: 0.95rem; line-height: 1.6rem; }
-  .ab-tl-year { position: static; font-size: 5.2rem; margin: 0.2rem 0 1rem; }
-  .ab-tl-frame {
-    position: relative;
-    left: auto;
-    top: auto;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1.15;
-  }
-  .ab-tl-chip {
-    position: relative;
-    left: auto;
-    top: auto;
-    width: 100%;
-    height: 6.2rem;
-    margin-top: 0.9rem;
-  }
-  .ab-tl-cap { padding: 0.9rem 1rem; font-size: 0.88rem; }
-  .ab-tl-badge { display: none; }
 }
 
 /* ============================================================

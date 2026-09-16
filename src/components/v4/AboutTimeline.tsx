@@ -1,207 +1,217 @@
 'use client'
 
-import { useEffect, useRef, type ReactNode } from 'react'
-import { gsap, EASE } from '@/lib/motion-v4'
-import { getLenis } from '@/components/v4/SmoothScroll'
+import { useEffect, useRef } from 'react'
+import { gsap } from '@/lib/motion-v4'
 
 /**
- * HOW IT WENT — THE ROLL (2026-09-11, the user's frame "timeline
- * section.png": "202 stays pinned and doesn't change, only the last
- * number changes, by rolling; on roll the image and the text change;
- * the scroll stays there").
+ * HOW IT WENT — THE TRAVEL (2026-09-16, user: "a more functional and
+ * motion-filled timeline… no eyebrows, no unnecessary small numbering,
+ * no hairlines. Pure motion"). It replaces THE ROLL of 2026-09-11 (one
+ * fixed composition, the year's last digit rolling on an odometer, a
+ * "Scroll to explore" badge with a progress ring) — a slideshow that
+ * mostly stood still.
  *
- * THE PIN. The section is a tall wrapper with a sticky stage one
- * viewport high. Each entry owns a stretch of the wrapper's scroll
- * (STEP viewports); the stage holds while the hand scrolls through
- * them, and the index is which stretch the hand is in. Nothing is
- * scrubbed — the change is a MOVE, run once per index change, in the
- * direction the hand went.
+ * THE TRACK. One pinned viewport; the entries stand on one horizontal
+ * track, a STRIDE apart, and the track pans left as the hand scrolls —
+ * scrubbed, continuous, no steps. The neighbours are always in the
+ * frame at the edges, so the hand can see where it is and where it is
+ * going: that is the timeline's function, the line of years itself.
  *
- * THE DIGIT — AN ODOMETER (2026-09-13, user: "the number changing needs
- * optimizing"). The year's last digit is no longer a stack of layers
- * swapped by visibility: it is one strip of the ten digits, and the
- * strip slides one em per digit to the year's digit. 2 → 5 passes 3 and
- * 4 on the way,
- * like a counter; scrolling back runs it down. One transform on one
- * element, so a fast scroll that lands mid-roll simply retargets the
- * tween (overwrite) — nothing is left half-visible, and there is no
- * blur filter re-rasterising an 11rem glyph every frame.
+ * THREE RATES. The plates (tall portrait pictures) and their captions
+ * ride the track at full speed. A band of giant YEAR numerals runs
+ * along the foot on its own track at YEAR_RATE of the speed, in white
+ * with mix-blend-mode: difference — ink on the paper, light where they
+ * cross a picture — so the numerals slide under the pictures and cut
+ * across their edges as the two layers drift apart and realign. At
+ * each entry's stop the year and its plate are centred together (the
+ * band's stride is the track's stride × YEAR_RATE; about.css).
  *
- * THE OTHER VOICES. The label, the plate and the caption still roll as
- * layers: the leaving one travels up out of its crop, the arriving one
- * rises in from below, on the same clock as the digit. Interrupt-safe:
- * a new roll hides every layer that is neither leaving nor arriving,
- * and an arriving layer caught mid-transit continues from where it is.
- * No blur in transit — the plate's roll carries a slight scale instead,
- * so the picture reads as sliding under the frame (and under the
- * frame's grain, which is on the frame, not the plate — about.css).
+ * THE DEVELOP. Each entry's state is continuous in its distance d
+ * from the centre (0 there, 1 a stride away): the plate scales from
+ * SCALE_FAR to 1, its mono print gives way to the colour print
+ * (two <img> of the same file — an opacity, not a per-frame filter),
+ * the picture drifts inside its frame against the pan (INNER), and the
+ * caption rises to full ink. Everything written is transform/opacity.
  *
- * THE BADGE. The dark disc on the plate's corner says what to do and
- * shows where you are: a ring around it fills with the index, and a
- * click on it scrolls the page to the next entry (through Lenis, so the
- * hand's easing applies).
+ * THE DRIVER. gsap.ticker + one rect per frame, the house pattern (no
+ * scroll listeners, no ScrollTrigger). The strides are MEASURED off the
+ * laid-out entries, so the CSS numbers are the only ones. The pin's
+ * length is written to --ab-tl-len: a viewport plus STEP viewports per
+ * stride, plus a hold on the last entry.
  *
- * No JS: the accessible list of entries (page.tsx, visually hidden
- * otherwise) is shown in flow and the stage is a static first frame.
+ * Reduced motion (`is-still`) and no JS (page.tsx's noscript): the stage
+ * is static and the entries stack in flow, each with its own year in
+ * the caption (the band is decoration, aria-hidden). Every word is
+ * server-rendered.
  */
 
-/** viewports of scroll each entry owns */
-const STEP = 0.7
-/** the hold on the last entry, in viewports, before the stage releases */
-const HOLD = 0.3
-/** one roll's travel */
-const ROLL = 0.9
+export type Era = {
+  year: string
+  label: string
+  plate: string
+  text: string
+}
 
-export default function AboutTimeline({
-  children,
-  count,
-  digits: yearDigits,
-}: {
-  children: ReactNode
-  count: number
-  /** the last digit of each year, in entry order */
-  digits: number[]
-}) {
+/** viewports of scroll per stride */
+const STEP = 0.8
+/** the hold on the last entry, in viewports, before the stage releases */
+const HOLD = 0.35
+/** the year band's speed as a share of the track's — the same number as
+ *  the band's stride in about.css (calc(stride * 0.6)) */
+const YEAR_RATE = 0.6
+/** a plate's scale one stride from the centre */
+const SCALE_FAR = 0.86
+/** the picture's drift inside its frame, in % of its width per stride */
+const INNER = 5
+/** how fast the caption fades with distance (1 = gone a stride away) */
+const CAP_FADE = 1.8
+
+const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
+
+export default function AboutTimeline({ eras }: { eras: readonly Era[] }) {
   const ref = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
     const root = ref.current
     if (!root) return
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const stage = root.querySelector<HTMLElement>('.ab-tl-stage')
-    if (!stage) return
+    const track = root.querySelector<HTMLElement>('.ab-tl-track')
+    const band = root.querySelector<HTMLElement>('.ab-tl-years')
+    const entries = Array.from(root.querySelectorAll<HTMLElement>('.ab-tl-entry'))
+    const years = Array.from(root.querySelectorAll<HTMLElement>('.ab-tl-year'))
+    const n = entries.length
+    if (!track || !band || n === 0) return
 
-    /* the voices, each a list of layers in entry order */
-    const voice = (sel: string) => Array.from(root.querySelectorAll<HTMLElement>(sel))
-    const strip = root.querySelector<HTMLElement>('.ab-tl-strip')
-    const labels = voice('.ab-tl-label')
-    const plates = voice('.ab-tl-plate')
-    const caps = voice('.ab-tl-cap')
-    const ring = root.querySelector<SVGCircleElement>('.ab-tl-ring')
-    const badge = root.querySelector<HTMLElement>('.ab-tl-badge')
-    const n = count
-    const layers: HTMLElement[][] = [labels, plates, caps]
+    if (reduce) {
+      root.classList.add('is-still')
+      return () => root.classList.remove('is-still')
+    }
 
-    /* the wrapper's height is the pin's length: the first viewport plus a
-       step per change plus the hold */
+    const parts = entries.map((e) => ({
+      plate: e.querySelector<HTMLElement>('.ab-tl-plate'),
+      colour: e.querySelector<HTMLElement>('.ab-tl-img-colour'),
+      imgs: Array.from(e.querySelectorAll<HTMLElement>('.ab-tl-img')),
+      cap: e.querySelector<HTMLElement>('.ab-tl-cap'),
+    }))
+
+    /* the pin's length */
     root.style.setProperty('--ab-tl-len', `${100 + (n - 1) * STEP * 100 + HOLD * 100}svh`)
 
-    let index = 0
-    let tl: gsap.core.Timeline | null = null
-
-    const progress = (i: number) => 1 - (n > 1 ? i / (n - 1) : 1)
-
-    /* the resting frame for entry i: one layer per voice, the strip on
-       the digit, the ring at the index */
-    const show = (i: number) => {
-      layers.forEach((v) =>
-        v.forEach((el, j) => {
-          el.style.visibility = j === i ? 'visible' : 'hidden'
-          gsap.set(el, { clearProps: 'transform' })
-        }),
-      )
-      if (strip) gsap.set(strip, { y: `${-(yearDigits[i] ?? 0)}em` })
-      if (ring) gsap.set(ring, { strokeDashoffset: progress(i) })
+    /* the strides, measured off the layout (about.css sets them) */
+    let stride = 0
+    let yearStride = 0
+    const measure = () => {
+      stride = n > 1 ? entries[1].offsetLeft - entries[0].offsetLeft : 0
+      yearStride = years.length > 1 ? years[1].offsetLeft - years[0].offsetLeft : stride * YEAR_RATE
     }
+    measure()
+    window.addEventListener('resize', measure)
 
-    const roll = (from: number, to: number) => {
-      const dir = to > from ? 1 : -1
-      tl?.kill()
-      tl = gsap.timeline({
-        defaults: { overwrite: 'auto' },
-        onComplete: () => {
-          show(to)
-          tl = null
-        },
-      })
-
-      /* the digit: the strip slides to the year's digit, through the
-         ones between — the counter's own direction, not the hand's */
-      if (strip) {
-        tl.to(strip, { y: `${-(yearDigits[to] ?? 0)}em`, duration: ROLL, ease: EASE.arc }, 0)
-      }
-
-      const pairs: [HTMLElement[], number][] = [
-        [labels, 0.05],
-        [plates, 0.04],
-        [caps, 0.08],
-      ]
-      pairs.forEach(([v, at]) => {
-        const a = v[from]
-        const b = v[to]
-        if (!a || !b) return
-        const isPlate = v === plates
-        /* anything that is neither leaving nor arriving is parked — this
-           is what a killed roll would otherwise leave half-way up */
-        v.forEach((el) => {
-          if (el !== a && el !== b) {
-            el.style.visibility = 'hidden'
-            gsap.set(el, { clearProps: 'transform' })
-          }
-        })
-        /* the arriving layer starts below the crop unless it is already
-           in transit from an interrupted roll — then it continues */
-        if (b.style.visibility !== 'visible') {
-          gsap.set(b, { visibility: 'visible', yPercent: 104 * dir, scale: isPlate ? 1.06 : 1 })
-        }
-        tl!.to(a, { yPercent: -104 * dir, duration: ROLL, ease: EASE.arc, scale: isPlate ? 0.96 : 1 }, at)
-        tl!.to(b, { yPercent: 0, duration: ROLL, ease: EASE.arc, scale: 1 }, at)
-      })
-      if (ring) {
-        tl.to(ring, { strokeDashoffset: progress(to), duration: ROLL, ease: EASE.arc }, 0)
-      }
-    }
-
-    show(0)
-
-    const stepPx = () => window.innerHeight * STEP
+    let last = -1
     const tick = () => {
       const r = root.getBoundingClientRect()
       const vh = window.innerHeight
       if (r.bottom < 0 || r.top > vh) return
-      const scrolled = -r.top
-      const step = stepPx()
-      const next = Math.min(Math.max(Math.floor((scrolled + step * 0.5) / step), 0), n - 1)
-      if (next !== index) {
-        const from = index
-        index = next
-        if (reduce) show(next)
-        else roll(from, next)
-      }
+      /* the playhead: 0 with the first entry centred, n-1 with the last */
+      const travel = (n - 1) * STEP * vh
+      const p = travel > 0 ? clamp01(-r.top / travel) * (n - 1) : 0
+      if (Math.abs(p - last) < 0.0005) return
+      last = p
+
+      track.style.transform = `translate3d(${(-p * stride).toFixed(2)}px, 0, 0)`
+      band.style.transform = `translate3d(${(-p * yearStride).toFixed(2)}px, 0, 0)`
+
+      parts.forEach((q, i) => {
+        const dd = i - p
+        const d = Math.min(Math.abs(dd), 1)
+        if (q.plate) q.plate.style.transform = `scale(${(1 - (1 - SCALE_FAR) * d).toFixed(4)})`
+        if (q.colour) q.colour.style.opacity = (1 - d).toFixed(3)
+        q.imgs.forEach((img) => {
+          img.style.transform = `translate3d(${(dd * INNER).toFixed(2)}%, 0, 0) scale(1.14)`
+        })
+        if (q.cap) {
+          const c = clamp01(1 - d * CAP_FADE)
+          q.cap.style.opacity = c.toFixed(3)
+          q.cap.style.transform = `translate3d(0, ${((1 - c) * 1.2).toFixed(3)}rem, 0)`
+        }
+      })
     }
     tick()
     gsap.ticker.add(tick)
 
-    /* the badge: to the next entry (or back to the first at the end) */
-    const onBadge = () => {
-      const r = root.getBoundingClientRect()
-      const top = window.scrollY + r.top
-      const to = index < n - 1 ? top + (index + 1) * stepPx() : top
-      const lenis = getLenis()
-      if (lenis) lenis.scrollTo(to)
-      else window.scrollTo({ top: to, behavior: reduce ? 'auto' : 'smooth' })
-    }
-    badge?.addEventListener('click', onBadge)
-
     return () => {
       gsap.ticker.remove(tick)
-      tl?.kill()
-      badge?.removeEventListener('click', onBadge)
-      layers.forEach((v) =>
-        v.forEach((el) => {
-          el.style.visibility = ''
-          gsap.set(el, { clearProps: 'transform' })
-        }),
-      )
-      if (strip) gsap.set(strip, { clearProps: 'transform' })
-      if (ring) gsap.set(ring, { clearProps: 'strokeDashoffset' })
+      window.removeEventListener('resize', measure)
       root.style.removeProperty('--ab-tl-len')
+      track.style.transform = ''
+      band.style.transform = ''
+      parts.forEach((q) => {
+        if (q.plate) q.plate.style.transform = ''
+        if (q.colour) q.colour.style.opacity = ''
+        q.imgs.forEach((img) => (img.style.transform = ''))
+        if (q.cap) {
+          q.cap.style.opacity = ''
+          q.cap.style.transform = ''
+        }
+      })
     }
-  }, [count, yearDigits])
+  }, [eras])
 
   return (
     <section ref={ref} className="ab-time" aria-label="How it went">
-      {children}
+      <div className="ab-tl-stage">
+        <h2 className="ab-tl-t">How it <em>went</em></h2>
+
+        {/* the track: the entries a stride apart, panned by the driver */}
+        <ol className="ab-tl-track">
+          {eras.map((y, i) => (
+            <li key={y.year} className="ab-tl-entry" style={{ '--i': i } as React.CSSProperties}>
+              <figure className="ab-tl-plate">
+                {/* the mono print under the colour print; the driver
+                    fades the colour in as the entry reaches the centre */}
+                <img
+                  className="ab-tl-img ab-tl-img-mono"
+                  src={y.plate}
+                  alt=""
+                  width={1024}
+                  height={1536}
+                  loading="lazy"
+                  decoding="async"
+                  draggable={false}
+                  aria-hidden="true"
+                />
+                <img
+                  className="ab-tl-img ab-tl-img-colour"
+                  src={y.plate}
+                  alt={y.label}
+                  width={1024}
+                  height={1536}
+                  loading="lazy"
+                  decoding="async"
+                  draggable={false}
+                />
+              </figure>
+              <div className="ab-tl-cap">
+                <h3 className="ab-tl-name">
+                  <span className="ab-tl-when">{y.year}</span>
+                  {y.label}
+                </h3>
+                <p className="ab-tl-text">{y.text}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+
+        {/* the band: the years along the foot, on the slower track, in
+            the difference blend; decoration — each entry says its year */}
+        <div className="ab-tl-years" aria-hidden="true">
+          {eras.map((y, i) => (
+            <span key={y.year} className="ab-tl-year" style={{ '--i': i } as React.CSSProperties}>
+              {y.year}
+            </span>
+          ))}
+        </div>
+      </div>
     </section>
   )
 }
