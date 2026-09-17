@@ -1,0 +1,261 @@
+/* ============================================================
+   THE WORKBENCH — .hb-* (HubBench.tsx). Moved out of hub.css on
+   2026-09-18, unchanged but for two things, when the homepage took
+   the bench in place of its six cards (user: "in the homepage replace
+   the services section cards with the services bento grid we have in
+   the services hub"):
+     · `.sh-index.hb` is `section.hb`, and carries its own paper and
+       position — on the hub `.sh-index` still makes it the cover;
+       `section.hb` out-ranks `.sh-index` whatever order the sheets
+       load in
+     · the spark breathes on its own keyframes (hb-breathe), not the
+       hero's
+   The scenes are ServiceScene.tsx + scenes.css, which that component
+   now imports itself.
+   ============================================================ */
+@keyframes hb-breathe { 50% { transform: scale(0.82) rotate(18deg); opacity: 0.55; } }
+
+/* ============================================================
+   §2 · THE SERVICES — THE WORKBENCH (HubBench.tsx, 2026-09-17)
+   It replaces THE LIST / THE STAIR above (HubList.tsx, parked with
+   its rules). The section keeps `.sh-index` — the cover: opaque,
+   above the sticky hero — and takes `.hb` for its own picture: a head
+   (a line and the lead), then a bento of seven cards on a 12-column
+   grid in perspective. A card is an ARTBOARD: a scene drawn in code on
+   a dotted ground (the hero's field, stilled), then the name (the
+   link, stretched over the card), the tagline, the blurb that opens
+   under the hand, two facts, and the arrow disc. The driver tips each
+   card up from under the fold (the transform on `.hb-card`) and leans
+   it under the pointer (the transform on `.hb-card-in`); the scenes
+   are CSS keyed on `is-hot` / `is-seen`. Every length rem, hairlines
+   px; nothing is a picture.
+   ============================================================ */
+section.hb {
+  position: relative;
+  background: var(--surface);
+  padding: 9rem var(--page-pad) 8rem;
+  color: var(--text);
+}
+.hb-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 34rem);
+  column-gap: 4rem;
+  align-items: end;
+  margin-bottom: 4.5rem;
+}
+.hb-title {
+  margin: 0;
+  font-size: 6.4rem;
+  font-weight: var(--w-light);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  color: var(--text);
+}
+.hb-title em { display: block; font-style: normal; color: var(--text-muted); }
+.hb-lead {
+  margin: 0 0 0.6rem;
+  font-size: 1.2rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+/* THE GRID: the sheet in perspective (the driver moves its vanishing
+   point with the viewport) */
+.hb-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1.25rem;
+  perspective: 110rem;
+}
+.hb-card {
+  position: relative;
+  grid-column: span 4;
+  min-height: 33rem;
+  transform-origin: 50% 100%;
+  will-change: transform, opacity;
+  perspective: 70rem;
+}
+.hb-card-design { grid-column: span 7; min-height: 31rem; }
+.hb-card-dev { grid-column: span 5; min-height: 31rem; }
+.hb-card-seo { grid-column: span 8; min-height: 24rem; }
+.hb-card-ask { grid-column: span 4; min-height: 24rem; }
+
+.hb-card-in {
+  --px: 50%;
+  --py: 50%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--hairline);
+  border-radius: 1.75rem;
+  background: var(--n-0);
+  box-shadow: 0 0.2rem 0.6rem -0.3rem rgb(13 16 18 / 0.06);
+  transition:
+    border-color var(--d-base) var(--e-glass),
+    box-shadow var(--d-slow) var(--e-glass),
+    opacity var(--d-base) var(--e-glass);
+  will-change: transform;
+}
+/* the spotlight: a soft shade that follows the pointer */
+.hb-card-in::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(28rem circle at var(--px) var(--py), rgb(13 16 18 / 0.075), transparent 62%);
+  transition: opacity var(--d-base) var(--e-glass);
+}
+.hb-card.is-hot .hb-card-in {
+  border-color: var(--n-5);
+  box-shadow:
+    0 2.6rem 4.5rem -2.4rem rgb(13 16 18 / 0.36),
+    0 0.4rem 1rem -0.4rem rgb(13 16 18 / 0.1);
+}
+.hb-card.is-hot .hb-card-in::before { opacity: 1; }
+/* the others step back */
+.hb-grid.has-hot .hb-card:not(.is-hot) .hb-card-in { opacity: 0.72; }
+
+/* the scene's ground: the hero's field, stilled */
+.hb-vis {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  display: grid;
+  place-items: center;
+  min-height: 15rem;
+  overflow: hidden;
+  background-image: radial-gradient(var(--n-4) 1px, transparent 1.3px);
+  background-size: 1.35rem 1.35rem;
+  background-position: 50% 50%;
+  -webkit-mask-image: radial-gradient(85% 90% at 50% 45%, #000 45%, transparent 100%);
+  mask-image: radial-gradient(85% 90% at 50% 45%, #000 45%, transparent 100%);
+}
+.hb-body { position: relative; z-index: 1; padding: 0 1.7rem 1.6rem; }
+.hb-name {
+  margin: 0;
+  font-size: 2.35rem;
+  font-weight: var(--w-light);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+.hb-link { color: inherit; text-decoration: none; }
+/* the link is the card */
+.hb-link::after { content: ''; position: absolute; inset: 0; z-index: 3; border-radius: 1.75rem; }
+.hb-card .hb-link:focus-visible::after { outline: 2px solid var(--ink); outline-offset: 3px; }
+.hb-tag { margin: 0.5rem 0 0; font-size: 1.02rem; line-height: 1.35; color: var(--text-muted); }
+.hb-more {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows var(--d-slow) var(--e-glass), opacity var(--d-base) var(--e-glass);
+}
+.hb-more > * { min-height: 0; overflow: hidden; }
+.hb-card.is-hot .hb-more { grid-template-rows: 1fr; opacity: 1; }
+.hb-blurb { margin: 0; padding-top: 0.7rem; max-width: 34rem; font-size: 0.92rem; line-height: 1.45; color: var(--text); }
+.hb-facts { display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 1.1rem 0 0; padding: 0; list-style: none; }
+.hb-facts li {
+  padding: 0.42rem 0.75rem;
+  border: 1px solid var(--hairline);
+  border-radius: 1rem;
+  font-size: 0.76rem;
+  line-height: 1;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.hb-facts b { font-weight: var(--w-medium); color: var(--text); }
+
+/* the arrow disc: two arrows on a strip, the flood under the hand */
+.hb-go {
+  position: absolute;
+  z-index: 2;
+  right: 1.3rem;
+  top: 1.3rem;
+  width: 2.9rem;
+  height: 2.9rem;
+  overflow: hidden;
+  border: 1px solid var(--hairline);
+  border-radius: 50%;
+  background: var(--n-0);
+  color: var(--ink);
+  transition: background var(--d-base) var(--e-glass), color var(--d-base) var(--e-glass), border-color var(--d-base) var(--e-glass);
+}
+.hb-go svg {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin: -0.575rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform var(--d-slow) var(--e-glass);
+}
+.hb-go svg:nth-child(2) { transform: translate(-2.4rem, 2.4rem); }
+.hb-card.is-hot .hb-go { background: var(--ink); border-color: var(--ink); color: var(--n-0); }
+.hb-card.is-hot .hb-go svg:nth-child(1) { transform: translate(2.4rem, -2.4rem); }
+.hb-card.is-hot .hb-go svg:nth-child(2) { transform: none; }
+
+/* the two wide cards: the words left, the scene right */
+.hb-card-design .hb-card-in,
+.hb-card-seo .hb-card-in { flex-direction: row-reverse; align-items: stretch; }
+.hb-card-design .hb-vis,
+.hb-card-seo .hb-vis { flex: 1 1 58%; }
+.hb-card-design .hb-body,
+.hb-card-seo .hb-body { flex: 0 0 42%; display: flex; flex-direction: column; justify-content: flex-end; padding: 1.7rem; }
+
+/* THE SEVENTH: the void, and the way back to the prompt */
+.hb-card-ask .hb-card-in {
+  justify-content: flex-end;
+  gap: 1.2rem;
+  padding: 1.8rem;
+  border-color: var(--n-11);
+  background: var(--n-11);
+  color: var(--n-0);
+}
+.hb-card-ask .hb-card-in::before { background: radial-gradient(24rem circle at var(--px) var(--py), rgb(255 255 255 / 0.14), transparent 60%); }
+.hb-ask-spark { position: absolute; left: 1.8rem; top: 1.8rem; width: 1.7rem; height: 1.7rem; animation: hb-breathe 3.2s ease-in-out infinite; }
+.hb-ask-t { margin: 0; font-size: 2.2rem; font-weight: var(--w-light); line-height: 1.08; letter-spacing: -0.03em; }
+.hb-ask-a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  align-self: flex-start;
+  height: 3rem;
+  padding: 0 1.2rem;
+  border-radius: 1.5rem;
+  background: var(--n-0);
+  color: var(--ink);
+  font-size: 0.95rem;
+  font-weight: var(--w-medium);
+}
+.hb-ask-a svg { width: 1.1rem; height: 1.1rem; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: transform var(--d-base) var(--e-settle); }
+.hb-card-ask.is-hot .hb-ask-a svg { transform: translateX(0.3rem); }
+
+/* THE SCENES (.hv-*) live in scenes.css since 2026-09-17: the service
+   pages' hero shows the same scene enlarged, so both routes read them. */
+
+/* PHONES: one column; the scroll does the hovering */
+@media (max-width: 57.5rem) {
+  section.hb { padding: 5rem var(--page-pad) 4rem; }
+  .hb-head { grid-template-columns: minmax(0, 1fr); row-gap: 1.4rem; margin-bottom: 2.4rem; }
+  .hb-title { font-size: 3rem; }
+  .hb-lead { font-size: 1.05rem; }
+  .hb-grid { grid-template-columns: minmax(0, 1fr); perspective: none; }
+  .hb-card, .hb-card-design, .hb-card-dev, .hb-card-seo, .hb-card-ask { grid-column: auto; min-height: 0; }
+  .hb-card-design .hb-card-in, .hb-card-seo .hb-card-in { flex-direction: column; }
+  .hb-card-design .hb-body, .hb-card-seo .hb-body { flex: 0 0 auto; padding: 0 1.4rem 1.4rem; }
+  .hb-vis { min-height: 16rem; }
+  .hb-body { padding: 0 1.4rem 1.4rem; }
+  .hb-name { font-size: 1.9rem; }
+  .hb-card-ask .hb-card-in { min-height: 16rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hb-ask-spark { animation: none; }
+}

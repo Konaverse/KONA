@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Button from '@/components/v4/Button'
 import { CONTACT_EMAIL } from '@/lib/site'
 
@@ -15,6 +15,10 @@ import { CONTACT_EMAIL } from '@/lib/site'
  * `company` is the honeypot: visually gone, tab-skipped, autocomplete
  * off. A person never fills it; a bot does, and the route drops the
  * message while saying it sent.
+ *
+ * THE BRIEF (2026-09-18): the prompts on the services hub and in the
+ * Invitation send people here as /contact?brief=…; the message field
+ * takes it, so what they typed is not lost on the way.
  */
 type State = 'idle' | 'sending' | 'sent' | 'error'
 
@@ -22,6 +26,12 @@ export default function ContactForm({ initial = 'idle', initialError }: { initia
   const formRef = useRef<HTMLFormElement | null>(null)
   const [state, setState] = useState<State>(initial)
   const [error, setError] = useState<string | null>(initialError ?? null)
+
+  useEffect(() => {
+    const brief = new URLSearchParams(window.location.search).get('brief')?.trim()
+    const field = formRef.current?.querySelector<HTMLTextAreaElement>('textarea[name="message"]')
+    if (brief && field && !field.value) field.value = brief.slice(0, 4000)
+  }, [])
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()

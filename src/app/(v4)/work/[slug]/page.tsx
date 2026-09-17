@@ -1,46 +1,57 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import CaseMotion from '@/components/v4/CaseMotion'
+import CaseTrack from '@/components/v4/CaseTrack'
 import Button from '@/components/v4/Button'
 import ArrowLink from '@/components/v4/ArrowLink'
-import Reveal from '@/components/v4/Reveal'
-import BlockReveal from '@/components/v4/BlockReveal'
 import { CASE_STUDIES, getCaseStudy, type CaseBlock } from '@/lib/case-studies'
 import { WORK_PROJECTS } from '@/lib/work-projects'
 import { CALENDLY_URL, CONTACT_EMAIL, SITE_URL } from '@/lib/site'
-import './case.css'
+import './travel.css'
 
 /**
- * THE CASE STUDY — /work/[slug] (2026-09-12, the user's wireframe "Case
- * Study.png", elevated: "more sections, more elements, nice clean
- * motion; in the pinned section try different things — text with cards,
- * a quote; it needs to read as a nice article").
+ * THE CASE STUDY — /work/[slug]. SECOND BUILD, 2026-09-18 (user: "poor
+ * designed, low on imagery and video, but good on text content… a
+ * complete redesign… maybe full horizontal… imagery and video focused…
+ * one viewport can be one video in a big container, one can be a nice
+ * layout… a bit of editorial design layout with agentic. No numbering,
+ * no hairlines, no eyebrows"). The first build (2026-09-12: a dark
+ * article with a pinned index on a mesh-gradient ground) is parked:
+ * CaseMotion.tsx, CaseMesh.tsx, case.css — unimported.
  *
- * The page is an article on the void with a pinned index. In order:
+ * THE TRAVEL. The page is one horizontal run of SPREADS on a pinned
+ * stage, driven by the ordinary vertical scroll (CaseTrack.tsx has the
+ * how). The words are the first build's, untouched — the six blocks of
+ * site-architecture §3 in the same order — but every block is now laid
+ * out as a spread WITH PICTURES, and the project's captures are dealt
+ * through the run so no spread is bare:
  *
- *   §1 THE HERO — the project's name, the two paragraphs (block 1's
- *      first half), the facts on a hairline, the still with Visit under it
- *   §2 THE DEVICE — the laptop render on a glow
- *   §3 THE RECORDING — the live site under a real wheel, full width
- *   §4 THE ARTICLE — the index at the left follows the reading; the
- *      sections at the right are the six blocks of site-architecture §3
- *      (data: src/lib/case-studies.ts); the RESULT closes it (block 5,
- *      required)
- *   §5 THE FOOT — the next project, the two CTAs, all work + the service
- *      page (block 6)
+ *   THE COVER     paper — the name, huge, set across the edge of a big
+ *                 window that cuts through the site's captures (the
+ *                 hub's reel, this project alone); the facts as plain
+ *                 lines; Visit
+ *   THE OPENING   paper — the lede in display type, the second paragraph
+ *                 beside it, the laptop render floating at two rates
+ *   THE FILM      void — one viewport, one video, in one big container
+ *   A CHAPTER     paper — the title in display type, its paragraphs as
+ *                 staggered columns, a tall plate; then its blocks:
+ *     cards       picture tiles on a stair
+ *     quote       a void page: the line in display type over a capture
+ *     images      big plates, the second dropped and smaller
+ *     steps       THE NOTES — the agent's cursor walks the decisions as
+ *                 the spread crosses the screen, and the plate beside
+ *                 them cuts to each one's picture (a hand on a note
+ *                 takes over)
+ *     list        plain lines in columns
+ *   THE RESULT    void — block 5 (required), the two CTAs, block 6's links
+ *   THE NEXT      the next project's plate, its name across the edge
  *
- * THE GROUND is one fixed, full-viewport liquid mesh shader behind
- * everything (CaseMesh.tsx, mounted by CaseMotion) — user, 2026-09-12:
- * "an animated mesh gradient, subtle but animated". The sections sit on
- * it at z-index 1.
+ * THE ISLAND floats at the foot of the stage: a progress ring, the
+ * chapter on show, the index, the live site.
  *
- * SERVER-RENDERED, every word in the raw HTML (SEO plan D5): the article,
- * the index, the facts, the captions. The motion (CaseMotion.tsx) is an
- * enhancement; the recording has a poster and the page stands without JS.
- *
- * NOT INDEXED YET — KONA_OPEN_ROUTES=/work lifts the launch redirect
- * locally (the sub-path rule covers /work/[slug]). Flip INDEXABLE, list
- * the studies in sitemap.ts, in the same commit.
+ * SERVER-RENDERED, every word in the raw HTML in reading order (SEO plan
+ * D5); phones, reduced motion and no JS get the same DOM in flow. NOT
+ * INDEXED YET — KONA_OPEN_ROUTES=/work lifts the launch redirect locally.
+ * Flip INDEXABLE and list the studies in sitemap.ts in the same commit.
  */
 const INDEXABLE = false
 
@@ -74,84 +85,48 @@ export async function generateMetadata({
   }
 }
 
-/** one block of the article, by kind */
-function Block({ block, i }: { block: CaseBlock; i: number }) {
-  switch (block.kind) {
-    case 'text':
-      return (
-        <Reveal className="cs-block cs-text" index={0}>
-          {block.paragraphs.map((p) => (
-            <p key={p.slice(0, 32)}>{p}</p>
-          ))}
-        </Reveal>
-      )
-    case 'cards':
-      return (
-        <ul className="cs-cards">
-          {block.items.map((c, j) => (
-            <li key={c.title}>
-              <Reveal className="cs-card" index={j}>
-                <h3 className="cs-card-t">{c.title}</h3>
-                <p className="cs-card-b">{c.body}</p>
-              </Reveal>
-            </li>
-          ))}
-        </ul>
-      )
-    case 'quote':
-      return (
-        <Reveal className="cs-block">
-          <blockquote className="cs-quote">
-            <p>“{block.text}”</p>
-            <footer>
-              {block.who}
-              {block.role ? <span> · {block.role}</span> : null}
-            </footer>
-          </blockquote>
-        </Reveal>
-      )
-    case 'images':
-      return (
-        <div className={`cs-figs${block.items.length > 1 ? ' cs-figs-2' : ''}`}>
-          {block.items.map((im, j) => (
-            <Reveal key={im.src + j} index={j}>
-              <figure className="cs-fig">
-                <div className="cs-fig-win">
-                  <img src={im.src} alt={im.alt} width={1900} height={1000} loading="lazy" decoding="async" draggable={false} />
-                </div>
-                {im.caption ? <figcaption>{im.caption}</figcaption> : null}
-              </figure>
-            </Reveal>
-          ))}
-        </div>
-      )
-    case 'steps':
-      return (
-        <Reveal as="div" className="cs-block" index={i > 0 ? 1 : 0}>
-          <ol className="cs-steps">
-            {block.items.map((s) => (
-              <li key={s.title} className="cs-step">
-                <h3>{s.title}</h3>
-                <p>{s.body}</p>
-              </li>
-            ))}
-          </ol>
-        </Reveal>
-      )
-    case 'list':
-      return (
-        <Reveal as="div" className="cs-block" index={i > 0 ? 1 : 0}>
-          <ul className="cs-list">
-            {block.items.map((it) => (
-              <li key={it}>{it}</li>
-            ))}
-          </ul>
-        </Reveal>
-      )
-    default:
-      return null
-  }
+/** a picture in a window: the print slides inside it (CaseTrack), the
+ *  window leans with the run's speed and wipes open on arrival */
+function Plate({
+  src,
+  alt = '',
+  shape,
+  caption,
+  at,
+  eager,
+}: {
+  src: string
+  alt?: string
+  /** wide 19:10 by the stage's height · tall crop · tile · small */
+  shape: 'wide' | 'tall' | 'tile' | 'small'
+  caption?: string
+  /** where the crop looks, for the tall and tile crops */
+  at?: string
+  eager?: boolean
+}) {
+  return (
+    <figure className={`cx-plate cx-plate-${shape} cx-r`}>
+      <span className="cx-win">
+        <span className="cx-print">
+          <img
+            src={src}
+            alt={alt}
+            width={1900}
+            height={1000}
+            loading={eager ? 'eager' : 'lazy'}
+            decoding="async"
+            draggable={false}
+            style={at ? { objectPosition: at } : undefined}
+          />
+        </span>
+      </span>
+      {caption ? <figcaption>{caption}</figcaption> : null}
+    </figure>
+  )
 }
+
+/** where the crops look, dealt in turn — so two tiles of one capture differ */
+const LOOKS = ['18% 30%', '78% 40%', '50% 12%', '30% 80%', '85% 70%', '10% 55%']
 
 export default async function CaseStudyPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -160,19 +135,30 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
 
   const url = `${SITE_URL}/work/${study.slug}`
 
-  /* the next project: the study's own pick, else the roster's next; the
-     link goes to its case study when that exists, else to the hub */
+  /* the next project: the study's own pick, else the roster's next */
   const rosterIdx = WORK_PROJECTS.findIndex((p) => p.slug === study.slug)
   const nextSlug = study.next ?? WORK_PROJECTS[(rosterIdx + 1) % WORK_PROJECTS.length]?.slug
   const next = WORK_PROJECTS.find((p) => p.slug === nextSlug) ?? null
   const nextHref = next && getCaseStudy(next.slug) ? `/work/${next.slug}` : '/work'
 
-  /* the hero still is a REEL of the project's stills (the hub's frames),
-     cut at five a second; the first frame is the still itself */
+  /* THE PICTURES: the project's captures, dealt through the run in turn */
   const project = WORK_PROJECTS.find((p) => p.slug === study.slug)
   const frames = project?.frames?.length ? project.frames : [study.still.src]
+  let dealt = 0
+  const deal = () => frames[++dealt % frames.length]
+  let looked = 0
+  const look = () => LOOKS[looked++ % LOOKS.length]
 
-  const index = [...study.sections.map((s) => ({ id: s.id, title: s.title })), { id: 'result', title: 'Result' }]
+  /* the name, in lines: the last word alone when there are three or more */
+  const words = study.name.split(' ')
+  const nameLines = words.length >= 3 ? [words.slice(0, -1).join(' '), words[words.length - 1]] : words
+
+  const chapters = [
+    { id: 'opening', title: 'Opening' },
+    ...(study.reel ? [{ id: 'film', title: 'The film' }] : []),
+    ...study.sections.map((s) => ({ id: s.id, title: s.title })),
+    { id: 'result', title: 'Result' },
+  ]
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -200,176 +186,291 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
     ],
   }
 
-  return (
-    <CaseMotion>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      {/* the entrance parks the hero; the no-JS page undoes it */}
-      <noscript>
-        <style>{`.cs-ent,.cs-ln{opacity:1!important;transform:none!important}`}</style>
-      </noscript>
+  /** one block of a chapter, as a spread */
+  const spread = (block: CaseBlock, key: string) => {
+    switch (block.kind) {
+      case 'text':
+        return null // a chapter's text is its opening spread (below)
+      case 'cards':
+        return (
+          <div key={key} className="cx-s cx-cards">
+            <ul className="cx-cards-row">
+              {block.items.map((c, j) => (
+                <li key={c.title} className="cx-card" data-rate={[0.05, -0.03, 0.06][j % 3]}>
+                  <Plate src={deal()} shape="tile" at={look()} />
+                  <div className="cx-r" style={{ '--d': `${0.08 + j * 0.06}s` } as React.CSSProperties}>
+                    <h3 className="cx-card-t">{c.title}</h3>
+                    <p className="cx-card-b">{c.body}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      case 'quote':
+        return (
+          <div key={key} className="cx-s cx-quote k-dark">
+            <span className="cx-quote-bg" aria-hidden="true">
+              <span className="cx-print">
+                <img src={deal()} alt="" width={1900} height={1000} loading="lazy" decoding="async" draggable={false} />
+              </span>
+            </span>
+            <blockquote className="cx-quote-in cx-r" data-rate="-0.06">
+              <p>“{block.text}”</p>
+              <footer>
+                {block.who}
+                {block.role ? <span>, {block.role}</span> : null}
+              </footer>
+            </blockquote>
+          </div>
+        )
+      case 'images':
+        return (
+          <div key={key} className="cx-s cx-figs">
+            {block.items.map((im, j) => (
+              <Plate key={im.src + j} src={im.src} alt={im.alt} caption={im.caption} shape={j === 0 ? 'wide' : 'small'} />
+            ))}
+          </div>
+        )
+      case 'steps': {
+        const pics = block.items.map(() => deal())
+        return (
+          <div key={key} className="cx-s cx-notes">
+            <figure className="cx-plate cx-plate-wide cx-notes-plate cx-r" aria-hidden="true">
+              <span className="cx-win">
+                <span className="cx-print">
+                  {pics.map((src, j) => (
+                    <img key={src + j} className={`cx-notes-f${j === 0 ? ' is-on' : ''}`} src={src} alt="" width={1900} height={1000} loading="lazy" decoding="async" draggable={false} />
+                  ))}
+                </span>
+              </span>
+            </figure>
+            <div className="cx-notes-side">
+              <i className="cx-agent" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M3 2.5 L17 9.2 L10.6 11 L8.4 17.5 Z" />
+                </svg>
+                <b>Kona</b>
+              </i>
+              <ol className="cx-notes-list">
+                {block.items.map((s, j) => (
+                  <li key={s.title} className={`cx-note${j === 0 ? ' is-on' : ''}`}>
+                    <h3>{s.title}</h3>
+                    <p>{s.body}</p>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        )
+      }
+      case 'list':
+        return (
+          <div key={key} className="cx-s cx-list">
+            <ul className="cx-list-in">
+              {block.items.map((it, j) => (
+                <li key={it} className="cx-r" style={{ '--d': `${j * 0.04}s` } as React.CSSProperties}>
+                  {it}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      default:
+        return null
+    }
+  }
 
-      {/* §1 — THE HERO */}
-      <header className="cs-hero">
-        <h1 className="cs-h1">
-          {study.name.split(' ').map((w, i, arr) => (
-            <span key={w + i} className="cs-mask" style={{ display: arr.length > 2 && i < arr.length - 1 ? 'inline-block' : undefined }}>
-              <span className="cs-ln">{w}{i < arr.length - 1 ? ' ' : ''}</span>
+  return (
+    <CaseTrack chapters={chapters} live={study.live}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      {/* arrivals wait hidden under .is-live only, so the no-JS page needs no undo */}
+
+      {/* THE COVER */}
+      <header className="cx-s cx-cover" id="opening">
+        <div className="cx-cover-side">
+          <ul className="cx-facts cx-r" style={{ '--d': '0.5s' } as React.CSSProperties}>
+            {study.facts.map((f) => (
+              <li key={f.label}>
+                <span className="sr-only">{f.label}: </span>
+                {f.value}
+              </li>
+            ))}
+          </ul>
+          {study.live ? (
+            <div className="cx-cover-act cx-r" style={{ '--d': '0.62s' } as React.CSSProperties}>
+              <Button href={study.live} external hoverLabel="Open it">
+                Visit site
+              </Button>
+            </div>
+          ) : null}
+        </div>
+        <figure className="cx-plate cx-plate-cover cx-r" style={{ '--d': '0.2s' } as React.CSSProperties}>
+          <span className="cx-win">
+            <span className="cx-print cx-reel">
+              {frames.slice(0, 8).map((src, j) => (
+                <img
+                  key={src}
+                  className={j === 0 ? 'is-on' : ''}
+                  src={src}
+                  alt={j === 0 ? study.still.alt : ''}
+                  width={1900}
+                  height={1000}
+                  fetchPriority={j === 0 ? 'high' : undefined}
+                  loading={j < 2 ? 'eager' : 'lazy'}
+                  decoding="async"
+                  draggable={false}
+                />
+              ))}
+            </span>
+          </span>
+        </figure>
+        <h1 className="cx-h1 cx-r" data-rate="-0.12">
+          {nameLines.map((ln, i) => (
+            <span key={ln + i} className="cx-mask">
+              <span className="cx-ln" style={{ '--d': `${0.1 + i * 0.1}s` } as React.CSSProperties}>
+                {ln}
+                {i < nameLines.length - 1 ? ' ' : ''}
+              </span>
             </span>
           ))}
         </h1>
-        <div className="cs-intro cs-ent">
-          {study.intro.map((p) => (
-            <p key={p.slice(0, 32)}>{p}</p>
-          ))}
-        </div>
-        <div className="cs-still-wrap cs-ent">
-          <div className="cs-still" style={{ '--cs-n': frames.length, '--cs-anim': `cs-flick-${Math.min(frames.length, 12)}` } as React.CSSProperties}>
-            {frames.slice(0, 12).map((src, j) => (
-              <img
-                key={src}
-                style={{ '--f': j } as React.CSSProperties}
-                src={src}
-                alt={j === 0 ? study.still.alt : ''}
-                width={1900}
-                height={1000}
-                fetchPriority={j === 0 ? 'high' : undefined}
-                loading={j === 0 ? 'eager' : 'lazy'}
-                decoding="async"
-                draggable={false}
-              />
-            ))}
-          </div>
-        </div>
-        {study.live ? (
-          <div className="cs-visit cs-ent">
-            <Button href={study.live} external ghost hoverLabel="Open it">
-              Visit site
-            </Button>
-          </div>
-        ) : null}
-        <ul className="cs-facts cs-ent" aria-label="At a glance">
-          {study.facts.map((f) => (
-            <li key={f.label} className="cs-fact">
-              <span className="cs-fact-l">{f.label}</span>
-              <span className="cs-fact-v">{f.value}</span>
-            </li>
-          ))}
-        </ul>
       </header>
 
-      {/* §2 — THE DEVICE */}
-      <section className="cs-device" aria-label="The site on a laptop">
-        <div className="cs-device-stage">
-          {study.device.back ? (
-            <img className="cs-device-back" src={study.device.back} alt="" loading="lazy" decoding="async" draggable={false} aria-hidden="true" />
-          ) : null}
-          <Reveal className="cs-device-front-wrap">
-            <img className="cs-device-front" src={study.device.front} alt={`${study.name} — the website on a laptop`} loading="lazy" decoding="async" draggable={false} />
-          </Reveal>
+      {/* THE OPENING — block 1's first half */}
+      <section className="cx-s cx-open" aria-label="Opening">
+        <div className="cx-open-text">
+          <p className="cx-lede cx-r">{study.intro[0]}</p>
+          {study.intro.slice(1).map((p, j) => (
+            <p key={p.slice(0, 32)} className="cx-open-p cx-r" style={{ '--d': `${0.12 + j * 0.08}s` } as React.CSSProperties}>
+              {p}
+            </p>
+          ))}
         </div>
-        {study.live ? (
-          <p className="cs-device-cap">
-            <a href={study.live} target="_blank" rel="noopener noreferrer">{study.live.replace(/^https?:\/\//, '')}</a>
-            {' · '}designed and built by Konaverse, {study.facts.find((f) => f.label === 'Year')?.value}
-          </p>
-        ) : null}
+        <div className="cx-device" aria-hidden={false}>
+          {study.device.back ? (
+            <img className="cx-device-back" data-rate="0.16" src={study.device.back} alt="" loading="lazy" decoding="async" draggable={false} aria-hidden="true" />
+          ) : null}
+          <img className="cx-device-front" data-rate="-0.08" src={study.device.front} alt={`${study.name} — the website on a laptop`} loading="lazy" decoding="async" draggable={false} />
+        </div>
       </section>
 
-      {/* §3 — THE RECORDING */}
+      {/* THE FILM — one viewport, one video */}
       {study.reel ? (
-        <figure className="cs-reel">
-          <div className="cs-reel-win">
-            <video autoPlay muted loop playsInline preload="metadata" poster={study.reel.poster} aria-label={`${study.name} — a screen recording of the live site`}>
-              {study.reel.webm ? <source src={study.reel.webm} type="video/webm" /> : null}
-              <source src={study.reel.mp4} type="video/mp4" />
-              <img src={study.reel.poster} alt={study.still.alt} />
-            </video>
-          </div>
-          <div className="cs-reel-foot">
+        <section className="cx-s cx-film k-dark" id="film" aria-label="The film">
+          <figure className="cx-film-fig cx-r">
+            <span className="cx-win">
+              <video autoPlay muted loop playsInline preload="metadata" poster={study.reel.poster} aria-label={`${study.name} — a screen recording of the live site`}>
+                {study.reel.webm ? <source src={study.reel.webm} type="video/webm" /> : null}
+                <source src={study.reel.mp4} type="video/mp4" />
+              </video>
+            </span>
             <figcaption>The live site, under a real scroll</figcaption>
-            <span className="cs-reel-bar" aria-hidden="true"><i /></span>
-          </div>
-        </figure>
+          </figure>
+        </section>
       ) : null}
 
-      {/* §4 — THE ARTICLE */}
-      <section className="cs-article" aria-label="The case study">
-        <nav className="cs-rail" aria-label="In this case study">
-          <ol className="cs-index">
-            {index.map((s, i) => (
-              <li key={s.id} data-id={s.id} className={i === 0 ? 'is-active' : ''}>
-                <a href={`#${s.id}`}>{s.title}</a>
-              </li>
-            ))}
-          </ol>
-        </nav>
-        <div className="cs-body">
-          {study.sections.map((s) => (
-            <section key={s.id} id={s.id} className="cs-sec" aria-labelledby={`${s.id}-h`}>
-              <BlockReveal as="h2" className="cs-h2" id={`${s.id}-h`} text={s.title} />
-              {s.blocks.map((b, i) => (
-                <Block key={s.id + b.kind + i} block={b} i={i} />
-              ))}
-            </section>
-          ))}
-          {/* BLOCK 5 — required */}
-          <section id="result" className="cs-sec" aria-labelledby="result-h">
-            <BlockReveal as="h2" className="cs-h2" id="result-h" text="Result" />
-            {study.result.stats?.length ? (
-              <ul className="cs-stats">
-                {study.result.stats.map((st, j) => (
-                  <li key={st.label}>
-                    <Reveal className="cs-stat" index={j}>
-                      <span className="cs-stat-v">{st.value}</span>
-                      <span className="cs-stat-l">{st.label}</span>
-                    </Reveal>
-                  </li>
+      {/* THE CHAPTERS — the six blocks, each a run of spreads */}
+      {study.sections.map((s) => {
+        const paragraphs = s.blocks.flatMap((b) => (b.kind === 'text' ? b.paragraphs : []))
+        return (
+          <section key={s.id} id={s.id} className="cx-ch" aria-labelledby={`${s.id}-h`}>
+            <div className="cx-s cx-text">
+              <div className="cx-text-main">
+              <h2 className="cx-h2 cx-r" id={`${s.id}-h`} data-rate="-0.1">
+                <span className="cx-mask">
+                  <span className="cx-ln">{s.title}</span>
+                </span>
+              </h2>
+              <div className="cx-cols">
+                {paragraphs.map((p, j) => (
+                  <p key={p.slice(0, 32)} className="cx-r" style={{ '--d': `${0.1 + j * 0.08}s` } as React.CSSProperties}>
+                    {p}
+                  </p>
                 ))}
-              </ul>
-            ) : null}
-            <Reveal className="cs-result" index={1}>
-              <p>{study.result.text}</p>
-            </Reveal>
+              </div>
+              </div>
+              <Plate src={deal()} shape="tall" at={look()} />
+            </div>
+            {s.blocks.map((b, i) => spread(b, s.id + b.kind + i))}
           </section>
+        )
+      })}
+
+      {/* THE RESULT — block 5 (required), the invitation, block 6 */}
+      <section className="cx-s cx-result k-dark" id="result" aria-labelledby="result-h">
+        <span className="cx-quote-bg" aria-hidden="true">
+          <span className="cx-print">
+            <img src={study.still.src} alt="" width={1900} height={1000} loading="lazy" decoding="async" draggable={false} />
+          </span>
+        </span>
+        <div className="cx-result-in">
+          <h2 className="cx-h2 cx-r" id="result-h">
+            <span className="cx-mask">
+              <span className="cx-ln">Result</span>
+            </span>
+          </h2>
+          {study.result.stats?.length ? (
+            <ul className="cx-stats">
+              {study.result.stats.map((st, j) => (
+                <li key={st.label} className="cx-r" style={{ '--d': `${0.1 + j * 0.07}s` } as React.CSSProperties}>
+                  <span className="cx-stat-v">{st.value}</span>
+                  <span className="cx-stat-l">{st.label}</span>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          <p className="cx-result-t cx-r" style={{ '--d': '0.14s' } as React.CSSProperties}>
+            {study.result.text}
+          </p>
         </div>
-      </section>
-
-      {/* §5 — THE FOOT */}
-      <footer className="cs-foot">
-        {next ? (
-          <a className="cs-next" href={nextHref}>
-            <div className="cs-next-l">
-              <span className="cs-next-k">Next project</span>
-              <p className="cs-next-n">{next.name}</p>
-              <p className="cs-next-line">{next.line}</p>
-            </div>
-            <div className="cs-next-plate" aria-hidden="true">
-              <img src={next.image} alt="" width={1600} height={1100} loading="lazy" decoding="async" draggable={false} />
-            </div>
-          </a>
-        ) : null}
-
-        <section className="cs-invite" aria-labelledby="cs-invite-h">
-          <h2 className="cs-invite-h" id="cs-invite-h">Have a project like this one?</h2>
-          <div className="cs-invite-act">
+        <div className="cx-invite cx-r" style={{ '--d': '0.2s' } as React.CSSProperties}>
+          <h2 className="cx-invite-h">Have a project like this one?</h2>
+          <div className="cx-invite-act">
             <Button href="/contact" hoverLabel="Say hello">
               Contact us
             </Button>
             <Button href={CALENDLY_URL} external ghost hoverLabel="Pick a time">
               Book a call
             </Button>
-            <a className="cs-mail" href={`mailto:${CONTACT_EMAIL}`}>
-              {CONTACT_EMAIL}
-            </a>
           </div>
-        </section>
+          <a className="cx-mail" href={`mailto:${CONTACT_EMAIL}`}>
+            {CONTACT_EMAIL}
+          </a>
+          <nav className="cx-links" aria-label="Related">
+            <ArrowLink href="/work">All work</ArrowLink>
+            <ArrowLink href={`/services/${study.service.slug}`}>{study.service.name}</ArrowLink>
+          </nav>
+        </div>
+      </section>
 
-        {/* BLOCK 6 — the service page, and the hub */}
-        <nav className="cs-links" aria-label="Related">
-          <ArrowLink href="/work">All work</ArrowLink>
-          <ArrowLink href={`/services/${study.service.slug}`}>{study.service.name}</ArrowLink>
-        </nav>
-      </footer>
-    </CaseMotion>
+      {/* THE NEXT */}
+      {next ? (
+        <a className="cx-s cx-next" href={nextHref} aria-label={`Next project: ${next.name}`}>
+          <figure className="cx-plate cx-plate-wide cx-r" aria-hidden="true">
+            <span className="cx-win">
+              <span className="cx-print">
+                <img src={next.image} alt="" width={1900} height={1000} loading="lazy" decoding="async" draggable={false} />
+              </span>
+            </span>
+          </figure>
+          <p className="cx-next-n cx-r" data-rate="-0.1" aria-hidden="true">
+            <span className="cx-mask">
+              <span className="cx-ln">{next.name}</span>
+            </span>
+          </p>
+          <p className="cx-next-line cx-r" aria-hidden="true">
+            {next.line}
+            <span className="cx-next-go">
+              Next project
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
+                <path d="M2 8 L13 8" />
+                <path d="M9 4.5 L13 8 L9 11.5" />
+              </svg>
+            </span>
+          </p>
+        </a>
+      ) : null}
+    </CaseTrack>
   )
 }

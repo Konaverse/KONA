@@ -1,0 +1,220 @@
+/* ============================================================
+   THE SCENES — six services DRAWN IN CODE (ServiceScene.tsx)
+   Moved out of hub.css 2026-09-17, unchanged: the hub's bento plays
+   them in its cards, and the service pages' hero (run.css, THE BRIEF)
+   shows the same scene enlarged as the agent's artboard — the card you
+   clicked becomes the page. Markup only in the component; everything
+   drawn and moved is here, keyed on an ancestor's `is-hot` (playing)
+   and `is-seen`. Every length rem, hairlines px; nothing is a picture.
+   ============================================================ */
+.hv { position: relative; }
+
+/* WEB DESIGN: a board whose blocks take a second layout under the hand */
+.hv-design { width: 25rem; }
+.hv-frame-l { display: block; margin: 0 0 0.45rem 0.1rem; font-size: 0.68rem; font-weight: var(--w-medium); color: var(--n-6); }
+.hv-board {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 25 / 15.5;
+  border: 1px solid var(--hairline);
+  border-radius: 0.8rem;
+  background: var(--n-0);
+  box-shadow: 0 1.4rem 2.6rem -1.6rem rgb(13 16 18 / 0.3);
+}
+.hv-b {
+  position: absolute;
+  border-radius: 0.4rem;
+  background: var(--n-2);
+  transition: left 0.9s var(--e-glass), top 0.9s var(--e-glass), width 0.9s var(--e-glass), height 0.9s var(--e-glass), background 0.6s var(--e-glass);
+}
+.hv-b1 { left: 4%; top: 6%; width: 92%; height: 8%; }
+.hv-b2 { left: 4%; top: 19%; width: 56%; height: 46%; background: var(--n-10); transition-delay: 0.06s; }
+.hv-b2 u { position: absolute; left: 9%; height: 9%; border-radius: 0.2rem; background: var(--n-0); opacity: 0.9; }
+.hv-b2 u:nth-child(1) { bottom: 30%; width: 58%; }
+.hv-b2 u:nth-child(2) { bottom: 14%; width: 34%; opacity: 0.45; }
+.hv-b3 { left: 64%; top: 19%; width: 32%; height: 21%; transition-delay: 0.1s; }
+.hv-b4 { left: 64%; top: 44%; width: 32%; height: 21%; transition-delay: 0.14s; }
+.hv-b5 { left: 4%; top: 70%; width: 92%; height: 23%; transition-delay: 0.18s; }
+.is-hot .hv-b2 { left: 40%; top: 19%; width: 56%; height: 61%; }
+.is-hot .hv-b3 { left: 4%; top: 19%; width: 32%; height: 28%; }
+.is-hot .hv-b4 { left: 4%; top: 52%; width: 32%; height: 28%; }
+.is-hot .hv-b5 { top: 85%; height: 9%; }
+/* the agent, holding the hero block's corner */
+.hv-cur { position: absolute; left: 58%; top: 62%; transition: left 0.9s var(--e-glass) 0.06s, top 0.9s var(--e-glass) 0.06s; }
+.is-hot .hv-cur { left: 94%; top: 77%; }
+.hv-cur svg { display: block; width: 1.15rem; height: 1.15rem; filter: drop-shadow(0 0.15rem 0.25rem rgb(13 16 18 / 0.3)); }
+.hv-cur path { fill: var(--ink); stroke: var(--n-0); stroke-width: 1.4; stroke-linejoin: round; }
+.hv-cur b { position: absolute; left: 0.95rem; top: 0.95rem; padding: 0.2rem 0.42rem; border-radius: 0.15rem 0.6rem 0.6rem 0.6rem; background: var(--ink); color: var(--n-0); font-size: 0.58rem; font-weight: var(--w-medium); line-height: 1; }
+
+/* DEVELOPMENT: an editor that types itself, then the build passes */
+.hv-dev { width: 19rem; }
+.hv-win { border: 1px solid var(--hairline); border-radius: 0.8rem; background: var(--n-0); box-shadow: 0 1.4rem 2.6rem -1.6rem rgb(13 16 18 / 0.3); overflow: hidden; }
+.hv-bar { display: flex; gap: 0.35rem; padding: 0.7rem 0.8rem; border-bottom: 1px solid var(--hairline); }
+.hv-bar i { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--n-3); }
+.hv-code { display: grid; gap: 0.62rem; padding: 1rem 1rem 1.15rem; }
+.hv-ln { display: flex; gap: 0.4rem; padding-left: calc(var(--in) * 1.1rem); }
+.hv-ln i { height: 0.5rem; border-radius: 0.25rem; background: var(--n-3); }
+.hv-ln i:nth-child(1) { background: var(--ink); }
+.hv-ln i:nth-child(3) { background: var(--n-5); }
+.is-hot .hv-ln { animation: hv-type 0.42s steps(9) both; animation-delay: calc(var(--l) * 0.17s); }
+@keyframes hv-type { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+.hv-pill {
+  position: absolute;
+  right: -1.6rem;
+  bottom: -1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 1rem;
+  background: var(--ink);
+  color: var(--n-0);
+  font-size: 0.72rem;
+  font-weight: var(--w-medium);
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0 0.8rem 1.4rem -0.8rem rgb(13 16 18 / 0.5);
+}
+.hv-pill i { width: 0.45rem; height: 0.45rem; border-radius: 50%; background: #7ee2a8; }
+.is-hot .hv-pill { animation: hv-pop 0.6s var(--e-settle) both; animation-delay: 1.3s; }
+@keyframes hv-pop { from { transform: translateY(0.6rem) scale(0.8); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* 3D WEBSITES: a glass cube with a solid core; it turns, and leans to
+   the pointer (--lx/--ly, the card's own lean, read larger) */
+.hv-three { width: 12rem; height: 12rem; perspective: 46rem; }
+.hv-tilt {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(calc(-18deg + var(--ly, 0) * -26deg)) rotateY(calc(var(--lx, 0) * 38deg));
+}
+.hv-cube, .hv-core { position: absolute; transform-style: preserve-3d; }
+.hv-cube { --s: 7.4rem; left: 50%; top: 50%; width: var(--s); height: var(--s); margin: calc(var(--s) / -2); animation: hv-turn 22s linear infinite; }
+.hv-core { --s: 3.3rem; left: 50%; top: 50%; width: var(--s); height: var(--s); margin: calc(var(--s) / -2); animation: hv-turn 9s linear infinite reverse; }
+.hv-cube > i, .hv-core > i { position: absolute; inset: 0; border: 1.5px solid var(--ink); background: rgb(255 255 255 / 0.38); }
+.hv-core > i { border-color: var(--n-11); background: var(--n-11); opacity: 0.92; }
+.hv-cube > i:nth-child(1), .hv-core > i:nth-child(1) { transform: translateZ(calc(var(--s) / 2)); }
+.hv-cube > i:nth-child(2), .hv-core > i:nth-child(2) { transform: rotateY(180deg) translateZ(calc(var(--s) / 2)); }
+.hv-cube > i:nth-child(3), .hv-core > i:nth-child(3) { transform: rotateY(90deg) translateZ(calc(var(--s) / 2)); }
+.hv-cube > i:nth-child(4), .hv-core > i:nth-child(4) { transform: rotateY(-90deg) translateZ(calc(var(--s) / 2)); }
+.hv-cube > i:nth-child(5), .hv-core > i:nth-child(5) { transform: rotateX(90deg) translateZ(calc(var(--s) / 2)); }
+.hv-cube > i:nth-child(6), .hv-core > i:nth-child(6) { transform: rotateX(-90deg) translateZ(calc(var(--s) / 2)); }
+@keyframes hv-turn { to { transform: rotateY(360deg) rotateX(360deg); } }
+.is-hot .hv-cube { animation-duration: 9s; }
+.hv-floor { position: absolute; left: 12%; right: 12%; bottom: -0.6rem; height: 1.2rem; border-radius: 50%; background: radial-gradient(closest-side, rgb(13 16 18 / 0.28), transparent); transition: transform var(--d-slow) var(--e-glass); }
+.is-hot .hv-floor { transform: scale(1.18); }
+
+/* ONE-PAGE: a long page scrolling itself in a tall frame */
+.hv-one { display: flex; align-items: stretch; gap: 0.9rem; height: 14rem; }
+.hv-tall { width: 10.5rem; overflow: hidden; border: 1px solid var(--hairline); border-radius: 0.9rem; background: var(--n-0); box-shadow: 0 1.4rem 2.6rem -1.6rem rgb(13 16 18 / 0.3); }
+.hv-strip { display: grid; gap: 0.5rem; padding: 0.55rem; }
+.hv-s { position: relative; display: block; border-radius: 0.45rem; background: var(--n-2); }
+.hv-s u { position: absolute; left: 10%; height: 0.4rem; border-radius: 0.2rem; background: var(--n-0); }
+.hv-s1 { height: 8.5rem; background: var(--n-10); }
+.hv-s1 u:nth-child(1) { bottom: 2rem; width: 62%; }
+.hv-s1 u:nth-child(2) { bottom: 1.2rem; width: 38%; opacity: 0.5; }
+.hv-s2 { height: 5rem; }
+.hv-s3 { height: 6.5rem; background: transparent; border: 1px solid var(--hairline); }
+.hv-s3 u { background: var(--n-4); width: 70%; }
+.hv-s3 u:nth-child(1) { top: 1.2rem; }
+.hv-s3 u:nth-child(2) { top: 2.3rem; width: 55%; }
+.hv-s3 u:nth-child(3) { top: 3.4rem; width: 62%; }
+.hv-s4 { height: 7rem; }
+.hv-s5 { height: 4.5rem; background: var(--n-10); }
+.hv-s5 u { left: 50%; top: 50%; width: 42%; height: 1.1rem; margin: -0.55rem 0 0 -21%; border-radius: 0.55rem; opacity: 1; }
+.is-hot .hv-strip { animation: hv-scroll 3.4s cubic-bezier(0.65, 0, 0.35, 1) infinite alternate; }
+@keyframes hv-scroll { 0%, 8% { transform: none; } 92%, 100% { transform: translateY(calc(-100% + 14rem)); } }
+.hv-rail { position: relative; width: 1px; margin: 0.6rem 0; background: var(--n-4); }
+.hv-rail i { position: absolute; left: -0.22rem; top: 0; width: 0.5rem; height: 0.5rem; margin-top: -0.25rem; border-radius: 50%; background: var(--ink); }
+.is-hot .hv-rail i { animation: hv-rail 3.4s cubic-bezier(0.65, 0, 0.35, 1) infinite alternate; }
+@keyframes hv-rail { 0%, 8% { top: 0; } 92%, 100% { top: 100%; } }
+
+/* REDESIGN: before | after under one frame; the driver owns --split */
+.hv-re {
+  --split: 50%;
+  width: 19rem;
+  aspect-ratio: 19 / 12.5;
+  overflow: hidden;
+  border: 1px solid var(--hairline);
+  border-radius: 0.8rem;
+  background: var(--n-0);
+  box-shadow: 0 1.4rem 2.6rem -1.6rem rgb(13 16 18 / 0.3);
+}
+.hv-after, .hv-before { position: absolute; inset: 0; }
+.hv-after i { position: absolute; border-radius: 0.35rem; }
+.hv-a1 { left: 8%; top: 16%; width: 46%; height: 11%; background: var(--ink); }
+.hv-a2 { left: 8%; top: 33%; width: 30%; height: 5%; background: var(--n-4); }
+.hv-a3 { left: 8%; top: 70%; width: 22%; height: 13%; border-radius: 1rem !important; background: var(--ink); }
+.hv-a4 { left: 60%; top: 14%; width: 32%; height: 70%; background: var(--n-2); }
+.hv-before {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 0.3rem;
+  padding: 0.5rem;
+  background: var(--n-3);
+  clip-path: inset(0 calc(100% - var(--split)) 0 0);
+}
+.hv-before i { border: 1.5px solid var(--n-6); border-radius: 1px; background: var(--n-2); }
+.hv-before i:nth-child(3n) { grid-column: span 2; background: var(--n-4); }
+.hv-before i:nth-child(4n + 1) { background: var(--n-5); transform: rotate(-1.5deg); }
+.hv-before i:nth-child(7) { grid-row: span 2; }
+.hv-div { position: absolute; left: var(--split); top: 0; bottom: 0; width: 1.5px; margin-left: -0.75px; background: var(--ink); }
+.hv-div i { position: absolute; left: 50%; top: 50%; width: 1.6rem; height: 1.6rem; margin: -0.8rem; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 0.25rem var(--n-0); }
+.hv-div i::before, .hv-div i::after { content: ''; position: absolute; top: 50%; width: 0.32rem; height: 0.32rem; margin-top: -0.16rem; border: solid var(--n-0); border-width: 1.5px 1.5px 0 0; }
+.hv-div i::before { left: 0.36rem; transform: rotate(-135deg); }
+.hv-div i::after { right: 0.36rem; transform: rotate(45deg); }
+.hv-lab { position: absolute; bottom: 0.5rem; padding: 0.22rem 0.45rem; border-radius: var(--r-sm); font-size: 0.6rem; font-weight: var(--w-medium); line-height: 1; }
+.hv-lab-b { left: 0.5rem; background: var(--n-0); color: var(--ink); }
+.hv-lab-a { right: 0.5rem; background: var(--ink); color: var(--n-0); }
+
+/* SEO: your row climbs from fourth to first; the line rises */
+.hv-seo { display: flex; align-items: center; gap: 2.2rem; }
+.hv-serp { display: grid; gap: 0.5rem; width: 19rem; padding: 0.9rem; border: 1px solid var(--hairline); border-radius: 0.8rem; background: var(--n-0); box-shadow: 0 1.4rem 2.6rem -1.6rem rgb(13 16 18 / 0.3); }
+.hv-q { display: flex; align-items: center; gap: 0.5rem; height: 2rem; padding: 0 0.8rem; border: 1px solid var(--hairline); border-radius: 1rem; font-size: 0.72rem; color: var(--text-muted); }
+.hv-q i { width: 0.6rem; height: 0.6rem; border: 1.5px solid var(--n-6); border-radius: 50%; }
+.hv-r {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1rem 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 0.6rem;
+  row-gap: 0.3rem;
+  height: 2.5rem;
+  align-content: center;
+  padding: 0 0.6rem;
+  border-radius: 0.5rem;
+  transition: transform 0.95s var(--e-glass), background 0.5s var(--e-glass);
+  transition-delay: calc((3 - var(--r)) * 0.05s);
+}
+.hv-r i { grid-row: span 2; align-self: center; width: 1rem; height: 1rem; border-radius: 50%; background: var(--n-3); }
+.hv-r u { height: 0.42rem; border-radius: 0.2rem; background: var(--n-3); }
+.hv-r u:nth-of-type(1) { width: 62%; background: var(--n-5); }
+.hv-r u:nth-of-type(2) { width: 84%; }
+.hv-you { background: var(--n-2); }
+.hv-you i, .hv-you u:nth-of-type(1) { background: var(--ink); }
+.hv-you b { position: absolute; right: 0.6rem; top: 50%; transform: translateY(-50%); padding: 0.2rem 0.42rem; border-radius: var(--r-sm); background: var(--ink); color: var(--n-0); font-size: 0.58rem; font-weight: var(--w-medium); line-height: 1; }
+.is-hot .hv-r:not(.hv-you) { transform: translateY(3rem); }
+.is-hot .hv-you { transform: translateY(-9rem); }
+.hv-rank { display: grid; gap: 0.8rem; width: 11rem; }
+.hv-rank-n { position: relative; display: block; height: 4.6rem; font-size: 4.6rem; font-weight: var(--w-light); line-height: 1; letter-spacing: -0.05em; }
+.hv-rank-n b { position: absolute; left: 0; top: 0; font-weight: inherit; transition: transform 0.8s var(--e-glass), opacity 0.5s var(--e-glass); }
+.hv-rank-n b:nth-child(2) { transform: translateY(60%); opacity: 0; }
+.is-hot .hv-rank-n b:nth-child(1) { transform: translateY(-60%); opacity: 0; }
+.is-hot .hv-rank-n b:nth-child(2) { transform: none; opacity: 1; }
+.hv-rank svg { display: block; width: 100%; height: auto; overflow: visible; }
+.hv-rank path { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 160; stroke-dashoffset: 160; transition: stroke-dashoffset 1.2s var(--e-drift, ease); }
+.is-seen .hv-rank path { stroke-dashoffset: 96; }
+.is-hot .hv-rank path { stroke-dashoffset: 0; }
+
+/* PHONES */
+@media (max-width: 57.5rem) {
+  .hv-design { width: 17rem; }
+  .hv-seo { flex-direction: column; gap: 1rem; }
+  .hv-rank { display: none; }
+  .hv-serp { width: 16rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hv-cube, .hv-core { animation: none; }
+  .is-hot .hv-ln, .is-hot .hv-pill, .is-hot .hv-strip, .is-hot .hv-rail i { animation: none; }
+}

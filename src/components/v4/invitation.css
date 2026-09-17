@@ -1,126 +1,229 @@
 /* ============================================================
-   THE INVITATION — .inv-* (2026-08-24), the site's CTA. Moved out of
-   home.css on 2026-09-08 so the section can close any route (the
-   services hub ends on it); Invitation.tsx imports this file.
-   Mechanism notes in Invitation.tsx.
+   THE INVITATION — .inv-* — the site's CTA (Invitation.tsx has the
+   what and the why). SECOND BUILD, 2026-09-18: paper, THE FIELD in ink
+   under everything (FooterField tone="paper", styled in tokens.css),
+   the line, THE ASK (a real prompt) with Book beside it, the starters,
+   the four sites as plates at the flanks, the agent's cursor.
+   Desktop lengths are rem (the picture scales); the whole section sits
+   inside one screen at the 1534 x 730 reference. Nothing is a rule, a
+   label or a number.
    ============================================================ */
 .inv {
   position: relative;
   background: var(--surface);
-  /* tall enough that both plates sit WHOLE (user call 2026-08-24 — the
-     bleed-off-the-edge composition read as cropping); the clip stays as
-     the safety net for the drift. The TOP padding is the shorter side
-     (same day): the approach from §5 was reading as dead air. */
-  padding-block: clamp(9rem, 18vh, 14rem) clamp(13rem, 28vh, 22rem);
+  padding-block: 8.5rem 9.5rem;
   overflow: clip;
 }
 .inv-body {
   position: relative;
-  z-index: 1; /* the line rides over a plate where they cross */
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 .inv-line {
   margin: 0;
-  max-width: 14ch;
+  max-width: 16ch;
+  font-size: 6.4rem;
   font-weight: var(--w-light);
 }
-.inv-act {
+
+/* ---------- THE ASK, and Book beside it ---------- */
+.inv-row {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: var(--s-6) var(--s-7);
-  margin-top: clamp(var(--s-8), 9vh, var(--s-10));
+  gap: 0.75rem;
+  width: min(100%, 50rem);
+  margin-top: 3.2rem;
 }
-
-/* ---------- the plates ---------- */
-.inv-plates {
+.inv-ask {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  height: 4rem;
+  padding: 0 0.55rem 0 1.4rem;
+  border-radius: 2rem;
+  background: var(--surface-raised);
+  box-shadow: 0 0.06rem 0.12rem rgb(21 23 26 / 0.06), 0 1.2rem 2.6rem -1rem rgb(21 23 26 / 0.22), inset 0 0 0 1px rgb(21 23 26 / 0.07);
+  transition: box-shadow var(--d-base) var(--e-settle);
+}
+.inv-ask:focus-within {
+  box-shadow: 0 0.06rem 0.12rem rgb(21 23 26 / 0.06), 0 1.6rem 3.2rem -1rem rgb(21 23 26 / 0.3), inset 0 0 0 1px rgb(21 23 26 / 0.55);
+}
+.inv-ask-mark { flex: none; width: 1.15rem; height: 1.15rem; color: var(--ink); transition: transform 0.9s var(--e-settle); }
+.inv-ask.is-agent .inv-ask-mark,
+.inv-ask:focus-within .inv-ask-mark { transform: rotate(90deg) scale(1.12); }
+.inv-field { position: relative; flex: 1; min-width: 0; text-align: left; }
+.inv-input {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: none;
+  font: inherit;
+  font-size: 1.1rem;
+  line-height: 1.4;
+  color: var(--ink);
+}
+.inv-input::placeholder { color: var(--n-6); opacity: 1; transition: color var(--d-quick) linear; }
+.inv-ask.is-agent .inv-input::placeholder { color: transparent; }
+/* what the agent types: over the empty input, never in it */
+.inv-ghost {
   position: absolute;
-  inset: 0;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.1rem;
+  line-height: 1.4;
+  color: var(--ink);
+  white-space: nowrap;
   pointer-events: none;
 }
-.inv-plate {
+.inv-ask.is-agent .inv-ghost::after {
+  content: '';
+  display: inline-block;
+  width: 0.09rem;
+  height: 1.15em;
+  margin-left: 0.12rem;
+  vertical-align: -0.2em;
+  background: var(--ink);
+  animation: inv-caret 0.9s steps(1, end) infinite;
+}
+@keyframes inv-caret { 50% { opacity: 0; } }
+.inv-send {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.9rem;
+  height: 2.9rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--n-0);
+  cursor: pointer;
+  transition: transform var(--d-base) var(--e-settle);
+}
+.inv-send svg { width: 1.05rem; height: 1.05rem; transition: transform var(--d-base) var(--e-settle); }
+/* sent: the ink floods the prompt from the button's side */
+.inv-note {
   position: absolute;
-  margin: 0;
-  border-radius: var(--r-lg);
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: inherit;
+  background: var(--ink);
+  color: var(--n-0);
+  font-size: 1rem;
+  clip-path: inset(0 0 0 100% round 2rem);
+  transition: clip-path 0.55s var(--e-glass);
+  pointer-events: none;
+}
+.inv-ask.is-routing .inv-note { clip-path: inset(0 0 0 0 round 2rem); }
+
+/* ---------- the starters ---------- */
+.inv-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.4rem;
+}
+.inv-chip {
+  height: 2.3rem;
+  padding: 0 1.05rem;
+  border: 0;
+  border-radius: 1.15rem;
+  background: rgb(21 23 26 / 0.06);
+  color: var(--n-7);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color var(--d-base) var(--e-settle), color var(--d-base) var(--e-settle), transform var(--d-base) var(--e-settle);
+}
+
+/* ---------- THE WORK: the plates at the flanks ---------- */
+.inv-plates { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.inv-plate { position: absolute; margin: 0; aspect-ratio: 1.9; will-change: transform; }
+.inv-plate-in {
+  display: block;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
-  box-shadow: var(--lift-4);
+  border-radius: 1.2rem;
+  background: var(--n-11);
+  box-shadow: 0 1.4rem 2.8rem -1.2rem rgb(21 23 26 / 0.4), 0 0.3rem 0.8rem -0.3rem rgb(21 23 26 / 0.16);
+  pointer-events: auto;
+  transition: box-shadow 0.7s var(--e-settle);
+  will-change: transform;
 }
 .inv-plate img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* INTERIM monochrome grade, same status as §3's plate: out when graded
-     assets land (B1). Safe ONLY because it is on the IMG — a filter on any
-     ancestor of the fluid canvas kills the difference blend. */
+  /* mono until a hand, or the agent, is on it — on the IMG only (a
+     filter on an ancestor of the fluid canvas kills its blend) */
   filter: grayscale(1) contrast(1.04);
+  transition: filter 0.8s var(--e-glass), transform 1.3s var(--e-glass);
 }
-.inv-plate-a {
-  /* whole, with margin the drift cannot spend: at −64px/vh the plate
-     rises ≤ ~85px while its edge is on screen — 9% because the section
-     got SHORTER when its top padding came down, and 6% of the new
-     height no longer cleared that */
-  top: 9%;
-  right: 4%;
-  width: clamp(11.875rem, 21vw, 18.75rem);
-  aspect-ratio: 4 / 5;
+.inv-plate.is-held img { filter: none; transform: scale(1.05); }
+.inv-plate.is-held .inv-plate-in { box-shadow: 0 2.4rem 4rem -1.4rem rgb(21 23 26 / 0.5), 0 0.5rem 1.2rem -0.4rem rgb(21 23 26 / 0.2); }
+.inv-plate-1 { left: 2.5rem; top: 5rem; width: 17.5rem; }
+.inv-plate-2 { left: 7rem; bottom: 4.5rem; width: 14rem; }
+.inv-plate-3 { right: 3rem; top: 7.5rem; width: 15.5rem; }
+.inv-plate-4 { right: 4.5rem; bottom: 3.5rem; width: 17.5rem; }
+
+/* ---------- the agent's cursor ---------- */
+.inv-agent {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  align-items: flex-start;
+  color: var(--ink);
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform;
 }
-.inv-plate-b {
-  /* opposite corner, same rule against its own +42px/vh — and the action
-     row owns the bottom-LEFT, so nothing photographic may sit under the
-     button */
-  bottom: 8%;
-  right: 17%;
-  width: clamp(9.375rem, 16vw, 15rem);
-  aspect-ratio: 1 / 1;
+.inv-agent svg { width: 1.3rem; height: 1.3rem; filter: drop-shadow(0 0.15rem 0.3rem rgb(21 23 26 / 0.3)); }
+.inv-agent b {
+  margin: 1.05rem 0 0 -0.1rem;
+  padding: 0.12rem 0.5rem;
+  border-radius: 1rem;
+  background: var(--ink);
+  color: var(--n-0);
+  font-size: 0.68rem;
+  font-weight: var(--w-medium);
+  line-height: 1.3;
 }
 
-/* ---------- the social rail: sideways, reading bottom-to-top ---------- */
-.inv-social {
-  position: absolute;
-  z-index: 1;
-  right: calc(var(--page-pad) / 2);
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--s-6);
-}
-.inv-soc {
-  writing-mode: vertical-rl;
-  rotate: 180deg; /* bottom-to-top, the way a book spine reads */
-  color: var(--text-muted);
-  text-decoration: none;
-  letter-spacing: 0.04em;
-  transition: color var(--d-instant) var(--e-settle);
-}
-.inv-soc:hover {
-  color: var(--text);
+@media (hover: hover) {
+  .inv-send:hover { transform: scale(1.07); }
+  .inv-send:hover svg { transform: translate3d(0.12rem, 0, 0); }
+  .inv-chip:hover { background: var(--ink); color: var(--n-0); transform: translate3d(0, -0.1rem, 0); }
+  .inv-plate-in:hover img { filter: none; transform: scale(1.05); }
 }
 
 @media (max-width: 57.5rem) {
-  .inv {
-    padding-block: clamp(7rem, 16vh, 10rem);
-  }
-  /* the rail lies back down into a row, and the plates GO (2026-08-26,
-     user: "only one image appears and the way it appears I don't like
-     it, so probably no images") — the one still that stayed for
-     atmosphere sat on the line's first row at every phone width, and a
-     phone column has no corner the copy does not need. The section is
-     the line, the button, the address, the socials. */
-  .inv-social {
-    position: static;
-    transform: none;
-    flex-direction: row;
-    gap: var(--s-6);
-    margin-top: var(--s-8);
-    padding-inline: var(--page-pad);
-  }
-  .inv-soc {
-    writing-mode: horizontal-tb;
-    rotate: none;
-  }
-  .inv-plates {
-    display: none;
-  }
+  .inv { padding-block: clamp(6rem, 14vh, 8rem); }
+  .inv-body { align-items: stretch; text-align: left; }
+  .inv-line { max-width: 14ch; font-size: clamp(2.6rem, 11vw, 4rem); }
+  .inv-row { flex-direction: column; align-items: flex-start; gap: 1rem; margin-top: 2.4rem; }
+  .inv-ask { flex: none; width: 100%; height: 3.6rem; }
+  .inv-chips { justify-content: flex-start; }
+  /* no plates on a phone (user, 2026-08-26), so no agent either */
+  .inv-plates,
+  .inv-agent { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .inv-agent { display: none; }
+  .inv-note { transition: none; }
 }

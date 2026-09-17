@@ -25,8 +25,15 @@ export type Fact = {
   value: string
   /** what the number is: "Starting at", "Typical timeline" */
   label: string
-  /** the capsule plate — one of the hero's three inline plates */
+  /** the capsule plate — one of the old hero's three inline plates
+   *  (ServiceStage, parked 2026-09-17; THE RUN draws its facts in code) */
   plate: 1 | 2 | 3
+  /** THE CUE (THE RUN, 2026-09-17): the phrase INSIDE `answer`, verbatim,
+   *  that carries this number — "four to six weeks" for "4–6 weeks". As
+   *  the read-head clears it the agent plucks it and the fact computes.
+   *  Optional: a fact with no cue (or one the answer does not contain)
+   *  computes on an even beat, no pluck. PLACEHOLDER with the copy. */
+  cue?: string
 }
 
 export type PlateBeat = {
@@ -49,7 +56,7 @@ export type ServicePage = {
   slug: string
   /** the service's name as the menu says it */
   name: string
-  /** the display word(s) of the h1 — set in uppercase by the CSS */
+  /** the display word(s) of the h1 */
   word: string
   /** completes the primary keyword INSIDE the h1, as a smaller second
    *  line: "Web design" + "in Cyprus" → the h1 reads "Web design in Cyprus" */
@@ -79,8 +86,23 @@ export type ServicePage = {
    *  lifted on their own. */
   answer: [string, string]
   facts: [Fact, Fact, Fact]
+  /** THE DECK (THE RUN's answer, 2026-09-17): the three plates the facts
+   *  land on, one per fact, in order — the studio's own work on screens
+   *  (the About hero's renders), so the picture under a number is the
+   *  thing the number buys. Decorative (alt ""): the caption on each
+   *  plate is the fact. STAND-INS until a service has renders of its
+   *  own; optional — the template falls back to RUN_DECK. */
+  deck?: [string, string, string]
   fromPrice: number
   plate: {
+    /** THE FIT'S WINDOW (THE RUN, 2026-09-17): one noir plate a service —
+     *  the small frame beside "what it is" that grows into the full-bleed
+     *  ground of "when it is the wrong choice". STAND-INS out of the
+     *  site's pool, chosen for what they say (structure, a lit hall, an
+     *  object in space, one line, a city out of the fog, the one lit
+     *  tower), shown mono by run.css. The portrait ones are 1024–1122
+     *  wide and run ~1.4x at full bleed under the veil — the user
+     *  supplies masters before launch. */
     image: string
     alt: string
     headline: string
@@ -94,9 +116,8 @@ export type ServicePage = {
   sister?: { slug: string; name: string; line: string }
 }
 
-/* the stand-in plate for every page until the user's dune master lands:
-   Bosra, already graded for the noir direction (see .sv-img in home.css) */
-const PLATE = '/home/bosra-2000.webp'
+/** the answer's deck when a page names none */
+export const RUN_DECK: [string, string, string] = ['/about-hero/02.webp', '/about-hero/06.webp', '/about-hero/01.webp']
 
 export const SERVICE_PAGES: ServicePage[] = [
   {
@@ -104,7 +125,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     name: 'Web Design',
     word: 'Web design',
     modifier: 'in Cyprus',
-    wordSize: 7.25,
+    wordSize: 11.4,
     title: 'Web Design in Cyprus',
     description:
       'Custom web design for Cyprus businesses — a site designed on a system of type, space and motion, never assembled from a template. From €2,000, four to six weeks.',
@@ -119,14 +140,15 @@ export const SERVICE_PAGES: ServicePage[] = [
       'We aim to fill the internet with websites that carry a strong character. No more plain and lifeless pages: a personalised structure, layout and motion, so that your website stands out and stays in mind.',
     ],
     facts: [
-      { value: '€2,000', label: 'Starting at', plate: 1 },
-      { value: '4–6 weeks', label: 'From call to launch', plate: 2 },
+      { value: '€2,000', label: 'Starting at', plate: 1, cue: '€2,000' },
+      { value: '4–6 weeks', label: 'From call to launch', plate: 2, cue: 'four to six weeks' },
       { value: '1 designer', label: 'Start to finish', plate: 3 },
     ],
+    deck: ['/about-hero/02.webp', '/about-hero/03.webp', '/about-hero/01.webp'],
     fromPrice: 2000,
     plate: {
-      image: PLATE,
-      alt: 'A dune ridge in black and white — light on one face, shadow on the other',
+      image: '/home/bosra-2000.webp',
+      alt: 'Roman columns in black and white, lit from one side against a black sky',
       headline: 'Design the website you want',
       beats: [
         {
@@ -183,7 +205,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     name: 'Web Development',
     word: 'Web development',
     modifier: 'in Cyprus',
-    wordSize: 5.6,
+    wordSize: 9.6,
     title: 'Web Development in Cyprus',
     description:
       'Web development in Cyprus on Next.js — fast, server-rendered sites with the integrations and CMS your business runs on. From €2,000, four to eight weeks.',
@@ -198,14 +220,15 @@ export const SERVICE_PAGES: ServicePage[] = [
       'Every page ships as real HTML, so search engines and AI assistants read all of it. Core Web Vitals are a delivery requirement, not an afterthought.',
     ],
     facts: [
-      { value: '€2,000', label: 'Starting at', plate: 2 },
-      { value: '4–8 weeks', label: 'Typical build', plate: 3 },
-      { value: '< 2.5 s', label: 'Largest paint, guaranteed', plate: 1 },
+      { value: '€2,000', label: 'Starting at', plate: 2, cue: '€2,000' },
+      { value: '4–8 weeks', label: 'Typical build', plate: 3, cue: 'four to eight weeks' },
+      { value: '< 2.5 s', label: 'Largest paint, guaranteed', plate: 1, cue: 'Core Web Vitals' },
     ],
+    deck: ['/about-hero/07.webp', '/about-hero/01.webp', '/about-hero/06.webp'],
     fromPrice: 2000,
     plate: {
-      image: PLATE,
-      alt: 'A dune ridge in black and white — light on one face, shadow on the other',
+      image: '/work/hall.webp',
+      alt: 'A vast dark hall, one shaft of light falling on small figures crossing the floor',
       headline: 'Build the site that keeps up',
       beats: [
         {
@@ -238,7 +261,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     name: '3D Websites',
     word: '3D websites',
     modifier: 'Immersive website design, for brands anywhere',
-    wordSize: 7,
+    wordSize: 10.6,
     title: '3D and Immersive Website Design',
     description:
       'Immersive, 3D website design — path-traced objects, scroll-driven scenes and WebGL, engineered to read premium on every device. From €4,000, eight to twelve weeks.',
@@ -253,14 +276,15 @@ export const SERVICE_PAGES: ServicePage[] = [
       'The objects are rendered offline and delivered as light video and imagery, so the site stays fast on a phone. WebGL is used where it earns its cost, never for its own sake.',
     ],
     facts: [
-      { value: '€4,000', label: 'Starting at', plate: 3 },
-      { value: '8–12 weeks', label: 'Concept to launch', plate: 1 },
-      { value: '60 fps', label: 'On a mid-range phone', plate: 2 },
+      { value: '€4,000', label: 'Starting at', plate: 3, cue: '€4,000' },
+      { value: '8–12 weeks', label: 'Concept to launch', plate: 1, cue: 'eight to twelve weeks' },
+      { value: '60 fps', label: 'On a mid-range phone', plate: 2, cue: 'fast on a phone' },
     ],
+    deck: ['/about-hero/06.webp', '/about-hero/07.webp', '/about-hero/02.webp'],
     fromPrice: 4000,
     plate: {
-      image: PLATE,
-      alt: 'A dune ridge in black and white — light on one face, shadow on the other',
+      image: '/work/orb.webp',
+      alt: 'A dark sphere hanging over a lit glass floor, figures walking beneath it',
       headline: 'Make the screen a place',
       beats: [
         {
@@ -288,7 +312,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     name: 'One-page Websites',
     word: 'One-page websites',
     modifier: 'Landing pages and single-page sites, designed and built',
-    wordSize: 5.1,
+    wordSize: 9.2,
     title: 'One-page Website Design',
     description:
       'A single-page website designed and built in two to three weeks, from €1,000. One argument, no scroll wasted — for launches, practices and campaigns.',
@@ -303,14 +327,15 @@ export const SERVICE_PAGES: ServicePage[] = [
       'It is the smallest thing we make and it is made the same way as the largest: designed for your brand, built as real HTML, fast on a phone.',
     ],
     facts: [
-      { value: '€1,000', label: 'Starting at', plate: 1 },
-      { value: '2–3 weeks', label: 'To live', plate: 3 },
-      { value: '1 page', label: 'Everything on it', plate: 2 },
+      { value: '€1,000', label: 'Starting at', plate: 1, cue: '€1,000' },
+      { value: '2–3 weeks', label: 'To live', plate: 3, cue: 'two to three weeks' },
+      { value: '1 page', label: 'Everything on it', plate: 2, cue: 'a single, long page' },
     ],
+    deck: ['/about-hero/03.webp', '/about-hero/02.webp', '/about-hero/07.webp'],
     fromPrice: 1000,
     plate: {
-      image: PLATE,
-      alt: 'A dune ridge in black and white — light on one face, shadow on the other',
+      image: '/home/inline-2.webp',
+      alt: 'A single line of light along a dark horizon',
       headline: 'Say the one thing well',
       beats: [
         { title: 'What it is', body: 'Six to eight sections in a fixed order that answers the visitor’s questions as they arrive: what, for whom, proof, price, contact. Designed, not templated.' },
@@ -331,7 +356,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     name: 'Website Redesign',
     word: 'Website redesign',
     modifier: 'For sites the business has outgrown',
-    wordSize: 5.4,
+    wordSize: 9.6,
     title: 'Website Redesign Services',
     description:
       'Website redesign from €1,500 — keep what works, redesign what does not, and redirect every old URL so rankings survive the move. Four to eight weeks.',
@@ -346,14 +371,15 @@ export const SERVICE_PAGES: ServicePage[] = [
       'Before and after is the easiest proof there is. Half of our redesigns begin with an audit you can act on whether or not you hire us.',
     ],
     facts: [
-      { value: '€1,500', label: 'Starting at', plate: 2 },
-      { value: '4–8 weeks', label: 'Audit to launch', plate: 1 },
-      { value: '0 lost', label: 'Old URLs redirected', plate: 3 },
+      { value: '€1,500', label: 'Starting at', plate: 2, cue: '€1,500' },
+      { value: '4–8 weeks', label: 'Audit to launch', plate: 1, cue: 'four to eight weeks' },
+      { value: '0 lost', label: 'Old URLs redirected', plate: 3, cue: 'every old URL is redirected' },
     ],
+    deck: ['/about-hero/01.webp', '/about-hero/02.webp', '/about-hero/03.webp'],
     fromPrice: 1500,
     plate: {
-      image: PLATE,
-      alt: 'A dune ridge in black and white — light on one face, shadow on the other',
+      image: '/work/fog.webp',
+      alt: 'Towers rising out of fog over a city, in black and white',
       headline: 'The site your business deserves now',
       beats: [
         { title: 'What it is', body: 'An audit of what the current site earns — pages that rank, pages that convert, pages nobody visits — then a redesign that keeps the first two and drops the third.' },
@@ -375,7 +401,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     name: 'SEO',
     word: 'SEO',
     modifier: 'Search and AI visibility for Cyprus businesses',
-    wordSize: 7.25,
+    wordSize: 15,
     title: 'SEO Services in Cyprus',
     description:
       'SEO in Cyprus that starts with the technical foundation — server-rendered pages, structured data, real content — and continues monthly from €500. For Google and for AI search.',
@@ -390,14 +416,15 @@ export const SERVICE_PAGES: ServicePage[] = [
       'We do not sell rankings. We sell the pages, the structure and the citations that earn them, and we report what moved each month.',
     ],
     facts: [
-      { value: '€500 / mo', label: 'Ongoing, from', plate: 3 },
-      { value: '€800', label: 'Foundation audit', plate: 2 },
-      { value: 'Monthly', label: 'Report you can read', plate: 1 },
+      { value: '€500 / mo', label: 'Ongoing, from', plate: 3, cue: '€500 a month' },
+      { value: '€800', label: 'Foundation audit', plate: 2, cue: '€800' },
+      { value: 'Monthly', label: 'Report you can read', plate: 1, cue: 'each month' },
     ],
+    deck: ['/about-hero/06.webp', '/about-hero/03.webp', '/about-hero/07.webp'],
     fromPrice: 500,
     plate: {
-      image: PLATE,
-      alt: 'A dune ridge in black and white — light on one face, shadow on the other',
+      image: '/work/city.webp',
+      alt: 'A city at night, one tower lit above all the others',
       headline: 'Show up where it counts',
       beats: [
         { title: 'What it is', body: 'Technical fixes first — rendering, speed, structured data, indexing. Then one strong page a month that answers a question your customers are asking, and the off-site work that gets it cited.' },

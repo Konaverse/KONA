@@ -4,7 +4,8 @@ import HeroPortrait from '@/components/v4/HeroPortrait'
 import HeroPeel from '@/components/v4/HeroPeel'
 import ClaimEntrance from '@/components/v4/ClaimEntrance'
 import BlockReveal from '@/components/v4/BlockReveal'
-import ServiceCards from '@/components/v4/ServiceCards'
+import HubBench from '@/components/v4/HubBench'
+import { SERVICE_PAGES } from '@/lib/service-pages'
 import WorkList from '@/components/v4/WorkList'
 import { CASE_STUDIES } from '@/lib/case-studies'
 import Invitation from '@/components/v4/Invitation'
@@ -61,6 +62,10 @@ export const metadata: Metadata = {
  *  the user writes the real line. */
 const SOLVE_LINE =
   'Your site looks like everyone else’s. Visitors leave before they understand what you do. It has not kept up with the business, and where people actually search, you are nowhere. That is what we solve.'
+
+/** the bench's lead — the hub's own line */
+const BENCH_LEAD =
+  'Our websites are the result when you combine a personalised structure, layout and motion. When you work with us, we make sure your website stands out and is remembered.'
 
 const CLAIM_LINE =
   'Konaverse is a web studio for brands that want their site to carry the story, not just the information.'
@@ -148,12 +153,24 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* §4 — the cards: two columns, three rows, six identical cards, each
-          carrying its own light, entering as paper (per-corner matrix3d,
-          inner corners leading). Replaced the threshold 2026-08-20 (user
-          call); ServicesThreshold.tsx and ServicesAccordion.tsx both stay in
-          the tree, unimported, for comparison. */}
-      <ServiceCards />
+      {/* §4 — THE WORKBENCH (2026-09-18, user: "in the homepage replace
+          the services section cards with the services bento grid we have
+          in the services hub"): the hub's bento, the same component — six
+          artboards whose scenes play under the hand, tipping up out of the
+          fold, and the dark card that sends the undecided to the
+          Invitation's prompt. The six void cards (ServiceCards.tsx, and
+          the threshold and accordion before them) stay in the tree,
+          unimported. */}
+      <HubBench
+        lead={BENCH_LEAD}
+        services={SERVICE_PAGES.map((p) => ({
+          slug: p.slug,
+          name: p.name,
+          tagline: p.tagline,
+          blurb: p.blurb,
+          facts: p.facts.map((f) => ({ value: f.value, label: f.label })),
+        }))}
+      />
 
       {/* §5 — THE LIST (WorkList, 2026-09-14): igniteagency.com's selected
           work rebuilt from measurement — a marquee head, hairline rows

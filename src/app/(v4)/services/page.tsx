@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
-import HubAgent from '@/components/v4/HubAgent'
+import HubStill from '@/components/v4/HubStill'
 import HubBench from '@/components/v4/HubBench'
 import Invitation from '@/components/v4/Invitation'
 import { SERVICE_PAGES } from '@/lib/service-pages'
 import { SITE_URL } from '@/lib/site'
+import './scenes.css'
 import './hub.css'
 
 /**
@@ -122,11 +123,11 @@ export default function ServicesHubPage() {
       {/* the entrance parks everything at opacity 0 (hub.css .sh-ent); the
           no-JS page undoes it, and the bend's final state is CSS too */}
       <noscript>
-        <style>{`.sh-ent,.ha-ent{opacity:1!important;transform:none!important;filter:none!important}.ha-skel,.ha-cursor,.ha-guides{display:none!important}.ha-chip{opacity:1!important}.ha-ring-v{stroke-dashoffset:0!important}`}</style>
+        <style>{`.sh-ent,.hc-ent{opacity:1!important;transform:none!important;filter:none!important}`}</style>
       </noscript>
 
       {/* §1 — THE HERO, sticky: the index scrolls over it */}
-      <HubAgent kicker="Web design and development, Cyprus" statement={STATEMENT} />
+      <HubStill kicker="Web design and development, Cyprus" statement={STATEMENT} />
 
       {/* §2 — THE LIST, on paper, in flow: scrolls up over the sticky hero */}
       <HubBench
