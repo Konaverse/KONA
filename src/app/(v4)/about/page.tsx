@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 import AboutGridHero from '@/components/v4/AboutGridHero'
 import AboutPeople, { type Person } from '@/components/v4/AboutPeople'
 import AboutOpen, { type Beat } from '@/components/v4/AboutOpen'
-import AboutTools from '@/components/v4/AboutTools'
+import AboutWords from '@/components/v4/AboutWords'
+import AboutBento, { type Tool } from '@/components/v4/AboutBento'
 import AboutTimeline from '@/components/v4/AboutTimeline'
 import BlockReveal from '@/components/v4/BlockReveal'
 import Invitation from '@/components/v4/Invitation'
@@ -53,16 +54,31 @@ import './about.css'
  * the title and a circle of the picture; pinned, the circle grows to
  * the viewport and covers the title, then the picture zooms on under
  * a darkening veil while one sentence, in four parts, scrolls up over
- * it; the toolset slides over the held picture. AboutOpen.tsx.
+ * it; THE WORDS slide over the held picture. AboutOpen.tsx.
  *
- * §5 OUR TOOLSET (2026-09-11, the user's frame "toolset section.png") —
- * a row of cards wider than the page, DRAGGED by the hand, not pinned:
- * each card a step of the dark ladder with the bosra plate fading in
- * its corner, the tool's name and one line on what it does here. Over
- * the row the cursor becomes a frosted disc that says "Drag".
- * AboutTools.tsx.
+ * §5 WHAT WE MAKE — THE WORDS (2026-09-17, the user's frame "image.png":
+ * "big editorial and bold words, almost the full width, one below
+ * another… no eyebrows, no numbering, no hairlines"): a section on
+ * paper, in flow, the cover over the opening's held picture; the four words at
+ * display size, one below another; each is done as its row climbs
+ * through its own window of the viewport — it swells from the light face to the heavy
+ * one and its letters fly one by one from the right edge to the left,
+ * then lets go of its ink once the next is at work; the done words pile up on the
+ * left, ghosted, the waiting ones queue on the right. NOT pinned,
+ * scrubbed by each row's own place in the viewport (user: "continuous
+ * scroll" — a clock and a pin were both turned down). AboutWords.tsx.
  *
- * §6 HOW IT WENT — THE TRAVEL (2026-09-16, user: "more functional and
+ * §6 OUR TOOLSET — THE BENTO (2026-09-17, the user's frame "image.png",
+ * a dark bento turned to paper: "a white theme bento grid with black
+ * gradients… objects that exceed the margins of their card"): six
+ * raised paper cards in the frame's grid, each with a soft black wash,
+ * a name, one line, and a rendered object hanging past its edge with
+ * a shadow. Entrance, a slow ride on the scroll, a lean from the
+ * pointer. AboutBento.tsx. The drag track it replaces (AboutTools.tsx,
+ * "this very heavy drag section") is parked, unimported, with its hand
+ * lens; the objects are PLACEHOLDERS from the homepage's services.
+ *
+ * §7 HOW IT WENT — THE TRAVEL (2026-09-16, user: "more functional and
  * motion-filled… no eyebrows, no unnecessary small numbering, no
  * hairlines. Pure motion"; it replaces the pinned roll of 09-11): one
  * pinned viewport, the four entries on a horizontal track panned by
@@ -71,7 +87,7 @@ import './about.css'
  * grows, turns to colour and speaks as it reaches the centre.
  * AboutTimeline.tsx.
  *
- * §7 THE INVITATION follows in flow and carries the footer out.
+ * §8 THE INVITATION follows in flow and carries the footer out.
  *
  * SERVER-RENDERED, every word in the raw HTML (SEO plan D5): the h1
  * sentence, the statement, the three names as h3 with the roles, the
@@ -168,14 +184,21 @@ const OPEN_BEATS: Beat[] = [
   },
 ]
 
-/** the toolset — the cards, in the ladder's order. FIRST DRAFT. */
-const TOOLS = [
-  { name: 'Blender', line: 'Every 3D object on our sites is modelled, lit and rendered here, then brought to the browser as a loop.' },
-  { name: 'Next.js', line: 'The frame every site is built in: server-rendered, fast, and honest to crawlers.' },
-  { name: 'Three.js', line: 'The WebGL layer: the shaders, the fluids and the objects that answer the cursor.' },
-  { name: 'GSAP', line: 'Every entrance, roll and scrub on the page runs on one clock.' },
-  { name: 'Figma', line: 'Where the picture is decided before a line of code: the type, the space, the motion.' },
-  { name: 'After Effects', line: 'The motion is drawn before it is coded; the loops and the reels start here.' },
+/** THE WORDS — what we make, in four (user, 2026-09-17), in the
+ *  order they take the line */
+const WORDS = ['Branding', 'Design', 'Experience', 'Motion'] as const
+
+/** the toolset — the six cards of the bento, in the grid's order (tall
+ *  left, wide top right, two squares, wide bottom left, square bottom
+ *  right). Lines FIRST DRAFT. The `art` is a PLACEHOLDER from the
+ *  homepage's service objects — the user generates the real ones. */
+const TOOLS: readonly Tool[] = [
+  { name: 'Blender', line: 'Every 3D object on our sites is modelled, lit and rendered here, then brought to the browser as a loop.', art: { src: '/services/seo-art/sphere.webp', width: 900, height: 906 } },
+  { name: 'Next.js', line: 'The frame every site is built in: server-rendered, fast, and honest to crawlers.', art: { src: '/services/web-design/main.webp', width: 1200, height: 877 } },
+  { name: 'Three.js', line: 'The WebGL layer: the shaders, the fluids and the objects that answer the cursor.', art: { src: '/services/web-design/orb-4.webp', width: 460, height: 513 } },
+  { name: 'GSAP', line: 'Every entrance, roll and scrub on the page runs on one clock.', art: { src: '/services/redesign-art/arrow.webp', width: 900, height: 952 } },
+  { name: 'Figma', line: 'Where the picture is decided before a line of code: the type, the space, the motion.', art: { src: '/services/one-page-art/mockup.webp', width: 1000, height: 542 } },
+  { name: 'After Effects', line: 'The motion is drawn before it is coded; the loops and the reels start here.', art: { src: '/work/device-back.webp', width: 522, height: 546 } },
 ]
 
 /** the timeline — four years; only the LAST digit changes, so every
@@ -230,7 +253,7 @@ export default function AboutPage() {
       {/* the entrances park things at opacity 0 or behind a crop edge;
           the no-JS page undoes every one of them */}
       <noscript>
-        <style>{`.ab-ent{opacity:1!important;transform:none!important;filter:none!important}.ab-pill{width:var(--ab-pill-rest)!important;margin-left:.22em!important}.ab-band::before{transform:none!important}.ab-op-stage{position:static!important;height:auto!important;padding:8rem 0 0}.ab-op-t{position:static!important;padding:0 var(--ab-pad) 3rem}.ab-op-box{position:relative!important;width:100%!important;height:70svh!important;border-radius:0!important;transform:none!important;contain:none!important}.ab-op-veil{display:none!important}.ab-op-beats{margin-top:0!important;padding:4rem 0 100svh!important}.ab-op-beat{height:auto!important;padding:3rem var(--ab-pad)!important}.ab-ppl-cap,.ab-ppl-pic img{opacity:1!important;transform:none!important}.k-pix{display:none!important}.ab-tools-vp{overflow-x:auto!important}.ab-tool,.ab-tools-w,.ab-tools-t{opacity:1!important;transform:none!important}.ab-time{height:auto!important}.ab-tl-stage{position:static!important;height:auto!important;overflow:visible!important;padding:6rem var(--ab-pad) 4rem}.ab-tl-t{position:static!important;margin-bottom:3rem}.ab-tl-track{position:static!important}.ab-tl-entry{position:static!important;margin:0 0 4rem}.ab-tl-img-colour{opacity:1!important}.ab-tl-when{position:static!important;display:block;width:auto!important;height:auto!important;clip:auto!important;margin-bottom:.4rem;font-size:3.4rem}.ab-tl-years{display:none!important}.ag{height:100svh!important}`}</style>
+        <style>{`.ab-ent{opacity:1!important;transform:none!important;filter:none!important}.ab-pill{width:var(--ab-pill-rest)!important;margin-left:.22em!important}.ab-band::before{transform:none!important}.ab-op-stage{position:static!important;height:auto!important;padding:8rem 0 0}.ab-op-t{position:static!important;padding:0 var(--ab-pad) 3rem}.ab-op-box{position:relative!important;width:100%!important;height:70svh!important;border-radius:0!important;transform:none!important;contain:none!important}.ab-op-veil{display:none!important}.ab-op-beats{margin-top:0!important;padding:4rem 0 100svh!important}.ab-op-beat{height:auto!important;padding:3rem var(--ab-pad)!important}.ab-ppl-cap,.ab-ppl-pic img{opacity:1!important;transform:none!important}.k-pix{display:none!important}.ab-wd-w{opacity:1!important}.ab-bento-card,.ab-bento-obj{opacity:1!important;translate:none!important;transform:none!important}.ab-tools-w{transform:none!important}.ab-time{height:auto!important}.ab-tl-stage{position:static!important;height:auto!important;overflow:visible!important;padding:6rem var(--ab-pad) 4rem}.ab-tl-t{position:static!important;margin-bottom:3rem}.ab-tl-track{position:static!important}.ab-tl-entry{position:static!important;margin:0 0 4rem}.ab-tl-img-colour{opacity:1!important}.ab-tl-when{position:static!important;display:block;width:auto!important;height:auto!important;clip:auto!important;margin-bottom:.4rem;font-size:3.4rem}.ab-tl-years{display:none!important}.ag{height:100svh!important}`}</style>
       </noscript>
 
       {/* §1 — THE HERO: the grid (2026-09-14) — one picture full-bleed,
@@ -266,35 +289,16 @@ export default function AboutPage() {
         beats={OPEN_BEATS}
       />
 
-      {/* §5 — OUR TOOLSET: the drag track */}
-      <AboutTools>
-        <h2 className="ab-tools-t">
-          <span className="ab-tools-m">
-            <span className="ab-tools-w"><em>Our</em> toolset</span>
-          </span>
-        </h2>
-        <div className="ab-tools-vp">
-          <ul className="ab-tools-track">
-            {TOOLS.map((t, i) => (
-              <li key={t.name} className="ab-tool" style={{ '--i': i } as React.CSSProperties}>
-                <img className="ab-tool-bg" src="/home/bosra-1200.webp" alt="" loading="lazy" decoding="async" draggable={false} aria-hidden="true" />
-                <span className="ab-tool-arrow" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M6 18 18 6M8 6h10v10" />
-                  </svg>
-                </span>
-                <h3 className="ab-tool-name">{t.name}</h3>
-                <p className="ab-tool-line">{t.line}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </AboutTools>
+      {/* §5 — WHAT WE MAKE: the words, on their own clock */}
+      <AboutWords words={WORDS} />
 
-      {/* §6 — HOW IT WENT: the pinned roll */}
+      {/* §6 — OUR TOOLSET: the bento */}
+      <AboutBento tools={TOOLS} />
+
+      {/* §7 — HOW IT WENT: the travel */}
       <AboutTimeline eras={YEARS} />
 
-      {/* §7 — THE INVITATION */}
+      {/* §8 — THE INVITATION */}
       <div className="ab-cta">
         <Invitation />
       </div>

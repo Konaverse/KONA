@@ -27,8 +27,8 @@ import { gsap, EASE, rem } from '@/lib/motion-v4'
  *     in its own stretch of the run, scrolling up over the pinned
  *     picture and out at the top — no driver on the words.
  *  5. THE COVER. The picture holds for one more viewport and the next
- *     section (the toolset, on paper) slides up over it: about.css
- *     pulls `.ab-tools` up by a viewport and stacks it above.
+ *     section (THE WORDS, on paper) slides up over it: about.css
+ *     pulls `.ab-wd` up by a viewport and stacks it above.
  *
  * THE DRIVER. One rect per frame off gsap.ticker (the page and the
  * picture share a clock — no lag on top of Lenis). The grow is the pin's

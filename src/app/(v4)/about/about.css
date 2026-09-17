@@ -3,7 +3,7 @@
    §1 THE SENTENCE (AboutHero.tsx) on paper, the third line on a dark
    band that ends on the viewport's bottom; §2 THE STATEMENT on paper;
    §3 WHO WE ARE (AboutWho.tsx) — THE PICTURE, a fixed composition;
-   §4 WHAT WE MAKE — THE OPENING (AboutOpen.tsx, 2026-09-16); §5 the
+   §4 WHAT WE MAKE — THE OPENING (AboutOpen.tsx, 2026-09-16); §5 THE WORDS (AboutWords.tsx, 2026-09-17); §6 the toolset; §7 the travel; §8 the
    CTA in flow. Colours, type and easings from tokens.css; the plate material
    is the homepage hero's dark-grain pill, restated here because
    home.css is not on this route.
@@ -198,7 +198,7 @@
    the circle grows to the whole viewport over the first viewport of
    scroll (the driver writes the box), then the picture zooms on and a
    veil darkens over it while the beats — one sentence in parts — scroll
-   up over it in plain flow; the toolset then slides over the held
+   up over it in plain flow; the words (§5) then slide over the held
    picture (its margin, below). CSS holds the REST frame — the numbers
    here and the driver's constants are the same — and the still state.
    Every length rem; svh only for the pin and the runways. */
@@ -320,7 +320,7 @@
 }
 
 
-/* ---------- §5 · THE INVITATION ---------- */
+/* ---------- §8 · THE INVITATION ---------- */
 .ab-cta {
   position: relative;
   background: var(--surface);
@@ -350,24 +350,117 @@
   .ab-do  { margin: 0 var(--ab-pad); }
 }
 
-/* ---------- §5 · OUR TOOLSET — the drag track ----------
-   (2026-09-11, the user's frame "toolset section.png"). Not pinned. The
-   title at the gutter, "our" in the muted step; under it a row of cards
-   wider than the page, moved by the hand (AboutTools). Each card is a
-   step of the dark ladder — the first the void, each next one lighter —
-   with the bosra plate fading into its top-right corner, the arrow and
-   the name bottom-left, one line bottom-right. Over the row the native
-   cursor goes and the frosted disc follows the hand. */
-.ab-tools {
+/* ---------- §5 · WHAT WE MAKE — THE WORDS (AboutWords.tsx, 2026-09-17) ----------
+   A section on paper, in flow, NOT pinned (user: "continuous scroll"),
+   that slides up over the last viewport of the opening's held picture
+   (THE COVER, moved here from the toolset the same day): pulled up by
+   that viewport, stacked above it, on its own ground. Inside, the four
+   words at display size, one below another, right-aligned, all in the
+   heavy face, ghosted; each one is done by the driver as its row
+   climbs through its own window of the viewport — it comes up to ink,
+   its letters fly from the right edge to the left, it lets go — the
+   first as soon as it is in, the last just before it leaves. No
+   eyebrow, no numbering, no hairline — the words are the section. */
+.ab-wd {
   position: relative;
-  /* THE COVER (2026-09-16): the section slides up over the last
-     viewport of the opening's held picture (§4) — pulled up by that
-     viewport, stacked above it, on its own ground */
   z-index: 2;
   margin-top: -100svh;
-  padding: 10rem 0 8rem;
+  padding: 9rem 0 11rem;
   overflow: clip;
   background: var(--ab-ground);
+  color: var(--text);
+}
+/* THE ROSE (2026-09-17): the user's black rose, no ground, trimmed to
+   its own box (984x1368; the stem leaves the bottom edge 21% along).
+   Turned 35° to the right about the stem's end, and that end set past
+   the left edge two thirds of the way down, so the stem ENTERS FROM
+   THE LEFT and the head sits left of centre, mid-height. The wrapper
+   is the driver's drift; the picture carries the turn. The words go
+   over it in the difference blend (below). */
+.ab-wd-rose {
+  --ab-rose-w: 50rem;
+  /* the stem's end, in the section */
+  --ab-rose-x: -4rem;
+  --ab-rose-y: 56rem;
+  position: absolute;
+  z-index: 0;
+  left: calc(var(--ab-rose-x) - 0.21 * var(--ab-rose-w));
+  top: calc(var(--ab-rose-y) - var(--ab-rose-w) * 1368 / 984);
+  width: var(--ab-rose-w);
+  pointer-events: none;
+  will-change: transform;
+}
+.ab-wd-rose img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transform-origin: 21% 100%;
+  transform: rotate(35deg);
+}
+.ab-wd-list {
+  /* the words' own gutter — tighter than the page's, so the longest
+     word still has somewhere to fly */
+  --ab-wd-pad: 2.6rem;
+  /* positioned, NO z-index: a stacking context here would cut the
+     words' blend off from the rose and the paper under them */
+  position: relative;
+  margin: 0;
+  padding: 0 var(--ab-wd-pad);
+  list-style: none;
+}
+.ab-wd-w {
+  display: block;
+  margin: 0;
+  text-align: right;
+  /* the longest word is ~85% of the width */
+  font-size: 14rem;
+  font-weight: 800;
+  line-height: 0.88;
+  letter-spacing: -0.045em;
+  white-space: nowrap;
+  /* white in the difference blend: ink on paper, paper over the rose */
+  color: var(--n-0);
+  mix-blend-mode: difference;
+  opacity: 0.1;
+}
+.ab-wd-word { display: inline-block; }
+.ab-wd-l {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* the still state (reduced motion; the noscript in page.tsx says the
+   same): the four words in flow, in ink */
+.ab-wd.is-still .ab-wd-w { opacity: 1; }
+
+@media (max-width: 57.5rem) {
+  .ab-wd { padding: 5rem 0 6rem; }
+  .ab-wd-list { --ab-wd-pad: var(--ab-pad); }
+  .ab-wd-w { font-size: 13vw; }
+  .ab-wd-rose { --ab-rose-w: 78vw; --ab-rose-x: -6vw; --ab-rose-y: 78%; }
+}
+
+/* ---------- §6 · OUR TOOLSET — THE BENTO (AboutBento.tsx, 2026-09-17) ----------
+   The user's frame "image.png" turned to paper: three columns, three
+   rows — a tall card down the left, a wide one across the top right,
+   two squares under it, a wide one across the bottom left, a square
+   bottom right. Each card is raised paper with a soft BLACK wash from
+   one corner (the frame's white sheens, inverted), no hairline, a
+   name and one line. Each OBJECT sits INSIDE its card (user, second
+   pass: hanging past the edges was "terrible and confusing"), in the
+   corner the text leaves free, floating on a drop shadow; the card
+   clips, so the ride and the lean can never carry one out. The drag track of 09-11 (.ab-tools-vp/-track/-tool and the
+   hand's clone rules) is gone with its component. Title rules
+   (.ab-tools-t/-m/-w) stay as they were. */
+.ab-tools {
+  position: relative;
+  z-index: 2;
+  padding: 10rem 0 9rem;
+  background: var(--ab-ground);
+  /* the ride and the lean, written by the driver */
+  --sy: 0px;
+  --px: 0px;
+  --py: 0px;
 }
 .ab-tools-t {
   margin: 0 0 3.2rem var(--ab-pad);
@@ -392,117 +485,159 @@
 }
 .ab-tools-t.is-in .ab-tools-w { transform: none; }
 
-.ab-tools-vp {
-  position: relative;
-  overflow: hidden;
-  touch-action: pan-y;
-  user-select: none;
-  -webkit-user-select: none;
-}
-@media (hover: hover) {
-  .ab-tools-vp { cursor: none; }
-}
-.ab-tools-track {
-  display: flex;
-  gap: 1.5rem;
+.ab-bento-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: 21rem 21rem 21rem;
+  grid-template-areas:
+    "a b b"
+    "a c d"
+    "e e f";
+  gap: 1.25rem;
   list-style: none;
-  margin: 0;
-  /* the row starts at the gutter and runs off the right edge; the last
-     card can be pulled to the gutter on the other side */
-  padding: 0 var(--ab-pad);
-  width: max-content;
-  will-change: transform;
+  margin: 0 var(--ab-pad);
+  padding: 0;
 }
-.ab-tool {
-  --ab-tool-ground: var(--n-11);
+.ab-bento-card {
+  /* the wash's corner and the text's place, per card below */
+  --wash-at: 0% 100%;
   position: relative;
-  flex: 0 0 auto;
-  width: 38rem;
-  height: 27rem;
-  padding: 2.4rem 2.6rem 2.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 2.4rem 2.6rem;
   border-radius: var(--r-lg);
   overflow: hidden;
-  background: var(--ab-tool-ground);
-  color: var(--n-0);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.12),
-    inset 0 0 0 1px rgb(255 255 255 / 0.06);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 18rem;
-  grid-template-rows: 1fr auto auto;
-  column-gap: 2rem;
-  align-items: end;
+  /* the wash: the frame's sheen inverted — a black pool in one corner
+     and a faint diagonal band across from it */
+  background:
+    radial-gradient(120% 95% at var(--wash-at), rgb(21 23 26 / 0.2), rgb(21 23 26 / 0.06) 40%, rgb(21 23 26 / 0) 66%),
+    linear-gradient(var(--wash-angle, 135deg), rgb(21 23 26 / 0) 30%, rgb(21 23 26 / 0.05) 50%, rgb(21 23 26 / 0) 70%),
+    var(--n-0);
+  box-shadow: 0 1.5rem 3rem -2.2rem rgb(21 23 26 / 0.28);
+  /* the entrance: parked low and faint, lifted by is-in on the grid */
   opacity: 0;
-  transform: translateY(1.2rem);
+  translate: 0 2rem;
   transition:
-    opacity var(--d-slow) var(--e-glass) calc(var(--i, 0) * 0.08s),
-    transform var(--d-slow) var(--e-glass) calc(var(--i, 0) * 0.08s);
+    opacity var(--d-slow) var(--e-glass) calc(var(--i) * 70ms),
+    translate var(--d-slow) var(--e-glass) calc(var(--i) * 70ms);
 }
-.ab-tools-vp.is-in .ab-tool { opacity: 1; transform: none; }
-/* the ladder: each card one step lighter than the one before */
-.ab-tool:nth-child(2) { --ab-tool-ground: var(--n-10); }
-.ab-tool:nth-child(3) { --ab-tool-ground: var(--n-9); }
-.ab-tool:nth-child(4) { --ab-tool-ground: var(--n-8); }
-.ab-tool:nth-child(5) { --ab-tool-ground: var(--n-7); }
-.ab-tool:nth-child(6) { --ab-tool-ground: var(--n-6); }
-/* the plate in the corner, fading toward the bottom-left */
-.ab-tool-bg {
+.ab-bento-card::after {
+  /* the hover: the wash deepens */
+  content: '';
   position: absolute;
-  right: 0;
-  top: 0;
-  width: 72%;
-  height: 78%;
-  object-fit: cover;
-  object-position: 50% 30%;
-  opacity: 0.5;
-  filter: grayscale(1) contrast(1.1);
-  -webkit-mask-image: linear-gradient(225deg, rgb(0 0 0 / 0.9) 0%, rgb(0 0 0 / 0.35) 40%, transparent 72%);
-  mask-image: linear-gradient(225deg, rgb(0 0 0 / 0.9) 0%, rgb(0 0 0 / 0.35) 40%, transparent 72%);
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(120% 95% at var(--wash-at), rgb(21 23 26 / 0.09), rgb(21 23 26 / 0) 62%);
+  opacity: 0;
+  transition: opacity var(--d-base) var(--e-settle);
   pointer-events: none;
 }
-.ab-tool-arrow {
-  grid-column: 1;
-  grid-row: 2;
+.ab-bento-card:hover::after { opacity: 1; }
+.ab-bento-grid.is-in .ab-bento-card { opacity: 1; translate: none; }
+
+.ab-bento-card:nth-child(1) { grid-area: a; --wash-angle: 160deg; }
+.ab-bento-card:nth-child(2) { grid-area: b; --wash-at: 100% 100%; --wash-angle: 100deg; }
+.ab-bento-card:nth-child(3) { grid-area: c; justify-content: flex-start; --wash-at: 100% 0%; --wash-angle: 210deg; }
+.ab-bento-card:nth-child(4) { grid-area: d; --wash-at: 0% 0%; --wash-angle: 135deg; }
+.ab-bento-card:nth-child(5) { grid-area: e; --wash-at: 100% 0%; --wash-angle: 250deg; }
+.ab-bento-card:nth-child(6) { grid-area: f; justify-content: flex-start; --wash-at: 0% 100%; --wash-angle: 45deg; }
+
+.ab-bento-text {
+  position: relative;
+  z-index: 1;
+  max-width: 24rem;
+}
+/* the squares: the line stops before the object's corner */
+.ab-bento-card:nth-child(3) .ab-bento-text,
+.ab-bento-card:nth-child(4) .ab-bento-text,
+.ab-bento-card:nth-child(6) .ab-bento-text { max-width: 17rem; }
+.ab-bento-name {
+  margin: 0 0 0.6rem;
+  font-size: 2.2rem;
+  font-weight: var(--w-medium);
+  line-height: 1.05;
+  letter-spacing: var(--ls-h3);
+  color: var(--text);
+}
+.ab-bento-line {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* THE OBJECTS: inside the card, in the free corner, with the ride and
+   the lean composed into one transform. `--d` is each object's depth. */
+.ab-bento-obj {
+  --d: 1;
+  position: absolute;
+  z-index: 0;
   display: block;
-  font-size: 2rem;
-  line-height: 1;
-  margin-bottom: 0.8rem;
+  height: auto;
+  max-width: none;
+  pointer-events: none;
+  filter: drop-shadow(0 1.8rem 1.6rem rgb(21 23 26 / 0.26));
+  transform: translate3d(calc(var(--px) * var(--d)), calc(var(--py) * var(--d) + var(--sy) * var(--d)), 0) scale(var(--lift, 1));
+  transition:
+    opacity var(--d-cinema) var(--e-glass) calc(var(--i) * 70ms + 120ms),
+    --lift var(--d-base) var(--e-settle),
+    filter var(--d-base) var(--e-settle);
+  will-change: transform;
+  opacity: 0;
 }
-.ab-tool-arrow svg { display: block; }
-.ab-tool-name {
-  grid-column: 1;
-  grid-row: 3;
-  margin: 0;
-  font-size: 2.7rem;
-  font-weight: var(--w-light);
-  line-height: 1;
-  letter-spacing: -0.03em;
+.ab-bento-grid.is-in .ab-bento-obj { opacity: 1; }
+.ab-bento-card:hover .ab-bento-obj {
+  --lift: 1.04;
+  filter: drop-shadow(0 2.4rem 2rem rgb(21 23 26 / 0.3));
 }
-.ab-tool-line {
-  grid-column: 2;
-  grid-row: 3;
-  margin: 0;
-  font-size: 0.86rem;
-  line-height: 1.36;
-  text-align: right;
-  color: rgb(251 252 252 / 0.78);
+/* the sphere, upper half of the tall card */
+.ab-bento-card:nth-child(1) .ab-bento-obj { top: 3rem; left: 50%; margin-left: -8rem; width: 16rem; --d: 1.2; }
+/* the dashboard, right of the wide top card */
+.ab-bento-card:nth-child(2) .ab-bento-obj { top: 1.8rem; right: 2.2rem; width: 23.5rem; --d: 0.8; }
+/* the cursor, bottom right */
+.ab-bento-card:nth-child(3) .ab-bento-obj { bottom: 1.6rem; right: 2.2rem; width: 9rem; --d: 1.4; }
+/* the arrow, top right */
+.ab-bento-card:nth-child(4) .ab-bento-obj { top: 1.8rem; right: 2.2rem; width: 9rem; --d: 1.1; }
+/* the wireframe slab, right of the wide bottom card */
+.ab-bento-card:nth-child(5) .ab-bento-obj { bottom: 2rem; right: 2.4rem; width: 24rem; --d: 0.7; }
+/* the laptop back, bottom right */
+.ab-bento-card:nth-child(6) .ab-bento-obj { bottom: 1.4rem; right: 2rem; width: 10rem; --d: 1.3; }
+
+@property --lift {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 1;
 }
 
-/* THE HAND'S DISC is the shared one (HandDisc.tsx, hand-lens.ts, the
-   .k-hand-* rules in tokens.css). What is this page's alone: the lens'
-   clone of the row must show as revealed and at rest — the cards'
-   entrance off, or they would fade in inside the glass. The row's own
-   cursor rule above is the fallback; the driver's class on <html> is
-   what actually hides the hand. */
-.ab-tools .k-hand-clone,
-.ab-tools .k-hand-clone *,
-.ab-tools .k-hand-clone *::before,
-.ab-tools .k-hand-clone *::after {
-  transition: none !important;
-  animation: none !important;
+@media (prefers-reduced-motion: reduce) {
+  .ab-bento-card, .ab-bento-obj { opacity: 1; translate: none; transition: none; }
+  .ab-bento-obj { transform: none; }
 }
 
-/* ---------- §6 · HOW IT WENT — THE TRAVEL ----------
+@media (max-width: 57.5rem) {
+  .ab-tools { padding: 5rem 0 4rem; }
+  .ab-tools-t { margin: 0 0 1.8rem var(--ab-pad); font-size: 3rem; }
+  .ab-bento-grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-template-areas: none;
+    grid-auto-rows: 15rem;
+    gap: 1rem;
+    margin: 0 var(--ab-pad);
+  }
+  .ab-bento-card { grid-area: auto !important; justify-content: flex-end !important; padding: 1.6rem 1.5rem; }
+  .ab-bento-text { max-width: 60%; }
+  .ab-bento-name { font-size: 1.5rem; }
+  .ab-bento-line { font-size: 0.9rem; }
+  /* every object sits in the top right on phones (the grid class in
+     the selector outweighs the desktop per-card rules) */
+  .ab-bento-grid .ab-bento-card .ab-bento-obj { top: 1.2rem; right: 1.2rem; bottom: auto; left: auto; margin: 0; width: 6.5rem; }
+  .ab-bento-grid .ab-bento-card:nth-child(2) .ab-bento-obj,
+  .ab-bento-grid .ab-bento-card:nth-child(5) .ab-bento-obj { width: 10rem; }
+}
+
+/* ---------- §7 · HOW IT WENT — THE TRAVEL ----------
    (AboutTimeline.tsx, 2026-09-16, user: "more functional and
    motion-filled… no eyebrows, no unnecessary small numbering, no
    hairlines. Pure motion".) The wrapper is the pin's length

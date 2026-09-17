@@ -12,7 +12,11 @@ import './globals.css'
 // The five fonts below it belong to the outgoing v3.1 site and come out with it.
 const manrope = Manrope({
   subsets: ['latin'],
-  weight: ['200', '400', '500', '600'],
+  /* the VARIABLE face (2026-09-17): one file, every weight from 200 to
+     800 — the about page's words sit at 800, which the four static
+     instances this replaces never carried. They render identically
+     from it, and a weight can now be tweened as a number. */
+  weight: 'variable',
   variable: '--font-manrope',
   display: 'swap',
 })
