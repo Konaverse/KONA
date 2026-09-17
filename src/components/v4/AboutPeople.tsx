@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from 'react'
 import { gsap } from '@/lib/motion-v4'
-import PixelReveal from '@/components/v4/PixelReveal'
 
 /**
  * THE PEOPLE — THREE CARDS (2026-09-16, user: "something simpler but
@@ -14,7 +13,7 @@ import PixelReveal from '@/components/v4/PixelReveal'
  * flips whose portraits went through a slatted shutter, then a drum,
  * then a GL funnel — all rejected.
  *
- * THE LAYOUT (about.css). A 200svh section on the void, not pinned.
+ * THE LAYOUT (about.css). A 200svh section on paper, not pinned.
  * Three cards of one size — the portrait in a rounded frame, then a
  * hairline, the name, the role (no description, no numbering) — set
  * about the section's centre line: the first high on the LEFT, the
@@ -30,15 +29,11 @@ import PixelReveal from '@/components/v4/PixelReveal'
  * transform per card off gsap.ticker + one rect; no lag on top of
  * Lenis — the page and the cards share one clock.
  *
- * THE GROUND. The page fades to the void as the section arrives and
- * STAYS there (user, 2026-09-16: "make the team section stay dark
- * after it switches, don't make it go back to white" — the opening
- * that follows is on the void): `--ab-dark` on the page root, mixed
- * in about.css, so the statement above cross-fades with it. The way
- * back to paper happens only once the section has left the viewport,
- * behind the opening's own ground, so the toolset after it is on
- * paper again. `k-dark` goes on the section once the roles have flipped
- * (the grain, GrainField).
+ * THE GROUND. Paper (user, 2026-09-17: "make the team and the below
+ * section light theme"). The fade to the void this driver used to
+ * write on the page root (`--ab-dark`, held through the opening) is
+ * gone; the section sits on the page's own ground like the statement
+ * above it.
  *
  * THE DOLLY ZOOM (same day, the user's People.zip: for each person the
  * set with them painted out, and them cut out). Two layers in the
@@ -47,11 +42,11 @@ import PixelReveal from '@/components/v4/PixelReveal'
  * Vertigo shot, the space opening up behind a still figure. The
  * driver owns both transforms (BG_*, CUT_*).
  *
- * THE ENTRANCE. Each frame stands as a blurred MOSAIC of its two
- * layers from the moment they load (PixelReveal.tsx — both layers are
- * eager for that) and resolves block by block as it enters; the
- * caption, set IN the picture over a scrim at its foot, rises once
- * the pixels have sharpened (`is-in`, a beat late). Reduced motion:
+ * THE ENTRANCE. Each frame comes up whole as its card enters, and the
+ * caption, set IN the picture over a scrim at its foot, rises a beat
+ * behind it (`is-in`, about.css). The mosaic that used to resolve
+ * block by block (PixelReveal.tsx, parked, unimported) was removed at
+ * the user's word, 2026-09-17. Reduced motion:
  * no parallax, everything in place. No JS: page.tsx's noscript lifts
  * the entrance. Every word is server-rendered.
  */
@@ -72,8 +67,6 @@ export type Person = {
 /** each card's drift across the section's travel, in viewport heights:
  *  negative lags the page (slower), positive leads it (faster) */
 const RATES = [-0.22, 0.14, 0.5]
-/** the ground's fade, in viewport heights of the section's edge */
-const FADE = 0.6
 /** THE DOLLY ZOOM. As a card crosses the viewport (0 entering at the
  *  bottom, 1 leaving at the top) the set behind the person PULLS BACK
  *  — close up on entry (BG_FROM), zooming out to BG_TO — about a point
@@ -94,7 +87,6 @@ export default function AboutPeople({ people }: { people: readonly Person[] }) {
   useEffect(() => {
     const sec = ref.current
     if (!sec) return
-    const page = sec.closest<HTMLElement>('.ab')
     const cards = Array.from(sec.querySelectorAll<HTMLElement>('.ab-ppl-card'))
     const layers = cards.map((c) => ({
       pic: c.querySelector<HTMLElement>('.ab-ppl-pic'),
@@ -119,24 +111,12 @@ export default function AboutPeople({ people }: { people: readonly Person[] }) {
     if (reduce) cards.forEach((c) => c.classList.add('is-in'))
     else cards.forEach((c) => io.observe(c))
 
-    let lastDark = -1
     let lastP = -1
     const tick = () => {
       const r = sec.getBoundingClientRect()
       const vh = window.innerHeight
       if (r.bottom < -vh || r.top > vh * 2) return
 
-      /* THE GROUND: in over the section's top edge; held to the end;
-         out only once the bottom edge has left the viewport (unseen,
-         behind the next section's own ground) */
-      const dark = Math.min(clamp01((vh - r.top) / (FADE * vh)), clamp01((r.bottom + FADE * vh) / (FADE * vh)))
-      if (page && Math.abs(dark - lastDark) > 0.002) {
-        lastDark = dark
-        page.style.setProperty('--ab-dark', dark.toFixed(3))
-        sec.classList.toggle('k-dark', dark >= 0.55)
-      }
-
-      if (reduce) return
       /* THE PARALLAX: 0 as the section's top enters at the bottom, 1 as
          its bottom leaves at the top; no drift at the midpoint */
       const p = (vh - r.top) / (vh + r.height)
@@ -160,14 +140,14 @@ export default function AboutPeople({ people }: { people: readonly Person[] }) {
         l.cut.style.transform = `scale(${(CUT_FROM + (CUT_TO - CUT_FROM) * q).toFixed(4)})`
       })
     }
-    tick()
-    gsap.ticker.add(tick)
+    if (!reduce) {
+      tick()
+      gsap.ticker.add(tick)
+    }
 
     return () => {
       io.disconnect()
       gsap.ticker.remove(tick)
-      page?.style.removeProperty('--ab-dark')
-      sec.classList.remove('k-dark')
       cards.forEach((c) => {
         c.classList.remove('is-in')
         c.style.transform = ''
@@ -195,7 +175,7 @@ export default function AboutPeople({ people }: { people: readonly Person[] }) {
               alt=""
               width={1200}
               height={1440}
-              loading="eager"
+              loading="lazy"
               decoding="async"
               draggable={false}
               aria-hidden="true"
@@ -206,13 +186,10 @@ export default function AboutPeople({ people }: { people: readonly Person[] }) {
               alt={p.name}
               width={1200}
               height={1440}
-              loading="eager"
+              loading="lazy"
               decoding="async"
               draggable={false}
             />
-            {/* the reveal: a blurred mosaic of the two layers that
-                resolves when the frame enters (PixelReveal.tsx) */}
-            <PixelReveal />
             {/* the caption IN the picture, over a scrim at its foot:
                 name and role only (user: no description, no numbering);
                 the bio stays in the data for the schema */}

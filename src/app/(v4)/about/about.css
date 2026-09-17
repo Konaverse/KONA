@@ -3,7 +3,7 @@
    §1 THE SENTENCE (AboutHero.tsx) on paper, the third line on a dark
    band that ends on the viewport's bottom; §2 THE STATEMENT on paper;
    §3 WHO WE ARE (AboutWho.tsx) — THE PICTURE, a fixed composition;
-   §4 WHAT WE MAKE — THE OPENING (AboutOpen.tsx, 2026-09-16); §5 THE WORDS (AboutWords.tsx, 2026-09-17); §6 the toolset; §7 the travel; §8 the
+   §4 WHAT WE MAKE — THE OPENING (AboutOpen.tsx, 2026-09-16); §5 THE WORDS (AboutWords.tsx, 2026-09-17); §6 the toolset; §7 the thread; §8 the
    CTA in flow. Colours, type and easings from tokens.css; the plate material
    is the homepage hero's dark-grain pill, restated here because
    home.css is not on this route.
@@ -20,18 +20,11 @@
      --page-pad, and the picture is measured off this edge */
   --ab-pad: 6.8rem;
   --ab-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='90' height='90' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
-  /* THE GROUND'S FADE (2026-09-16, the people's stage): `--ab-dark` is
-     0 on paper and 1 in the void, written by AboutPeople as the stage
-     arrives and leaves. The ground mixes along the whole way; the
-     roles flip on a short ramp about the midpoint (`--ab-flip`) so
-     the type is never mid-grey on a mid-grey ground. Nothing here is
-     a stacking context; a `k-dark` child restates its own roles. */
-  --ab-dark: 0;
-  --ab-flip: clamp(0, (var(--ab-dark) - 0.45) * 10, 1);
-  --ab-ground: color-mix(in oklab, var(--n-1), var(--n-11) calc(var(--ab-dark) * 100%));
-  --text: color-mix(in oklab, var(--ink), var(--n-0) calc(var(--ab-flip) * 100%));
-  --text-muted: color-mix(in oklab, var(--n-7), var(--n-5) calc(var(--ab-flip) * 100%));
-  --hairline: color-mix(in oklab, var(--n-3), var(--n-9) calc(var(--ab-flip) * 100%));
+  /* THE GROUND: paper, the whole way down (user, 2026-09-17: "make the
+     team and the below section light theme" — the fade to the void the
+     people's stage drove, `--ab-dark`, is gone with it). The sections
+     that cover another restate it as their own ground. */
+  --ab-ground: var(--n-1);
   background: var(--ab-ground);
   color: var(--text);
 }
@@ -192,7 +185,9 @@
 /* §3 THE PEOPLE — see the block appended at the end of this file */
 
 /* ---------- §4 · WHAT WE MAKE — THE OPENING ----------
-   (AboutOpen.tsx, 2026-09-16, built from the user's recording.) A dark
+   (AboutOpen.tsx, 2026-09-16, built from the user's recording; ON PAPER
+   since 2026-09-17 — the title in ink, the picture and its veil still
+   dark, so the beats over it stay in paper.) A
    ground that scrolls in like any section: the title centred in the
    upper third, a circle of the picture under it. Pinned from its top:
    the circle grows to the whole viewport over the first viewport of
@@ -204,15 +199,15 @@
    Every length rem; svh only for the pin and the runways. */
 .ab-op {
   position: relative;
-  background: var(--n-11);
-  color: var(--n-0);
+  background: var(--ab-ground);
+  color: var(--text);
 }
 .ab-op-stage {
   position: sticky;
   top: 0;
   height: 100svh;
   overflow: hidden;
-  background: var(--n-11);
+  background: var(--ab-ground);
 }
 .ab-op-t {
   position: absolute;
@@ -225,12 +220,12 @@
   font-weight: var(--w-light);
   line-height: 1;
   letter-spacing: -0.035em;
-  color: var(--n-0);
+  color: var(--text);
 }
 .ab-op-sub {
   display: block;
   margin-top: 0.12em;
-  color: var(--n-6);
+  color: var(--text-muted);
 }
 
 /* THE BOX: a circle at rest under the title — the driver takes it from
@@ -311,6 +306,9 @@
 .ab-op.is-still .ab-op-veil { display: none; }
 .ab-op.is-still .ab-op-beats { margin-top: 0; padding: 4rem 0 130svh; }
 .ab-op.is-still .ab-op-beat { height: auto; padding: 3rem var(--ab-pad); }
+/* in flow the beats are on paper, not over the veiled picture */
+.ab-op.is-still .ab-op-line { color: var(--text); }
+.ab-op.is-still .ab-op-note { color: var(--text-muted); }
 
 @media (max-width: 57.5rem) {
   .ab-op-t { top: 17svh; font-size: 2.9rem; }
@@ -637,47 +635,41 @@
   .ab-bento-grid .ab-bento-card:nth-child(5) .ab-bento-obj { width: 10rem; }
 }
 
-/* ---------- §7 · HOW IT WENT — THE TRAVEL ----------
-   (AboutTimeline.tsx, 2026-09-16, user: "more functional and
-   motion-filled… no eyebrows, no unnecessary small numbering, no
-   hairlines. Pure motion".) The wrapper is the pin's length
-   (--ab-tl-len, written by the driver); the stage is sticky and one
-   viewport high. On it: the title at the gutter; the TRACK — the
-   entries a stride apart, each a tall plate with its caption beside
-   it, panned by the driver; and the BAND — the years along the foot
-   on a track 0.6 as long, in the difference blend, so they read as
-   ink on the paper and as light where they cross a picture. The
-   driver measures the strides off this layout: the numbers live here
-   only. Sized to the reference viewport (730px = 45.6rem). */
+/* ---------- §7 · HOW IT WENT — THE THREAD ----------
+   (AboutTimeline.tsx, 2026-09-17, user: "vertical scroll not
+   horizontal… an svg scroll follow lines animation… cool image
+   transitions… not too heavy"; it replaces THE TRAVEL's pinned
+   horizontal track.) A section on paper, in flow, no pin. The title
+   at the gutter; under it the entries a viewport apart (46rem — the
+   reference viewport is 45.6), alternating sides about the centre:
+   the plate one side, the year and the words the other, the year a
+   giant numeral that overhangs the plate's inner edge in the
+   difference blend. THE THREAD is an SVG the size of the section
+   UNDER the plates; the driver writes its route from the plates as
+   laid out here, so these numbers are the only ones. The hidden
+   states live under `.is-live` (the driver's): without it — no JS,
+   reduced motion — the entries stand open, in colour, no thread. */
 .ab-time {
   position: relative;
   /* on its own ground and above the opening's pinned picture (§4):
      the toolset is the cover, but on phones and tall viewports it is
      shorter than the viewport it covers, so this section carries the
-     ground on; its gap from the toolset is the toolset's bottom pad */
+     ground on. The ground is also the years' backdrop: the section
+     is a stacking context, and a difference blend can only see what
+     is inside it */
   z-index: 2;
+  padding: 9rem 0 14rem;
+  overflow: clip;
   background: var(--ab-ground);
-  height: var(--ab-tl-len, 100svh);
-  --ab-tl-stride: 50rem;
-  --ab-tl-plate-w: 18rem;
-  --ab-tl-plate-h: 27rem;
-}
-.ab-tl-stage {
-  position: sticky;
-  top: 0;
-  height: 100svh;
-  overflow: hidden;
-  /* the ground is ON the stage: a sticky box is its own stacking
-     context, and the band's difference blend can only see a backdrop
-     inside it — without this the years come out white on paper */
-  background: var(--ab-ground);
+  --ab-tl-plate-w: 24rem;
+  --ab-tl-plate-h: 32rem;
+  /* the plate's and the words' distance from the centre line */
+  --ab-tl-off: 4rem;
 }
 .ab-tl-t {
-  position: absolute;
-  left: var(--ab-pad);
-  top: 5.6rem;
+  position: relative;
   z-index: 1;
-  margin: 0;
+  margin: 0 0 3rem var(--ab-pad);
   font-size: 6.8rem;
   font-weight: var(--w-light);
   line-height: 1;
@@ -686,35 +678,93 @@
   white-space: nowrap;
 }
 
-/* THE TRACK */
-.ab-tl-track {
+/* THE THREAD: under everything; hairlines stay px */
+.ab-tl-thread {
+  display: none;
   position: absolute;
+  z-index: 0;
   inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.ab-time.is-live .ab-tl-thread { display: block; }
+.ab-tl-ghost {
+  stroke: var(--n-5);
+  stroke-width: 1.5px;
+  stroke-dasharray: 1 8;
+  stroke-linecap: round;
+}
+.ab-tl-ink {
+  stroke: var(--ink);
+  stroke-width: 2px;
+  stroke-linecap: round;
+}
+/* THE HEAD: a ring on the end of the ink; the driver places its
+   centre (the box is pulled back by half its size) */
+.ab-tl-head {
+  display: none;
+  position: absolute;
+  z-index: 0;
+  left: -0.55rem;
+  top: -0.55rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--ab-ground);
+  box-shadow: 0 0 0 0.35rem var(--ab-ground);
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+.ab-time.is-live .ab-tl-head { display: block; }
+
+/* THE ENTRIES. No stacking context between the section and a year
+   (no transform, opacity or z-index on the list, the entry, the body
+   or the name) — the year's blend must see the plate and the paper. */
+.ab-tl-list {
+  position: relative;
   margin: 0;
   padding: 0;
   list-style: none;
-  will-change: transform;
 }
 .ab-tl-entry {
-  position: absolute;
-  /* the plate's centre sits a stride per index from the stage's centre */
-  left: calc(50% + var(--i) * var(--ab-tl-stride) - var(--ab-tl-plate-w) / 2);
-  top: 13rem;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   align-items: center;
-  gap: 2.4rem;
+  height: 46rem;
 }
 .ab-tl-plate {
   position: relative;
-  flex: 0 0 auto;
+  z-index: 1;
+  grid-row: 1;
+  grid-column: 2;
+  justify-self: start;
   width: var(--ab-tl-plate-w);
   height: var(--ab-tl-plate-h);
-  margin: 0;
+  margin: 0 0 0 var(--ab-tl-off);
   border-radius: var(--r-lg);
   overflow: hidden;
   background: var(--n-10);
-  will-change: transform;
+  /* it hangs from where the thread enters it (the driver's swing) */
+  transform-origin: 50% 0;
+  will-change: clip-path, transform;
 }
+.ab-tl-body {
+  grid-row: 1;
+  grid-column: 1;
+  justify-self: end;
+  width: 25rem;
+  margin: 0 var(--ab-tl-off) 0 0;
+}
+/* the mirror */
+.ab-tl-entry:nth-child(even) .ab-tl-plate { grid-column: 1; justify-self: end; margin: 0 var(--ab-tl-off) 0 0; }
+.ab-tl-entry:nth-child(even) .ab-tl-body { grid-column: 2; justify-self: start; margin: 0 0 0 var(--ab-tl-off); }
+
+/* closed until the thread reaches it (the driver opens the iris) */
+.ab-time.is-live .ab-tl-plate { clip-path: circle(0 at 50% 0%); }
 .ab-tl-img {
   position: absolute;
   inset: 0;
@@ -724,11 +774,8 @@
   will-change: transform;
 }
 .ab-tl-img-mono { filter: grayscale(1) brightness(0.96); }
-.ab-tl-img-colour { opacity: 0; }
-.ab-tl-cap {
-  width: 22rem;
-  will-change: transform, opacity;
-}
+.ab-time.is-live .ab-tl-img-colour { opacity: 0; }
+
 .ab-tl-name {
   margin: 0 0 0.9rem;
   font-size: 2.3rem;
@@ -737,75 +784,77 @@
   letter-spacing: -0.02em;
   color: var(--text);
 }
-/* the entry's own year: for readers and the still state; the band is
-   the visible year under motion */
+/* THE YEAR: white in the difference blend — ink on the paper, light
+   where it overhangs the picture; pulled across the gap and 5rem onto
+   the plate; the driver drifts it against the page */
 .ab-tl-when {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
-.ab-tl-text {
-  margin: 0;
-  font-size: 1rem;
-  line-height: 1.5;
-  color: var(--text-muted);
-}
-
-/* THE BAND */
-.ab-tl-years {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0.6rem;
+  position: relative;
   z-index: 2;
-  height: 12rem;
+  display: block;
+  margin: 0 calc(-2 * var(--ab-tl-off) - 5rem) 1.6rem 0;
+  text-align: right;
+  font-size: 11.5rem;
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  white-space: nowrap;
   color: #fff;
   mix-blend-mode: difference;
   pointer-events: none;
   will-change: transform;
 }
-.ab-tl-year {
-  position: absolute;
-  left: calc(50% + var(--i) * var(--ab-tl-stride) * 0.6);
-  top: 0;
-  transform: translateX(-50%);
-  font-size: 12rem;
-  font-weight: var(--w-light);
-  line-height: 1;
-  letter-spacing: -0.04em;
-  white-space: nowrap;
+.ab-tl-entry:nth-child(even) .ab-tl-when {
+  margin: 0 0 1.6rem calc(-2 * var(--ab-tl-off) - 5rem);
+  text-align: left;
 }
+/* the digits, each in its own mask */
+.ab-tl-d {
+  display: inline-block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+  vertical-align: bottom;
+}
+.ab-tl-d > span {
+  display: inline-block;
+  transition: transform var(--d-slow) var(--e-glass);
+  transition-delay: calc(var(--j) * 70ms);
+}
+.ab-tl-label { display: block; }
+.ab-tl-text {
+  margin: 0;
+  max-width: 22rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+.ab-tl-label,
+.ab-tl-text {
+  transition:
+    opacity var(--d-slow) var(--e-glass) 0.25s,
+    transform var(--d-slow) var(--e-glass) 0.25s;
+}
+.ab-tl-text { transition-delay: 0.35s; }
+/* the hush: until the entry is on (and again below it, quickly) */
+.ab-time.is-live .ab-tl-entry:not(.is-on) .ab-tl-d > span { transform: translateY(108%); transition-delay: 0s; }
+.ab-time.is-live .ab-tl-entry:not(.is-on) .ab-tl-label,
+.ab-time.is-live .ab-tl-entry:not(.is-on) .ab-tl-text { opacity: 0; transform: translateY(1.2rem); transition-delay: 0s; }
 
-/* the still state (reduced motion; the noscript in page.tsx says the
-   same): nothing pinned, the entries stacked, each with its year */
-.ab-time.is-still { height: auto; }
-.ab-time.is-still .ab-tl-stage { position: static; height: auto; overflow: visible; padding: 6rem var(--ab-pad) 4rem; }
-.ab-time.is-still .ab-tl-t { position: static; margin-bottom: 3rem; }
-.ab-time.is-still .ab-tl-track { position: static; }
-.ab-time.is-still .ab-tl-entry { position: static; margin: 0 0 4rem; }
-.ab-time.is-still .ab-tl-img-colour { opacity: 1; }
-.ab-time.is-still .ab-tl-when { position: static; display: block; width: auto; height: auto; clip: auto; margin-bottom: 0.4rem; font-size: 3.4rem; letter-spacing: -0.04em; }
-.ab-time.is-still .ab-tl-years { display: none; }
-
+/* PHONES: one column — the plate, the year over its foot, the words;
+   no thread (the route would run through the words), the iris still
+   opens on the same clock */
 @media (max-width: 57.5rem) {
-  .ab-time {
-    --ab-tl-stride: 78vw;
-    --ab-tl-plate-w: 60vw;
-    --ab-tl-plate-h: 88vw;
-  }
-  .ab-tl-t { top: 4.6rem; font-size: 2.8rem; }
-  .ab-tl-entry { top: 8.6rem; flex-direction: column; align-items: flex-start; gap: 1.4rem; width: var(--ab-tl-plate-w); }
-  .ab-tl-cap { width: 100%; }
+  .ab-time { padding: 5rem 0 4rem; }
+  .ab-time.is-live .ab-tl-thread,
+  .ab-time.is-live .ab-tl-head { display: none; }
+  .ab-tl-t { font-size: 2.8rem; margin-bottom: 2.5rem; }
+  .ab-tl-entry { display: block; height: auto; padding: 0 var(--ab-pad) 4rem; }
+  .ab-tl-plate,
+  .ab-tl-entry:nth-child(even) .ab-tl-plate { width: 100%; height: auto; aspect-ratio: 3 / 4; margin: 0; }
+  .ab-tl-body,
+  .ab-tl-entry:nth-child(even) .ab-tl-body { width: auto; margin: 0; }
+  .ab-tl-when,
+  .ab-tl-entry:nth-child(even) .ab-tl-when { margin: -2.7rem 0 0.8rem; font-size: 5.4rem; text-align: left; }
   .ab-tl-name { font-size: 1.5rem; margin-bottom: 0.5rem; }
-  .ab-tl-text { font-size: 0.9rem; }
-  .ab-tl-years { height: 4.4rem; bottom: 4rem; }
-  .ab-tl-year { font-size: 4.4rem; }
-  .ab-time.is-still .ab-tl-stage { padding: 4rem var(--ab-pad) 2rem; }
-  .ab-time.is-still .ab-tl-entry { width: auto; }
-  .ab-time.is-still .ab-tl-plate { width: 100%; height: auto; aspect-ratio: 2 / 3; }
+  .ab-tl-text { font-size: 0.9rem; max-width: none; }
 }
 
 @media (max-width: 57.5rem) {
@@ -985,8 +1034,8 @@
 
 /* ============================================================
    §3 · THE PEOPLE — THREE CARDS (AboutPeople.tsx, 2026-09-16)
-   A 200svh section on the void (the ground is the page's own,
-   `--ab-ground` above, faded by the driver), not pinned. Three cards
+   A 200svh section ON PAPER (user, 2026-09-17: light theme — the fade
+   to the void is gone; the ground is the page's own), not pinned. Three cards
    of ONE size about the section's centre line — high left, lower
    right, lower still near the centre — each riding the scroll at its
    own rate (the driver's transform; the layout is the midpoint). The
@@ -1040,8 +1089,17 @@
   margin: 0;
   overflow: hidden;
   border-radius: var(--r-lg);
-  background: var(--n-10);
+  background: var(--n-3);
+  /* THE ENTRANCE (2026-09-17, the mosaic reveal removed at the user's
+     word): the frame comes up whole as its card enters, the caption a
+     beat behind it; page.tsx's noscript lifts this */
+  opacity: 0;
+  transform: translateY(3rem);
+  transition:
+    opacity var(--d-slow) var(--e-glass),
+    transform var(--d-cinema) var(--e-glass);
 }
+.ab-ppl-card.is-in .ab-ppl-pic { opacity: 1; transform: none; }
 /* THE DOLLY'S LAYERS: the set behind, scaled about head height by the
    driver; the person in front. Both fill the frame (the plates are
    5:6, like the frame) so no edge ever shows under the zoom. */
@@ -1056,27 +1114,9 @@
 }
 .ab-ppl-bg { transform-origin: 50% 38%; }
 .ab-ppl-cut { transform-origin: 50% 60%; }
-/* the layers wait under the plate until the mosaic has them (or the
-   reveal is off) — a set that loads before its person never shows
-   alone; page.tsx's noscript lifts this */
-.ab-ppl-pic img { opacity: 0; }
-.ab-ppl-pic:has(.k-pix.is-set) img,
-.ab-ppl-pic:has(.k-pix.is-done) img { opacity: 1; }
-/* THE REVEAL: the mosaic canvas over the layers (PixelReveal.tsx) —
-   painted once the layers load, resolved on entry, then out of paint */
-.k-pix {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  transition: opacity var(--d-base) var(--e-glass);
-}
-.k-pix.is-done { opacity: 0; visibility: hidden; transition: opacity var(--d-base) var(--e-glass), visibility 0s var(--d-base); }
 
 /* THE CAPTION, IN THE PICTURE (user, 2026-09-16): name and role at the
-   frame's foot over a scrim; rises once the pixels have sharpened */
+   frame's foot over a scrim; rises a beat after the frame */
 .ab-ppl-cap {
   position: absolute;
   left: 0;
@@ -1090,8 +1130,8 @@
   opacity: 0;
   transform: translateY(var(--reveal-shift));
   transition:
-    opacity var(--d-slow) var(--e-glass) 0.9s,
-    transform var(--d-slow) var(--e-glass) 0.9s;
+    opacity var(--d-slow) var(--e-glass) 0.35s,
+    transform var(--d-slow) var(--e-glass) 0.35s;
 }
 .ab-ppl-card.is-in .ab-ppl-cap { opacity: 1; transform: none; }
 .ab-ppl-name {

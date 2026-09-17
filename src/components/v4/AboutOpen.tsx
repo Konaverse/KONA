@@ -10,7 +10,10 @@ import { gsap, EASE, rem } from '@/lib/motion-v4'
  * strengthens on scroll… we need smart content"). Read frame by frame
  * (the clip is the section scrolled backwards); in scroll order:
  *
- *  1. THE REST. A dark ground scrolls in like any section: the title
+ *  1. THE REST. The ground — PAPER since 2026-09-17 (user: "make the
+ *     team and the below section light theme"; the title in ink, the
+ *     picture and its veil still dark so the beats stay in paper) —
+ *     scrolls in like any section: the title
  *     centred in the upper third, a small CIRCLE of the picture under
  *     it. Nothing moves until the section's top reaches the viewport's.
  *  2. THE GROW (the first viewport of the pin). The circle grows into
@@ -150,7 +153,7 @@ export default function AboutOpen({
   }, [])
 
   return (
-    <section ref={ref} className="ab-op k-dark" aria-label={title}>
+    <section ref={ref} className="ab-op" aria-label={title}>
       <div className="ab-op-stage">
         <h2 className="ab-op-t">
           {title}

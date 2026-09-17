@@ -37,21 +37,21 @@ import './about.css'
  * §3 THE PEOPLE — THREE CARDS (2026-09-16, user: three people now;
  * after a day of pinned stages — letter flips over a slatted
  * shutter, a drum, a GL funnel, all rejected — "something simpler but
- * we'll do it perfectly"). A 200svh section, not pinned, on the void:
+ * we'll do it perfectly"). A 200svh section, not pinned, ON PAPER
+ * (2026-09-17 — the void, its ground fade and the mosaic reveal all
+ * removed at the user's word):
  * three cards of one size — portrait, hairline, name, role; no
  * description, no numbering — placed about the centre line, high left / lower right
  * / lower still near the centre, each riding the scroll at its own
  * rate so they fan apart on the way in and gather on the way out; at
- * the midpoint all three faces are in the frame. The page fades to
- * the void as the section arrives and back to paper as it leaves
- * (`--ab-dark` on the root, mixed in about.css). AboutPeople.tsx. THE
+ * the midpoint all three faces are in the frame. AboutPeople.tsx. THE
  * PICTURE it replaces (AboutWho.tsx — the mirrored plates, the
  * ledger, the climbing portraits, the dossiers) is parked,
  * unimported, like the sentence hero.
  *
  * §4 WHAT WE MAKE — THE OPENING (2026-09-16, the user's recording; it
- * replaces WE REFUSE TO DO, removed the same day): a dark ground with
- * the title and a circle of the picture; pinned, the circle grows to
+ * replaces WE REFUSE TO DO, removed the same day): a ground — paper
+ * since 2026-09-17 — with the title and a circle of the picture; pinned, the circle grows to
  * the viewport and covers the title, then the picture zooms on under
  * a darkening veil while one sentence, in four parts, scrolls up over
  * it; THE WORDS slide over the held picture. AboutOpen.tsx.
@@ -78,13 +78,15 @@ import './about.css'
  * "this very heavy drag section") is parked, unimported, with its hand
  * lens; the objects are PLACEHOLDERS from the homepage's services.
  *
- * §7 HOW IT WENT — THE TRAVEL (2026-09-16, user: "more functional and
- * motion-filled… no eyebrows, no unnecessary small numbering, no
- * hairlines. Pure motion"; it replaces the pinned roll of 09-11): one
- * pinned viewport, the four entries on a horizontal track panned by
- * the hand, each a tall plate with its caption; the years run along
- * the foot on a slower track in the difference blend; each entry
- * grows, turns to colour and speaks as it reaches the centre.
+ * §7 HOW IT WENT — THE THREAD (2026-09-17, user: "more impressive…
+ * vertical scroll not horizontal… an svg scroll follow lines
+ * animation, cool image transitions… not too heavy"; it replaces THE
+ * TRAVEL's pinned horizontal track of 09-16): in flow, no pin, the
+ * four entries alternating sides a viewport apart; one SVG line drawn
+ * by the scroll swings from plate to plate behind them, and each
+ * picture opens in a circle from the point the line reaches it; the
+ * years are giant numerals over the plates' edges in the difference
+ * blend, their digits rising as the entry speaks.
  * AboutTimeline.tsx.
  *
  * §8 THE INVITATION follows in flow and carries the footer out.
@@ -210,9 +212,6 @@ const YEARS = [
   { year: '2026', label: 'The redesign', plate: '/work/corridor.webp', text: 'The site you are reading, rebuilt in black and white from the first pixel.' },
 ]
 
-/** the last digit of each year: the odometer's stops (module-level so
- *  the array is stable across renders) */
-
 export default function AboutPage() {
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -253,7 +252,7 @@ export default function AboutPage() {
       {/* the entrances park things at opacity 0 or behind a crop edge;
           the no-JS page undoes every one of them */}
       <noscript>
-        <style>{`.ab-ent{opacity:1!important;transform:none!important;filter:none!important}.ab-pill{width:var(--ab-pill-rest)!important;margin-left:.22em!important}.ab-band::before{transform:none!important}.ab-op-stage{position:static!important;height:auto!important;padding:8rem 0 0}.ab-op-t{position:static!important;padding:0 var(--ab-pad) 3rem}.ab-op-box{position:relative!important;width:100%!important;height:70svh!important;border-radius:0!important;transform:none!important;contain:none!important}.ab-op-veil{display:none!important}.ab-op-beats{margin-top:0!important;padding:4rem 0 100svh!important}.ab-op-beat{height:auto!important;padding:3rem var(--ab-pad)!important}.ab-ppl-cap,.ab-ppl-pic img{opacity:1!important;transform:none!important}.k-pix{display:none!important}.ab-wd-w{opacity:1!important}.ab-bento-card,.ab-bento-obj{opacity:1!important;translate:none!important;transform:none!important}.ab-tools-w{transform:none!important}.ab-time{height:auto!important}.ab-tl-stage{position:static!important;height:auto!important;overflow:visible!important;padding:6rem var(--ab-pad) 4rem}.ab-tl-t{position:static!important;margin-bottom:3rem}.ab-tl-track{position:static!important}.ab-tl-entry{position:static!important;margin:0 0 4rem}.ab-tl-img-colour{opacity:1!important}.ab-tl-when{position:static!important;display:block;width:auto!important;height:auto!important;clip:auto!important;margin-bottom:.4rem;font-size:3.4rem}.ab-tl-years{display:none!important}.ag{height:100svh!important}`}</style>
+        <style>{`.ab-ent{opacity:1!important;transform:none!important;filter:none!important}.ab-pill{width:var(--ab-pill-rest)!important;margin-left:.22em!important}.ab-band::before{transform:none!important}.ab-op-stage{position:static!important;height:auto!important;padding:8rem 0 0}.ab-op-t{position:static!important;padding:0 var(--ab-pad) 3rem}.ab-op-box{position:relative!important;width:100%!important;height:70svh!important;border-radius:0!important;transform:none!important;contain:none!important}.ab-op-veil{display:none!important}.ab-op-beats{margin-top:0!important;padding:4rem 0 100svh!important}.ab-op-beat{height:auto!important;padding:3rem var(--ab-pad)!important}.ab-op-line{color:var(--text)!important}.ab-op-note{color:var(--text-muted)!important}.ab-ppl-cap,.ab-ppl-pic{opacity:1!important;transform:none!important}.ab-wd-w{opacity:1!important}.ab-bento-card,.ab-bento-obj{opacity:1!important;translate:none!important;transform:none!important}.ab-tools-w{transform:none!important}.ag{height:100svh!important}`}</style>
       </noscript>
 
       {/* §1 — THE HERO: the grid (2026-09-14) — one picture full-bleed,

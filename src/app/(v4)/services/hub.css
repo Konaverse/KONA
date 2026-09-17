@@ -681,3 +681,853 @@
   .sh-pill img { animation: none; }
   .sh-glint { display: none; }
 }
+
+/* ============================================================
+   §1 · THE HERO — THE BRIEF (HubAgent.tsx, 2026-09-17)
+   It replaces THE BEND above (HubHero.tsx, parked with its rules).
+   The header keeps `.sh-hero` — the sticky box, the cover's drift and
+   shade — and takes `.ha` for its own picture: a field of dots (a
+   canvas), the kicker, the word, the statement, the plan's chips and
+   the prompt down the left; three product cards drawn in code on the
+   right; guides across it all; the agent's cursor over everything.
+   The driver's pass builds it; what it parks is parked HERE
+   (`.ha-ent`, the skeletons, the cards) and lifted by page.tsx's
+   noscript and by `is-still`. Every length rem, hairlines px; nothing
+   is a picture.
+   ============================================================ */
+.sh-hero.ha {
+  display: block;
+  padding: 5.5rem var(--page-pad) 2rem;
+  --ha-mx: 0;
+  --ha-my: 0;
+}
+.ha-ent { opacity: 0; }
+.ha.is-still .ha-ent { opacity: 1; }
+
+/* THE FIELD: strongest behind the cards, gone at the edges */
+.ha-grid {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.6s var(--e-glass);
+  -webkit-mask-image: radial-gradient(95% 95% at 68% 48%, #000 35%, transparent 85%);
+  mask-image: radial-gradient(95% 95% at 68% 48%, #000 35%, transparent 85%);
+}
+.ha.is-in .ha-grid { opacity: 1; }
+
+/* THE GUIDES: two verticals and the statement's baseline, hairlines */
+.ha-guides { position: absolute; inset: 0; pointer-events: none; }
+.ha-guide { position: absolute; background: var(--n-4); opacity: 0; }
+.ha-guide-v1 { left: var(--page-pad); top: 0; bottom: 0; width: 1px; transform-origin: 50% 0; }
+.ha-guide-v2 { left: 58.2rem; top: 0; bottom: 0; width: 1px; transform-origin: 50% 100%; }
+.ha-guide-h { left: 0; right: 0; top: 27.2rem; height: 1px; transform-origin: 0 50%; }
+.ha.is-snapped .ha-guide-h { animation: ha-flash 0.7s var(--e-glass); }
+@keyframes ha-flash {
+  0% { background: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
+  100% { background: var(--n-4); box-shadow: 0 0 0 0 transparent; }
+}
+
+.ha-kicker { position: relative; }
+
+/* THE WORD: the variable face — every letter carries its own weight
+   (--w), which the pass runs down the axis and the hand adds to */
+.ha-h1 {
+  position: relative;
+  margin: 1.9rem 0 0;
+  width: max-content;
+  font-size: 13.5rem;
+  line-height: 0.92;
+  letter-spacing: -0.055em;
+  color: var(--text);
+}
+.ha-h1-in { position: relative; display: inline-block; white-space: nowrap; }
+/* the rise's crop: top and bottom ONLY (a clip-path with open sides —
+   overflow: hidden cut every glyph's flanks, the tight tracking and
+   the weight under the hand both reach past the letter's own box) */
+.ha-lm { display: inline-block; clip-path: inset(0 -0.6em 0 -0.6em); padding: 0.04em 0 0.1em; margin: -0.04em 0 -0.1em; vertical-align: top; }
+.ha-l {
+  --w: 200;
+  display: inline-block;
+  font-weight: var(--w);
+  font-variation-settings: 'wght' var(--w);
+  will-change: transform;
+}
+/* the skeletons: what stands where the type will be */
+.ha-skel {
+  position: absolute;
+  border-radius: var(--r-md);
+  background: linear-gradient(100deg, var(--n-2) 30%, var(--n-0) 50%, var(--n-2) 70%) 0 0 / 300% 100%;
+  animation: ha-shimmer 1.6s linear infinite;
+  pointer-events: none;
+}
+@keyframes ha-shimmer { to { background-position: -150% 0; } }
+.ha-skel-h1 { left: 0.4rem; top: 1.6rem; width: 46rem; height: 9.4rem; border-radius: var(--r-lg); }
+.ha.is-still .ha-skel { display: none; }
+/* the selection: a design tool's box, four handles and the size tag */
+.ha-sel {
+  position: absolute;
+  inset: 0.9rem -0.9rem 0.2rem -0.5rem;
+  border: 1px solid var(--ink);
+  opacity: 0;
+  pointer-events: none;
+  letter-spacing: 0;
+}
+.ha-sel i {
+  position: absolute;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin: -0.25rem;
+  border: 1px solid var(--ink);
+  background: var(--n-0);
+}
+.ha-sel i:nth-child(1) { left: 0; top: 0; }
+.ha-sel i:nth-child(2) { left: 100%; top: 0; }
+.ha-sel i:nth-child(3) { left: 0; top: 100%; }
+.ha-sel i:nth-child(4) { left: 100%; top: 100%; }
+.ha-sel-tag {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 0.55rem);
+  transform: translateX(-50%);
+  padding: 0.22rem 0.5rem;
+  border-radius: var(--r-sm);
+  background: var(--ink);
+  color: var(--n-0);
+  font-size: 0.68rem;
+  font-weight: var(--w-medium);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* THE STATEMENT */
+.ha-state {
+  position: relative;
+  margin: 2.3rem 0 0;
+  width: max-content;
+  max-width: 44rem;
+  font-size: 2.15rem;
+  font-weight: var(--w-light);
+  line-height: 1.22;
+  letter-spacing: var(--ls-h1);
+  color: var(--text);
+}
+.ha-state-in { display: block; will-change: transform; }
+.ha-state-m { display: block; overflow: hidden; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+.ha-state-ln { display: block; white-space: nowrap; }
+.ha-state-m:last-child .ha-state-ln { color: var(--text-muted); }
+.ha-skel-s { left: 0; top: calc(0.35rem + var(--i) * 2.62rem); width: calc(30rem - var(--i) * 5rem); height: 1.75rem; }
+
+/* THE PLAN */
+.ha-plan {
+  position: absolute;
+  left: var(--page-pad);
+  bottom: 8.3rem;
+  display: flex;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ha-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.1rem;
+  padding: 0 0.85rem 0 0.6rem;
+  border: 1px solid var(--hairline);
+  border-radius: 1.05rem;
+  background: var(--n-0);
+  font-size: 0.8rem;
+  font-weight: var(--w-medium);
+  line-height: 1;
+  color: var(--text-muted);
+  white-space: nowrap;
+  opacity: 0;
+  transition: color var(--d-base) var(--e-glass), border-color var(--d-base) var(--e-glass);
+}
+.ha.is-still .ha-chip { opacity: 1; }
+.ha-chip.is-run,
+.ha-chip.is-done { color: var(--text); }
+.ha-chip.is-run { border-color: var(--n-6); }
+/* the tick: a ring, a spinner while the step runs, a check when done */
+.ha-tick {
+  position: relative;
+  width: 0.95rem;
+  height: 0.95rem;
+  border: 1.5px solid var(--n-4);
+  border-radius: 50%;
+  transition: background var(--d-base) var(--e-glass), border-color var(--d-base) var(--e-glass);
+}
+.ha-chip.is-run .ha-tick { border-color: var(--n-3); border-top-color: var(--ink); animation: ha-spin 0.7s linear infinite; }
+.ha-chip.is-done .ha-tick { border-color: var(--ink); background: var(--ink); }
+.ha-tick::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 0.26rem;
+  height: 0.48rem;
+  border: solid var(--n-0);
+  border-width: 0 1.5px 1.5px 0;
+  transform: translate(-50%, -50%) rotate(45deg) scale(0);
+  transition: transform var(--d-base) var(--e-settle);
+}
+.ha-chip.is-done .ha-tick::after { transform: translate(-50%, -50%) rotate(45deg) scale(1); }
+.ha.is-still .ha-tick { border-color: var(--ink); background: var(--ink); }
+.ha.is-still .ha-tick::after { transform: translate(-50%, -50%) rotate(45deg) scale(1); }
+@keyframes ha-spin { to { transform: rotate(360deg); } }
+
+/* THE PROMPT */
+.ha-prompt {
+  position: absolute;
+  left: var(--page-pad);
+  bottom: 2.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  width: 41rem;
+  height: 4.5rem;
+  padding: 0 0.7rem 0 1.4rem;
+  border: 1px solid var(--hairline);
+  border-radius: 2.25rem;
+  background: var(--n-0);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.9) inset,
+    0 1.6rem 3.2rem -1.6rem rgb(13 16 18 / 0.28),
+    0 0.2rem 0.6rem -0.2rem rgb(13 16 18 / 0.08);
+  transition: border-color var(--d-base) var(--e-glass), box-shadow var(--d-base) var(--e-glass);
+}
+.ha-prompt:focus-within,
+.ha-prompt.is-typing { border-color: var(--n-6); }
+.ha-spark { flex: 0 0 auto; width: 1.25rem; height: 1.25rem; color: var(--ink); animation: ha-breathe 3.2s ease-in-out infinite; }
+@keyframes ha-breathe { 50% { transform: scale(0.82) rotate(18deg); opacity: 0.55; } }
+.ha-field { position: relative; flex: 1 1 auto; min-width: 0; height: 100%; }
+.ha-input {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 1.15rem;
+  color: var(--text);
+}
+.ha-input::placeholder { color: var(--n-6); opacity: 1; }
+/* while the agent holds the prompt its typing covers the placeholder */
+.ha-prompt.is-typing:not(.is-sent):not(.is-yours) .ha-input::placeholder { color: transparent; }
+.ha-typed {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  font-size: 1.15rem;
+  color: var(--text);
+  white-space: nowrap;
+  pointer-events: none;
+  transition: transform 0.5s var(--e-glass), opacity 0.4s var(--e-glass);
+}
+.ha-prompt.is-sent .ha-typed { transform: translateY(-1.1rem); opacity: 0; }
+.ha-prompt.is-yours .ha-typed,
+.ha-prompt:not(.is-typing) .ha-typed { display: none; }
+.ha-caret { width: 1.5px; height: 1.35rem; margin-left: 1px; background: var(--ink); animation: ha-blink 1s steps(1) infinite; }
+@keyframes ha-blink { 50% { opacity: 0; } }
+.ha-send {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 3.1rem;
+  height: 3.1rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--n-0);
+  cursor: pointer;
+  transition: transform var(--d-base) var(--e-settle);
+}
+.ha-send svg { width: 1.3rem; height: 1.3rem; transition: transform var(--d-base) var(--e-settle); }
+.ha-send:hover svg { transform: translateX(0.18rem); }
+.ha-prompt.is-routing { border-color: var(--ink); }
+.ha-prompt.is-routing .ha-send svg { animation: ha-route 0.5s var(--e-glass) forwards; }
+@keyframes ha-route { to { transform: translateX(2.4rem); opacity: 0; } }
+
+/* THE CARDS: paper product cards, drawn in code; the wrapper leans
+   from the pointer, each floats on its own clock */
+.ha-cards {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transform: translate3d(calc(var(--ha-mx) * -0.9rem), calc(var(--ha-my) * -0.7rem), 0);
+}
+.ha-card { position: absolute; will-change: transform; }
+.ha-card-type { right: 24rem; top: 7.2rem; width: 15rem; z-index: 2; rotate: -3deg; }
+.ha-card-motion { right: 4.5rem; top: 12.4rem; width: 19rem; rotate: 2.5deg; }
+.ha-card-speed { right: 21rem; bottom: 3rem; width: 13.5rem; rotate: -2deg; }
+.ha-float {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 1.1rem 1.2rem 1.15rem;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  background: linear-gradient(160deg, var(--n-0) 40%, var(--n-1));
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.9) inset,
+    0 2.2rem 3.6rem -2rem rgb(13 16 18 / 0.32),
+    0 0.3rem 0.8rem -0.3rem rgb(13 16 18 / 0.08);
+  animation: ha-float 7s ease-in-out infinite alternate;
+}
+.ha-card-motion .ha-float { animation-duration: 9s; animation-delay: -3s; }
+.ha-card-speed .ha-float { animation-duration: 8s; animation-delay: -5s; }
+@keyframes ha-float {
+  from { transform: translate3d(0, -0.35rem, 0); }
+  to   { transform: translate3d(0, 0.45rem, 0); }
+}
+.ha-card-k {
+  font-size: 0.72rem;
+  font-weight: var(--w-medium);
+  line-height: 1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.ha-card-v { font-size: 0.78rem; line-height: 1.2; color: var(--text-muted); white-space: nowrap; }
+.ha-card-v b { font-weight: var(--w-medium); color: var(--text); }
+.ha-aa {
+  --w: 200;
+  font-size: 4.6rem;
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+  font-weight: var(--w);
+  font-variation-settings: 'wght' var(--w);
+  color: var(--text);
+}
+.ha-track { position: relative; height: 1px; margin: 0.45rem 0.4rem 0.35rem; background: var(--n-4); }
+.ha-knob {
+  position: absolute;
+  left: 12%;
+  top: 50%;
+  width: 0.85rem;
+  height: 0.85rem;
+  margin: -0.425rem;
+  border-radius: 50%;
+  background: var(--ink);
+  box-shadow: 0 0 0 0.25rem var(--n-0);
+}
+.ha-plot { display: block; width: 100%; height: auto; overflow: visible; }
+.ha-plot-g { fill: none; stroke: var(--n-3); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.ha-plot-h { fill: none; stroke: var(--n-5); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.ha-plot-k { fill: var(--n-0); stroke: var(--ink); stroke-width: 1.2; vector-effect: non-scaling-stroke; }
+.ha-curve { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; }
+.ha-rider { fill: var(--ink); opacity: 0; transition: opacity 0.4s var(--e-glass); }
+.ha-card-motion.is-on .ha-rider,
+.ha.is-still .ha-rider { opacity: 1; }
+.ha-dial { position: relative; display: grid; place-items: center; width: 7rem; height: 7rem; margin: 0.1rem auto 0; }
+.ha-dial svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+.ha-ring-g { fill: none; stroke: var(--n-3); stroke-width: 5; }
+.ha-ring-v { fill: none; stroke: var(--ink); stroke-width: 5; stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: 100; }
+.ha.is-still .ha-ring-v { stroke-dashoffset: 0; }
+.ha-score { font-size: 2.3rem; font-weight: var(--w-light); letter-spacing: -0.04em; color: var(--text); }
+.ha-card-speed .ha-card-v { text-align: center; }
+
+/* THE AGENT: a design tool's multiplayer cursor; the driver places its
+   tip (the arrow's point is the box's origin) */
+.ha-cursor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 8;
+  display: block;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+.ha-cursor svg { display: block; width: 1.5rem; height: 1.5rem; margin: -0.15rem 0 0 -0.25rem; filter: drop-shadow(0 0.2rem 0.3rem rgb(13 16 18 / 0.3)); }
+.ha-cursor path { fill: var(--ink); stroke: var(--n-0); stroke-width: 1.4; stroke-linejoin: round; }
+.ha-cursor b {
+  position: absolute;
+  left: 1.15rem;
+  top: 1.2rem;
+  padding: 0.28rem 0.55rem;
+  border-radius: 0.2rem 0.8rem 0.8rem 0.8rem;
+  background: var(--ink);
+  color: var(--n-0);
+  font-size: 0.7rem;
+  font-weight: var(--w-medium);
+  line-height: 1;
+}
+.ha-cursor.is-idle svg,
+.ha-cursor.is-idle b { animation: ha-bob 3.4s ease-in-out infinite alternate; }
+@keyframes ha-bob { to { transform: translate3d(0.25rem, 0.35rem, 0); } }
+
+/* PHONES: a column — the word, the statement, the prompt, the chips
+   wrapped, the cards in a row under them; no agent, no guides */
+@media (max-width: 57.5rem) {
+  .sh-hero.ha { padding: 6rem var(--page-pad) var(--s-7); }
+  .ha-guides,
+  .ha-cursor { display: none; }
+  .ha-h1 { margin-top: 1.4rem; font-size: clamp(4rem, 21vw, 7.5rem); }
+  .ha-state { margin-top: 1.4rem; width: auto; font-size: 1.45rem; }
+  .ha-state-ln { white-space: normal; }
+  .ha-prompt { position: relative; left: auto; bottom: auto; width: 100%; height: 3.9rem; margin-top: 2rem; }
+  .ha-send { width: 2.7rem; height: 2.7rem; }
+  .ha-plan { position: relative; left: auto; bottom: auto; flex-wrap: wrap; margin-top: 1rem; }
+  .ha-cards { position: relative; inset: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-top: 2rem; transform: none; }
+  .ha-card { position: relative; inset: auto; width: auto; rotate: none; }
+  .ha-card-motion { grid-column: 1 / -1; order: 3; }
+  .ha-dial { width: 5.4rem; height: 5.4rem; }
+  .ha-aa { font-size: 3.4rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ha-float, .ha-spark, .ha-skel, .ha-caret { animation: none; }
+}
+
+/* ============================================================
+   §2 · THE SERVICES — THE WORKBENCH (HubBench.tsx, 2026-09-17)
+   It replaces THE LIST / THE STAIR above (HubList.tsx, parked with
+   its rules). The section keeps `.sh-index` — the cover: opaque,
+   above the sticky hero — and takes `.hb` for its own picture: a head
+   (a line and the lead), then a bento of seven cards on a 12-column
+   grid in perspective. A card is an ARTBOARD: a scene drawn in code on
+   a dotted ground (the hero's field, stilled), then the name (the
+   link, stretched over the card), the tagline, the blurb that opens
+   under the hand, two facts, and the arrow disc. The driver tips each
+   card up from under the fold (the transform on `.hb-card`) and leans
+   it under the pointer (the transform on `.hb-card-in`); the scenes
+   are CSS keyed on `is-hot` / `is-seen`. Every length rem, hairlines
+   px; nothing is a picture.
+   ============================================================ */
+.sh-index.hb {
+  padding: 9rem var(--page-pad) 8rem;
+  color: var(--text);
+}
+.hb-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 34rem);
+  column-gap: 4rem;
+  align-items: end;
+  margin-bottom: 4.5rem;
+}
+.hb-title {
+  margin: 0;
+  font-size: 6.4rem;
+  font-weight: var(--w-light);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  color: var(--text);
+}
+.hb-title em { display: block; font-style: normal; color: var(--text-muted); }
+.hb-lead {
+  margin: 0 0 0.6rem;
+  font-size: 1.2rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+/* THE GRID: the sheet in perspective (the driver moves its vanishing
+   point with the viewport) */
+.hb-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1.25rem;
+  perspective: 110rem;
+}
+.hb-card {
+  position: relative;
+  grid-column: span 4;
+  min-height: 33rem;
+  transform-origin: 50% 100%;
+  will-change: transform, opacity;
+  perspective: 70rem;
+}
+.hb-card-design { grid-column: span 7; min-height: 31rem; }
+.hb-card-dev { grid-column: span 5; min-height: 31rem; }
+.hb-card-seo { grid-column: span 8; min-height: 24rem; }
+.hb-card-ask { grid-column: span 4; min-height: 24rem; }
+
+.hb-card-in {
+  --px: 50%;
+  --py: 50%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--hairline);
+  border-radius: 1.75rem;
+  background: var(--n-0);
+  box-shadow: 0 0.2rem 0.6rem -0.3rem rgb(13 16 18 / 0.06);
+  transition:
+    border-color var(--d-base) var(--e-glass),
+    box-shadow var(--d-slow) var(--e-glass),
+    opacity var(--d-base) var(--e-glass);
+  will-change: transform;
+}
+/* the spotlight: a soft shade that follows the pointer */
+.hb-card-in::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(28rem circle at var(--px) var(--py), rgb(13 16 18 / 0.075), transparent 62%);
+  transition: opacity var(--d-base) var(--e-glass);
+}
+.hb-card.is-hot .hb-card-in {
+  border-color: var(--n-5);
+  box-shadow:
+    0 2.6rem 4.5rem -2.4rem rgb(13 16 18 / 0.36),
+    0 0.4rem 1rem -0.4rem rgb(13 16 18 / 0.1);
+}
+.hb-card.is-hot .hb-card-in::before { opacity: 1; }
+/* the others step back */
+.hb-grid.has-hot .hb-card:not(.is-hot) .hb-card-in { opacity: 0.72; }
+
+/* the scene's ground: the hero's field, stilled */
+.hb-vis {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  display: grid;
+  place-items: center;
+  min-height: 15rem;
+  overflow: hidden;
+  background-image: radial-gradient(var(--n-4) 1px, transparent 1.3px);
+  background-size: 1.35rem 1.35rem;
+  background-position: 50% 50%;
+  -webkit-mask-image: radial-gradient(85% 90% at 50% 45%, #000 45%, transparent 100%);
+  mask-image: radial-gradient(85% 90% at 50% 45%, #000 45%, transparent 100%);
+}
+.hb-body { position: relative; z-index: 1; padding: 0 1.7rem 1.6rem; }
+.hb-name {
+  margin: 0;
+  font-size: 2.35rem;
+  font-weight: var(--w-light);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+.hb-link { color: inherit; text-decoration: none; }
+/* the link is the card */
+.hb-link::after { content: ''; position: absolute; inset: 0; z-index: 3; border-radius: 1.75rem; }
+.hb-card .hb-link:focus-visible::after { outline: 2px solid var(--ink); outline-offset: 3px; }
+.hb-tag { margin: 0.5rem 0 0; font-size: 1.02rem; line-height: 1.35; color: var(--text-muted); }
+.hb-more {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows var(--d-slow) var(--e-glass), opacity var(--d-base) var(--e-glass);
+}
+.hb-more > * { min-height: 0; overflow: hidden; }
+.hb-card.is-hot .hb-more { grid-template-rows: 1fr; opacity: 1; }
+.hb-blurb { margin: 0; padding-top: 0.7rem; max-width: 34rem; font-size: 0.92rem; line-height: 1.45; color: var(--text); }
+.hb-facts { display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 1.1rem 0 0; padding: 0; list-style: none; }
+.hb-facts li {
+  padding: 0.42rem 0.75rem;
+  border: 1px solid var(--hairline);
+  border-radius: 1rem;
+  font-size: 0.76rem;
+  line-height: 1;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.hb-facts b { font-weight: var(--w-medium); color: var(--text); }
+
+/* the arrow disc: two arrows on a strip, the flood under the hand */
+.hb-go {
+  position: absolute;
+  z-index: 2;
+  right: 1.3rem;
+  top: 1.3rem;
+  width: 2.9rem;
+  height: 2.9rem;
+  overflow: hidden;
+  border: 1px solid var(--hairline);
+  border-radius: 50%;
+  background: var(--n-0);
+  color: var(--ink);
+  transition: background var(--d-base) var(--e-glass), color var(--d-base) var(--e-glass), border-color var(--d-base) var(--e-glass);
+}
+.hb-go svg {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin: -0.575rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform var(--d-slow) var(--e-glass);
+}
+.hb-go svg:nth-child(2) { transform: translate(-2.4rem, 2.4rem); }
+.hb-card.is-hot .hb-go { background: var(--ink); border-color: var(--ink); color: var(--n-0); }
+.hb-card.is-hot .hb-go svg:nth-child(1) { transform: translate(2.4rem, -2.4rem); }
+.hb-card.is-hot .hb-go svg:nth-child(2) { transform: none; }
+
+/* the two wide cards: the words left, the scene right */
+.hb-card-design .hb-card-in,
+.hb-card-seo .hb-card-in { flex-direction: row-reverse; align-items: stretch; }
+.hb-card-design .hb-vis,
+.hb-card-seo .hb-vis { flex: 1 1 58%; }
+.hb-card-design .hb-body,
+.hb-card-seo .hb-body { flex: 0 0 42%; display: flex; flex-direction: column; justify-content: flex-end; padding: 1.7rem; }
+
+/* THE SEVENTH: the void, and the way back to the prompt */
+.hb-card-ask .hb-card-in {
+  justify-content: flex-end;
+  gap: 1.2rem;
+  padding: 1.8rem;
+  border-color: var(--n-11);
+  background: var(--n-11);
+  color: var(--n-0);
+}
+.hb-card-ask .hb-card-in::before { background: radial-gradient(24rem circle at var(--px) var(--py), rgb(255 255 255 / 0.14), transparent 60%); }
+.hb-ask-spark { position: absolute; left: 1.8rem; top: 1.8rem; width: 1.7rem; height: 1.7rem; animation: ha-breathe 3.2s ease-in-out infinite; }
+.hb-ask-t { margin: 0; font-size: 2.2rem; font-weight: var(--w-light); line-height: 1.08; letter-spacing: -0.03em; }
+.hb-ask-a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  align-self: flex-start;
+  height: 3rem;
+  padding: 0 1.2rem;
+  border-radius: 1.5rem;
+  background: var(--n-0);
+  color: var(--ink);
+  font-size: 0.95rem;
+  font-weight: var(--w-medium);
+}
+.hb-ask-a svg { width: 1.1rem; height: 1.1rem; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: transform var(--d-base) var(--e-settle); }
+.hb-card-ask.is-hot .hb-ask-a svg { transform: translateX(0.3rem); }
+
+/* ---------- THE SCENES ---------- */
+.hv { position: relative; }
+
+/* WEB DESIGN: a board whose blocks take a second layout under the hand */
+.hv-design { width: 25rem; }
+.hv-frame-l { display: block; margin: 0 0 0.45rem 0.1rem; font-size: 0.68rem; font-weight: var(--w-medium); color: var(--n-6); }
+.hv-board {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 25 / 15.5;
+  border: 1px solid var(--hairline);
+  border-radius: 0.8rem;
+  background: var(--n-0);
+  box-shadow: 0 1.4rem 2.6rem -1.6rem rgb(13 16 18 / 0.3);
+}
+.hv-b {
+  position: absolute;
+  border-radius: 0.4rem;
+  background: var(--n-2);
+  transition: left 0.9s var(--e-glass), top 0.9s var(--e-glass), width 0.9s var(--e-glass), height 0.9s var(--e-glass), background 0.6s var(--e-glass);
+}
+.hv-b1 { left: 4%; top: 6%; width: 92%; height: 8%; }
+.hv-b2 { left: 4%; top: 19%; width: 56%; height: 46%; background: var(--n-10); transition-delay: 0.06s; }
+.hv-b2 u { position: absolute; left: 9%; height: 9%; border-radius: 0.2rem; background: var(--n-0); opacity: 0.9; }
+.hv-b2 u:nth-child(1) { bottom: 30%; width: 58%; }
+.hv-b2 u:nth-child(2) { bottom: 14%; width: 34%; opacity: 0.45; }
+.hv-b3 { left: 64%; top: 19%; width: 32%; height: 21%; transition-delay: 0.1s; }
+.hv-b4 { left: 64%; top: 44%; width: 32%; height: 21%; transition-delay: 0.14s; }
+.hv-b5 { left: 4%; top: 70%; width: 92%; height: 23%; transition-delay: 0.18s; }
+.is-hot .hv-b2 { left: 40%; top: 19%; width: 56%; height: 61%; }
+.is-hot .hv-b3 { left: 4%; top: 19%; width: 32%; height: 28%; }
+.is-hot .hv-b4 { left: 4%; top: 52%; width: 32%; height: 28%; }
+.is-hot .hv-b5 { top: 85%; height: 9%; }
+/* the agent, holding the hero block's corner */
+.hv-cur { position: absolute; left: 58%; top: 62%; transition: left 0.9s var(--e-glass) 0.06s, top 0.9s var(--e-glass) 0.06s; }
+.is-hot .hv-cur { left: 94%; top: 77%; }
+.hv-cur svg { display: block; width: 1.15rem; height: 1.15rem; filter: drop-shadow(0 0.15rem 0.25rem rgb(13 16 18 / 0.3)); }
+.hv-cur path { fill: var(--ink); stroke: var(--n-0); stroke-width: 1.4; stroke-linejoin: round; }
+.hv-cur b { position: absolute; left: 0.95rem; top: 0.95rem; padding: 0.2rem 0.42rem; border-radius: 0.15rem 0.6rem 0.6rem 0.6rem; background: var(--ink); color: var(--n-0); font-size: 0.58rem; font-weight: var(--w-medium); line-height: 1; }
+
+/* DEVELOPMENT: an editor that types itself, then the build passes */
+.hv-dev { width: 19rem; }
+.hv-win { border: 1px solid var(--hairline); border-radius: 0.8rem; background: var(--n-0); box-shadow: 0 1.4rem 2.6rem -1.6rem rgb(13 16 18 / 0.3); overflow: hidden; }
+.hv-bar { display: flex; gap: 0.35rem; padding: 0.7rem 0.8rem; border-bottom: 1px solid var(--hairline); }
+.hv-bar i { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--n-3); }
+.hv-code { display: grid; gap: 0.62rem; padding: 1rem 1rem 1.15rem; }
+.hv-ln { display: flex; gap: 0.4rem; padding-left: calc(var(--in) * 1.1rem); }
+.hv-ln i { height: 0.5rem; border-radius: 0.25rem; background: var(--n-3); }
+.hv-ln i:nth-child(1) { background: var(--ink); }
+.hv-ln i:nth-child(3) { background: var(--n-5); }
+.is-hot .hv-ln { animation: hv-type 0.42s steps(9) both; animation-delay: calc(var(--l) * 0.17s); }
+@keyframes hv-type { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+.hv-pill {
+  position: absolute;
+  right: -1.6rem;
+  bottom: -1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 1rem;
+  background: var(--ink);
+  color: var(--n-0);
+  font-size: 0.72rem;
+  font-weight: var(--w-medium);
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0 0.8rem 1.4rem -0.8rem rgb(13 16 18 / 0.5);
+}
+.hv-pill i { width: 0.45rem; height: 0.45rem; border-radius: 50%; background: #7ee2a8; }
+.is-hot .hv-pill { animation: hv-pop 0.6s var(--e-settle) both; animation-delay: 1.3s; }
+@keyframes hv-pop { from { transform: translateY(0.6rem) scale(0.8); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* 3D WEBSITES: a glass cube with a solid core; it turns, and leans to
+   the pointer (--lx/--ly, the card's own lean, read larger) */
+.hv-three { width: 12rem; height: 12rem; perspective: 46rem; }
+.hv-tilt {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(calc(-18deg + var(--ly, 0) * -26deg)) rotateY(calc(var(--lx, 0) * 38deg));
+}
+.hv-cube, .hv-core { position: absolute; transform-style: preserve-3d; }
+.hv-cube { --s: 7.4rem; left: 50%; top: 50%; width: var(--s); height: var(--s); margin: calc(var(--s) / -2); animation: hv-turn 22s linear infinite; }
+.hv-core { --s: 3.3rem; left: 50%; top: 50%; width: var(--s); height: var(--s); margin: calc(var(--s) / -2); animation: hv-turn 9s linear infinite reverse; }
+.hv-cube > i, .hv-core > i { position: absolute; inset: 0; border: 1.5px solid var(--ink); background: rgb(255 255 255 / 0.38); }
+.hv-core > i { border-color: var(--n-11); background: var(--n-11); opacity: 0.92; }
+.hv-cube > i:nth-child(1), .hv-core > i:nth-child(1) { transform: translateZ(calc(var(--s) / 2)); }
+.hv-cube > i:nth-child(2), .hv-core > i:nth-child(2) { transform: rotateY(180deg) translateZ(calc(var(--s) / 2)); }
+.hv-cube > i:nth-child(3), .hv-core > i:nth-child(3) { transform: rotateY(90deg) translateZ(calc(var(--s) / 2)); }
+.hv-cube > i:nth-child(4), .hv-core > i:nth-child(4) { transform: rotateY(-90deg) translateZ(calc(var(--s) / 2)); }
+.hv-cube > i:nth-child(5), .hv-core > i:nth-child(5) { transform: rotateX(90deg) translateZ(calc(var(--s) / 2)); }
+.hv-cube > i:nth-child(6), .hv-core > i:nth-child(6) { transform: rotateX(-90deg) translateZ(calc(var(--s) / 2)); }
+@keyframes hv-turn { to { transform: rotateY(360deg) rotateX(360deg); } }
+.is-hot .hv-cube { animation-duration: 9s; }
+.hv-floor { position: absolute; left: 12%; right: 12%; bottom: -0.6rem; height: 1.2rem; border-radius: 50%; background: radial-gradient(closest-side, rgb(13 16 18 / 0.28), transparent); transition: transform var(--d-slow) var(--e-glass); }
+.is-hot .hv-floor { transform: scale(1.18); }
+
+/* ONE-PAGE: a long page scrolling itself in a tall frame */
+.hv-one { display: flex; align-items: stretch; gap: 0.9rem; height: 14rem; }
+.hv-tall { width: 10.5rem; overflow: hidden; border: 1px solid var(--hairline); border-radius: 0.9rem; background: var(--n-0); box-shadow: 0 1.4rem 2.6rem -1.6rem rgb(13 16 18 / 0.3); }
+.hv-strip { display: grid; gap: 0.5rem; padding: 0.55rem; }
+.hv-s { position: relative; display: block; border-radius: 0.45rem; background: var(--n-2); }
+.hv-s u { position: absolute; left: 10%; height: 0.4rem; border-radius: 0.2rem; background: var(--n-0); }
+.hv-s1 { height: 8.5rem; background: var(--n-10); }
+.hv-s1 u:nth-child(1) { bottom: 2rem; width: 62%; }
+.hv-s1 u:nth-child(2) { bottom: 1.2rem; width: 38%; opacity: 0.5; }
+.hv-s2 { height: 5rem; }
+.hv-s3 { height: 6.5rem; background: transparent; border: 1px solid var(--hairline); }
+.hv-s3 u { background: var(--n-4); width: 70%; }
+.hv-s3 u:nth-child(1) { top: 1.2rem; }
+.hv-s3 u:nth-child(2) { top: 2.3rem; width: 55%; }
+.hv-s3 u:nth-child(3) { top: 3.4rem; width: 62%; }
+.hv-s4 { height: 7rem; }
+.hv-s5 { height: 4.5rem; background: var(--n-10); }
+.hv-s5 u { left: 50%; top: 50%; width: 42%; height: 1.1rem; margin: -0.55rem 0 0 -21%; border-radius: 0.55rem; opacity: 1; }
+.is-hot .hv-strip { animation: hv-scroll 3.4s cubic-bezier(0.65, 0, 0.35, 1) infinite alternate; }
+@keyframes hv-scroll { 0%, 8% { transform: none; } 92%, 100% { transform: translateY(calc(-100% + 14rem)); } }
+.hv-rail { position: relative; width: 1px; margin: 0.6rem 0; background: var(--n-4); }
+.hv-rail i { position: absolute; left: -0.22rem; top: 0; width: 0.5rem; height: 0.5rem; margin-top: -0.25rem; border-radius: 50%; background: var(--ink); }
+.is-hot .hv-rail i { animation: hv-rail 3.4s cubic-bezier(0.65, 0, 0.35, 1) infinite alternate; }
+@keyframes hv-rail { 0%, 8% { top: 0; } 92%, 100% { top: 100%; } }
+
+/* REDESIGN: before | after under one frame; the driver owns --split */
+.hv-re {
+  --split: 50%;
+  width: 19rem;
+  aspect-ratio: 19 / 12.5;
+  overflow: hidden;
+  border: 1px solid var(--hairline);
+  border-radius: 0.8rem;
+  background: var(--n-0);
+  box-shadow: 0 1.4rem 2.6rem -1.6rem rgb(13 16 18 / 0.3);
+}
+.hv-after, .hv-before { position: absolute; inset: 0; }
+.hv-after i { position: absolute; border-radius: 0.35rem; }
+.hv-a1 { left: 8%; top: 16%; width: 46%; height: 11%; background: var(--ink); }
+.hv-a2 { left: 8%; top: 33%; width: 30%; height: 5%; background: var(--n-4); }
+.hv-a3 { left: 8%; top: 70%; width: 22%; height: 13%; border-radius: 1rem !important; background: var(--ink); }
+.hv-a4 { left: 60%; top: 14%; width: 32%; height: 70%; background: var(--n-2); }
+.hv-before {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 0.3rem;
+  padding: 0.5rem;
+  background: var(--n-3);
+  clip-path: inset(0 calc(100% - var(--split)) 0 0);
+}
+.hv-before i { border: 1.5px solid var(--n-6); border-radius: 1px; background: var(--n-2); }
+.hv-before i:nth-child(3n) { grid-column: span 2; background: var(--n-4); }
+.hv-before i:nth-child(4n + 1) { background: var(--n-5); transform: rotate(-1.5deg); }
+.hv-before i:nth-child(7) { grid-row: span 2; }
+.hv-div { position: absolute; left: var(--split); top: 0; bottom: 0; width: 1.5px; margin-left: -0.75px; background: var(--ink); }
+.hv-div i { position: absolute; left: 50%; top: 50%; width: 1.6rem; height: 1.6rem; margin: -0.8rem; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 0.25rem var(--n-0); }
+.hv-div i::before, .hv-div i::after { content: ''; position: absolute; top: 50%; width: 0.32rem; height: 0.32rem; margin-top: -0.16rem; border: solid var(--n-0); border-width: 1.5px 1.5px 0 0; }
+.hv-div i::before { left: 0.36rem; transform: rotate(-135deg); }
+.hv-div i::after { right: 0.36rem; transform: rotate(45deg); }
+.hv-lab { position: absolute; bottom: 0.5rem; padding: 0.22rem 0.45rem; border-radius: var(--r-sm); font-size: 0.6rem; font-weight: var(--w-medium); line-height: 1; }
+.hv-lab-b { left: 0.5rem; background: var(--n-0); color: var(--ink); }
+.hv-lab-a { right: 0.5rem; background: var(--ink); color: var(--n-0); }
+
+/* SEO: your row climbs from fourth to first; the line rises */
+.hv-seo { display: flex; align-items: center; gap: 2.2rem; }
+.hv-serp { display: grid; gap: 0.5rem; width: 19rem; padding: 0.9rem; border: 1px solid var(--hairline); border-radius: 0.8rem; background: var(--n-0); box-shadow: 0 1.4rem 2.6rem -1.6rem rgb(13 16 18 / 0.3); }
+.hv-q { display: flex; align-items: center; gap: 0.5rem; height: 2rem; padding: 0 0.8rem; border: 1px solid var(--hairline); border-radius: 1rem; font-size: 0.72rem; color: var(--text-muted); }
+.hv-q i { width: 0.6rem; height: 0.6rem; border: 1.5px solid var(--n-6); border-radius: 50%; }
+.hv-r {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1rem 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 0.6rem;
+  row-gap: 0.3rem;
+  height: 2.5rem;
+  align-content: center;
+  padding: 0 0.6rem;
+  border-radius: 0.5rem;
+  transition: transform 0.95s var(--e-glass), background 0.5s var(--e-glass);
+  transition-delay: calc((3 - var(--r)) * 0.05s);
+}
+.hv-r i { grid-row: span 2; align-self: center; width: 1rem; height: 1rem; border-radius: 50%; background: var(--n-3); }
+.hv-r u { height: 0.42rem; border-radius: 0.2rem; background: var(--n-3); }
+.hv-r u:nth-of-type(1) { width: 62%; background: var(--n-5); }
+.hv-r u:nth-of-type(2) { width: 84%; }
+.hv-you { background: var(--n-2); }
+.hv-you i, .hv-you u:nth-of-type(1) { background: var(--ink); }
+.hv-you b { position: absolute; right: 0.6rem; top: 50%; transform: translateY(-50%); padding: 0.2rem 0.42rem; border-radius: var(--r-sm); background: var(--ink); color: var(--n-0); font-size: 0.58rem; font-weight: var(--w-medium); line-height: 1; }
+.is-hot .hv-r:not(.hv-you) { transform: translateY(3rem); }
+.is-hot .hv-you { transform: translateY(-9rem); }
+.hv-rank { display: grid; gap: 0.8rem; width: 11rem; }
+.hv-rank-n { position: relative; display: block; height: 4.6rem; font-size: 4.6rem; font-weight: var(--w-light); line-height: 1; letter-spacing: -0.05em; }
+.hv-rank-n b { position: absolute; left: 0; top: 0; font-weight: inherit; transition: transform 0.8s var(--e-glass), opacity 0.5s var(--e-glass); }
+.hv-rank-n b:nth-child(2) { transform: translateY(60%); opacity: 0; }
+.is-hot .hv-rank-n b:nth-child(1) { transform: translateY(-60%); opacity: 0; }
+.is-hot .hv-rank-n b:nth-child(2) { transform: none; opacity: 1; }
+.hv-rank svg { display: block; width: 100%; height: auto; overflow: visible; }
+.hv-rank path { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 160; stroke-dashoffset: 160; transition: stroke-dashoffset 1.2s var(--e-drift, ease); }
+.is-seen .hv-rank path { stroke-dashoffset: 96; }
+.is-hot .hv-rank path { stroke-dashoffset: 0; }
+
+/* PHONES: one column; the scroll does the hovering */
+@media (max-width: 57.5rem) {
+  .sh-index.hb { padding: 5rem var(--page-pad) 4rem; }
+  .hb-head { grid-template-columns: minmax(0, 1fr); row-gap: 1.4rem; margin-bottom: 2.4rem; }
+  .hb-title { font-size: 3rem; }
+  .hb-lead { font-size: 1.05rem; }
+  .hb-grid { grid-template-columns: minmax(0, 1fr); perspective: none; }
+  .hb-card, .hb-card-design, .hb-card-dev, .hb-card-seo, .hb-card-ask { grid-column: auto; min-height: 0; }
+  .hb-card-design .hb-card-in, .hb-card-seo .hb-card-in { flex-direction: column; }
+  .hb-card-design .hb-body, .hb-card-seo .hb-body { flex: 0 0 auto; padding: 0 1.4rem 1.4rem; }
+  .hb-vis { min-height: 16rem; }
+  .hb-body { padding: 0 1.4rem 1.4rem; }
+  .hb-name { font-size: 1.9rem; }
+  .hv-design { width: 17rem; }
+  .hv-seo { flex-direction: column; gap: 1rem; }
+  .hv-rank { display: none; }
+  .hv-serp { width: 16rem; }
+  .hb-card-ask .hb-card-in { min-height: 16rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hv-cube, .hv-core, .hb-ask-spark { animation: none; }
+  .is-hot .hv-ln, .is-hot .hv-pill, .is-hot .hv-strip, .is-hot .hv-rail i { animation: none; }
+}

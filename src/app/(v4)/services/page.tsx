@@ -1,8 +1,6 @@
 import type { Metadata } from 'next'
-import HubHero from '@/components/v4/HubHero'
-import HubList from '@/components/v4/HubList'
-import BlockReveal from '@/components/v4/BlockReveal'
-import Button from '@/components/v4/Button'
+import HubAgent from '@/components/v4/HubAgent'
+import HubBench from '@/components/v4/HubBench'
 import Invitation from '@/components/v4/Invitation'
 import { SERVICE_PAGES } from '@/lib/service-pages'
 import { SITE_URL } from '@/lib/site'
@@ -16,38 +14,45 @@ import './hub.css'
  * Short intro, one entry per service linking down, nothing lifted from the
  * children.
  *
- * §1 THE HERO — THE BEND. The statement top-right, the small paragraph
- * bottom-left, the display word bottom-right. On load the statement rises
- * line by line; then ONE move: the word "bending" slides LEFT out of its
- * sentence into the gutter, and the hole it leaves fills with a dark-grain
- * plate — the same object as the homepage hero's inline pills — opened by
- * the word's own departure. The pill is exactly the word's footprint, so
- * nothing reflows; the sentence still reads with the plate in the word's
- * place. HubHero.tsx.
+ * §1 THE HERO — THE BRIEF (2026-09-17, user: "familiar, smart, smooth,
+ * agentic, premium, light theme and motion rich… we need to impress";
+ * and, stopping THE GATHERING before it: "you reveal all the services
+ * from the hero", with no picture-per-service to be had). No service is
+ * named and nothing is a photograph: the hero is the studio at work,
+ * drawn in code. An agent's cursor types a brief into a prompt, a plan
+ * of four steps ticks itself, and the hero BUILDS — the word out of its
+ * skeleton with its weight running down the variable axis, the guides
+ * and the statement dragged onto them, a MOTION card drawing the house
+ * curve, a PERFORMANCE dial closing on 100 — then rests alive: a dot
+ * field that bends to the pointer, letters that gain weight under the
+ * hand, and a prompt that is REAL (type what you need; a small router
+ * answers with the right page). HubAgent.tsx. THE BEND (HubHero.tsx)
+ * is parked, unimported, with its rules in hub.css.
  *
  * THE COVER (user, 2026-09-09: "Pin the hero, and the services section
  * will scroll over it"): the hero is sticky; the list, opaque and above
  * it, scrolls up over it as a plain section (the hero drifts and dims
  * beneath, HubList.tsx).
  *
- * §2 THE LIST (rebuilt 2026-09-09 to the user's reference image.png: "a
- * long, maybe 300vh section that's not pinned. Simple yet elegant"). On
- * paper, in flow: a lead paragraph with a small label at its left, filling
- * letter by letter as it climbs (the house scroll fill), then one row per
- * service split by hairlines — the number and the title (the link), then
- * THE EDITORIAL BLOCK (user, same day: "add in an editorial way more
- * content — image, mini cards, text"): the plate with the tagline as its
- * caption, the blurb and the "What it is" paragraph with a BUTTON to the
- * service's page, and the three facts as mini cards. THE STACK: the rows are CARDS that never leave — each
- * sticks a title-and-a-half below the one before, so a card covers the
- * one above it and leaves the top half of its title showing; the deck is
- * compact so the LAST card's block still fits under the five half-titles
- * above it. Each card reveals once as it enters. HubList.tsx.
+ * §2 THE SERVICES — THE WORKBENCH (2026-09-17, user: "completely
+ * changed… hover animated mixed with scroll motion rich… it can be a
+ * grid, it can be cards… don't be afraid to mix things up"). A bento of
+ * six artboards and a seventh, dark card. No photographs: each card
+ * carries a scene DRAWN IN CODE that does what the service is — a
+ * layout rearranging, an editor typing, a glass cube turning, a long
+ * page scrolling itself, before | after under the hand, a result
+ * climbing to first. Under the hand a card lights, leans, plays its
+ * scene and opens its blurb while the others step back; on scroll the
+ * cards come up from under the fold tipped back in perspective and
+ * settle flat, a beat per column. Each card's link is its h2.
+ * HubBench.tsx. THE LIST / THE STAIR it replaces (HubList.tsx — the
+ * sticky cards, the tread, the plates) is parked, unimported, with
+ * its rules in hub.css.
  *
  * §3 THE INVITATION follows in flow and carries the footer out.
  *
  * SERVER-RENDERED, every word in the raw HTML (SEO plan D5): the h1, the
- * statement with "bending" in its sentence, the six names as h2 links with
+ * statement, the prompt as a real form, the six names as h2 links with
  * their lines. The drivers are enhancements; the layout is the fallback.
  *
  * NOT INDEXED YET — same gate as the template: KONA_OPEN_ROUTES=/services
@@ -76,19 +81,9 @@ export const metadata: Metadata = {
   },
 }
 
-/** THE STATEMENT, line by line — the frame's six breaks, held at every
- *  desktop width because the type is rem (the picture rule). `bend` marks
- *  the word that leaves. */
-const STATEMENT: (string | { bend: string; after: string })[] = [
-  'Our expertise consists of',
-  'designing the web and',
-  { bend: 'bending', after: ' the rules of' },
-  'creativity in a way that',
-  'satisfies every need you',
-  'might desire',
-]
-
-const no = (i: number) => String(i + 1).padStart(2, '0')
+/** THE STATEMENT, line by line — the breaks hold at every desktop width
+ *  because the type is rem (the picture rule). PLACEHOLDER copy. */
+const STATEMENT = ['Tell us what you need.', 'We design it, build it and make it move.'] as const
 
 /** the list's lead — PLACEHOLDER, the second half of the frame's paragraph
  *  (the first half is the hero's small paragraph) */
@@ -127,122 +122,23 @@ export default function ServicesHubPage() {
       {/* the entrance parks everything at opacity 0 (hub.css .sh-ent); the
           no-JS page undoes it, and the bend's final state is CSS too */}
       <noscript>
-        <style>{`.sh-ent{opacity:1!important;transform:none!important;filter:none!important}`}</style>
+        <style>{`.sh-ent,.ha-ent{opacity:1!important;transform:none!important;filter:none!important}.ha-skel,.ha-cursor,.ha-guides{display:none!important}.ha-chip{opacity:1!important}.ha-ring-v{stroke-dashoffset:0!important}`}</style>
       </noscript>
 
       {/* §1 — THE HERO, sticky: the index scrolls over it */}
-      <HubHero>
-        <div className="sh-hero-l">
-          {/* the keyword line, top-left (user, 2026-09-08: out of the h1,
-              onto the left of the hero) */}
-          <p className="sh-kicker sh-ent">Web design and development, Cyprus</p>
-          <p className="sh-para sh-ent">
-            We aim to fill the internet with websites that convey a strong character and
-            personality through it. We design websites that provide immersive experiences to
-            the visitors. No more plain and lifeless websites.
-          </p>
-        </div>
-
-        <div className="sh-hero-r">
-          <p className="sh-state">
-            {STATEMENT.map((ln, i) => (
-              <span key={i} className={`sh-mask${typeof ln === 'string' ? '' : ' sh-mask-bend'}`}>
-                <span className="sh-ln sh-ent">
-                  {typeof ln === 'string' ? (
-                    ln
-                  ) : (
-                    <>
-                      {/* THE SLOT: the word in the flow, the plate behind
-                          it in the word's own footprint (HubHero). The
-                          plate is decorative; the sentence reads whole
-                          without it. The synonyms the word rolls through
-                          are injected by the driver, so the served
-                          sentence says "bending" once. */}
-                      <span className="sh-slot">
-                        <em className="sh-word">
-                          <span className="sh-syn is-cur">{ln.bend}</span>
-                        </em>
-                        <span className="sh-pill" aria-hidden="true">
-                          <img src="/home/inline-1.webp" alt="" draggable={false} />
-                          <i className="sh-glint" />
-                        </span>
-                      </span>
-                      {ln.after}
-                    </>
-                  )}
-                </span>
-              </span>
-            ))}
-          </p>
-
-          {/* the h1: the display word alone (user, 2026-09-08 — the keyword
-              line moved to the kicker top-left; the title tag and the intro
-              carry the broad term) */}
-          <h1 className="sh-h1">
-            <span className="sh-mask sh-mask-w">
-              <span className="sh-h1-w sh-ent">Services</span>
-            </span>
-          </h1>
-        </div>
-      </HubHero>
+      <HubAgent kicker="Web design and development, Cyprus" statement={STATEMENT} />
 
       {/* §2 — THE LIST, on paper, in flow: scrolls up over the sticky hero */}
-      <HubList>
-        <div className="sh-lead">
-          <span className="sh-lead-l">Services</span>
-          <BlockReveal as="p" className="sh-lead-p" text={LEAD} />
-        </div>
-
-        <ol className="sh-list">
-          {pages.map((p, i) => (
-            <li key={p.slug} className="sh-row" style={{ '--i': i } as React.CSSProperties}>
-              <span className="sh-row-no" aria-hidden="true">{no(i)}</span>
-              <h2 className="sh-row-title">
-                <span className="sh-row-mask">
-                  <a className="sh-row-link" href={`/services/${p.slug}`}>{p.name}</a>
-                </span>
-              </h2>
-              {/* THE TREAD (2026-09-13) — the step's flat, an editorial
-                  spread under the title: left the promise, the blurb and
-                  the way in; right the plate, the service's own poster
-                  with its number printed on it, cut by the page's right
-                  edge rather than framed by the card; along the foot the
-                  three facts as one hairline strip — the case study's
-                  meta row, so a fact reads the same everywhere. The
-                  title above is the same link as the button, so the tree
-                  reads it twice on purpose (user: "make the CTA clear"). */}
-              <div className="sh-tread">
-                <div className="sh-tread-copy">
-                  <p className="sh-pull">{p.tagline}</p>
-                  <p className="sh-blurb">{p.blurb}</p>
-                  <div className="sh-tread-cta">
-                    <Button href={`/services/${p.slug}`} hoverLabel="View the service">
-                      {`Explore ${p.name}`}
-                    </Button>
-                  </div>
-                </div>
-                <figure className="sh-plate">
-                  <img src={p.visual} alt="" draggable={false} loading="lazy" decoding="async" style={{ objectPosition: p.visualPos }} />
-                  <span className="sh-plate-no" aria-hidden="true">
-                    <span className="sh-plate-no-in">{no(i)}</span>
-                  </span>
-                  <figcaption className="sh-plate-cap">{p.plate.headline}</figcaption>
-                  <i className="sh-plate-glint" aria-hidden="true" />
-                </figure>
-                <dl className="sh-spec">
-                  {p.facts.map((f) => (
-                    <div key={f.label} className="sh-spec-it">
-                      <dt>{f.label}</dt>
-                      <dd>{f.value}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </div>
-            </li>
-          ))}
-        </ol>
-
-      </HubList>
+      <HubBench
+        lead={LEAD}
+        services={pages.map((p) => ({
+          slug: p.slug,
+          name: p.name,
+          tagline: p.tagline,
+          blurb: p.blurb,
+          facts: p.facts.map((f) => ({ value: f.value, label: f.label })),
+        }))}
+      />
 
       {/* §3 — THE INVITATION, the site's CTA, in flow; above the sticky
           hero like the list */}

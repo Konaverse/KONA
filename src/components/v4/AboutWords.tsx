@@ -39,6 +39,22 @@ import { gsap, EASE } from '@/lib/motion-v4'
  * (EASE.drift) and every state is a tween of progress: it reads the
  * same up and down. One rect per frame off gsap.ticker.
  *
+ * THE GLIDE (the second smoothing pass, user, 2026-09-17: "smooth out
+ * even further… it's too abrupt on the scroll"). Three things. The
+ * windows are longer still and overlap more (SPAN_MAX, GAP), so a
+ * word's first letters lift off while the last of the word before are
+ * landing. A letter's flight is a bigger share of its word's clock
+ * (T.flight), so each one crosses over more scroll. And the scroll no
+ * longer IS the progress, it is where the progress is HEADED: each
+ * word eases after its target with a time constant (GLIDE), frame-rate
+ * independent, so a flick of the wheel becomes a glide that settles
+ * after the page has stopped — the one place on the page with a lag
+ * on top of Lenis, because here the hand's speed was the abruptness.
+ * And the glide has a TOP SPEED (FASTEST): however hard the flick, no
+ * word runs its whole clock in less than that, so a letter never
+ * crosses the row in a blink — it trails the hand and lands after it.
+ * Out of sight the words snap to their targets.
+ *
  * THE FLIGHT's distance is the row's inner width less the word's
  * width, measured once (and again on resize).
  *
@@ -54,21 +70,26 @@ const GHOST = 0.1
 const FIRST_START = 1.0
 const LAST_END = 0.15
 /** the longest a window may be (its length in viewport shares) */
-const SPAN_MAX = 0.5
+const SPAN_MAX = 0.62
 /** the gap between one word's end and the next one's start — negative:
  *  they overlap by this much, the hand-over */
-const GAP = -0.12
+const GAP = -0.26
+/** THE GLIDE: the time constant (s) of each word's ease after its
+ *  target — ~63% of the way there in this long, settled in about four */
+const GLIDE = 0.4
+/** THE TOP SPEED: the least time (s) a word's whole clock may take */
+const FASTEST = 1.8
 /** how much of the page's scroll the rose gives back */
 const ROSE_DRIFT = 0.1
 
 /** one word's clock, in timeline units */
 const T = {
-  ink: 1.0,
-  flightAt: 0.3,
-  flight: 1.2,
-  stagger: 0.08,
-  letGoAt: 2.4,
-  letGo: 0.8,
+  ink: 1.2,
+  flightAt: 0.2,
+  flight: 1.7,
+  stagger: 0.07,
+  letGoAt: 2.6,
+  letGo: 1.0,
 } as const
 
 const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
@@ -98,6 +119,8 @@ export default function AboutWords({ words }: { words: readonly string[] }) {
     let starts: number[] = []
     let span = SPAN_MAX
     const last: number[] = rows.map(() => -1)
+    /** where each word's progress IS (it eases after the scroll's) */
+    const cur: number[] = rows.map(() => -1)
 
     const build = () => {
       tls.forEach((t) => t.kill())
@@ -138,23 +161,32 @@ export default function AboutWords({ words }: { words: readonly string[] }) {
         return tl
       })
       last.fill(-1)
+      cur.fill(-1)
     }
     build()
 
     const rose = sec.querySelector<HTMLElement>('.ab-wd-rose')
-    const tick = () => {
+    const tick = (_time?: number, deltaTime?: number) => {
       const r = sec.getBoundingClientRect()
       const vh = window.innerHeight
-      if (r.bottom < 0 || r.top > vh) return
+      const seen = r.bottom > 0 && r.top < vh
+      /* out of sight and settled: nothing to do */
+      if (!seen && cur[0] >= 0 && cur.every((c, i) => c === last[i])) return
+      /* the share of the way to the target this frame covers */
+      const dt = (deltaTime ?? 16.7) / 1000
+      const k = 1 - Math.exp(-dt / GLIDE)
+      const cap = dt / FASTEST
       /* the rose rides a little slower than the page (the drift) */
       if (rose) rose.style.transform = `translate3d(0, ${((vh / 2 - (r.top + r.height / 2)) * ROSE_DRIFT).toFixed(2)}px, 0)`
       for (let i = 0; i < n; i++) {
         const c = (r.top + centres[i]) / vh
         const p = clamp01((starts[i] - c) / span)
-        if (Math.abs(p - last[i]) > 0.0002 || last[i] < 0) {
-          last[i] = p
-          tls[i].progress(p)
-        }
+        last[i] = p
+        /* the first frame and the unseen ones land on the target */
+        const was = cur[i]
+        const d = p - was
+        cur[i] = was < 0 || !seen || Math.abs(d) < 0.0004 ? p : was + Math.max(-cap, Math.min(cap, d * k))
+        if (cur[i] !== was) tls[i].progress(cur[i])
       }
     }
     tick()
@@ -194,7 +226,7 @@ export default function AboutWords({ words }: { words: readonly string[] }) {
           centre; the words go over it in the difference blend). The
           wrapper takes the drift, the picture the turn. */}
       <div className="ab-wd-rose" aria-hidden="true">
-        <img src="/about/rose.webp" alt="" width={984} height={1368} loading="lazy" decoding="async" draggable={false} />
+        <img src="/About/rose.webp" alt="" width={984} height={1368} loading="lazy" decoding="async" draggable={false} />
       </div>
       <ul className="ab-wd-list">
         {words.map((w) => (
