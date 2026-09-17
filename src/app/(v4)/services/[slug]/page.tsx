@@ -7,10 +7,10 @@ import RunBrief from '@/components/v4/RunBrief'
 import RunAnswer from '@/components/v4/RunAnswer'
 import RunFit from '@/components/v4/RunFit'
 import RunPlan from '@/components/v4/RunPlan'
-import RunHandover from '@/components/v4/RunHandover'
+import Invitation from '@/components/v4/Invitation'
 import { SCENE } from '@/components/v4/ServiceScene'
 import { RUN_DECK, SERVICE_PAGES, getServicePage } from '@/lib/service-pages'
-import { CALENDLY_URL, CONTACT_EMAIL, SITE_URL } from '@/lib/site'
+import { CALENDLY_URL, SITE_URL } from '@/lib/site'
 import '../scenes.css'
 import '../run.css'
 
@@ -206,6 +206,24 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
         {cta}
       </RunBrief>
 
+      {/* 2 + 3 — THE ANSWER and THE FIT share ONE GROUND: the user's
+          aerial crowd, sticky behind both (run.css .rs-ground); the plan
+          then scrolls over it */}
+      <div className="rs-ground">
+        <div className="rs-bg" aria-hidden="true">
+          <img
+            src="/services/walking-1400.webp"
+            srcSet="/services/walking-700.webp 700w, /services/walking-1000.webp 1000w, /services/walking-1400.webp 1400w"
+            sizes="100vw"
+            alt=""
+            width={1086}
+            height={1448}
+            loading="lazy"
+            decoding="async"
+            draggable={false}
+          />
+        </div>
+
       {/* 2 — THE ANSWER: the direct answer; the three facts, a plate each */}
       <RunAnswer
         answer={page.answer}
@@ -220,35 +238,28 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
         image={page.plate.image}
         alt={page.plate.alt}
       />
+      </div>
 
       {/* 4 — THE PLAN: the process */}
       <RunPlan steps={page.process} />
 
-      {/* 5 + 6 — THE HANDOVER: the two CTAs; the up-link and the sister */}
-      <RunHandover
-        name={page.name}
-        invite={page.invite}
-        receipt={[
-          ...page.facts.map((f) => ({ label: f.label, value: f.value })),
-          { label: 'Steps, planned', value: String(page.process.length) },
-        ]}
-        actions={
-          <>
-            {cta}
-            <a className="rh-mail" href={`mailto:${CONTACT_EMAIL}`}>
-              {CONTACT_EMAIL}
-            </a>
-          </>
-        }
-      >
+      {/* 5 — THE CTA: the site's Invitation (2026-09-18, user: "replace
+          the cta with the new one we built"). THE HANDOVER it replaces
+          (RunHandover.tsx — the void, the light pooling under the
+          receipt) is parked, unimported, with its rules in run.css; the
+          service's own `invite` line and the receipt go with it. */}
+      <Invitation />
+
+      {/* 6 — the up-link and the sister service */}
+      <nav className="rs-foot" aria-label="Related">
         <ArrowLink href="/services">All services</ArrowLink>
         {page.sister && (
-          <p className="rh-sister">
+          <p className="rs-sister">
             {page.sister.line}{' '}
             <a href={`/services/${page.sister.slug}`}>{page.sister.name}</a>
           </p>
         )}
-      </RunHandover>
+      </nav>
 
       {/* THE LIGHT and THE RUN BAR — both fixed, so they sit LAST in the
           source: nothing stands between a crawler and the h1 */}

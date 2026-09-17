@@ -47,8 +47,13 @@ import { aimLight } from '@/lib/run-store'
  * plate (its depth in the stack), the cursor's transform. Hidden states
  * live under `.is-live`, which only this driver sets: no JS and reduced
  * motion get the answer in ink and the three plates in a column,
- * resolved. Phones: unpinned, the plates under the prose landing as the
- * section crosses; no cursor. Every word is server-rendered.
+ * resolved. UNPINNED since 2026-09-18 (user: "make the answer and fit
+ * sections work without being pinned"): the stage stands in flow and
+ * the read is the section's own crossing, at every width — the pin and
+ * the phone's separate unpinned path are one thing now. The section
+ * also lost its ground: it shares THE GROUND with the fit (run.css
+ * `.rs-ground`, the user's aerial crowd). No cursor on phones. Every
+ * word is server-rendered.
  */
 
 export type RunFact = { value: string; label: string; cue?: string; plate: string }
@@ -250,7 +255,8 @@ export default function RunAnswer({ answer, facts }: { answer: readonly string[]
       const r = root.getBoundingClientRect()
       const vh = window.innerHeight
       if (r.bottom < -vh * 0.2 || r.top > vh * 1.2) return
-      const want = phone ? clamp01((vh * 0.8 - r.top) / (r.height * 0.95)) : clamp01(-r.top / Math.max(1, r.height - vh))
+      /* the crossing: the read runs while the section is on screen */
+      const want = clamp01((vh * 0.82 - r.top) / Math.max(1, r.height * 0.86))
       const f = 1 - Math.exp(-((deltaTime ?? 16.7) / 1000) / GLIDE)
       p = p < 0 || Math.abs(want - p) < 0.0004 ? want : p + (want - p) * f
       const head = Math.round(clamp01((p - READ_FROM) / (READ_TO - READ_FROM)) * N)
@@ -266,7 +272,7 @@ export default function RunAnswer({ answer, facts }: { answer: readonly string[]
       })
       /* the light: on the deck while a plate lands, else with the head
          down the prose */
-      if (!phone && r.top < vh * 0.5 && r.bottom > vh * 0.5) {
+      if (r.top < vh * 0.6 && r.bottom > vh * 0.4) {
         if (lit) aimLight(0.78, (deckAt.y / SH) * 0.85)
         else aimLight(0.3, 0.25 + 0.4 * (head / Math.max(1, N)))
       }
