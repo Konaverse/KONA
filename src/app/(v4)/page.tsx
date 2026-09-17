@@ -4,6 +4,7 @@ import HeroPortrait from '@/components/v4/HeroPortrait'
 import HeroPeel from '@/components/v4/HeroPeel'
 import ClaimEntrance from '@/components/v4/ClaimEntrance'
 import BlockReveal from '@/components/v4/BlockReveal'
+import SolveStack from '@/components/v4/SolveStack'
 import HubBench from '@/components/v4/HubBench'
 import { SERVICE_PAGES } from '@/lib/service-pages'
 import WorkList from '@/components/v4/WorkList'
@@ -62,6 +63,26 @@ export const metadata: Metadata = {
  *  the user writes the real line. */
 const SOLVE_LINE =
   'Your site looks like everyone else’s. Visitors leave before they understand what you do. It has not kept up with the business, and where people actually search, you are nowhere. That is what we solve.'
+
+/** §3's SHEET (2026-09-17). SOLVE_LINE names four symptoms in one
+ *  breath; the sheet names them again one word at a time, each word cut
+ *  by the plate it sits on. A tag and an answer line rode with each of
+ *  these until the user cut them — "just basically remove everything
+ *  except the big text in the middle" — so the word is all that is left,
+ *  and the statement above carries the meaning.
+ *
+ *  WORDS ARE A FIRST DRAFT and the PICTURES ARE PLACEHOLDER — the house
+ *  noir plates, deliberately NOT the case-study covers, because §5 right
+ *  below is the work. Every plate has to be DARK (see SolveStack.tsx). */
+const SOLVE_BEATS = [
+  { word: 'TEMPLATE', src: '/work/city.webp', alt: 'One lit tower standing out of a dark skyline' },
+  { word: 'FORGETTABLE', src: '/work/corridor.webp', alt: 'Figures at the threshold of a corridor opening onto light' },
+  { word: 'OUTGROWN', src: '/work/orb.webp', alt: 'People crossing the floor of a vast hall, seen from above' },
+  /* NOT fog.webp, though it suited the word: the sheet's word lies over
+     the plate in difference blend, and a mid-grey picture sends it
+     straight back to mid-grey. Every plate here has to be dark. */
+  { word: 'INVISIBLE', src: '/work/hall.webp', alt: 'A shaft of light crossing a dark hall' },
+] as const
 
 /** the bench's lead — the hub's own line */
 const BENCH_LEAD =
@@ -151,6 +172,16 @@ export default function HomePage() {
           <p className="sv2-k t-small">What we solve</p>
           <BlockReveal as="h2" className="sv2-p" id="sv2-h" text={SOLVE_LINE} />
         </div>
+        {/* THE SPREAD (2026-09-17, the user's recording "pinned stack
+            image section.mp4": "recreate this component and make it a
+            part of the what we solve — text a little above, component
+            below", then "make the plate smaller and let's design a
+            section around it"). The statement scrolls away; a pinned
+            spread holds — the answer large on the left, the deck on the
+            right, a step rail under both — and one scroll deals a new
+            picture and a new answer together. SolveStack.tsx carries the
+            measurements the deck was built from. */}
+        <SolveStack beats={SOLVE_BEATS} />
       </section>
 
       {/* §4 — THE WORKBENCH (2026-09-18, user: "in the homepage replace
