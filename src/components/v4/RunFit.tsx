@@ -26,8 +26,10 @@ import { aimLight } from '@/lib/run-store'
  *
  * THE MOTION IS THE SCROLL. As the section crosses: the window's print
  * eases back from a close-up and drifts against the page (depth, not
- * decoration), and the close line resolves word by word. That is all —
- * no cursor, no handles, no flip.
+ * decoration), and the close line resolves word by word. On the way out
+ * the window takes THE PARTING — the hero artboard's exit, rising and
+ * tipping (`data-lift`, PlateLift.tsx). That is all — no cursor, no
+ * handles, no flip.
  *
  * THE DRIVER. gsap.ticker, one rect a frame, on the glide; it writes
  * two transforms and the close's words. Reduced motion, no JS and
@@ -130,7 +132,7 @@ export default function RunFit({
         </div>
 
         {/* the plate: the service's own noir picture */}
-        <figure className="rf-win">
+        <figure className="rf-win" data-lift>
           <img className="rf-img" src={image} alt={alt} loading="lazy" decoding="async" draggable={false} />
         </figure>
 

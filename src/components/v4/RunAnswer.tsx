@@ -319,7 +319,7 @@ export default function RunAnswer({ answer, facts }: { answer: readonly string[]
 
         {/* THE DECK: a plate a fact. The picture is decoration (alt "");
             the caption is the fact. */}
-        <ul className="ra-deck" aria-label="At a glance">
+        <ul className="ra-deck" data-lift aria-label="At a glance">
           {facts.map((f) => {
             const m = f.value.match(/(\d+)\s*[–-]\s*(\d+)/)
             return (

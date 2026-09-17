@@ -2001,6 +2001,20 @@ html.lenis, html.lenis body { height: auto; }
   color: var(--text);
   overflow: clip;
 }
+/* ---------- THE PARTING (2026-09-18) ----------
+   The exit the service hero's artboard has, given to every picture the
+   user marks (user: "I also like the exit animation of the infographic
+   on the hero. I want all images to have it like that"): on its way off
+   the top of the screen a picture RISES against the scroll and TIPS a
+   few degrees, so it parts from the words instead of sliding away with
+   them. PlateLift.tsx writes the two values; mark the FRAME, never the
+   print inside it, so a driver that owns the print's transform is not
+   fought. */
+[data-lift] {
+  transform: translate3d(0, var(--k-lift, 0px), 0) rotate(var(--k-tip, 0deg));
+  will-change: transform;
+}
+
 /* THE FIELD (FooterField.tsx, 2026-09-18): the lattice of points. The
    CSS lattice is the no-WebGL / no-JS ground; the canvas covers it once
    it draws. Same cell as the shader's. */

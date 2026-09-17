@@ -4,6 +4,7 @@ import SmoothScroll from '@/components/v4/SmoothScroll'
 import FluidCursor from '@/components/v4/FluidCursor'
 import GrainField from '@/components/v4/GrainField'
 import PageTransition from '@/components/v4/PageTransition'
+import PlateLift from '@/components/v4/PlateLift'
 import SiteFooter from '@/components/v4/SiteFooter'
 import '@/styles/tokens.css'
 
@@ -45,6 +46,10 @@ export default function V4Layout({ children }: { children: React.ReactNode }) {
           anchored to the clicked button instead of leaving (2026-08-26) */}
       <CalendlyPopover />
       <FluidCursor />
+      {/* THE PARTING: any picture marked `data-lift` leaves the way the
+          service hero's artboard does — rising and tipping on its way off
+          the top (PlateLift.tsx; the rule is in tokens.css) */}
+      <PlateLift />
 
       <SmoothScroll>
         <PageTransition>
