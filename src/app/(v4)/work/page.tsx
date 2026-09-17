@@ -1,52 +1,49 @@
 import type { Metadata } from 'next'
-import WorkMotion from '@/components/v4/WorkMotion'
+import WorkHero, { type HeroProject } from '@/components/v4/WorkHero'
 import Button from '@/components/v4/Button'
-import ArrowLink from '@/components/v4/ArrowLink'
-import Invitation from '@/components/v4/Invitation'
 import { WORK_PROJECTS } from '@/lib/work-projects'
 import { getCaseStudy } from '@/lib/case-studies'
 import { CALENDLY_URL, SITE_URL } from '@/lib/site'
 import './work.css'
 
 /**
- * THE WORK HUB — /work (2026-09-11, the user's wireframe "Work Page.png",
- * brought to life: "add images, scroll motion, design elements, and work
- * really well with hover").
+ * THE WORK HUB — /work. Second build, 2026-09-17 (user: "elevate the
+ * concept of the hero by redesigning it. I like the current hero, but
+ * it's poorly designed and implemented… No eyebrows, no numbering, and
+ * no hairlines. — Replace the cards section with the hover section of
+ * the projects we have in the homepage"). The first build (2026-09-11,
+ * the wireframe "Work Page.png") is parked: WorkMotion.tsx, unimported,
+ * and its rules at the foot of work.css.
  *
- * §1 THE HERO — on paper (user, 2026-09-11: the inset dark card is
- * gone), the statement centred (two lines muted, the third in ink), a
- * WINDOW under it — THE
- * REEL (user, 2026-09-11): the projects' captures stacked and cut
- * between at four to five a second, relentlessly, no video needed — with
- * the two CTAs on it (Contact, Book — the two the inner-page phase
- * decided), the services as vertical labels at the
- * page's edges. ON DESKTOP the hero is PINNED (user, 2026-09-11): a
- * notch of scroll sets the window growing to the full viewport at a
- * fixed speed, then "selected" and "work" rise at the viewport's centre;
- * a notch back reverses it from wherever it is (WorkMotion.tsx). On
- * phones "selected work" stays set across the window's bottom edge —
- * paper over the dark window, ink on the paper either side, the edge
- * cutting the word (mix-blend difference), lagging the scroll.
+ * §1 THE HERO (WorkHero.tsx). The concept is the first build's, the
+ * user's own: a statement; under it a WINDOW cutting relentlessly
+ * through the projects' captures, leaning to the hand; on scroll it
+ * grows to the whole viewport and "selected", then "work", rise on it.
+ * Rebuilt: the statement is display type and IS the hero; the two CTAs
+ * (Contact, Book — the two the inner-page phase decided) stand under it;
+ * the window is wide and cut by the fold; the vertical service labels,
+ * the meta row and its hairlines are GONE; and the growth is a scrub on
+ * the glide inside a sticky stage — no wheel lock. The title lands huge,
+ * on a diagonal; the reel's cut slows as the window grows.
  *
- * §2 THE META ROW — year, studio, discipline on one hairline, drawn as
- * it enters.
+ * §2 THE SLIDER — inside the hero (third build, the same evening; the
+ * user's recording "projects section vide.mp4": "after the container
+ * opens to full viewport it stays to full viewport and becomes this
+ * section… connected to the footer"). The full bleed STAYS: a track of
+ * names across the middle, the project on show centred and its
+ * neighbours cut by the screen's edges; the reel locked to that project
+ * and dissolving on a change; a filmstrip window cut by the fold; two
+ * arrows. The scroll walks it, a band per project. The homepage's hover
+ * list on a paper cover (WorkList `bare`) stood here for a day and did
+ * not tie with the hero. NOTHING follows but the footer — the house void
+ * comes up under the dark stage (the Invitation left this page with the
+ * cover: the hero carries the two CTAs, the footer the address).
  *
- * §3 THE CARDS — the four projects as dark cards, two by two, all the
- * same (user, 2026-09-11: none featured): the capture in a plate at the
- * top, the name, the line, the link. They ARRIVE AS PAPER — the
- * homepage §4 entrance (user: "similar to the services cards") — each
- * card inside a cell the driver bends by its inner corner. Under the
- * hand: the cursor becomes the frosted "View" disc, the plate becomes a
- * REEL of the site's captures cutting at the window's rate, the
- * spotlight rides the ring, the card lifts a step.
- *
- * §4 THE INVITATION follows in flow.
- *
- * SERVER-RENDERED, every word in the raw HTML (SEO plan D5). No video
- * on the page: the reel is CSS. NOT INDEXED YET —
- * KONA_OPEN_ROUTES=/work lifts the launch redirect locally. Case
- * studies (/work/[slug]) do not exist yet; the links go to the live
- * sites where known.
+ * SERVER-RENDERED, every word in the raw HTML (SEO plan D5): the h1 is
+ * the statement; the list's h2 ("Selected work") and the four names as
+ * links. No video on the page: the reel is stacked captures cut by a
+ * clock. NOT INDEXED YET — KONA_OPEN_ROUTES=/work lifts the launch
+ * redirect locally.
  */
 const INDEXABLE = false
 
@@ -67,11 +64,28 @@ export const metadata: Metadata = {
   },
 }
 
-/** the services at the page's edges (the wireframe's vertical labels) */
-const SIDES = ['Web design', 'Web development', '3D websites']
+/** THE STATEMENT, line by line (the breaks hold: the type is rem); the
+ *  last line is set in ink */
+const STATEMENT = ['We don’t build to impress, we', 'build to bring your vision to life.', 'If it impresses, then so be it.'] as const
+
+/** how many captures of each project the reel cuts through */
+const REEL_EACH = 4
 
 export default function WorkPage() {
   const projects = WORK_PROJECTS
+
+  /* the slider's roster: where each project goes (its case study, else
+     the live site), its filmstrip capture, the captures its reel cuts */
+  const roster: HeroProject[] = projects.map((p) => ({
+    slug: p.slug,
+    name: p.name,
+    service: p.service,
+    year: p.year,
+    href: getCaseStudy(p.slug) ? `/work/${p.slug}` : p.href ?? '/contact',
+    image: p.image,
+    shots: [p.image, ...(p.frames ?? []).slice(1, REEL_EACH)],
+  }))
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -105,160 +119,24 @@ export default function WorkPage() {
   }
 
   return (
-    <WorkMotion>
+    <main className="wk">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      {/* the entrance parks the hero at opacity 0; the no-JS page undoes
-          it and lands the reveals */}
+      {/* the hero's entrance parks its lines and buttons (work.css
+          .wh-ent); the no-JS page undoes it */}
       <noscript>
-        <style>{`.wk-ent,.wk-win,.wk-side,.wk-title,.wk-card,.wk-cell{opacity:1!important;transform:none!important;filter:none!important}.wk-meta-l::before,.wk-meta-l::after{transform:none!important}`}</style>
+        <style>{`.wh-ent{opacity:1!important;transform:none!important}`}</style>
       </noscript>
 
-      {/* §1 — THE HERO: the stage is what pins on desktop */}
-      <header className="wk-hero">
-        <div className="wk-stage">
-        {/* the services, vertical, at the page's edges */}
-        <ul className="wk-sides wk-sides-l" aria-label="Services">
-          {SIDES.map((s) => (
-            <li key={s} className="wk-side">{s}</li>
-          ))}
-        </ul>
-        <ul className="wk-sides wk-sides-r" aria-hidden="true">
-          {SIDES.map((s) => (
-            <li key={s} className="wk-side">{s}</li>
-          ))}
-        </ul>
+      {/* §1 — THE HERO */}
+      <WorkHero lines={STATEMENT} projects={roster}>
+        <Button href="/contact" hoverLabel="Say hello">
+          Contact us
+        </Button>
+        <Button href={CALENDLY_URL} external ghost hoverLabel="Pick a time">
+          Book a call
+        </Button>
+      </WorkHero>
 
-        <div className="wk-card-hero">
-          <h1 className="wk-state">
-            <span className="wk-mask"><span className="wk-ln wk-ent">We don’t build to impress, we</span></span>
-            <span className="wk-mask"><span className="wk-ln wk-ent">build to bring your vision to life.</span></span>
-            <span className="wk-mask"><span className="wk-ln wk-ent wk-ln-ink">If it impresses, then so be it.</span></span>
-          </h1>
-
-          {/* THE WINDOW: THE REEL — the captures stacked, each shown for
-              one step of a stepped animation, two crops of each so the
-              cut never repeats too soon; graded; the two CTAs on it */}
-          <div className="wk-win k-dark">
-            <div className="wk-win-media wk-reel" aria-hidden="true">
-              {projects.flatMap((p, i) =>
-                [0, 1].map((crop) => (
-                  <img
-                    key={`${p.slug}-${crop}`}
-                    className={`wk-reel-f${crop ? ' wk-reel-f-low' : ''}`}
-                    style={{ '--f': i * 2 + crop } as React.CSSProperties}
-                    src={p.image}
-                    alt=""
-                    width={1600}
-                    height={1100}
-                    loading="eager"
-                    decoding="async"
-                    draggable={false}
-                  />
-                )),
-              )}
-            </div>
-            {/* the shade the expansion raises under the title */}
-            <div className="wk-win-shade" aria-hidden="true" />
-            <div className="wk-win-acts">
-              <Button href="/contact" ghost hoverLabel="Say hello">
-                Contact us
-              </Button>
-              <Button href={CALENDLY_URL} external hoverLabel="Pick a time">
-                Book a call
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* THE CUT TITLE (phones): across the window's bottom edge */}
-        <div className="wk-title-wrap" aria-hidden="true">
-          <p className="wk-title">selected work</p>
-        </div>
-
-        {/* THE BIG TITLE (desktop): rises at the viewport's centre once
-            the window has the whole stage — "selected", then "work" */}
-        <p className="wk-big" aria-hidden="true">
-          <span className="wk-big-m"><span className="wk-big-w">selected</span></span>
-          <span className="wk-big-m"><span className="wk-big-w">work</span></span>
-        </p>
-        </div>
-      </header>
-
-      {/* §2 — THE META ROW */}
-      <div className="wk-meta" aria-hidden="true">
-        <span className="wk-meta-l">2024 – 2026</span>
-        <span className="wk-meta-l">Konaverse</span>
-        <span className="wk-meta-l">Design &amp; development</span>
-      </div>
-
-      {/* §3 — THE CARDS */}
-      <section className="wk-grid" aria-label="Selected work">
-        <h2 className="sr-only">Selected work</h2>
-        {projects.map((p, i) => {
-          /* the plate's reel: the shot frames, or two crops of the one
-             capture until they exist */
-          const frames = p.frames?.length ? p.frames : [p.image, p.image]
-          /* the card goes to the case study once it exists (2026-09-12),
-             else to the live site where known */
-          const study = getCaseStudy(p.slug)
-          const to = study ? `/work/${p.slug}` : p.href
-          return (
-          <div key={p.slug} className="wk-cell">
-          <article
-            className="wk-card k-dark"
-            style={{ '--i': i % 2, '--wk-n': frames.length, '--wk-anim': `wk-flick-${frames.length}` } as React.CSSProperties}
-          >
-            <div className="wk-plate">
-              {frames.map((src, j) => (
-                <img
-                  key={j}
-                  className={`wk-pf${!p.frames?.length && j === 1 ? ' wk-pf-low' : ''}`}
-                  style={{ '--f': j } as React.CSSProperties}
-                  src={src}
-                  alt={j === 0 ? `${p.name} — the website` : ''}
-                  width={1900}
-                  height={1000}
-                  loading={i < 2 && j === 0 ? 'eager' : 'lazy'}
-                  decoding="async"
-                  draggable={false}
-                />
-              ))}
-            </div>
-            <div className="wk-card-body">
-              <p className="wk-card-meta">
-                <span>{p.year}</span>
-                <span>{p.service}</span>
-              </p>
-              <h3 className="wk-card-name">{p.name}</h3>
-              <p className="wk-card-line">{p.line}</p>
-              <div className="wk-card-act">
-                {study ? (
-                  <ArrowLink href={to!}>View case study</ArrowLink>
-                ) : p.href ? (
-                  <ArrowLink href={p.href} external>
-                    View project
-                  </ArrowLink>
-                ) : (
-                  <span className="wk-card-soon">Case study soon</span>
-                )}
-              </div>
-            </div>
-            {/* the whole card is the link where there is one */}
-            {study ? (
-              <a className="wk-card-cover" href={to!} aria-label={`${p.name} — view case study`} />
-            ) : p.href ? (
-              <a className="wk-card-cover" href={p.href} target="_blank" rel="noopener noreferrer" aria-label={`${p.name} — view project`} />
-            ) : null}
-          </article>
-          </div>
-          )
-        })}
-      </section>
-
-      {/* §4 — THE INVITATION */}
-      <div className="wk-cta">
-        <Invitation />
-      </div>
-    </WorkMotion>
+    </main>
   )
 }

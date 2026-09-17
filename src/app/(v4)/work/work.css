@@ -19,6 +19,210 @@
   color: var(--text);
   --wk-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='90' height='90' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
 }
+/* ============================================================
+   §1 · THE HERO — second build (WorkHero.tsx, 2026-09-17; user: "I like
+   the current hero, but it's poorly designed and implemented… No
+   eyebrows, no numbering, and no hairlines").
+   BASE (phones, reduced motion, no JS): in flow — the statement, the two
+   CTAs, the window as a plain rounded frame with the reel in it, the
+   title under it.
+   LIVE (desktop): a runway with a sticky stage. The statement and the
+   buttons stand on the paper; THE WINDOW is a full-bleed layer clipped
+   to a wide frame whose foot the fold cuts (the driver writes the clip,
+   the reel's transform, the shadow's box); "selected" and "work" wait
+   under their masks, huge, on a diagonal.
+   THE SLIDER (third build, the same evening; the user's recording
+   "projects section vide.mp4"): the full bleed STAYS and becomes the
+   work — a track of names across the middle (the one on show centred,
+   its neighbours dim and cut by the screen's edges), a filmstrip window
+   cut by the fold, two arrows. The runway is 2.4 screens for the hero's
+   own beats + 0.7 per project (--wh-n, set by the component); the
+   footer's void follows the stage directly. BASE gets the projects as a
+   list of plates with their names, in flow.
+   Every length rem; nothing is a rule, a label or a number.
+   ============================================================ */
+.wh { position: relative; }
+.wh-ent { opacity: 0; }
+.wh.is-in .wh-ent { opacity: 1; }
+.wh-stage { position: relative; padding: 7rem var(--page-pad) 0; text-align: center; }
+.wh-state {
+  margin: 0;
+  font-size: 4.3rem;
+  font-weight: var(--w-light);
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+  color: var(--n-6);
+}
+/* a line's mask: top and bottom only (open flanks — overflow would crop
+   the glyphs' sides) */
+.wh-mask { display: block; clip-path: inset(0 -1em 0 -1em); padding-bottom: 0.14em; margin-bottom: -0.14em; }
+.wh-ln { display: block; white-space: nowrap; will-change: transform; }
+.wh-ln-ink { color: var(--ink); }
+.wh-acts { display: flex; justify-content: center; gap: 0.75rem; margin-top: 2.2rem; }
+.wh-shadow { display: none; }
+.wh-win {
+  position: relative;
+  width: min(60rem, 100%);
+  aspect-ratio: 1.9;
+  margin: 3rem auto 0;
+  overflow: hidden;
+  border-radius: 1.8rem;
+  background: var(--n-11);
+  box-shadow: 0 2.4rem 4rem -1.5rem rgb(13 16 18 / 0.45);
+}
+.wh-reel { position: absolute; inset: 0; }
+/* THE REEL: the captures stacked; the driver's clock names the one on
+   show and the one under it (so a cut never shows the void) */
+.wh-f { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; opacity: 0; filter: grayscale(1) contrast(1.04); }
+.wh-f.is-prev { opacity: 1; z-index: 1; }
+.wh-f.is-on { opacity: 1; z-index: 2; }
+/* the one dissolve: the slider's change of project */
+.wh-f.is-fade { transition: opacity 0.85s var(--e-glass); }
+.wh-shade { position: absolute; inset: 0; z-index: 3; background: var(--n-11); opacity: 0; }
+.wh-big {
+  margin: 3.5rem 0 0;
+  font-size: clamp(3.4rem, 17vw, 8rem);
+  font-weight: var(--w-light);
+  line-height: 0.92;
+  letter-spacing: -0.055em;
+  text-align: left;
+  color: var(--ink);
+}
+.wh-big-m { display: block; clip-path: inset(0 -0.3em 0 -0.3em); padding-bottom: 0.16em; margin-bottom: -0.16em; }
+.wh-big-m:nth-child(2) { text-align: right; }
+.wh-big-w { display: block; will-change: transform; }
+/* THE SLIDER, in flow: a plate and a name per project */
+.wh-slide { margin-top: 4rem; padding-bottom: 5rem; text-align: left; }
+.wh-track { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3.5rem 1.5rem; }
+.wh-name { display: block; color: var(--ink); text-decoration: none; }
+.wh-item-pic { display: block; width: 100%; height: auto; aspect-ratio: 1.9; object-fit: cover; margin-bottom: 1.2rem; border-radius: 1.2rem; }
+.wh-name-t { display: block; font-size: 2.1rem; font-weight: var(--w-light); line-height: 1.08; letter-spacing: -0.045em; }
+.wh-meta { display: block; margin-top: 0.5rem; font-size: 0.875rem; line-height: 1.4rem; color: var(--n-7); }
+.wh-meta-b { display: none; }
+.wh-strip,
+.wh-arrows { display: none; }
+
+@media (min-width: 57.5rem) {
+  .wh.is-live { height: calc((2.4 + var(--wh-n, 4) * 0.7 + 1) * 100svh); }
+  .wh.is-live .wh-stage { position: sticky; top: 0; height: 100svh; padding: 0; overflow: hidden; will-change: transform; }
+  .wh.is-live .wh-state { position: absolute; left: 0; right: 0; top: 6.4rem; }
+  .wh.is-live .wh-acts { position: absolute; left: 0; right: 0; top: 21.7rem; z-index: 4; margin: 0; }
+  /* the window's shadow: its own box (a clip-path would cut a shadow off),
+     re-fitted by the driver, gone as the frame grows */
+  .wh.is-live .wh-shadow {
+    display: block;
+    position: absolute;
+    z-index: 1;
+    border-radius: 1.8rem;
+    box-shadow: 0 2.6rem 4.5rem -1.2rem rgb(13 16 18 / 0.5), 0 0.6rem 1.4rem -0.4rem rgb(13 16 18 / 0.2);
+    pointer-events: none;
+  }
+  .wh.is-live .wh-win {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    width: auto;
+    aspect-ratio: auto;
+    margin: 0;
+    overflow: visible;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    clip-path: inset(50%);
+    will-change: clip-path, transform;
+  }
+  .wh.is-live .wh-reel { inset: auto; transform-origin: 50% 50%; will-change: transform; }
+  .wh.is-live .wh-big {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    margin: 0;
+    font-size: 15.5rem;
+    line-height: 0.9;
+    color: var(--n-0);
+    pointer-events: none;
+  }
+  .wh.is-live .wh-big-m { position: absolute; }
+  .wh.is-live .wh-big-m:nth-child(1) { left: var(--page-pad); top: 8.6rem; }
+  .wh.is-live .wh-big-m:nth-child(2) { right: var(--page-pad); bottom: 6.6rem; }
+  .wh.is-live .wh-big-w { transform: translate3d(0, 108%, 0); }
+  /* THE SLIDER on the full bleed */
+  .wh.is-live .wh-slide { position: absolute; inset: 0; z-index: 6; margin: 0; padding: 0; text-align: center; color: var(--n-0); pointer-events: none; }
+  /* a band of shade behind the names: some captures are paper-light, and
+     the picture should stay a picture above and below them */
+  .wh.is-live .wh-slide::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgb(13 16 18 / 0) 14%, rgb(13 16 18 / 0.56) 50%, rgb(13 16 18 / 0) 86%);
+    opacity: 0;
+    transition: opacity 0.9s var(--e-glass);
+  }
+  .wh.is-live.is-slide .wh-slide::before { opacity: 1; }
+  .wh.is-live.is-slide .wh-track-m,
+  .wh.is-live.is-slide .wh-strip,
+  .wh.is-live.is-slide .wh-arrows { pointer-events: auto; }
+  /* the names' mask: top and bottom (the screen's edges cut the flanks) */
+  .wh.is-live .wh-track-m { position: absolute; left: 0; right: 0; top: 50%; height: 7.8rem; margin-top: -3.2rem; clip-path: inset(0); }
+  .wh.is-live .wh-track { display: block; position: relative; height: 100%; transform: translate3d(0, 118%, 0); will-change: transform; }
+  .wh.is-live .wh-item { position: absolute; left: 50%; top: 0; white-space: nowrap; will-change: transform; }
+  .wh.is-live .wh-item-pic { display: none; }
+  .wh.is-live .wh-name { padding: 0 1.5rem; color: var(--n-0); opacity: var(--wh-o, 0.36); }
+  .wh.is-live .wh-name-t { font-size: 4.3rem; }
+  .wh.is-live .wh-meta { position: relative; height: 1.4rem; margin-top: 0.7rem; overflow: hidden; color: rgb(255 255 255 / 0.74); opacity: 0; transition: opacity 0.45s linear; }
+  .wh.is-live .wh-item.is-on .wh-meta { opacity: 1; transition-delay: 0.15s; }
+  .wh.is-live .wh-meta-a,
+  .wh.is-live .wh-meta-b { display: flex; align-items: center; justify-content: center; gap: 0.45rem; height: 100%; transition: transform 0.6s var(--e-glass); }
+  .wh.is-live .wh-meta-b { position: absolute; inset: 0; color: var(--n-0); transform: translate3d(0, 110%, 0); }
+  .wh.is-live .wh-meta-b svg { width: 0.9rem; height: 0.9rem; }
+  /* the filmstrip: a window cut by the fold; its row pushes sideways */
+  .wh.is-live .wh-strip { display: block; position: absolute; left: 50%; bottom: -2.4rem; width: 17rem; height: 13rem; transform: translate3d(-50%, 110%, 0); will-change: transform; }
+  .wh.is-live .wh-strip-in { width: 100%; height: 100%; overflow: hidden; border-radius: 0.9rem; background: var(--n-11); box-shadow: 0 1.6rem 3rem -1rem rgb(0 0 0 / 0.55); transition: transform 0.7s var(--e-settle); }
+  .wh.is-live .wh-strip-row { display: flex; height: 100%; will-change: transform; }
+  .wh.is-live .wh-strip-f { flex: 0 0 100%; display: block; height: 100%; }
+  .wh.is-live .wh-strip-f img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .wh.is-live .wh-arrows { display: flex; gap: 0.5rem; position: absolute; right: var(--page-pad); bottom: 2rem; opacity: 0; }
+  .wh.is-live .wh-arrow {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 1px solid rgb(255 255 255 / 0.45);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--n-0);
+    cursor: pointer;
+    transition: background-color 0.45s var(--e-settle), color 0.45s var(--e-settle), border-color 0.45s var(--e-settle), opacity 0.3s linear;
+  }
+  .wh.is-live .wh-arrow svg { width: 1rem; height: 1rem; }
+  .wh.is-live .wh-arrow:disabled { opacity: 0.3; cursor: default; }
+  @media (hover: hover) {
+    .wh.is-live .wh-name:hover { opacity: 1; transition: opacity 0.35s linear; }
+    .wh.is-live .wh-item.is-on .wh-name:hover .wh-meta-a { transform: translate3d(0, -110%, 0); }
+    .wh.is-live .wh-item.is-on .wh-name:hover .wh-meta-b { transform: none; }
+    .wh.is-live .wh-strip:hover .wh-strip-in { transform: translate3d(0, -2.4rem, 0) scale(1.04); }
+    .wh.is-live .wh-arrow:not(:disabled):hover { background-color: var(--n-0); border-color: var(--n-0); color: var(--ink); }
+  }
+}
+@media (max-width: 57.5rem) {
+  .wh-stage { padding: 6.5rem var(--page-pad) 0; }
+  .wh-state { font-size: clamp(1.7rem, 7.4vw, 2.6rem); }
+  .wh-ln { white-space: normal; }
+  .wh-acts { flex-wrap: wrap; margin-top: 1.8rem; }
+  .wh-win { margin-top: 2.4rem; border-radius: 1.2rem; }
+  .wh-big { margin: 2.6rem 0 0.5rem; }
+  .wh-slide { margin-top: 2.6rem; padding-bottom: 4rem; }
+  .wh-track { grid-template-columns: minmax(0, 1fr); gap: 2.6rem; }
+  .wh-name-t { font-size: clamp(1.6rem, 6.6vw, 2.1rem); }
+}
+
+/* ============================================================
+   PARKED below (2026-09-17): the first build's hero, meta row and cards
+   (.wk-hero, .wk-stage, .wk-win, .wk-sides, .wk-big, .wk-meta, .wk-grid,
+   .wk-card…) — WorkMotion.tsx, unimported. Only `.wk` above and
+   `.wk-cta` are still read.
+   ============================================================ */
 /* the entrance's parked state — opacity only; the noscript lifts it */
 .wk-ent { opacity: 0; }
 .wk.is-in .wk-ent { opacity: 1; }

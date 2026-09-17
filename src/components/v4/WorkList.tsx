@@ -5,6 +5,7 @@ import Button from '@/components/v4/Button'
 import { WORK_PROJECTS, type WorkProject } from '@/lib/work-projects'
 import { gsap } from '@/lib/motion-v4'
 import { CustomEase } from 'gsap/CustomEase'
+import './worklist.css'
 
 /**
  * §5 — THE LIST (2026-09-14, user: igniteagency.com's selected work,
@@ -24,6 +25,12 @@ import { CustomEase } from 'gsap/CustomEase'
  *   · a 16:9 preview scales in from nothing, centred on the row's
  *     height and on the CURSOR's x, which it follows with a lag
  * The original's preview is a Vimeo loop; ours is the project's capture.
+ *
+ * ON THE WORK HUB (2026-09-17, user: "replace the cards section with the
+ * hover section of the projects we have in the homepage") the same rows
+ * stand alone — `bare`: no marquee, no kicker, no "All projects" foot
+ * (the hero's "selected work" is the title there, and the hub is where
+ * that button goes).
  *
  * Progress and the preview's chase run on one gsap.ticker (house rule).
  * Touch gets the plain list; reduced motion gets the list with the
@@ -54,7 +61,16 @@ const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
 const hrefOf = (p: WorkProject, studies: Set<string>) =>
   studies.has(p.slug) ? `/work/${p.slug}` : p.href ?? '/work'
 
-export default function WorkList({ projects = WORK_PROJECTS, studies }: { projects?: WorkProject[]; studies: string[] }) {
+export default function WorkList({
+  projects = WORK_PROJECTS,
+  studies,
+  bare = false,
+}: {
+  projects?: WorkProject[]
+  studies: string[]
+  /** the rows alone: no marquee head, no kicker, no foot (the work hub) */
+  bare?: boolean
+}) {
   const ref = useRef<HTMLElement | null>(null)
   const has = new Set(studies)
 
@@ -65,16 +81,15 @@ export default function WorkList({ projects = WORK_PROJECTS, studies }: { projec
     const track = sec.querySelector<HTMLElement>('.wl-marq-track')
     const copy = sec.querySelector<HTMLElement>('.wl-marq-t')
     const rows = Array.from(sec.querySelectorAll<HTMLElement>('.wl-row'))
-    if (!marq || !track || !copy) return
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const hover = window.matchMedia('(hover: hover)').matches
 
     /* ---- the marquee: drift + scrub, wrapped on one copy's width ---- */
     let drift = 0
     let lastT = performance.now()
-    let W = copy.offsetWidth
+    let W = copy?.offsetWidth ?? 0
     const onResize = () => {
-      W = copy.offsetWidth
+      W = copy?.offsetWidth ?? 0
     }
     window.addEventListener('resize', onResize)
 
@@ -89,8 +104,8 @@ export default function WorkList({ projects = WORK_PROJECTS, studies }: { projec
       const dt = Math.min(0.05, (now - lastT) / 1000)
       lastT = now
       const vh = window.innerHeight
-      const mr = marq.getBoundingClientRect()
-      if (mr.bottom > 0 && mr.top < vh && W > 0) {
+      const mr = marq && track ? marq.getBoundingClientRect() : null
+      if (mr && mr.bottom > 0 && mr.top < vh && W > 0) {
         if (!reduce) drift += DRIFT * dt
         const p = clamp01((vh - mr.top) / (vh + mr.height))
         const scrub = reduce ? 0 : (0.5 - p) * 2 * SCRUB_VW * window.innerWidth
@@ -152,13 +167,14 @@ export default function WorkList({ projects = WORK_PROJECTS, studies }: { projec
       gsap.ticker.remove(tick)
       window.removeEventListener('resize', onResize)
       offs.forEach((f) => f())
-      gsap.set([track, ...prevs.filter(Boolean)], { clearProps: 'transform' })
+      gsap.set([track, ...prevs].filter(Boolean), { clearProps: 'transform' })
     }
   }, [])
 
   return (
-    <section ref={ref} className="wl" id="work" aria-labelledby="wl-h">
+    <section ref={ref} className={`wl${bare ? ' wl-bare' : ''}`} id="work" aria-labelledby="wl-h">
       {/* the marquee head — decorative repeats; the real heading is below */}
+      {!bare && (
       <div className="wl-marq" aria-hidden="true">
         <div className="wl-marq-track">
           {Array.from({ length: 6 }, (_, i) => (
@@ -168,10 +184,11 @@ export default function WorkList({ projects = WORK_PROJECTS, studies }: { projec
           ))}
         </div>
       </div>
+      )}
 
       <div className="wl-page">
-        <h2 className="wl-k t-small" id="wl-h">
-          {CONTENT.kicker}
+        <h2 className={bare ? 'sr-only' : 'wl-k t-small'} id="wl-h">
+          {bare ? 'Selected work' : CONTENT.kicker}
         </h2>
 
         <ul className="wl-list">
@@ -199,11 +216,13 @@ export default function WorkList({ projects = WORK_PROJECTS, studies }: { projec
           ))}
         </ul>
 
-        <div className="wl-foot">
-          <Button href={CONTENT.cta.href} hoverLabel={CONTENT.cta.hover}>
-            {CONTENT.cta.label}
-          </Button>
-        </div>
+        {!bare && (
+          <div className="wl-foot">
+            <Button href={CONTENT.cta.href} hoverLabel={CONTENT.cta.hover}>
+              {CONTENT.cta.label}
+            </Button>
+          </div>
+        )}
       </div>
     </section>
   )
