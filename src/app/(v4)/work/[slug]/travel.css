@@ -260,3 +260,98 @@
   .cx-cover { padding-top: 6.5rem; }
   .cx-list-in { font-size: 1.1rem; }
 }
+
+/* ============================================================
+   THE END TITLE (page.tsx, 2026-09-19) — the name, heavy, on the
+   void, cut by the project's laptop; the card before the result.
+   ------------------------------------------------------------
+   THE BLEND. The card is ISOLATED and PAINTED (the void, via
+   k-dark on .cx-s): white type in difference is light on the
+   void and dark where it crosses the silver machine. Without
+   the isolation the type would blend with the stage's grain and
+   whatever the run has under it.
+   In flow (phones, reduced motion, no JS) it is the same card,
+   still: the laptop with the name across it.
+   ============================================================ */
+.cx-title {
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding-block: 5rem;
+}
+.cx-title-dev {
+  grid-area: 1 / 1;
+  display: block;
+  width: min(30rem, 86%);
+  height: auto;
+  /* the noir print: the project's colour is everywhere else */
+  filter: grayscale(1) contrast(1.08);
+  user-select: none;
+  pointer-events: none;
+}
+.cx-title-t {
+  grid-area: 1 / 1;
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+  mix-blend-mode: difference;
+  /* THE LINES STRADDLE THE KEYBOARD: the first crosses the screen, the
+     second the palm rest. Across the keys the inversion flips cap by cap
+     and scrambles the letters; across glass and bare metal it reads. */
+  gap: min(30vw, 10rem);
+  font-size: clamp(3rem, 15vw, 6.5rem);
+  line-height: 0.9;
+  font-weight: 700;
+  font-variation-settings: "wght" 740;
+  letter-spacing: -0.05em;
+  text-align: center;
+  pointer-events: none;
+}
+.cx-title-ln {
+  display: block;
+  white-space: nowrap;
+}
+
+@media (min-width: 57.5rem) {
+  /* `.cx.is-live .cx-s` makes every spread a flex ROW with a gap, and it
+     outranks the card's own grid above — restated here, or the laptop and
+     the name sit side by side instead of one over the other */
+  .cx.is-live .cx-title {
+    display: grid;
+    place-items: center;
+    gap: 0;
+    width: 100vw;
+    padding: var(--cx-top) 0 var(--cx-bot);
+  }
+  .cx.is-live .cx-title-dev {
+    width: auto;
+    height: min(38rem, calc(100svh - 9rem));
+    will-change: transform;
+  }
+  .cx.is-live .cx-title-t {
+    font-size: 13.5rem;
+    line-height: 0.86;
+    /* the block spans four fifths of the machine's height: one line at
+       the top of it (the screen), one at the foot (the palm rest); a
+       one-word name takes the screen */
+    gap: 0;
+    height: calc(min(38rem, 100svh - 9rem) * 0.84);
+    justify-content: space-between;
+    /* set a little low, so the second line clears the last row of keys
+       (the lines carry the driver's transforms; the block is free) */
+    transform: translateY(2.75rem);
+  }
+  /* the lines part to either side of centre at rest, so the pass has
+     somewhere to come from and somewhere to go */
+  .cx.is-live .cx-title-ln {
+    will-change: transform;
+  }
+  .cx.is-live .cx-title-ln:nth-child(odd) { align-self: flex-start; margin-left: 5vw; }
+  .cx.is-live .cx-title-ln:nth-child(even) { align-self: flex-end; margin-right: 5vw; }
+  .cx.is-live .cx-title-t { width: 100%; align-items: stretch; }
+}

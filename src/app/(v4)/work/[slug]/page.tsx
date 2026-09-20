@@ -397,6 +397,40 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
         )
       })}
 
+      {/* THE END TITLE (2026-09-19, user: "more sections like this" — the
+          About page's words and the rose — "go for the titles"). The cover
+          says the name THIN over the film; this card says it once more,
+          HEAVY, on the void, cut by the project's own laptop — the title
+          card a film lands on before its credits. It is on the VOID
+          because the laptops are silver: on paper silver is mid-grey,
+          exactly where a difference blend loses its letters; on the void
+          silver is the light thing, so the name is white on the dark and
+          turns dark where it crosses the machine. The render is taken to
+          monochrome here so the inversion stays in the noir register —
+          the project's colour is everywhere else on the page.
+          THE VERB is the track's own: the name's lines carry opposite
+          `data-rate`s, so as the card crosses the screen they pass each
+          other over the laptop, which slides at a third rate (CaseTrack's
+          DEPTH — no new driver). Decoration: the name is already the h1. */}
+      <section className="cx-s cx-title k-dark" aria-hidden="true">
+        <img
+          className="cx-title-dev"
+          data-rate="0.1"
+          src={study.device.front}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          draggable={false}
+        />
+        <p className="cx-title-t">
+          {nameLines.map((ln, i) => (
+            <span key={ln + i} className="cx-title-ln" data-rate={i % 2 ? '0.24' : '-0.24'}>
+              {ln}
+            </span>
+          ))}
+        </p>
+      </section>
+
       {/* THE RESULT — block 5 (required), the invitation, block 6 */}
       <section className="cx-s cx-result k-dark" id="result" aria-labelledby="result-h">
         <span className="cx-quote-bg" aria-hidden="true">
