@@ -1010,3 +1010,110 @@
   .k-agent, .rb-sel { display: none; }
   .rn { transition: none; }
 }
+
+/* ============================================================
+   THE POSTER (ServicePoster.tsx, 2026-09-19) — the interlude
+   between THE FIT and THE PLAN: the tagline at poster scale,
+   the service's object under it, the letters cut by the object.
+   ------------------------------------------------------------
+   It is a SHEET over the sticky crowd ground, like the plan
+   after it: opaque paper, its own stacking level.
+
+   THE BLEND. `.pst-stage` is ISOLATED and PAINTED: difference
+   needs a backdrop to differ from, and without the isolation the
+   type would blend with whatever is behind the section instead
+   of with this paper and this object. White type in difference
+   is ink on the paper and light on the object.
+   ============================================================ */
+.pst {
+  position: relative;
+  z-index: 3;
+  background: var(--surface);
+  overflow: clip;
+}
+.pst-stage {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  min-height: 118svh;
+  padding-block: clamp(5rem, 14svh, 10rem);
+  background: var(--surface);
+}
+
+/* the object, under the type — a box holding the render (the glass
+   holds three copies of it, stacked) */
+.pst-obj {
+  grid-area: 1 / 1;
+  position: relative;
+  display: grid;
+  width: min(46vw, 44rem);
+  user-select: none;
+  pointer-events: none;
+}
+.pst-obj img {
+  grid-area: 1 / 1;
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 78svh;
+  object-fit: contain;
+}
+.pst.is-live .pst-obj,
+.pst.is-live .pst-line {
+  will-change: transform;
+}
+/* THE NOIR GRADES. Difference wants a DARK object: over mid-grey the
+   letters land on mid-grey and vanish. The dashboard and the mockup are
+   dark as rendered; bright chrome is taken down to black chrome, and the
+   clear glass pane is inverted into smoked glass. */
+.pst-obj--chrome { filter: brightness(0.4) contrast(1.45) grayscale(1); }
+.pst-obj--glass  { filter: invert(1) brightness(0.3) contrast(1.9) grayscale(1); }
+
+/* the type, over it */
+.pst-type {
+  grid-area: 1 / 1;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  margin: 0;
+  padding-inline: var(--page-pad);
+  display: flex;
+  flex-direction: column;
+  gap: 0.04em;
+  color: #fff;
+  mix-blend-mode: difference;
+  /* sized off the longest line (--pst-n, its character count), so every
+     tagline fills the width and none runs off it */
+  font-size: clamp(2.75rem, min(10.2vw, calc(185vw / var(--pst-n, 17))), 11.5rem);
+  line-height: 0.92;
+  font-weight: 700;
+  font-variation-settings: "wght" 740;
+  letter-spacing: -0.045em;
+  pointer-events: none;
+}
+.pst-line {
+  display: block;
+  white-space: nowrap;
+}
+.pst-line.is-right {
+  align-self: flex-end;
+  text-align: right;
+}
+
+@media (max-width: 57.5rem) {
+  .pst-stage {
+    min-height: 0;
+    padding-block: var(--section-y);
+  }
+  .pst-obj {
+    width: min(82vw, 30rem);
+  }
+  .pst-type {
+    font-size: clamp(2.5rem, 12.5vw, 6rem);
+  }
+  /* long lines may wrap on a phone rather than run off it */
+  .pst-line {
+    white-space: normal;
+  }
+}

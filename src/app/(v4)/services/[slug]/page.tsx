@@ -7,6 +7,7 @@ import RunBrief from '@/components/v4/RunBrief'
 import RunAnswer from '@/components/v4/RunAnswer'
 import RunFit from '@/components/v4/RunFit'
 import RunPlan from '@/components/v4/RunPlan'
+import ServicePoster from '@/components/v4/ServicePoster'
 import Invitation from '@/components/v4/Invitation'
 import { SCENE } from '@/components/v4/ServiceScene'
 import { RUN_DECK, SERVICE_PAGES, getServicePage } from '@/lib/service-pages'
@@ -138,6 +139,17 @@ export async function generateMetadata({
   }
 }
 
+/** THE POSTER's object per service, and the noir grade it takes
+ *  (ServicePoster.tsx, run.css `.pst-obj--*`) */
+const POSTER: Record<string, { src: string; grade: 'none' | 'chrome' | 'glass' }> = {
+  'web-design': { src: '/services/web-design/main.webp', grade: 'none' },
+  'web-development': { src: '/services/3d-websites/glass-screen.webp', grade: 'glass' },
+  '3d-websites': { src: '/services/3d-websites/knot.webp', grade: 'chrome' },
+  'one-page-websites': { src: '/services/one-page-art/mockup.webp', grade: 'none' },
+  'website-redesign': { src: '/services/redesign-art/arrow.webp', grade: 'chrome' },
+  seo: { src: '/services/seo-art/sphere.webp', grade: 'chrome' },
+}
+
 export default async function ServicePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const page = getServicePage(slug)
@@ -239,6 +251,13 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
         alt={page.plate.alt}
       />
       </div>
+
+      {/* THE POSTER (2026-09-19): the interlude between the fit and the
+          plan — the tagline at poster scale, cut by the service's object.
+          Not a chapter: RunLight's rail does not count it. */}
+      {POSTER[page.slug] && (
+        <ServicePoster tagline={page.tagline} object={POSTER[page.slug].src} grade={POSTER[page.slug].grade} />
+      )}
 
       {/* 4 — THE PLAN: the process */}
       <RunPlan steps={page.process} />
