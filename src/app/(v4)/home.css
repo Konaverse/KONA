@@ -2818,13 +2818,11 @@
 .sv2 {
   position: relative;
   z-index: 2;
-  /* the BOTTOM is nearly closed (2026-09-17, user: "reduce the spacing
-     above and below — I would like it if content of the previous and
-     next section were visible"): the stack's own pin already leaves
-     half a viewport minus half a plate under the last plate, so any
-     padding on top of that is dead paper. Same reason .sk barely
-     clears the statement and §4 opens short — see below. */
-  padding: clamp(7rem, 18vh, 12rem) 0 0;
+  /* THE BOTTOM IS OPEN AGAIN (2026-09-19): it was closed to 0 while the
+     press sheet's pin supplied the room under the statement; the sheet is
+     off the homepage, so the statement carries its own. Kept moderate —
+     the user wants the next section's head in view under it. */
+  padding: clamp(7rem, 18vh, 12rem) 0 clamp(4rem, 9vh, 6rem);
   background: var(--surface);
   color: var(--text);
 }
@@ -3039,3 +3037,325 @@
 /* §5 — THE LIST (.wl-*) lives in src/components/v4/worklist.css since
    2026-09-17: WorkList.tsx imports it, so the homepage and the work hub
    both read it. */
+
+/* ============================================================
+   SECTION 4 — WHAT WE DO, SET AS A SIGN (WhatWeDo.tsx, 2026-09-19).
+   ------------------------------------------------------------
+   Four centred lines in the display face at its heaviest, the
+   third a pair of parentheses holding a picture. Manrope's
+   variable axis carries the weight (the footer's address leans
+   on the same axis); nothing else on the page sets 700, which
+   is what lets this read as a sign rather than a heading.
+   ============================================================ */
+.sg {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  min-height: 100svh;
+  background: var(--surface);
+  color: var(--text);
+  padding-block: clamp(3rem, 7svh, 6rem);
+  overflow-x: clip;
+}
+.sg-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.sg-h {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* the width is the measure: WHAT, the longest word, at roughly six
+     tenths of the page — the reference's own proportion */
+  /* …and bound by the height as well, so the four lines sit inside one
+     viewport the way the reference's do */
+  font-size: clamp(4.75rem, min(19.5vw, 22svh), 21rem);
+  line-height: 0.86;
+  font-weight: 700;
+  font-variation-settings: "wght" 740;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+  text-align: center;
+}
+.sg-w {
+  display: block;
+  /* the mask's crop sits on the line box; a hair of padding keeps the
+     heavy caps' corners from clipping at the top edge */
+  padding-top: 0.04em;
+}
+.sg-line {
+  position: relative;
+  display: block;
+  width: fit-content;
+}
+
+/* the brackets and the picture between them */
+.sg-br {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.05em;
+  line-height: 1;
+  font-weight: 500;
+  font-variation-settings: "wght" 500;
+  letter-spacing: 0;
+}
+.sg-p {
+  display: block;
+  /* the parentheses sit high in the em; nudged to centre on the picture */
+  transform: translateY(-0.06em);
+}
+.sg-pic {
+  display: block;
+  position: relative;
+  width: 0.74em;
+  height: 0.74em;
+  overflow: hidden;
+  background: var(--n-11);
+}
+.sg-pic img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* THE APERTURE: the picture opens once its line is in — from no width
+   to the full square, the parentheses parting as it does */
+.k-reveal.sg-br .sg-pic {
+  width: 0;
+  transition: width var(--d-slow) var(--e-glass);
+  transition-delay: 320ms;
+}
+.k-reveal.sg-br.is-in .sg-pic {
+  width: 0.74em;
+}
+.k-reveal.sg-br .sg-pic img {
+  /* the picture holds its frame while its window widens: sized to the
+     open square and anchored to the centre, so it is unveiled, not
+     stretched */
+  width: 0.74em;
+  left: 50%;
+  translate: -50% 0;
+}
+
+/* the note beside the brackets */
+.sg-note {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  margin-left: clamp(var(--s-4), 2vw, var(--s-6));
+  translate: 0 -50%;
+  white-space: nowrap;
+  font-size: var(--t-body);
+  font-weight: var(--w-regular);
+  font-variation-settings: "wght" 400;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.4;
+}
+.sg-note .k-arrow-link {
+  padding-bottom: 0;
+  color: var(--text-muted);
+}
+.sg-note .k-arrow-link:hover {
+  color: var(--text);
+}
+
+@media (prefers-reduced-motion: reduce), (scripting: none) {
+  .k-reveal.sg-br .sg-pic { width: 0.74em; transition: none; }
+}
+
+@media (max-width: 57.5rem) {
+  .sg {
+    min-height: 0;
+    padding-block: var(--section-y);
+  }
+  /* WHAT fills the phone's width; the note leaves the brackets and
+     stands under the whole sign, so the four lines stay one block */
+  .sg-h {
+    position: relative;
+    font-size: clamp(5rem, 30vw, 9rem);
+    padding-bottom: var(--s-8);
+  }
+  .sg-line {
+    position: static;
+  }
+  .sg-note {
+    left: 50%;
+    top: auto;
+    bottom: 0;
+    margin: 0;
+    translate: -50% 0;
+  }
+}
+
+/* ============================================================
+   SECTION 4b — THE SERVICES, AS SHEETS (ServiceSheets.tsx,
+   2026-09-19). A giant SERVICES over six full-width rows; each
+   row is a sheet that starts tucked and tilted under the row
+   above and slides out flat on the scrub. The driver writes
+   `transform` and `--svs-k` (1 tucked → 0 flat) per row; this
+   file only says what a sheet looks like at each.
+   ============================================================ */
+.svs {
+  position: relative;
+  z-index: 2;
+  background: var(--surface);
+  color: var(--text);
+  padding-bottom: var(--section-y);
+  /* a tipped sheet's right end swings past the page edge */
+  overflow-x: clip;
+}
+
+/* ---------- the heading ---------- */
+.svs-head {
+  padding-top: clamp(var(--s-7), 8vh, var(--s-9));
+  padding-bottom: clamp(var(--s-8), 12vh, var(--s-10));
+}
+.svs-title {
+  margin: 0;
+  /* the sign's own face: Manrope at the heavy end of its axis */
+  font-size: clamp(3.5rem, 14vw, 15rem);
+  line-height: 0.86;
+  font-weight: 700;
+  font-variation-settings: "wght" 740;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+  /* the heavy S overhangs its box on the left; pulled back to the margin */
+  margin-left: -0.05em;
+}
+.svs-title-w {
+  display: block;
+  padding-top: 0.04em;
+}
+
+/* ---------- the rows ---------- */
+.svs-list {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.svs-row {
+  position: relative;
+  transform-origin: 0 0;
+  background: var(--surface-raised);
+  border-top: var(--hair) solid var(--hairline);
+  /* the sheet above throws a little onto the one below */
+  box-shadow: 0 1.5rem 2.5rem -1.75rem rgb(13 16 18 / 0.22);
+}
+.svs-row:last-child {
+  border-bottom: var(--hair) solid var(--hairline);
+}
+.svs-list.is-live .svs-row {
+  will-change: transform;
+}
+/* the shade a covered sheet carries across its top, gone when flat */
+.svs-row::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgb(13 16 18 / 0.2), rgb(13 16 18 / 0.05) 55%, transparent);
+  opacity: var(--svs-k, 0);
+}
+
+.svs-link {
+  display: grid;
+  grid-template-columns:
+    3.75rem
+    minmax(12rem, 1.45fr)
+    minmax(11rem, 1.15fr)
+    minmax(16rem, 1.9fr)
+    clamp(10rem, 14vw, 14rem);
+  column-gap: clamp(var(--s-5), 2.4vw, var(--s-8));
+  align-items: start;
+  padding-block: var(--s-4);
+  color: var(--text);
+  text-decoration: none;
+}
+.svs-no {
+  padding-top: 0.55rem;
+  color: var(--text);
+  font-weight: var(--w-semi);
+  font-variant-numeric: tabular-nums;
+}
+.svs-name {
+  margin: 0;
+  font-size: clamp(1.75rem, 3.1vw, 3.1rem);
+  font-weight: var(--w-light);
+  line-height: 1.05;
+  letter-spacing: var(--ls-h1);
+  transition: transform var(--d-base) var(--e-settle);
+}
+.svs-tags {
+  list-style: none;
+  margin: 0;
+  padding: 0.6rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  color: var(--text-muted);
+}
+.svs-para {
+  margin: 0;
+  padding-top: 0.35rem;
+  max-width: 34ch;
+  font-weight: var(--w-medium);
+  line-height: 1.35;
+}
+.svs-pic {
+  display: block;
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--n-11);
+}
+.svs-pic img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--d-slow) var(--e-glass);
+}
+@media (hover: hover) {
+  .svs-link:hover .svs-name { transform: translateX(0.6rem); }
+  .svs-link:hover .svs-pic img { transform: scale(1.06); }
+}
+.svs-link:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -4px;
+}
+
+@media (max-width: 57.5rem) {
+  .svs-head {
+    padding-bottom: var(--s-7);
+  }
+  .svs-title {
+    font-size: clamp(3.25rem, 17vw, 7rem);
+  }
+  .svs-row {
+    box-shadow: none;
+  }
+  .svs-link {
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    row-gap: var(--s-4);
+    padding-block: var(--s-5);
+  }
+  .svs-no { padding-top: 0.35rem; }
+  .svs-pic,
+  .svs-para,
+  .svs-tags {
+    grid-column: 2;
+  }
+  .svs-tags { padding-top: 0; }
+  .svs-para { padding-top: 0; max-width: none; }
+}

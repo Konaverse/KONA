@@ -53,3 +53,6 @@ next-env.d.ts
 !public/object/*.mp4
 !public/home/hero-loop.mp4
 !public/object/*.webm
+
+# reference captures and measurements of other sites — scratch, never shipped
+extract/

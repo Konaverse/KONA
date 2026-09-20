@@ -4,9 +4,8 @@ import HeroPortrait from '@/components/v4/HeroPortrait'
 import HeroPeel from '@/components/v4/HeroPeel'
 import ClaimEntrance from '@/components/v4/ClaimEntrance'
 import BlockReveal from '@/components/v4/BlockReveal'
-import SolveStack from '@/components/v4/SolveStack'
-import HubBench from '@/components/v4/HubBench'
-import { SERVICE_PAGES } from '@/lib/service-pages'
+import WhatWeDo from '@/components/v4/WhatWeDo'
+import ServiceSheets from '@/components/v4/ServiceSheets'
 import WorkList from '@/components/v4/WorkList'
 import { CASE_STUDIES } from '@/lib/case-studies'
 import Invitation from '@/components/v4/Invitation'
@@ -63,30 +62,6 @@ export const metadata: Metadata = {
  *  the user writes the real line. */
 const SOLVE_LINE =
   'Your site looks like everyone else’s. Visitors leave before they understand what you do. It has not kept up with the business, and where people actually search, you are nowhere. That is what we solve.'
-
-/** §3's SHEET (2026-09-17). SOLVE_LINE names four symptoms in one
- *  breath; the sheet names them again one word at a time, each word cut
- *  by the plate it sits on. A tag and an answer line rode with each of
- *  these until the user cut them — "just basically remove everything
- *  except the big text in the middle" — so the word is all that is left,
- *  and the statement above carries the meaning.
- *
- *  WORDS ARE A FIRST DRAFT and the PICTURES ARE PLACEHOLDER — the house
- *  noir plates, deliberately NOT the case-study covers, because §5 right
- *  below is the work. Every plate has to be DARK (see SolveStack.tsx). */
-const SOLVE_BEATS = [
-  { word: 'TEMPLATE', src: '/work/city.webp', alt: 'One lit tower standing out of a dark skyline' },
-  { word: 'FORGETTABLE', src: '/work/corridor.webp', alt: 'Figures at the threshold of a corridor opening onto light' },
-  { word: 'OUTGROWN', src: '/work/orb.webp', alt: 'People crossing the floor of a vast hall, seen from above' },
-  /* NOT fog.webp, though it suited the word: the sheet's word lies over
-     the plate in difference blend, and a mid-grey picture sends it
-     straight back to mid-grey. Every plate here has to be dark. */
-  { word: 'INVISIBLE', src: '/work/hall.webp', alt: 'A shaft of light crossing a dark hall' },
-] as const
-
-/** the bench's lead — the hub's own line */
-const BENCH_LEAD =
-  'Our websites are the result when you combine a personalised structure, layout and motion. When you work with us, we make sure your website stands out and is remembered.'
 
 const CLAIM_LINE =
   'Konaverse is a web studio for brands that want their site to carry the story, not just the information.'
@@ -172,36 +147,25 @@ export default function HomePage() {
           <p className="sv2-k t-small">What we solve</p>
           <BlockReveal as="h2" className="sv2-p" id="sv2-h" text={SOLVE_LINE} />
         </div>
-        {/* THE SPREAD (2026-09-17, the user's recording "pinned stack
-            image section.mp4": "recreate this component and make it a
-            part of the what we solve — text a little above, component
-            below", then "make the plate smaller and let's design a
-            section around it"). The statement scrolls away; a pinned
-            spread holds — the answer large on the left, the deck on the
-            right, a step rail under both — and one scroll deals a new
-            picture and a new answer together. SolveStack.tsx carries the
-            measurements the deck was built from. */}
-        <SolveStack beats={SOLVE_BEATS} />
+        {/* THE PRESS SHEET (SolveStack — the pinned deck of plates under
+            TEMPLATE / FORGETTABLE / OUTGROWN / INVISIBLE) is OFF the
+            homepage (2026-09-19, user: "remove the section with the cards
+            before it"). The statement stands alone and §4's sign follows
+            it. SolveStack.tsx and its rules in home.css stay, unimported. */}
       </section>
 
-      {/* §4 — THE WORKBENCH (2026-09-18, user: "in the homepage replace
-          the services section cards with the services bento grid we have
-          in the services hub"): the hub's bento, the same component — six
-          artboards whose scenes play under the hand, tipping up out of the
-          fold, and the dark card that sends the undecided to the
-          Invitation's prompt. The six void cards (ServiceCards.tsx, and
-          the threshold and accordion before them) stay in the tree,
-          unimported. */}
-      <HubBench
-        lead={BENCH_LEAD}
-        services={SERVICE_PAGES.map((p) => ({
-          slug: p.slug,
-          name: p.name,
-          tagline: p.tagline,
-          blurb: p.blurb,
-          facts: p.facts.map((f) => ({ value: f.value, label: f.label })),
-        }))}
-      />
+      {/* §4 — WHAT WE DO, SET AS A SIGN (WhatWeDo, 2026-09-19, user: a
+          typographic block from a screenshot — WHAT / WE / ( picture ) /
+          DO — in place of the hub's bento, which stays on /services).
+          The six void cards (ServiceCards.tsx), the threshold and the
+          accordion stay in the tree, unimported. */}
+      <WhatWeDo />
+
+      {/* §4b — THE SERVICES, AS SHEETS (ServiceSheets, 2026-09-19, user: a
+          reference frame): a giant SERVICES over six full-width rows, each
+          a sheet that slides out from under the row above, tilted, and
+          settles flat on the scrub. Each row links to its service page. */}
+      <ServiceSheets />
 
       {/* §5 — THE LIST (WorkList, 2026-09-14): igniteagency.com's selected
           work rebuilt from measurement — a marquee head, hairline rows
