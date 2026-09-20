@@ -5,7 +5,7 @@ import FluidCursor from '@/components/v4/FluidCursor'
 import GrainField from '@/components/v4/GrainField'
 import PageTransition from '@/components/v4/PageTransition'
 import PlateLift from '@/components/v4/PlateLift'
-import SiteFooter from '@/components/v4/SiteFooter'
+import FooterGate from '@/components/v4/FooterGate'
 import '@/styles/tokens.css'
 
 /**
@@ -56,8 +56,10 @@ export default function V4Layout({ children }: { children: React.ReactNode }) {
           {children}
           {/* the footer is part of the page, so it rides the transition
               sheet with it; the under-reveal is self-contained (see
-              SiteFooter.tsx), so no page root needs to know it is here */}
-          <SiteFooter />
+              SiteFooter.tsx), so no page root needs to know it is here.
+              FooterGate leaves it off the pages that end without one
+              (the work hub). */}
+          <FooterGate />
         </PageTransition>
       </SmoothScroll>
     </div>

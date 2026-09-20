@@ -767,3 +767,273 @@
   .wk-card-name { font-size: 1.7rem; }
   .wk-card-line { margin: 0.6rem 0 1.2rem; font-size: 0.95rem; }
 }
+
+/* ============================================================
+   /work — THE CASCADE (WorkCascade.tsx, 2026-09-19).
+   ------------------------------------------------------------
+   THE FINAL STATE LIVES HERE, not in JS: a slot sits at the
+   stage's centre plus its index's share of one diagonal step.
+     --wc-w / --wc-h  the card, 16:10
+     --wc-dx  the step across: a quarter of a card, or whatever
+              lets the whole run keep inside nine tenths of the width
+     --wc-dy  the step down: the run is TALLER than the stage on
+              purpose, so it leaves the screen at both ends — the
+              reference's picture, and the scroll's promise
+   The entrance only plays the way INTO this picture and clears
+   everything it wrote, so resize, reduced motion and no JS all
+   land on the same layout.
+
+   SLOTS CENTRE WITH MARGINS, NOT A TRANSFORM. GSAP reads a CSS
+   translate(-50%) off the computed matrix as PIXELS and would
+   stack its own x/y on top; with margins the transform is GSAP's
+   alone and a rect read before the play is pure layout.
+   ============================================================ */
+.wc {
+  /* THE CARD IS THE COVER'S OWN SHAPE, 16:10 (2026-09-19, user: "make the
+     cards like their images' size") — it began as the reference's square.
+     Sized off the width, capped so its height stays near two fifths of
+     the screen. */
+  --wc-w: min(36vw, 67svh);
+  --wc-h: calc(var(--wc-w) / 1.6);
+  --wc-r: clamp(0.85rem, 1.3vw, 1.35rem);
+  /* PLACES ARE WHOLE NUMBERS, −N/2 … N/2−1: one card stands exactly at
+     the centre — the travel's focus slot */
+  --wc-mid: calc(var(--wc-n) / 2);
+  /* a wide card steps a smaller share of its width than of its height,
+     so what each card shows of itself — a strip down its left, a strip
+     along its top — stays about as deep one way as the other */
+  --wc-dx: min(calc(var(--wc-w) * 0.24), calc((90vw - var(--wc-w)) / (var(--wc-n) - 1)));
+  /* THE LOOP'S CONDITION: a card wraps from the run's foot to its head,
+     and that has to happen OFF SCREEN — so N steps must span the screen
+     plus a card. A third of a card where the screen is short enough to
+     allow it; otherwise whatever that condition asks. */
+  --wc-dy: max(calc(var(--wc-h) * 0.36), calc((100svh + var(--wc-h)) / var(--wc-n) + 4px));
+  position: relative;
+  /* THE SECTION CONTAINS ITS OWN STACK. The travel writes z-index on the
+     slots (about 60 to 140) and the words sit at 400; without a stacking
+     context here those numbers compete with the whole page, and the nav
+     (bar 50, open menu 51) loses — the cards painted over the open menu.
+     Isolated, the section is one layer at the page's level and the menu
+     is over it. The nav's blend is unharmed: an isolated group is still
+     part of the backdrop it blends with. */
+  isolation: isolate;
+  /* the reference's flat, cool ground: a step darker than the page's
+     paper, so a white site's card still has an edge */
+  background: var(--n-3);
+  color: var(--text);
+}
+.wc-stage {
+  position: relative;
+  height: 100svh;
+  min-height: 34rem;
+  overflow: clip;
+  /* the travel reads the hand itself: no native pan, no text selection
+     under a drag */
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.wc.is-live .wc-stage { cursor: grab; }
+.wc.is-dragging .wc-stage { cursor: grabbing; }
+/* a drag is not a hover: the cards stop answering the pointer under it */
+.wc.is-dragging .wc-card { pointer-events: none; }
+.wc-card { -webkit-user-drag: none; }
+.wc-run {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+/* until the driver has parked the deck, the run is not shown: otherwise
+   the finished cascade flashes for a frame before the plate. No JS and
+   reduced motion never park, and are let through below. */
+.wc:not(.is-playing):not(.is-done) .wc-run {
+  visibility: hidden;
+}
+@media (prefers-reduced-motion: reduce), (scripting: none) {
+  .wc:not(.is-playing):not(.is-done) .wc-run { visibility: visible; }
+}
+/* …except THE PLATE, which CSS shows from the first paint: the last slot,
+   the whole stage, square corners — exactly what the driver parks it as a
+   few hundred ms later, so hydration changes nothing on screen and a hard
+   load never opens on an empty ground. Only where the entrance will
+   actually run; a browser without the `scripting` feature skips this and
+   simply waits for the driver. */
+@media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
+  .wc:not(.is-playing):not(.is-done) .wc-slot:last-child {
+    visibility: visible;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  /* and the words wait with the deck: they arrive as it lands, so they
+     must not sit over the plate in the frames before the driver runs */
+  .wc:not(.is-playing):not(.is-done) .wc-open {
+    opacity: 1;
+  }
+  .wc:not(.is-playing):not(.is-done) .wc-ent,
+  .wc:not(.is-playing):not(.is-done) .wc-title {
+    visibility: hidden;
+  }
+}
+
+.wc-slot {
+  position: absolute;
+  left: calc(var(--wc-cx, 50%) + (var(--i) - var(--wc-mid)) * var(--wc-dx));
+  top: calc(50% + (var(--i) - var(--wc-mid)) * var(--wc-dy));
+  width: var(--wc-w);
+  height: var(--wc-h);
+  margin: calc(var(--wc-h) / -2) 0 0 calc(var(--wc-w) / -2);
+  border-radius: var(--wc-r);
+  /* a whisper, so two dark sites overlapping still read as two cards */
+  box-shadow: 0 0.75rem 2.5rem -0.75rem rgb(13 16 18 / 0.28);
+}
+.wc.is-playing .wc-slot,
+.wc.is-live .wc-slot {
+  will-change: transform;
+}
+/* THE TRAVEL owns the place: every slot stands at the centre and the
+   driver's transform carries it to where its wrapped place puts it */
+.wc.is-live .wc-slot {
+  left: var(--wc-cx, 50%);
+  top: 50%;
+}
+/* the step, as a box the driver can measure */
+.wc-probe {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--wc-dx);
+  height: var(--wc-dy);
+  visibility: hidden;
+  pointer-events: none;
+}
+.wc-card {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+  background: var(--n-11);
+  transition: transform var(--d-base) var(--e-settle);
+}
+/* THE OPENING FRAME: over the plate's cover, and invisible except while
+   the entrance is wearing it (the pre-driver state below, then GSAP) */
+.wc-card { position: relative; }
+.wc-card .wc-open {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.wc-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--d-slow) var(--e-glass);
+}
+@media (hover: hover) {
+  /* the lift waits for the entrance: a card under a parked pointer
+     must not jump while the deck is still being dealt */
+  /* THE PULL: up-left, out from under the neighbour that covers it */
+  .wc.is-done .wc-card:hover { transform: translate3d(-0.9rem, -0.9rem, 0); }
+  .wc.is-done .wc-card:hover img { transform: scale(1.04); }
+}
+.wc-card:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 4px;
+}
+
+/* THE WORDS: THE SPINE AND THE NAME (2026-09-19, user: "make it vertical,
+   taking a good amount of space"). The title stands up the left edge,
+   reading bottom to top, in the light display voice, sized off the
+   screen's HEIGHT so it always runs about three quarters of the way up.
+   That strip is free: the run only touches the left edge in the top sixth
+   of the screen, fanned open or not. The focused project's name sits
+   small at the title's foot. */
+.wc-words {
+  position: absolute;
+  left: var(--page-pad);
+  bottom: clamp(1.5rem, 4svh, 2.75rem);
+  /* over the run, whose z-order the travel writes (about 60 to 140) */
+  z-index: 400;
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(1rem, 1.6vw, 1.75rem);
+  pointer-events: none;
+}
+.wc-title {
+  margin: 0;
+  /* the crop the spine rises through */
+  overflow: clip;
+  font-size: clamp(3rem, 12.8svh, 8.5rem);
+  font-weight: var(--w-light);
+  line-height: 1;
+  letter-spacing: -0.05em;
+  /* a light capital's side bearing, taken back to the margin */
+  margin-left: -0.08em;
+}
+.wc-title-m {
+  display: block;
+}
+.wc-title-t {
+  display: block;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  white-space: nowrap;
+}
+.wc-now {
+  margin: 0 0 0.55rem;
+  font-size: var(--t-body);
+  color: var(--text-muted);
+  min-height: 1.6em;
+  white-space: nowrap;
+}
+
+/* a tall screen: the card is sized off the width, the run steepens */
+@media (max-aspect-ratio: 1 / 1) {
+  .wc {
+    --wc-w: min(62vw, 58svh);
+    /* a landscape card on a tall screen: the step down has to be most of
+       a card, or eight of them never reach the screen's ends */
+    --wc-dy: max(calc(var(--wc-h) * 0.62), calc((100svh + var(--wc-h)) / var(--wc-n) + 4px));
+    /* the run stands right of centre, so its foot clears the corner the
+       words live in: ink over a dark card is no words at all */
+    --wc-cx: 57%;
+    --wc-dx: min(calc(var(--wc-w) * 0.24), calc((88vw - var(--wc-w)) / (var(--wc-n) - 1)));
+  }
+  /* the corner cannot be kept clear here — the run is nearly the screen's
+     width and the focus line is a whole name — so the words stand on a
+     strip of the ground that the run's foot dissolves into */
+  .wc-words {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-width: none;
+    padding: 2.75rem var(--page-pad) clamp(1rem, 3svh, 1.5rem);
+    background: linear-gradient(to top, var(--n-3) 62%, rgb(221 226 227 / 0));
+  }
+  /* no spine here: the run is the screen's width, the left edge is its */
+  .wc-words {
+    display: block;
+  }
+  .wc-title {
+    font-size: var(--t-h3);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--ls-h2);
+    margin: 0 0 var(--s-2);
+  }
+  .wc-title-t {
+    writing-mode: horizontal-tb;
+    transform: none;
+  }
+  .wc-now {
+    margin: 0;
+    font-size: var(--t-small);
+    white-space: normal;
+  }
+}

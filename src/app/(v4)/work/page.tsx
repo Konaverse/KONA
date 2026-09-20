@@ -1,9 +1,8 @@
 import type { Metadata } from 'next'
-import WorkHero, { type HeroProject } from '@/components/v4/WorkHero'
-import Button from '@/components/v4/Button'
+import WorkCascade, { type CascadeCard } from '@/components/v4/WorkCascade'
 import { WORK_PROJECTS } from '@/lib/work-projects'
 import { getCaseStudy } from '@/lib/case-studies'
-import { CALENDLY_URL, SITE_URL } from '@/lib/site'
+import { SITE_URL } from '@/lib/site'
 import './work.css'
 
 /**
@@ -64,27 +63,40 @@ export const metadata: Metadata = {
   },
 }
 
-/** THE STATEMENT, line by line (the breaks hold: the type is rem); the
- *  last line is set in ink */
-const STATEMENT = ['We don’t build to impress, we', 'build to bring your vision to life.', 'If it impresses, then so be it.'] as const
-
-/** how many captures of each project the reel cuts through */
-const REEL_EACH = 4
+/** THE RUN (WorkCascade), top-left to bottom-right: one cover a project
+ *  (the user's covers, 2026-09-19 — public/work/covers/<slug>.webp, with a
+ *  960w sibling). A slug that is in WORK_PROJECTS takes its name, its line
+ *  and its case study from there; the four that are not yet carry their
+ *  own name and have NO destination — the card is a picture, not a link —
+ *  until they get a case study or a live URL. Light and dark alternate
+ *  down the run so neighbours separate. THE LAST ONE IS THE PLATE — the
+ *  card the page opens on at full bleed: a light one, so the nav's ink
+ *  reads over it, and one with no window corners baked into the shot. */
+const RUN: { slug: string; name?: string }[] = [
+  { slug: 'los-santos-barbers' },
+  { slug: 'lumiere-eclat' },
+  { slug: 'chris-n-clean', name: 'Chris N. Clean' },
+  { slug: 'velricon' },
+  { slug: 'dt-zankatian' },
+  { slug: 'heimat-group', name: 'Heimat Group' },
+  { slug: 'tdk', name: 'TDK' },
+  { slug: 'city-arcade', name: 'City Arcade' },
+]
 
 export default function WorkPage() {
   const projects = WORK_PROJECTS
 
-  /* the slider's roster: where each project goes (its case study, else
-     the live site), its filmstrip capture, the captures its reel cuts */
-  const roster: HeroProject[] = projects.map((p) => ({
-    slug: p.slug,
-    name: p.name,
-    service: p.service,
-    year: p.year,
-    href: getCaseStudy(p.slug) ? `/work/${p.slug}` : p.href ?? '/contact',
-    image: p.image,
-    shots: [p.image, ...(p.frames ?? []).slice(1, REEL_EACH)],
-  }))
+  const cards: CascadeCard[] = RUN.map(({ slug, name }) => {
+    const p = projects.find((x) => x.slug === slug)
+    return {
+      slug,
+      name: p?.name ?? name ?? slug,
+      meta: p ? `${p.service}, ${p.year}` : '',
+      href: p ? (getCaseStudy(slug) ? `/work/${slug}` : p.href) : undefined,
+      src: `/work/covers/${slug}.webp`,
+      small: `/work/covers/${slug}-960.webp`,
+    }
+  })
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -121,21 +133,22 @@ export default function WorkPage() {
   return (
     <main className="wk">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      {/* the hero's entrance parks its lines and buttons (work.css
-          .wh-ent); the no-JS page undoes it */}
+      {/* work.css hides the run until the driver parks the deck; a browser
+          that does not know the `scripting` media feature needs telling */}
       <noscript>
-        <style>{`.wh-ent{opacity:1!important;transform:none!important}`}</style>
+        <style>{`.wc .wc-run{visibility:visible!important}`}</style>
       </noscript>
 
-      {/* §1 — THE HERO */}
-      <WorkHero lines={STATEMENT} projects={roster}>
-        <Button href="/contact" hoverLabel="Say hello">
-          Contact us
-        </Button>
-        <Button href={CALENDLY_URL} external ghost hoverLabel="Pick a time">
-          Book a call
-        </Button>
-      </WorkHero>
+      {/* THE CASCADE (2026-09-19): the page opens on one card at full
+          bleed, draws in to card size, and deals the run. The old hub
+          (WorkHero — the statement and the slider) is parked, unimported,
+          with its rules above in work.css. No scroll behaviour yet. */}
+      <WorkCascade
+        cards={cards}
+        title="Selected work"
+        line="Every one from a blank file."
+        opener={{ src: '/work/covers/opener.webp', small: '/work/covers/opener-960.webp' }}
+      />
 
     </main>
   )
