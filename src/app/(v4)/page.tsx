@@ -54,16 +54,17 @@ export const metadata: Metadata = {
  *
  * hrefs point at the LIVE sites until case-study routes exist — the
  * choreography wants each sheet linking to its own case study eventually.
- * YEARS confirmed by the user 2026-08-28: Tzankatian 2026, Los Santos
- * 2025, Lumière 2026.
+ * YEARS confirmed by the user 2026-08-28: Los Santos 2025, Lumière 2026.
+ * Velricon replaced Tzankatian 2026-09-25; its year and line are the
+ * /work roster's first drafts, still to confirm.
  */
 const FEATURED: SheetProject[] = [
   {
-    title: 'Dimitris Tzankatian',
-    line: 'A videographer’s site that opens like his showreel — every frame with a purpose.',
-    year: '2026',
-    href: 'https://dtzankatian.com',
-    image: '/work/tzankatian.webp',
+    title: 'Velricon',
+    line: 'Financial leadership, given a site with the same composure.',
+    year: '2025',
+    href: 'https://velricon.com',
+    image: '/work/velricon.webp',
   },
   {
     title: 'Los Santos Barbershop',
