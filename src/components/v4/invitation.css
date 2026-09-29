@@ -2,11 +2,11 @@
    THE INVITATION — .inv-* — the site's CTA (Invitation.tsx has the
    what and the why). SECOND BUILD, 2026-09-18: paper, THE FIELD in ink
    under everything (FooterField tone="paper", styled in tokens.css),
-   the line, THE ASK (a real prompt) with Book beside it, the starters,
-   the four sites as plates at the flanks, the agent's cursor.
-   Desktop lengths are rem (the picture scales); the whole section sits
-   inside one screen at the 1534 x 730 reference. Nothing is a rule, a
-   label or a number.
+   the line, THE ASK (a real prompt) with Book beside it, the starters.
+   THIRD CUT, 2026-09-29: the site plates at the flanks and the agent's
+   cursor are gone. Desktop lengths are rem (the picture scales); the
+   whole section sits inside one screen at the 1534 x 730 reference.
+   Nothing is a rule, a label or a number.
    ============================================================ */
 .inv {
   position: relative;
@@ -55,12 +55,11 @@
   box-shadow: 0 0.06rem 0.12rem rgb(21 23 26 / 0.06), 0 1.6rem 3.2rem -1rem rgb(21 23 26 / 0.3), inset 0 0 0 1px rgb(21 23 26 / 0.55);
 }
 .inv-ask-mark { flex: none; width: 1.15rem; height: 1.15rem; color: var(--ink); transition: transform 0.9s var(--e-settle); }
-.inv-ask.is-agent .inv-ask-mark,
 .inv-ask:focus-within .inv-ask-mark { transform: rotate(90deg) scale(1.12); }
-.inv-field { position: relative; flex: 1; min-width: 0; text-align: left; }
 .inv-input {
   display: block;
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   padding: 0;
   border: 0;
   outline: none;
@@ -68,33 +67,10 @@
   font: inherit;
   font-size: 1.1rem;
   line-height: 1.4;
+  text-align: left;
   color: var(--ink);
 }
-.inv-input::placeholder { color: var(--n-6); opacity: 1; transition: color var(--d-quick) linear; }
-.inv-ask.is-agent .inv-input::placeholder { color: transparent; }
-/* what the agent types: over the empty input, never in it */
-.inv-ghost {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1.1rem;
-  line-height: 1.4;
-  color: var(--ink);
-  white-space: nowrap;
-  pointer-events: none;
-}
-.inv-ask.is-agent .inv-ghost::after {
-  content: '';
-  display: inline-block;
-  width: 0.09rem;
-  height: 1.15em;
-  margin-left: 0.12rem;
-  vertical-align: -0.2em;
-  background: var(--ink);
-  animation: inv-caret 0.9s steps(1, end) infinite;
-}
-@keyframes inv-caret { 50% { opacity: 0; } }
+.inv-input::placeholder { color: var(--n-6); opacity: 1; }
 .inv-send {
   flex: none;
   display: grid;
@@ -148,68 +124,10 @@
   transition: background-color var(--d-base) var(--e-settle), color var(--d-base) var(--e-settle), transform var(--d-base) var(--e-settle);
 }
 
-/* ---------- THE WORK: the plates at the flanks ---------- */
-.inv-plates { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
-.inv-plate { position: absolute; margin: 0; aspect-ratio: 1.9; will-change: transform; }
-.inv-plate-in {
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  border-radius: 1.2rem;
-  background: var(--n-11);
-  box-shadow: 0 1.4rem 2.8rem -1.2rem rgb(21 23 26 / 0.4), 0 0.3rem 0.8rem -0.3rem rgb(21 23 26 / 0.16);
-  pointer-events: auto;
-  transition: box-shadow 0.7s var(--e-settle);
-  will-change: transform;
-}
-.inv-plate img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  /* mono until a hand, or the agent, is on it — on the IMG only (a
-     filter on an ancestor of the fluid canvas kills its blend) */
-  filter: grayscale(1) contrast(1.04);
-  transition: filter 0.8s var(--e-glass), transform 1.3s var(--e-glass);
-}
-.inv-plate.is-held img { filter: none; transform: scale(1.05); }
-.inv-plate.is-held .inv-plate-in { box-shadow: 0 2.4rem 4rem -1.4rem rgb(21 23 26 / 0.5), 0 0.5rem 1.2rem -0.4rem rgb(21 23 26 / 0.2); }
-.inv-plate-1 { left: 2.5rem; top: 5rem; width: 17.5rem; }
-.inv-plate-2 { left: 7rem; bottom: 4.5rem; width: 14rem; }
-.inv-plate-3 { right: 3rem; top: 7.5rem; width: 15.5rem; }
-.inv-plate-4 { right: 4.5rem; bottom: 3.5rem; width: 17.5rem; }
-
-/* ---------- the agent's cursor ---------- */
-.inv-agent {
-  position: absolute;
-  left: 0;
-  top: 0;
-  z-index: 3;
-  display: flex;
-  align-items: flex-start;
-  color: var(--ink);
-  opacity: 0;
-  pointer-events: none;
-  will-change: transform;
-}
-.inv-agent svg { width: 1.3rem; height: 1.3rem; filter: drop-shadow(0 0.15rem 0.3rem rgb(21 23 26 / 0.3)); }
-.inv-agent b {
-  margin: 1.05rem 0 0 -0.1rem;
-  padding: 0.12rem 0.5rem;
-  border-radius: 1rem;
-  background: var(--ink);
-  color: var(--n-0);
-  font-size: 0.68rem;
-  font-weight: var(--w-medium);
-  line-height: 1.3;
-}
-
 @media (hover: hover) {
   .inv-send:hover { transform: scale(1.07); }
   .inv-send:hover svg { transform: translate3d(0.12rem, 0, 0); }
   .inv-chip:hover { background: var(--ink); color: var(--n-0); transform: translate3d(0, -0.1rem, 0); }
-  .inv-plate-in:hover img { filter: none; transform: scale(1.05); }
 }
 
 @media (max-width: 57.5rem) {
@@ -219,11 +137,7 @@
   .inv-row { flex-direction: column; align-items: flex-start; gap: 1rem; margin-top: 2.4rem; }
   .inv-ask { flex: none; width: 100%; height: 3.6rem; }
   .inv-chips { justify-content: flex-start; }
-  /* no plates on a phone (user, 2026-08-26), so no agent either */
-  .inv-plates,
-  .inv-agent { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .inv-agent { display: none; }
   .inv-note { transition: none; }
 }
