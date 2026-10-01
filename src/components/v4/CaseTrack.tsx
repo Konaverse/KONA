@@ -366,7 +366,9 @@ export default function CaseTrack({
       })
       if (now !== chapter) {
         chapter = now
-        isleRoll.style.transform = `translate3d(0, ${-now * 100}%, 0)`
+        /* one LINE per chapter (1.3rem, .cx-isle-roll span) — a % here is
+           of the whole roll, and the first step pushed every title out */
+        isleRoll.style.transform = `translate3d(0, ${-now * 1.3}rem, 0)`
         isle.querySelectorAll('.cx-isle-list li').forEach((li, i) => li.classList.toggle('is-on', i === now))
       }
       isle.classList.toggle('is-away', r.bottom < vh * 0.6)

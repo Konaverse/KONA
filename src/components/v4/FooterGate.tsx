@@ -20,7 +20,7 @@ import { ROUTES } from '@/lib/site'
  * EXACT MATCH: the work hub only. The case studies under /work/… keep
  * their footer.
  */
-const BARE: string[] = [ROUTES.work]
+const BARE: string[] = [ROUTES.work, ROUTES.services]
 
 export default function FooterGate() {
   const pathname = usePathname()

@@ -154,6 +154,8 @@ export default function ServicePoster({
   return (
     <section className="pst" ref={ref} aria-label={tagline}>
       <div className="pst-stage" style={{ '--pst-n': longest } as React.CSSProperties}>
+        {/* the page's hover dots, on this painted ground (RunGround places it) */}
+        <span className="ro-dots" aria-hidden="true" />
         <div className={`pst-obj pst-obj--${grade}`} aria-hidden="true">
           {Array.from({ length: copies }, (_, i) => (
             <img key={i} src={object} alt="" loading="lazy" decoding="async" draggable={false} />

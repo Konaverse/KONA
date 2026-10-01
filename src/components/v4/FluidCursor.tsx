@@ -75,11 +75,22 @@ export default function FluidCursor({
   blend?: 'difference' | 'exclusion'
 }) {
   const [on, setOn] = useState(false)
+  /* THE MENU'S FREEZE (UnderlayMenu, 2026-09-30): while the page is frozen
+     under the menu the trail has nothing to do, and traced, this loop was
+     the largest cost left in the menu's open. It stops (frameloop 'never')
+     and the canvas fades, so no trail is left standing over the panel. */
+  const [paused, setPaused] = useState(false)
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     if (!window.matchMedia('(hover: hover)').matches) return
     setOn(true)
+  }, [])
+
+  useEffect(() => {
+    const onFreeze = (e: Event) => setPaused(Boolean((e as CustomEvent<boolean>).detail))
+    window.addEventListener('k:freeze', onFreeze)
+    return () => window.removeEventListener('k:freeze', onFreeze)
   }, [])
 
   if (!on) return null
@@ -94,6 +105,7 @@ export default function FluidCursor({
       // difference: the core is a hard inversion now, and a hard edge upscaled
       // ten times is a visibly blocky one. Still under native, so still cheap.
       dpr={[0.5, 1]}
+      frameloop={paused ? 'never' : 'always'}
       gl={{ antialias: false, stencil: false, depth: false }}
       style={{
         position: 'fixed',
@@ -105,6 +117,8 @@ export default function FluidCursor({
         // identity, so this is what makes the page show through untouched
         // everywhere the trail is not.
         background: 'black',
+        opacity: paused ? 0 : 1,
+        transition: 'opacity 0.25s ease',
       }}
       aria-hidden="true"
     >

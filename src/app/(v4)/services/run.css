@@ -414,50 +414,279 @@
 .rb-sel-tag:empty { display: none; }
 
 /* ============================================================
-   2 · THE ANSWER (RunAnswer.tsx)
-   BASE: the prose in ink, the three facts resolved, side by side.
-   LIVE (2026-09-18: UNPINNED): the stage stands in flow on THE GROUND
-   it shares with the fit; words are grey until the read-head passes
-   them, facts pending until plucked, and the read is the section's own
-   crossing.
+   1 · THE HERO — THE SUNBURST (RunHero.tsx, 2026-09-30)
+   Replaces THE BRIEF above (its `.rb-*` rules stay, parked with
+   RunBrief.tsx). The user's reference poster in the house palette: one
+   lowercase word, fitted edge to edge and cut by the frame; a ring of
+   hairlines behind it; the h1 on top in ink; the two CTAs under it; a
+   foot line. THE VALUES are the reference's: the word is LIGHT (a pale
+   step of the ramp, as the reference's lime is light) so the dark
+   heading reads over it — an ink word under a difference-blend h1 was
+   tried first and the heading drowned in the letterforms.
+   STILL: nothing enters, nothing loops. The dots show only around the
+   pointer.
+   The ground and its hover dots are `.ro-ground` (RunGround.tsx), shared
+   with the statement after the hero.
    ============================================================ */
-.ra-stage {
-  position: relative;
+.ro {
+  --ro-cy: 47%;
+  /* how far past the frame the word runs (1 = edge to edge) */
+  --ro-span: 1.045;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 41rem;
-  column-gap: 5rem;
-  align-items: center;
-  padding: 5.4rem var(--page-pad) 4.6rem;
+  place-items: center;
+  height: 100svh;
+  min-height: 40rem;
+  padding: 0 var(--page-pad);
+  overflow: hidden;
 }
-.ra.is-live .ra-stage { min-height: 42rem; }
-.ra-p { margin: 0; }
-.ra-p1 { font-size: 2.05rem; font-weight: 300; line-height: 1.32; letter-spacing: -0.026em; }
-.ra-p2 { max-width: 40rem; margin-top: 1.8rem; font-size: 1.2rem; line-height: 1.5; }
+/* THE GROUND (RunGround.tsx): one paper under the WHOLE page — lit at
+   the hero's centre, the page paper below — and the hub's dots, seen
+   only around the pointer. The poster and the process card paint their
+   own grounds and carry their own dots layer (RunGround places each). */
+.ro-ground {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  background: radial-gradient(90rem 52rem at 50% 50svh, var(--n-0) 0%, var(--n-1) 60%, var(--n-1) 100%);
+}
+.sr > .ro-ground > header,
+.sr > .ro-ground > .ra { position: relative; z-index: 1; }
+/* the sections with nothing to paint show the ground (and its dots) */
+.sr .inv,
+.sr .rs-foot { background: transparent; }
+.ro-dots {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: radial-gradient(var(--n-6) 1.1px, transparent 1.4px);
+  background-size: 2.1rem 2.1rem;
+  -webkit-mask-image: radial-gradient(24rem circle at var(--ro-x, 50%) var(--ro-y, 22rem), #000 0%, rgb(0 0 0 / 0.5) 45%, transparent 100%);
+  mask-image: radial-gradient(24rem circle at var(--ro-x, 50%) var(--ro-y, 22rem), #000 0%, rgb(0 0 0 / 0.5) 45%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.45s var(--e-glass);
+  pointer-events: none;
+}
+.ro-dots.is-hand { opacity: 1; }
+/* the poster's layer: on its paper, under the object and the type */
+.pst-stage > .ro-dots { z-index: 0; }
+/* the process card's layer: light dots on the void */
+.rq-dots { z-index: 0; border-radius: inherit; background-image: radial-gradient(var(--n-8) 1.1px, transparent 1.4px); }
+
+/* THE RAYS: 1px at any size (non-scaling stroke) */
+.ro-rays {
+  animation: ro-turn 90s linear infinite;
+  position: absolute;
+  left: 50%;
+  top: var(--ro-cy);
+  width: 46rem;
+  height: 46rem;
+  margin: -23rem 0 0 -23rem;
+  overflow: visible;
+  pointer-events: none;
+}
+/* each ray is the whole run from the core to the rim (pathLength 1);
+   its dash is the share drawn, swinging between --lo and --hi. User
+   units, not a non-scaling stroke: that breaks pathLength dashes. */
+.ro-rays line {
+  stroke: var(--n-5);
+  stroke-width: 0.28;
+  stroke-dasharray: var(--hi) 2;
+  animation: ro-ray 4s ease-in-out infinite alternate;
+}
+@keyframes ro-turn { to { transform: rotate(360deg); } }
+@keyframes ro-ray {
+  from { stroke-dasharray: var(--lo) 2; }
+  to   { stroke-dasharray: var(--hi) 2; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ro-rays, .ro-rays line { animation: none; }
+}
+
+/* THE WORD: the CSS size is an estimate from the letter count; RunHero
+   measures and writes the exact one */
+.ro-back {
+  position: absolute;
+  left: 50%;
+  top: var(--ro-cy);
+  padding-right: 0.06em;
+  transform: translate(-50%, -52%);
+  font-size: calc(100vw * var(--ro-span) / (var(--ro-n) * 0.6));
+  font-weight: 800;
+  font-variation-settings: 'wght' 800;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  white-space: nowrap;
+  color: color-mix(in srgb, var(--n-3) 45%, var(--n-4));
+  pointer-events: none;
+  user-select: none;
+}
+
+/* THE H1 and the CTAs: the h1's centre is the word's; the CTAs hang
+   under it */
+.ro-mid {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: var(--ro-cy);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateY(-50%);
+  text-align: center;
+  pointer-events: none;
+}
+.ro-h1 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 6.6rem;
+  font-weight: 600;
+  font-variation-settings: 'wght' 600;
+  line-height: 0.96;
+  letter-spacing: -0.05em;
+}
+.ro-word,
+.ro-mod { display: block; }
+.ro-h1.is-long .ro-mod {
+  margin-top: 1.2rem;
+  font-size: 2rem;
+  font-weight: 500;
+  font-variation-settings: 'wght' 500;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+.ro-cta {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 2.6rem);
+  display: flex;
+  gap: 0.75rem;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  pointer-events: auto;
+}
+
+/* THE FOOT: the up-link (the facts beside it were cut 2026-09-30) */
+.ro-foot {
+  position: absolute;
+  left: var(--page-pad);
+  right: var(--page-pad);
+  bottom: 1.7rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.8rem;
+  line-height: 1.3;
+  color: var(--text-muted);
+}
+.ro-foot nav { display: flex; gap: 0.55rem; }
+.ro-foot a { color: var(--text-muted); text-decoration: none; }
+.ro-foot a:hover { color: var(--text); text-decoration: underline; text-underline-offset: 0.2em; }
+.ro-foot [aria-current] { color: var(--text); }
+.ro-foot i { font-style: normal; color: var(--n-5); }
+
+@media (max-width: 57.5rem) {
+  /* phones TURN the word: it runs up the tall frame, cut top and
+     bottom — the reference's crop, on the long axis */
+  .ro { --ro-cy: 46%; --ro-span: 1.04; --ro-turn: 1; min-height: 36rem; }
+  /* the trailing translate re-centres the ink (lowercase sits low in its box) */
+  .ro-back { transform: translate(-50%, -50%) rotate(-90deg) translateY(-0.1em); font-size: calc(100svh * var(--ro-span) / (var(--ro-n) * 0.6)); }
+  .ro-rays { width: 26rem; height: 26rem; margin: -13rem 0 0 -13rem; }
+  .ro-h1 { font-size: clamp(2.4rem, 11.5vw, 3.8rem); }
+  .ro-h1.is-long .ro-mod { margin-top: 0.8rem; font-size: 1.1rem; }
+  .ro-mid { padding: 0 var(--page-pad); }
+  .ro-cta { top: calc(100% + 1.8rem); flex-direction: column; align-items: center; }
+  .ro-foot { bottom: 1.2rem; font-size: 0.74rem; }
+}
+
+/* ============================================================
+   2 · THE STATEMENT AND THE CARDS (RunAnswer.tsx) — third cut,
+   2026-09-30, on the hero's ground (`.ro-ground`).
+   THE STATEMENT after the user's reference: a small label at the top
+   left, the paragraph large with its first line indented, the fact
+   phrases picked out (heavier, a ringed dot after), a thin arc through
+   the text. THE CARDS: the same plates, three in a row, landing left to
+   right.
+   BASE: the statement in ink, the cards resolved. LIVE (`.is-live`,
+   set only by the driver): words grey until read, cards parked until
+   they land.
+   ============================================================ */
+.ra { padding: 7rem var(--page-pad) 5rem; }
+.ra-say { position: relative; padding: 0 5.5rem; }
+.ra-label-top {
+  position: absolute;
+  left: 0;
+  top: 1.35rem;
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: var(--w-medium);
+  line-height: 1;
+  color: var(--text);
+}
+.ra-p {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  text-indent: 27rem;
+  font-size: 3.35rem;
+  font-weight: 500;
+  font-variation-settings: 'wght' 500;
+  line-height: 1.14;
+  letter-spacing: -0.038em;
+}
 .ra.is-live .ra-w { color: var(--n-4); transition: color 0.5s var(--e-glass); }
 .ra.is-live .ra-w.is-read { color: var(--ink); }
+/* THE PICKED-OUT PHRASE: heavier, with a ringed dot after it */
 .ra-cue {
-  margin: 0 -0.22em;
-  padding: 0.02em 0.22em;
-  border-radius: 0.2rem;
-  background: transparent;
+  background: none;
   color: inherit;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-  box-shadow: 0 0 0 1px transparent;
-  transition: box-shadow var(--d-base) var(--e-glass), background var(--d-base) var(--e-glass);
+  font-weight: 750;
+  font-variation-settings: 'wght' 750;
 }
-.ra-cue.is-hot { background: var(--n-0); box-shadow: 0 0 0 1px var(--ink); }
-.ra-cue.is-hot.is-kept { box-shadow: 0 0 0 1px var(--n-4); }
+.ra-cue::after {
+  content: '';
+  display: inline-block;
+  width: 0.36em;
+  height: 0.36em;
+  margin: 0 0.02em 0 0.16em;
+  box-sizing: border-box;
+  border: 0.07em solid var(--ink);
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--ink) 0 38%, transparent 42%);
+  vertical-align: 0.12em;
+  transition: opacity 0.5s var(--e-glass), transform 0.5s var(--e-settle);
+}
+.ra.is-live .ra-cue::after { opacity: 0; transform: scale(0.4); }
+.ra.is-live .ra-cue:has(.ra-w:last-child.is-read)::after { opacity: 1; transform: none; }
+/* THE ARC: one hairline ellipse through the text, faded at both ends */
+.ra-arc {
+  position: absolute;
+  left: 30%;
+  top: -12%;
+  z-index: 0;
+  width: 46%;
+  height: 124%;
+  overflow: visible;
+  color: var(--ink);
+  fill: none;
+  pointer-events: none;
+}
+.ra-arc ellipse { stroke-width: 1; vector-effect: non-scaling-stroke; }
 
-/* THE DECK: a plate a fact. BASE: a column of three wide plates, each a
-   picture (the studio's work on a screen, mono) under a caption row —
-   tick, label, the number at the right, the gauge under them. */
-.ra-deck { position: relative; display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; }
+/* THE CARDS: three in a row. The <li> is the slot (it never moves, the
+   driver reads it); the plate inside lands. */
+.ra-deck {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin: 6rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.ra-slot { position: relative; }
 .ra-fact {
-  --k: 0;
   position: relative;
   overflow: hidden;
-  aspect-ratio: 16 / 6.6;
+  aspect-ratio: 4 / 3;
   border-radius: 1.5rem;
   background: var(--n-11);
   color: var(--n-0);
@@ -465,15 +694,12 @@
 }
 .ra-img { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; }
 .ra-img img { display: block; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.06); }
-/* the caption's scrim, and the shade a plate takes as it steps back */
+/* the caption's scrim */
 .ra-img::after {
   content: '';
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(180deg, rgb(13 16 18 / 0.86) 0, rgb(13 16 18 / 0.6) 5.4rem, rgb(13 16 18 / 0) 12rem),
-    rgb(13 16 18 / calc(var(--k) * 0.22));
-  transition: background var(--d-slow) var(--e-glass);
+  background: linear-gradient(180deg, rgb(13 16 18 / 0.86) 0, rgb(13 16 18 / 0.6) 5.4rem, rgb(13 16 18 / 0) 12rem);
 }
 .ra-cap {
   position: absolute;
@@ -484,12 +710,12 @@
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   column-gap: 0.65rem;
-  padding: 0.95rem 1.6rem 0;
+  padding: 0.95rem 1.4rem 0;
 }
 .ra-fact .rn-tick { --tk-rim: var(--n-6); --tk-ink: var(--n-0); --tk-paper: var(--n-11); order: -1; }
-.ra-label { font-size: 0.95rem; font-weight: var(--w-medium); color: var(--n-4); white-space: nowrap; }
+.ra-label { overflow: hidden; font-size: 0.9rem; font-weight: var(--w-medium); color: var(--n-4); white-space: nowrap; text-overflow: ellipsis; }
 .ra-val {
-  font-size: 2.9rem;
+  font-size: 2.5rem;
   font-weight: var(--w-light);
   line-height: 1.2;
   letter-spacing: -0.04em;
@@ -536,47 +762,18 @@
 .ra.is-live .ra-gauge i:nth-child(2) { transition-delay: 0.45s; }
 .ra.is-live .ra-fact.is-done .ra-gauge i { transform: none; }
 
-/* LIVE: the slot, and the plates under the fold. A landed plate sits on
-   the slot; each one landed after it lifts it a strip (its caption stays
-   in view) and sets it back. */
-@media (min-width: 57.5rem) {
-  .ra.is-live .ra-deck { display: block; height: 35.4rem; }
-  .ra.is-live .ra-deck::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 25rem;
-    border: 1px dashed var(--n-5);
-    border-radius: 1.5rem;
-    background: linear-gradient(100deg, rgb(235 238 239 / 0.5) 30%, rgb(251 252 252 / 0.8) 50%, rgb(235 238 239 / 0.5) 70%) 0 0 / 300% 100%;
-    animation: ra-shimmer 1.8s linear infinite;
-    transition: opacity var(--d-slow) var(--e-glass);
-  }
-  .ra.is-live .ra-deck.has-plate::before { opacity: 0; }
-  .ra.is-live .ra-fact {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: calc(10 - var(--k));
-    height: 25rem;
-    aspect-ratio: auto;
-    transform-origin: 50% 0;
-    transform: translate3d(0, 125%, 0) rotate(7deg);
-    opacity: 0;
-    transition: transform 1.15s var(--e-glass), opacity 0.5s var(--e-glass);
-    will-change: transform;
-  }
-  .ra.is-live .ra-fact.is-down {
-    opacity: 1;
-    transform: translate3d(0, calc(var(--k) * -5.2rem), 0) scale(calc(1 - var(--k) * 0.05));
-  }
-  .ra.is-live .ra-img img { transform: scale(1.32); transition: transform 1.8s var(--e-glass); }
-  .ra.is-live .ra-fact.is-down .ra-img img { transform: scale(1.04); }
+/* THE LANDING (the stack's, kept): the plate rises turned a few degrees
+   and settles flat; its print eases back from a close-up */
+.ra.is-live .ra-fact {
+  transform-origin: 50% 0;
+  transform: translate3d(0, 45%, 0) rotate(7deg);
+  opacity: 0;
+  transition: transform 1.15s var(--e-glass), opacity 0.5s var(--e-glass);
+  will-change: transform;
 }
-@keyframes ra-shimmer { to { background-position: -150% 0; } }
+.ra.is-live .ra-fact.is-down { opacity: 1; transform: none; }
+.ra.is-live .ra-img img { transform: scale(1.32); transition: transform 1.8s var(--e-glass); }
+.ra.is-live .ra-fact.is-down .ra-img img { transform: scale(1.04); }
 
 /* ============================================================
    3 · THE FIT (RunFit.tsx) — THIRD CUT, 2026-09-18: unpinned, and the
@@ -719,13 +916,193 @@
   .rs-foot { padding-bottom: 4rem; }
 }
 
-.rs-ground .ra,
 .rs-ground .rf { position: relative; z-index: 1; }
+/* the paper ground above (RunGround) fades into the crowd, no seam */
+.rs-ground::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 1;
+  height: 14rem;
+  background: linear-gradient(180deg, var(--n-2), rgb(235 238 239 / 0));
+  pointer-events: none;
+}
 /* the plan covers the ground */
 .rp { position: relative; z-index: 2; background: var(--surface); }
 @media (max-width: 57.5rem) {
   .rs-bg { height: 70svh; margin-bottom: -70svh; }
   .rs-bg img { object-position: 50% 28%; }
+}
+
+/* ============================================================
+   4 · HOW IT GOES — THE TRACK (RunTrack.tsx, 2026-09-30; replaces THE
+   STACK, whose `.rp-*` rules stay parked with RunPlan.tsx). After the
+   user's recording: a pinned dark stage, the steps' names running up a
+   track, the one on the line lit with its text beside it; a dial at the
+   left (number, dotted ring, n/N); a tiny label at the far left.
+   BASE (no JS, reduced motion, phones): the void card with the plain
+   list, every row lit. LIVE (`.is-live`, desktop, set by the driver):
+   the runway, the sticky stage, the light by distance (--d).
+   ============================================================ */
+.rq {
+  position: relative;
+  z-index: 2;
+  margin: 0 0.75rem;
+  border-radius: 1.8rem;
+  background: var(--n-11);
+  color: var(--n-0);
+}
+.rq-stage { position: relative; z-index: 1; padding: 7rem var(--page-pad) 6rem; }
+.rq-label {
+  margin: 0 0 1.4rem;
+  font-size: 0.72rem;
+  font-weight: var(--w-semi);
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--n-5);
+}
+.rq-dial { display: none; }
+.rq-head { padding-bottom: 3.5rem; }
+.rq-h {
+  margin: 0;
+  font-size: 4.4rem;
+  font-weight: 750;
+  font-variation-settings: 'wght' 750;
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+}
+.rq-lead { margin: 1.1rem 0 0; font-size: 1rem; color: var(--n-5); }
+.rq-list { margin: 0; padding: 0; list-style: none; }
+.rq-row {
+  display: grid;
+  grid-template-columns: 22rem minmax(0, 1fr);
+  column-gap: 3rem;
+  align-items: center;
+  padding: 2rem 0;
+  border-top: 1px solid var(--n-9);
+}
+.rq-name {
+  margin: 0;
+  font-size: 2.4rem;
+  font-weight: 750;
+  font-variation-settings: 'wght' 750;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+.rq-body { max-width: 30rem; font-size: 0.95rem; line-height: 1.5; color: var(--n-5); }
+.rq-body p { margin: 0.5rem 0 0; }
+.rq-k { margin-right: 0.3rem; font-weight: var(--w-semi); color: var(--n-0); }
+.rq-time {
+  display: inline-block;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--n-8);
+  border-radius: 1rem;
+  font-size: 0.72rem;
+  font-weight: var(--w-medium);
+  line-height: 1;
+  color: var(--n-0);
+}
+
+/* LIVE: the runway (one screen for the arrival, about half a screen a
+   step), the sticky stage */
+.rq.is-live { height: calc(100svh + (var(--rq-n) + 0.6) * 52svh); }
+.rq.is-live .rq-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  padding: 0;
+  overflow: hidden;
+}
+.rq.is-live .rq-label {
+  position: absolute;
+  left: 2.4rem;
+  top: 50%;
+  margin: 0;
+  transform: translateY(-50%);
+}
+/* THE DIAL */
+.rq.is-live .rq-dial {
+  display: block;
+  position: absolute;
+  left: 27%;
+  top: 50%;
+  width: 12.5rem;
+  height: 12.5rem;
+  transform: translate(-50%, -50%);
+}
+.rq-ring { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.rq-ring circle {
+  fill: none;
+  stroke: var(--n-8);
+  /* user units (1 = 2px here); a non-scaling stroke breaks pathLength dashes */
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-dasharray: 0 0.0125;
+}
+/* the lit ring: the same dots in paper, shown up to the run's progress */
+.rq-ring.is-lit circle { stroke: var(--n-0); }
+.rq-ring.is-lit {
+  -webkit-mask-image: conic-gradient(#000 calc(var(--rq-p, 0) * 360deg), transparent 0);
+  mask-image: conic-gradient(#000 calc(var(--rq-p, 0) * 360deg), transparent 0);
+}
+.rq-num-win {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 1em;
+  overflow: hidden;
+  font-size: 3.8rem;
+  line-height: 1;
+  transform: translate(-50%, -50%);
+}
+.rq-num {
+  display: block;
+  font-weight: 250;
+  font-variation-settings: 'wght' 250;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+.rq-num.is-up { animation: rq-up 0.6s var(--e-glass) both; }
+.rq-num.is-down { animation: rq-down 0.6s var(--e-glass) both; }
+@keyframes rq-up { from { transform: translate3d(0, 70%, 0); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes rq-down { from { transform: translate3d(0, -70%, 0); opacity: 0; } to { transform: none; opacity: 1; } }
+/* THE TRACK: a window from the stage's middle to its right edge; the
+   rows fade out toward its top and bottom */
+.rq.is-live .rq-view {
+  position: absolute;
+  left: 47%;
+  right: var(--page-pad);
+  top: 0;
+  bottom: 0;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 78%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 78%, transparent 100%);
+}
+.rq.is-live .rq-track { position: absolute; left: 0; right: 0; top: 0; will-change: transform; }
+.rq.is-live .rq-head { padding-bottom: 5rem; }
+.rq.is-live .rq-row {
+  --d: 0;
+  --ad: max(var(--d), calc(var(--d) * -1));
+  height: 11rem;
+  padding: 0;
+  border-top: 0;
+}
+.rq.is-live .rq-name { opacity: clamp(0.13, calc(1 - var(--ad) * 0.62), 1); }
+.rq.is-live .rq-body {
+  opacity: clamp(0, calc(1 - var(--ad) * 2.4), 1);
+  transform: translate3d(calc(min(var(--ad), 1) * 1.5rem), 0, 0);
+}
+
+@media (max-width: 57.5rem) {
+  .rq { margin: 0 0.5rem; border-radius: 1.4rem; }
+  .rq-stage { padding: 4.5rem 1.4rem 3.5rem; }
+  .rq-h { font-size: 2.8rem; }
+  .rq-row { grid-template-columns: minmax(0, 1fr); row-gap: 1rem; padding: 1.6rem 0; }
+  .rq-name { font-size: 1.8rem; }
 }
 
 /* ============================================================
@@ -966,16 +1343,14 @@
   .rb-scene { --k: 0.95 !important; }
   .rb-sel, .rb-cursor { display: none; }
 
-  .ra.is-live { height: auto; }
-  .ra.is-live .ra-stage { position: relative; height: auto; }
-  .ra-stage { grid-template-columns: minmax(0, 1fr); row-gap: 2.5rem; padding: 3.5rem var(--page-pad); }
-  .ra-p1 { font-size: 1.45rem; }
-  .ra-p2 { font-size: 1.05rem; }
-  .ra-val { font-size: 2.6rem; }
-  .ra-cursor { display: none; }
-  .ra-fact { aspect-ratio: 16 / 9; }
-  .ra.is-live .ra-fact { opacity: 0; transform: translate3d(0, 2rem, 0); transition: transform 1s var(--e-glass), opacity 0.6s var(--e-glass); }
-  .ra.is-live .ra-fact.is-down { opacity: 1; transform: none; }
+  .ra { padding: 4.5rem var(--page-pad) 4.5rem; }
+  .ra-say { padding: 0; }
+  .ra-label-top { position: static; margin-bottom: 1.4rem; }
+  .ra-p { text-indent: 0; font-size: 1.75rem; line-height: 1.2; }
+  .ra-arc { display: none; }
+  .ra-deck { grid-template-columns: minmax(0, 1fr); gap: 1rem; margin-top: 3rem; }
+  .ra-fact { aspect-ratio: 16 / 10; }
+  .ra-val { font-size: 2.3rem; }
 
   .rf-stage { grid-template-columns: minmax(0, 1fr); row-gap: 2rem; padding: 4rem var(--page-pad); }
   .rf-h { font-size: 2.6rem; }
@@ -990,9 +1365,6 @@
   .rp-card { position: relative; top: auto; height: auto; margin-bottom: 1rem; padding: 0 1.5rem 1.6rem; }
   .rp-xs { grid-template-columns: minmax(0, 1fr); row-gap: 1.4rem; align-content: start; }
   .rp-x p { font-size: 1.2rem; }
-  /* the deck's caption: the label gives way to the number */
-  .ra-label { white-space: normal; font-size: 0.82rem; line-height: 1.2; }
-  .ra-val { font-size: 2rem; }
 
   .rh { grid-template-columns: minmax(0, 1fr); row-gap: 3rem; min-height: 0; padding: 5rem var(--page-pad) 3rem; }
   .rh-h { font-size: clamp(3rem, 14vw, 5rem); }

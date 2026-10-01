@@ -1,14 +1,23 @@
 import type { Metadata } from 'next'
-import HubStill from '@/components/v4/HubStill'
-import HubBench from '@/components/v4/HubBench'
-import Invitation from '@/components/v4/Invitation'
+import ServiceCarousel, { type CarouselService } from '@/components/v4/ServiceCarousel'
 import { SERVICE_PAGES } from '@/lib/service-pages'
 import { SITE_URL } from '@/lib/site'
-import './scenes.css'
 import './hub.css'
 
 /**
- * THE SERVICES HUB — /services (2026-09-08, the user's three frames in
+ * THE SERVICES HUB — /services.
+ *
+ * SINCE 2026-09-30 IT IS THE CAROUSEL (ServiceCarousel.tsx; the user:
+ * "like the projects hub page… you can't scroll to go anywhere, only
+ * click… a loop between the 6 cards of services"): one viewport, the
+ * footer off (FooterGate), the h1 and the six services as a ring of
+ * landscape cards — each the service's object on its film — with the
+ * active one's name, line and two arrows above. Everything below
+ * (THE BRIEF, THE WORKBENCH, the Invitation under it) is the hub it
+ * replaces: HubStill / HubAgent / HubBench are parked, unimported,
+ * their rules still in hub.css.
+ *
+ * THE HUB BEFORE (2026-09-08, the user's three frames in
  * ServicesHubSections.zip: "Hero load", "Hero final state", "Services
  * Section"). Its SEO job is small and fixed (site-architecture §2): route
  * visitors, pass authority down to the six pages, rank for the broad term.
@@ -82,14 +91,19 @@ export const metadata: Metadata = {
   },
 }
 
-/** THE STATEMENT, line by line — the breaks hold at every desktop width
- *  because the type is rem (the picture rule). PLACEHOLDER copy. */
-const STATEMENT = ['Tell us what you need.', 'We design it, build it and make it move.'] as const
-
-/** the list's lead — PLACEHOLDER, the second half of the frame's paragraph
- *  (the first half is the hero's small paragraph) */
-const LEAD =
-  'Our websites are the result when you combine a personalised structure, layout and motion. When you work with us, we make sure your website stands out and is remembered.'
+/** each card's picture: the service's OBJECT (its poster render, a
+ *  cut-out — the same table as the service template's POSTER) on its
+ *  FILM (public/services/films: the six ambient loops, re-encoded
+ *  1280 wide, and a still of each). STAND-INS until the user supplies
+ *  photography of their own. */
+const ART: Record<string, { object: string; grade: CarouselService['grade'] }> = {
+  'web-design': { object: '/services/web-design/main.webp', grade: 'none' },
+  'web-development': { object: '/services/3d-websites/glass-screen.webp', grade: 'glass' },
+  '3d-websites': { object: '/services/3d-websites/knot.webp', grade: 'chrome' },
+  'one-page-websites': { object: '/services/one-page-art/mockup.webp', grade: 'none' },
+  'website-redesign': { object: '/services/redesign-art/arrow.webp', grade: 'chrome' },
+  seo: { object: '/services/seo-art/sphere.webp', grade: 'chrome' },
+}
 
 export default function ServicesHubPage() {
   const pages = SERVICE_PAGES
@@ -117,35 +131,20 @@ export default function ServicesHubPage() {
     ],
   }
 
+  const services: CarouselService[] = pages.map((p) => ({
+    slug: p.slug,
+    name: p.name,
+    blurb: p.blurb,
+    film: `/services/films/${p.slug}.mp4`,
+    still: `/services/films/${p.slug}.webp`,
+    object: ART[p.slug]?.object ?? p.visual,
+    grade: ART[p.slug]?.grade ?? 'none',
+  }))
+
   return (
-    <main className="sh">
+    <main>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      {/* the entrance parks everything at opacity 0 (hub.css .sh-ent); the
-          no-JS page undoes it, and the bend's final state is CSS too */}
-      <noscript>
-        <style>{`.sh-ent,.hc-ent{opacity:1!important;transform:none!important;filter:none!important}`}</style>
-      </noscript>
-
-      {/* §1 — THE HERO, sticky: the index scrolls over it */}
-      <HubStill kicker="Web design and development, Cyprus" statement={STATEMENT} />
-
-      {/* §2 — THE LIST, on paper, in flow: scrolls up over the sticky hero */}
-      <HubBench
-        lead={LEAD}
-        services={pages.map((p) => ({
-          slug: p.slug,
-          name: p.name,
-          tagline: p.tagline,
-          blurb: p.blurb,
-          facts: p.facts.map((f) => ({ value: f.value, label: f.label })),
-        }))}
-      />
-
-      {/* §3 — THE INVITATION, the site's CTA, in flow; above the sticky
-          hero like the list */}
-      <div className="sh-cta">
-        <Invitation />
-      </div>
+      <ServiceCarousel services={services} />
     </main>
   )
 }

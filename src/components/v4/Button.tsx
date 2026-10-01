@@ -24,7 +24,7 @@ import { gsap, EASE } from '@/lib/motion-v4'
  *   arrow on the right rolls up and out with it; the label slides over; and
  *   a second mark rolls up into the room it left on the LEFT. Two icons, one
  *   per state, one side each — the rest icon names the destination, the
- *   hover one is the house sparkle. Everything moves up, in one register.
+ *   hover one is the house MARK, which draws itself in as a line.
  *
  * There is no drawn ring outside the button any more (user call,
  * 2026-09-13): its distance from the fill never read as one thing across
@@ -48,9 +48,11 @@ const MAX_D = 640
 const DRAIN = 0.7
 
 /* ---------- the two marks ----------
-   Drawn in the label's own colour, 16-unit boxes, hairline strokes that
-   match ArrowLink's. The arrow is the destination mark; the sparkle is the
-   house glyph from the hero, at label scale. */
+   Drawn in the label's own colour, hairline strokes that match
+   ArrowLink's. The arrow is the destination mark; the hover mark is the
+   Konaverse logo, DRAWN IN as a line on hover (2026-10-01, user: "I just
+   want it to be animated as a line drawing when I hover over a button";
+   it replaced the house sparkle). */
 
 function Arrow({ external }: { external: boolean }) {
   return (
@@ -64,10 +66,22 @@ function Arrow({ external }: { external: boolean }) {
   )
 }
 
-function Sparkle() {
+/** THE MARK: the logo rebuilt as its three continuous strokes — measured
+ *  off public/brand/mark.png (552 x 512, strokes 22.5 wide, all straight,
+ *  at 45° and 60°), so each is one path the hover can draw end to end.
+ *  `pathLength` 1 makes the dash maths the same for all three
+ *  (.k-btn__mark in tokens.css). The stroke is heavier than the PNG's so
+ *  it still reads as a hairline at label size. */
+function Mark() {
   return (
-    <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-      <path d="M8 0.5c.8 4.6 2.9 6.7 7.5 7.5-4.6.8-6.7 2.9-7.5 7.5-.8-4.6-2.9-6.7-7.5-7.5C5.1 7.2 7.2 5.1 8 .5Z" />
+    <svg className="k-btn__mark" viewBox="0 0 552 512" fill="none" stroke="currentColor"
+      strokeWidth="30" strokeLinejoin="miter" strokeLinecap="butt" aria-hidden="true">
+      {/* the C and the long diagonal, one stroke: hook, top, down, tip, up, bar */}
+      <path pathLength={1} d="M96.5 175 V103 H22 V474 L476 22 H356" />
+      {/* the P: foot, stem, bowl, inner stem */}
+      <path pathLength={1} d="M257 400 H165 V22 H300.5 V103.5 L196 208 V298" />
+      {/* the open V on the right */}
+      <path pathLength={1} d="M319.5 225 L419 400 H522 L378 151" />
     </svg>
   )
 }
@@ -93,7 +107,7 @@ export default function Button({
   ghost?: boolean
   /** The rest mark, on the right. Defaults to the destination arrow. */
   icon?: ReactNode
-  /** The hover mark, on the left. Defaults to the sparkle. */
+  /** The hover mark, on the left. Defaults to the drawn logo. */
   hoverIcon?: ReactNode
   className?: string
   onClick?: () => void
@@ -223,7 +237,7 @@ export default function Button({
   useEffect(() => () => { floodTween.current?.kill() }, [])
 
   const restIcon = icon ?? <Arrow external={external} />
-  const hotIcon = hoverIcon ?? <Sparkle />
+  const hotIcon = hoverIcon ?? <Mark />
 
   /* the label row, written once and rendered twice — the second copy sits
      on the flooded ground in the flood's ink, clipped to the disc. The

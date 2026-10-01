@@ -1,10 +1,9 @@
 /**
  * THE ROSTER — every site the studio shows (2026-09-11, for /work).
  *
- * One list, in the order the cards read them: the three the homepage
- * features (site-architecture §3: Tzankatian, Los Santos, Lumière are
- * the first three case studies), then Velricon. FOUR (user, 2026-09-11:
- * the other five were cut). `slug` is the case
+ * One list, in the order the cards read them. Tzankatian is OFF the
+ * site (user, 2026-10-01: "remove Tzankatian"); Chris N Clean, Heimat
+ * Group, TDK and City Arcade join with case studies of their own. `slug` is the case
  * study's future URL (/work/[slug]) and never changes once published.
  *
  * `href` is the LIVE site and is only set where it is known. Velricon's
@@ -39,21 +38,6 @@ export interface WorkProject {
 
 export const WORK_PROJECTS: WorkProject[] = [
   {
-    slug: 'dt-zankatian',
-    name: 'Dimitris Tzankatian',
-    line: 'A videographer’s site that opens like his showreel — every frame with a purpose.',
-    year: '2026',
-    service: 'Web design',
-    serviceSlug: 'web-design',
-    href: 'https://dtzankatian.com',
-    image: '/work/tzankatian.webp',
-    /* the case study's stills (2026-09-12), shot at 1900 x 1000 */
-    frames: [
-      'home', 'home-stats', 'home-services', 'home-cases', 'home-partners',
-      'about', 'about-press', 'services', 'services-process', 'cases', 'contact',
-    ].map((n) => `/work/dt-zankatian/${n}.webp`),
-  },
-  {
     slug: 'los-santos-barbers',
     name: 'Los Santos Barbershop',
     line: 'Nicosia’s barbershop set in type as sharp as the fades.',
@@ -85,5 +69,45 @@ export const WORK_PROJECTS: WorkProject[] = [
     href: 'https://velricon.com',
     image: '/work/velricon.webp',
     frames: Array.from({ length: 8 }, (_, i) => `/work/velricon/${String(i + 1).padStart(2, '0')}.webp`),
+  },
+  {
+    slug: 'chris-n-clean',
+    name: 'Chris N Clean',
+    line: 'A cleaning company’s site where the house comes clean under your scroll.',
+    year: '2026',
+    service: 'Web design',
+    serviceSlug: 'web-design',
+    href: 'https://www.chrisnclean.com',
+    image: '/work/covers/chris-n-clean.webp',
+  },
+  {
+    slug: 'heimat-group',
+    name: 'Heimat Group',
+    line: 'A new developer’s name, set like a home.',
+    year: '2026',
+    service: 'Web design',
+    serviceSlug: 'web-design',
+    href: 'https://www.heimat-group.com',
+    image: '/work/covers/heimat-group.webp',
+  },
+  {
+    slug: 'tdk',
+    name: 'TDK Design & Build',
+    line: 'The studio that draws and builds, standing in front of its own name.',
+    year: '2026',
+    service: 'Web development',
+    serviceSlug: 'web-development',
+    href: 'https://tdkdb.vercel.app/en',
+    image: '/work/covers/tdk.webp',
+  },
+  {
+    slug: 'city-arcade',
+    name: 'City Arcade',
+    line: 'A real-estate concept where the building rises out of its frame.',
+    year: '2026',
+    service: 'Web design',
+    serviceSlug: 'web-design',
+    href: 'https://city-arcade-roan.vercel.app',
+    image: '/work/covers/city-arcade.webp',
   },
 ]

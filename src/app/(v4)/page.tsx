@@ -8,6 +8,7 @@ import WhatWeDo from '@/components/v4/WhatWeDo'
 import ServiceSheets from '@/components/v4/ServiceSheets'
 import WorkList from '@/components/v4/WorkList'
 import { CASE_STUDIES } from '@/lib/case-studies'
+import { WORK_PROJECTS } from '@/lib/work-projects'
 import Invitation from '@/components/v4/Invitation'
 import { SITE_URL } from '@/lib/site'
 import './home.css'
@@ -65,6 +66,11 @@ const SOLVE_LINE =
 
 const CLAIM_LINE =
   'Konaverse is a web studio for brands that want their site to carry the story, not just the information.'
+
+/** the four the homepage shows (§5). TDK took Tzankatian's place
+ *  (2026-10-01, user: "remove the tzankatian project and replace it with
+ *  something else"); the rest of the roster lives on /work. */
+const HOME_WORK = ['los-santos-barbers', 'lumiere-eclat', 'tdk', 'velricon']
 
 export default function HomePage() {
   /* Hero A/B (2026-08-18): variant B, the user's staircase wireframe, is
@@ -144,7 +150,6 @@ export default function HomePage() {
           line (BlockReveal). `#solve` stays for the nav anchor. */}
       <section className="sv2" id="solve" aria-labelledby="sv2-h">
         <div className="sv2-page">
-          <p className="sv2-k t-small">What we solve</p>
           <BlockReveal as="h2" className="sv2-p" id="sv2-h" text={SOLVE_LINE} />
         </div>
         {/* THE PRESS SHEET (SolveStack — the pinned deck of plates under
@@ -173,7 +178,10 @@ export default function HomePage() {
           four projects, linking to their case studies. The section carries
           `#work`. The stack (WorkStack), the rows (WorkRows) and the deck
           (WorkDeck) stay in the tree unimported. */}
-      <WorkList studies={CASE_STUDIES.map((c) => c.slug)} />
+      <WorkList
+        studies={CASE_STUDIES.map((c) => c.slug)}
+        projects={HOME_WORK.map((slug) => WORK_PROJECTS.find((p) => p.slug === slug)!).filter(Boolean)}
+      />
 
       {/* §7 (Process) is UNMOUNTED for a user experiment (2026-08-24) — not
           deleted. To restore: re-import Process, mount it here, put `buried`

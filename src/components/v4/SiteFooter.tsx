@@ -4,7 +4,6 @@ import { useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
 import BlockReveal from '@/components/v4/BlockReveal'
 import Button from '@/components/v4/Button'
-import FooterField from '@/components/v4/FooterField'
 import Reveal from '@/components/v4/Reveal'
 import { gsap, rem } from '@/lib/motion-v4'
 import { CALENDLY_URL, CONTACT_EMAIL, ROUTES } from '@/lib/site'
@@ -48,9 +47,13 @@ import { CALENDLY_URL, CONTACT_EMAIL, ROUTES } from '@/lib/site'
  * SECOND PASS, 2026-09-18 (user: "the concept of the reveal stays. The
  * layout is good but it can be improved. The background also can be
  * improved. I would like something animated or interactive").
- *   · THE GROUND is THE FIELD (FooterField.tsx): a lattice of points on
- *     the void that the hand lenses, a press rings, and the reveal
- *     powers on from the seam down.
+ *   · THE GROUND was THE FIELD (FooterField.tsx, a lattice the hand
+ *     lensed); since 2026-10-01 it is THE DOTS (user: "keep the footer
+ *     background interactive but not with gravitational pull, just like
+ *     the services page template background"): the service ground's dot
+ *     grid in light dots, hidden at rest, seen in a circle under the
+ *     hand. Plain CSS, one leaf element written. FooterField stays for
+ *     the Invitation.
  *   · THE ADDRESS is the footer's big object now — set across the width
  *     in display type, and its letters take WEIGHT from the hand
  *     (Manrope's variable axis, 200 → 760 by distance, on a glide). It
@@ -128,7 +131,16 @@ export default function SiteFooter() {
 
     const inner = root.querySelector<HTMLElement>('.ft-inner')
     if (!inner) return
+    const dots = root.querySelector<HTMLElement>('.ft-dots')
 
+    /* the hand, in viewport px (-1: none); the dots' circle follows it,
+       and is re-placed every frame here so a still hand keeps its circle
+       while the footer scrolls under it */
+    let px = -1
+    let py = -1
+    let lit = false
+    let dx = -1
+    let dy = -1
     const tick = () => {
       const r = root.getBoundingClientRect()
       const vh = window.innerHeight
@@ -137,6 +149,21 @@ export default function SiteFooter() {
          page end, so this is how far it still has to go — 0 at the end */
       const rest = r.top - (vh - r.height)
       gsap.set(inner, { y: -DRAG * Math.max(0, rest) })
+
+      if (!dots) return
+      const on = px >= 0 && py >= r.top && py <= r.bottom
+      if (on !== lit) {
+        lit = on
+        dots.classList.toggle('is-hand', on)
+      }
+      if (!on) return
+      const x = px - r.left
+      const y = py - r.top
+      if (Math.abs(x - dx) < 0.5 && Math.abs(y - dy) < 0.5) return
+      dx = x
+      dy = y
+      dots.style.setProperty('--ft-x', `${x.toFixed(1)}px`)
+      dots.style.setProperty('--ft-y', `${y.toFixed(1)}px`)
     }
     tick()
     gsap.ticker.add(tick)
@@ -144,8 +171,6 @@ export default function SiteFooter() {
     /* THE ADDRESS takes weight from the hand */
     const letters = Array.from(root.querySelectorAll<HTMLElement>('.ft-mail-l'))
     const weights = letters.map(() => WGHT[0])
-    let px = -1
-    let py = -1
     const onMove = (ev: PointerEvent) => {
       px = ev.clientX
       py = ev.clientY
@@ -185,6 +210,9 @@ export default function SiteFooter() {
       window.removeEventListener('pointermove', onMove)
       document.documentElement.removeEventListener('pointerleave', onGone)
       letters.forEach((l) => (l.style.fontVariationSettings = ''))
+      dots?.classList.remove('is-hand')
+      dots?.style.removeProperty('--ft-x')
+      dots?.style.removeProperty('--ft-y')
       gsap.set(inner, { clearProps: 'transform' })
     }
   }, [])
@@ -192,7 +220,9 @@ export default function SiteFooter() {
 
   return (
     <footer ref={rootRef} className="ft k-dark">
-      <FooterField />
+      {/* THE DOTS (2026-10-01, replacing THE FIELD's pull): the service
+          pages' ground in light dots, seen only in a circle under the hand */}
+      <span className="ft-dots" aria-hidden="true" />
       <div className="ft-inner">
         <div className="k-page ft-top">
           <div className="ft-say">

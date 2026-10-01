@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from 'react'
 import { SERVICES } from '@/components/v4/services-data'
-import Reveal from '@/components/v4/Reveal'
 import { gsap } from '@/lib/motion-v4'
 
 /**
@@ -130,15 +129,10 @@ export default function ServiceSheets() {
   }, [])
 
   return (
-    <section className="svs" ref={rootRef} aria-labelledby="svs-h">
-      <div className="k-page svs-head">
-        <h2 className="svs-title" id="svs-h">
-          <Reveal as="span" className="svs-title-w" masked>
-            Services
-          </Reveal>
-        </h2>
-      </div>
-
+    /* no heading of its own (2026-10-01, user: "remove the Services
+       title and just keep the big what we do title") — the rows are the
+       sign's list; no numbering either */
+    <section className="svs" ref={rootRef} aria-label="Services">
       <ul className="svs-list">
         {SERVICES.map((s, i) => (
           <li
@@ -147,9 +141,6 @@ export default function ServiceSheets() {
             style={{ zIndex: SERVICES.length - i } as React.CSSProperties}
           >
             <a className="k-page svs-link" href={`/services/${s.slug}`}>
-              <span className="svs-no t-small" aria-hidden="true">
-                {String(i + 1).padStart(2, '0')}
-              </span>
               <h3 className="svs-name">{s.name}</h3>
               <ul className="svs-tags t-small">
                 {s.includes.map((line) => (

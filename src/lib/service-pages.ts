@@ -67,6 +67,10 @@ export type ServicePage = {
    *  block on purpose. The picture scales, so one rem value holds at
    *  every desktop width; phones clamp it to the viewport. */
   wordSize: number
+  /** THE HERO'S BIG WORD (RunHero, 2026-09-30): one lowercase word set
+   *  behind the h1, fitted edge to edge — decoration, aria-hidden.
+   *  PLACEHOLDER picks, one verb/noun a service. */
+  back: string
   title: string
   description: string
   areaServed: 'Cyprus' | 'Worldwide'
@@ -126,6 +130,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     word: 'Web design',
     modifier: 'in Cyprus',
     wordSize: 11.4,
+    back: 'design',
     title: 'Web Design in Cyprus',
     description:
       'Custom web design for Cyprus businesses — a site designed on a system of type, space and motion, never assembled from a template. From €2,000, four to six weeks.',
@@ -206,6 +211,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     word: 'Web development',
     modifier: 'in Cyprus',
     wordSize: 9.6,
+    back: 'build',
     title: 'Web Development in Cyprus',
     description:
       'Web development in Cyprus on Next.js — fast, server-rendered sites with the integrations and CMS your business runs on. From €2,000, four to eight weeks.',
@@ -262,6 +268,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     word: '3D websites',
     modifier: 'Immersive website design, for brands anywhere',
     wordSize: 10.6,
+    back: 'depth',
     title: '3D and Immersive Website Design',
     description:
       'Immersive, 3D website design — path-traced objects, scroll-driven scenes and WebGL, engineered to read premium on every device. From €4,000, eight to twelve weeks.',
@@ -313,6 +320,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     word: 'One-page websites',
     modifier: 'Landing pages and single-page sites, designed and built',
     wordSize: 9.2,
+    back: 'focus',
     title: 'One-page Website Design',
     description:
       'A single-page website designed and built in two to three weeks, from €1,000. One argument, no scroll wasted — for launches, practices and campaigns.',
@@ -357,6 +365,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     word: 'Website redesign',
     modifier: 'For sites the business has outgrown',
     wordSize: 9.6,
+    back: 'renew',
     title: 'Website Redesign Services',
     description:
       'Website redesign from €1,500 — keep what works, redesign what does not, and redirect every old URL so rankings survive the move. Four to eight weeks.',
@@ -402,6 +411,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     word: 'SEO',
     modifier: 'Search and AI visibility for Cyprus businesses',
     wordSize: 15,
+    back: 'search',
     title: 'SEO Services in Cyprus',
     description:
       'SEO in Cyprus that starts with the technical foundation — server-rendered pages, structured data, real content — and continues monthly from €500. For Google and for AI search.',

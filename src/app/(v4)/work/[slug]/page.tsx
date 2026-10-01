@@ -338,7 +338,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
       </header>
 
       {/* THE OPENING — block 1's first half */}
-      <section className="cx-s cx-open" aria-label="Opening">
+      <section className="cx-s cx-open" id="opening" aria-label="Opening">
         <div className="cx-open-text">
           <p className="cx-lede cx-r">{study.intro[0]}</p>
           {study.intro.slice(1).map((p, j) => (
@@ -347,12 +347,18 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
             </p>
           ))}
         </div>
-        <div className="cx-device" aria-hidden={false}>
-          {study.device.back ? (
-            <img className="cx-device-back" data-rate="0.16" src={study.device.back} alt="" loading="lazy" decoding="async" draggable={false} aria-hidden="true" />
-          ) : null}
-          <img className="cx-device-front" data-rate="-0.08" src={study.device.front} alt={`${study.name} — the website on a laptop`} loading="lazy" decoding="async" draggable={false} />
-        </div>
+        {/* the laptop render; a study without one (yet) opens on its
+            cover, wide, instead */}
+        {study.device ? (
+          <div className="cx-device" aria-hidden={false}>
+            {study.device.back ? (
+              <img className="cx-device-back" data-rate="0.16" src={study.device.back} alt="" loading="lazy" decoding="async" draggable={false} aria-hidden="true" />
+            ) : null}
+            <img className="cx-device-front" data-rate="-0.08" src={study.device.front} alt={`${study.name} — the website on a laptop`} loading="lazy" decoding="async" draggable={false} />
+          </div>
+        ) : (
+          <Plate src={study.still.src} alt={study.still.alt} shape="wide" />
+        )}
       </section>
 
       {/* THE FILM — one viewport, one video */}
@@ -411,7 +417,9 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
           THE VERB is the track's own: the name's lines carry opposite
           `data-rate`s, so as the card crosses the screen they pass each
           other over the laptop, which slides at a third rate (CaseTrack's
-          DEPTH — no new driver). Decoration: the name is already the h1. */}
+          DEPTH — no new driver). Decoration: the name is already the h1.
+          It needs the laptop: a study without a render skips it. */}
+      {study.device ? (
       <section className="cx-s cx-title k-dark" aria-hidden="true">
         <img
           className="cx-title-dev"
@@ -430,6 +438,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
           ))}
         </p>
       </section>
+      ) : null}
 
       {/* THE RESULT — block 5 (required), the invitation, block 6 */}
       <section className="cx-s cx-result k-dark" id="result" aria-labelledby="result-h">

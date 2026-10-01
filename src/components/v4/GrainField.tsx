@@ -43,6 +43,12 @@ export default function GrainField() {
   useEffect(() => {
     const root = document.querySelector<HTMLElement>('.k-root')
     if (!root) return
+    /* WRITE ON THE GRAIN, not on the root (2026-10-01, measured on a
+       service page): a custom property set on .k-root re-styles every
+       element under it, and while a dark section crosses the screen this
+       value moves every frame — it was most of the page's style-recalc
+       time. The grain layer is its only reader. */
+    const grain = document.querySelector<HTMLElement>('.k-grain') ?? root
 
     /* read the light value BEFORE anything is written inline, or we would be
        reading our own output back a frame later */
@@ -73,7 +79,7 @@ export default function GrainField() {
       if (!els.length) {
         if (last !== LIGHT) {
           last = LIGHT
-          root.style.setProperty('--grain-opacity', String(LIGHT))
+          grain.style.setProperty('--grain-opacity', String(LIGHT))
         }
         return
       }
@@ -98,13 +104,13 @@ export default function GrainField() {
          invalidates paint on the grain layer */
       if (Math.abs(next - last) < 0.002) return
       last = next
-      root.style.setProperty('--grain-opacity', next.toFixed(3))
+      grain.style.setProperty('--grain-opacity', next.toFixed(3))
     }
 
     gsap.ticker.add(tick)
     return () => {
       gsap.ticker.remove(tick)
-      root.style.removeProperty('--grain-opacity')
+      grain.style.removeProperty('--grain-opacity')
     }
   }, [])
 

@@ -3213,27 +3213,8 @@
   overflow-x: clip;
 }
 
-/* ---------- the heading ---------- */
-.svs-head {
-  padding-top: clamp(var(--s-7), 8vh, var(--s-9));
-  padding-bottom: clamp(var(--s-8), 12vh, var(--s-10));
-}
-.svs-title {
-  margin: 0;
-  /* the sign's own face: Manrope at the heavy end of its axis */
-  font-size: clamp(3.5rem, 14vw, 15rem);
-  line-height: 0.86;
-  font-weight: 700;
-  font-variation-settings: "wght" 740;
-  letter-spacing: -0.045em;
-  text-transform: uppercase;
-  /* the heavy S overhangs its box on the left; pulled back to the margin */
-  margin-left: -0.05em;
-}
-.svs-title-w {
-  display: block;
-  padding-top: 0.04em;
-}
+/* (no heading since 2026-10-01: the rows follow the WHAT WE DO sign) */
+.svs { padding-top: var(--s-6); }
 
 /* ---------- the rows ---------- */
 .svs-list {
@@ -3269,7 +3250,6 @@
 .svs-link {
   display: grid;
   grid-template-columns:
-    3.75rem
     minmax(12rem, 1.45fr)
     minmax(11rem, 1.15fr)
     minmax(16rem, 1.9fr)
@@ -3279,12 +3259,6 @@
   padding-block: var(--s-4);
   color: var(--text);
   text-decoration: none;
-}
-.svs-no {
-  padding-top: 0.55rem;
-  color: var(--text);
-  font-weight: var(--w-semi);
-  font-variant-numeric: tabular-nums;
 }
 .svs-name {
   margin: 0;
@@ -3336,25 +3310,13 @@
 }
 
 @media (max-width: 57.5rem) {
-  .svs-head {
-    padding-bottom: var(--s-7);
-  }
-  .svs-title {
-    font-size: clamp(3.25rem, 17vw, 7rem);
-  }
   .svs-row {
     box-shadow: none;
   }
   .svs-link {
-    grid-template-columns: 2.25rem minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     row-gap: var(--s-4);
     padding-block: var(--s-5);
-  }
-  .svs-no { padding-top: 0.35rem; }
-  .svs-pic,
-  .svs-para,
-  .svs-tags {
-    grid-column: 2;
   }
   .svs-tags { padding-top: 0; }
   .svs-para { padding-top: 0; max-width: none; }

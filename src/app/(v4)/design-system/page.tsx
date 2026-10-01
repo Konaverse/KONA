@@ -66,7 +66,7 @@ const SERVICES = [
 
 const TILES = [
   ['Titan Sable', 'Scroll-driven product story'],
-  ['DT Zankatian', 'Full site, seven templates'],
+  ['Velricon', 'Full site, financial advisory'],
   ['Los Santos Barbers', 'One-page, booking led'],
 ]
 

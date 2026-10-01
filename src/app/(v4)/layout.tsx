@@ -1,4 +1,4 @@
-import ApertureMenu from '@/components/v4/ApertureMenu'
+import UnderlayMenu from '@/components/v4/UnderlayMenu'
 import CalendlyPopover from '@/components/v4/CalendlyPopover'
 import SmoothScroll from '@/components/v4/SmoothScroll'
 import FluidCursor from '@/components/v4/FluidCursor'
@@ -41,7 +41,9 @@ export default function V4Layout({ children }: { children: React.ReactNode }) {
           --grain-opacity; this lerps the root value by how much dark ground is
           on screen, so the texture thickens over the dark passages. */}
       <GrainField />
-      <ApertureMenu />
+      {/* THE UNDERLAY (2026-09-30; the aperture is parked): the panel is
+          fixed under the page, and opening slides the page (.k-shift) */}
+      <UnderlayMenu />
       {/* the booking panel: every Calendly link on the page opens it
           anchored to the clicked button instead of leaving (2026-08-26) */}
       <CalendlyPopover />
@@ -52,6 +54,8 @@ export default function V4Layout({ children }: { children: React.ReactNode }) {
       <PlateLift />
 
       <SmoothScroll>
+        {/* the page, as one box the menu can freeze and slide */}
+        <div className="k-shift">
         <PageTransition>
           {children}
           {/* the footer is part of the page, so it rides the transition
@@ -61,6 +65,7 @@ export default function V4Layout({ children }: { children: React.ReactNode }) {
               (the work hub). */}
           <FooterGate />
         </PageTransition>
+        </div>
       </SmoothScroll>
     </div>
   )

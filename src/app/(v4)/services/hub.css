@@ -1217,3 +1217,189 @@
 /* §2 · THE SERVICES — THE WORKBENCH: its rules moved to
    src/components/v4/bench.css (2026-09-18), imported by HubBench.tsx,
    so the homepage reads them too. */
+
+/* ============================================================
+   THE CAROUSEL (ServiceCarousel.tsx, 2026-09-30) — the hub as one
+   viewport, like /work: the copy centred at the top (the h1 small, the
+   active name large, its line, the two arrows), and THE RING under it —
+   six landscape cards on one baseline, the centre one whole, one a side
+   behind it, the far ones cut by the screen. Each card: the service's
+   object on its film. The places are written inline (server and
+   driver); CSS holds the card's size, the shade a place gives it, and
+   the tag that names it. The frame is 1536 x 730 — 45.6rem tall.
+   ============================================================ */
+.sv {
+  --sv-w: 30rem;
+  position: relative;
+  /* its own stacking context: .sv-top's z 200 (over the ring's cards)
+     otherwise competed at the root with the nav bar (z 50) and covered
+     it — the menu could not be clicked on this page */
+  isolation: isolate;
+  height: 100svh;
+  min-height: 40rem;
+  overflow: hidden;
+  background: radial-gradient(80rem 46rem at 50% 100%, var(--n-0) 0%, var(--n-1) 60%, var(--n-1) 100%);
+  user-select: none;
+}
+.sv-top {
+  position: relative;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5.6rem var(--page-pad) 0;
+  text-align: center;
+}
+.sv-h1 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: var(--w-medium);
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--text-muted);
+}
+/* THE COPY: six stacked in one cell, the active one shown */
+.sv-copies { display: grid; width: 44rem; margin-top: 1rem; }
+.sv-copy {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translate3d(0, 0.6rem, 0);
+  transition: opacity 0.45s var(--e-glass), transform 0.6s var(--e-glass);
+  pointer-events: none;
+}
+.sv-copy.is-on { opacity: 1; transform: none; pointer-events: auto; }
+.sv-name {
+  margin: 0;
+  font-size: 4.1rem;
+  font-weight: 600;
+  font-variation-settings: 'wght' 600;
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+.sv-name a { color: var(--ink); text-decoration: none; }
+.sv-blurb {
+  margin: 1.1rem auto 0;
+  max-width: 36rem;
+  font-size: 1.02rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+.sv-arrows { display: flex; gap: 0.7rem; margin-top: 1.4rem; }
+.sv-arrow {
+  display: grid;
+  place-items: center;
+  width: 3.1rem;
+  height: 3.1rem;
+  padding: 0;
+  border: 1px solid var(--n-4);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background var(--d-base) var(--e-glass), color var(--d-base) var(--e-glass), border-color var(--d-base) var(--e-glass);
+}
+.sv-arrow svg { width: 1.15rem; height: 1.15rem; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.sv-arrow:hover { background: var(--ink); border-color: var(--ink); color: var(--n-0); }
+.sv-arrow:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
+
+/* THE RING: the cards stand on one baseline near the foot */
+.sv-ring {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 23.5rem;
+  touch-action: pan-y;
+  cursor: grab;
+}
+.sv-ring.is-drag { cursor: grabbing; }
+.sv-card {
+  position: absolute;
+  left: 50%;
+  bottom: 2.6rem;
+  display: block;
+  width: var(--sv-w);
+  aspect-ratio: 16 / 10;
+  transform-origin: 50% 100%;
+  color: inherit;
+  text-decoration: none;
+  will-change: transform;
+  -webkit-user-drag: none;
+}
+.sv-card:focus-visible { outline: none; }
+.sv-card:focus-visible .sv-pic { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
+.sv-pic {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 1.2rem;
+  background: var(--n-11);
+  box-shadow: 0 2.2rem 3.4rem -2rem rgb(13 16 18 / 0.55), 0 0.3rem 0.8rem -0.3rem rgb(13 16 18 / 0.18);
+}
+.sv-pic video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+/* the shade a place gives the card behind */
+.sv-pic::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--n-1);
+  opacity: calc(var(--sh, 0) * 0.55);
+  pointer-events: none;
+}
+.sv-obj {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: auto;
+  height: 74%;
+  max-width: 70%;
+  object-fit: contain;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 1.2rem 1.6rem rgb(0 0 0 / 0.4));
+  pointer-events: none;
+}
+.sv-obj--chrome { filter: grayscale(1) contrast(1.1) drop-shadow(0 1.2rem 1.6rem rgb(0 0 0 / 0.4)); }
+.sv-obj--glass { filter: grayscale(1) drop-shadow(0 1.2rem 1.6rem rgb(0 0 0 / 0.4)); }
+/* THE TAG: the card's name, centred above it (a side card's left edge
+   is behind the centre card), at one size whatever the card's scale
+   (counter-scaled) */
+.sv-tag {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(100% + 0.6rem / var(--s, 1));
+  display: flex;
+  align-items: center;
+  gap: calc(0.4rem / var(--s, 1));
+  font-size: calc(0.78rem / var(--s, 1));
+  font-weight: var(--w-medium);
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--text-muted);
+  /* named: the centre and the side cards; the far ones' tags go */
+  opacity: clamp(0, calc((0.5 - var(--sh, 0)) * 4), 1);
+}
+.sv-tag i {
+  width: calc(0.42rem / var(--s, 1));
+  height: calc(0.42rem / var(--s, 1));
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+.sv-card.is-on .sv-tag { color: var(--ink); }
+.sv-card.is-on .sv-tag i { background: currentColor; }
+/* while the deal opens the ring, the tags wait */
+.sv.is-dealing .sv-tag { opacity: 0; }
+
+@media (max-width: 57.5rem) {
+  .sv { --sv-w: 72vw; min-height: 36rem; }
+  .sv-top { padding-top: 6rem; }
+  .sv-copies { width: 100%; }
+  .sv-name { font-size: 2.6rem; }
+  .sv-blurb { font-size: 0.95rem; }
+  /* phones: the copy and the ring centred together, no gap between */
+  .sv { display: flex; flex-direction: column; justify-content: center; }
+  .sv-top { padding-top: 3rem; }
+  .sv-ring { position: relative; top: auto; bottom: auto; flex: none; height: calc(var(--sv-w) * 0.625 + 3.5rem); margin-top: 1.5rem; }
+  .sv-card { bottom: 0; }
+  .sv-tag { font-size: calc(0.7rem / var(--s, 1)); }
+}

@@ -41,8 +41,9 @@ export type RunChapter = { id: string; label: string }
 
 /** the core's ease after its aim: the time constant, in seconds */
 const GLIDE = 0.55
-/** the bar waits for the brief's pass, in seconds */
-const BAR_AFTER = 2.9
+/** the bar's wait before it arrives unscrolled, in seconds (it waited
+ *  2.9 for the brief's pass; the hero is still since 2026-09-30) */
+const BAR_AFTER = 1
 
 export default function RunLight({ chapters }: { chapters: readonly RunChapter[] }) {
   const ref = useRef<HTMLDivElement | null>(null)

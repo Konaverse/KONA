@@ -77,7 +77,6 @@ const RUN: { slug: string; name?: string }[] = [
   { slug: 'lumiere-eclat' },
   { slug: 'chris-n-clean', name: 'Chris N. Clean' },
   { slug: 'velricon' },
-  { slug: 'dt-zankatian' },
   { slug: 'heimat-group', name: 'Heimat Group' },
   { slug: 'tdk', name: 'TDK' },
   { slug: 'city-arcade', name: 'City Arcade' },

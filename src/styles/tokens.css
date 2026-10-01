@@ -821,6 +821,7 @@ html:has(.k-root)::-webkit-scrollbar {
    roll lands first on --d-base, the flood seals the state after it. */
 .k-btn {
   --k-btn-ico:  0.875rem;   /* the marks, at --t-small's own size */
+  --k-btn-ico-l: 1.125rem;  /* the drawn logo: a touch larger, or its gaps close */
   --k-btn-igap: 0.625rem;   /* mark -> label */
   /* the ghost's edge, and the edge the primary takes on when flooded:
      the type at 45%, not a ramp step. The ramp's hairlines are tuned for
@@ -866,6 +867,7 @@ html:has(.k-root)::-webkit-scrollbar {
 }
 .k-btn__ico--l {
   position: absolute; left: 0; top: 50%;
+  width: var(--k-btn-ico-l); height: var(--k-btn-ico-l);
   transform: translateY(-50%);
 }
 .k-btn__ico-in {
@@ -874,8 +876,16 @@ html:has(.k-root)::-webkit-scrollbar {
   transition: transform var(--d-base) var(--e-settle);
 }
 .k-btn__ico-in svg { display: block; width: 100%; height: 100%; }
-/* the hover mark waits below its slot; the rest mark sits in it */
-.k-btn__ico--l .k-btn__ico-in { transform: translateY(115%); transition-delay: 60ms; }
+/* the hover mark does not roll: it sits in its slot UNDRAWN and draws
+   itself in on hover, stroke by stroke in the order a hand would draw
+   it (each path is pathLength 1, so a dash of 1 offset by 1 is nothing
+   and offset 0 is all). This block is the way OUT — quick, together;
+   the way in is the hover rule below. */
+.k-btn__mark path {
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.28s var(--e-settle);
+}
 
 /* the roll. Both labels are absolutely positioned; an invisible sizer
    holds the width of whichever is WIDER so the button never resizes or
@@ -950,15 +960,19 @@ html:has(.k-root)::-webkit-scrollbar {
 @media (hover: hover) {
   .k-btn:hover .k-btn__line--a span { transform: translateY(-115%); }
   .k-btn:hover .k-btn__line--b span { transform: translateY(0); }
-  .k-btn:hover .k-btn__roll { transform: translateX(calc(var(--k-btn-ico) + var(--k-btn-igap))); }
+  .k-btn:hover .k-btn__roll { transform: translateX(calc(var(--k-btn-ico-l) + var(--k-btn-igap))); }
   .k-btn:hover .k-btn__ico--r .k-btn__ico-in { transform: translateY(-115%); }
-  .k-btn:hover .k-btn__ico--l .k-btn__ico-in { transform: translateY(0); }
+  .k-btn:hover .k-btn__mark path { stroke-dashoffset: 0; transition: stroke-dashoffset 0.75s var(--e-glass) var(--k-mark-at, 0.08s); }
+  .k-btn:hover .k-btn__mark path:nth-child(2) { --k-mark-at: 0.22s; }
+  .k-btn:hover .k-btn__mark path:nth-child(3) { --k-mark-at: 0.36s; }
 }
 .k-btn:focus-visible .k-btn__line--a span { transform: translateY(-115%); }
 .k-btn:focus-visible .k-btn__line--b span { transform: translateY(0); }
-.k-btn:focus-visible .k-btn__roll { transform: translateX(calc(var(--k-btn-ico) + var(--k-btn-igap))); }
+.k-btn:focus-visible .k-btn__roll { transform: translateX(calc(var(--k-btn-ico-l) + var(--k-btn-igap))); }
 .k-btn:focus-visible .k-btn__ico--r .k-btn__ico-in { transform: translateY(-115%); }
-.k-btn:focus-visible .k-btn__ico--l .k-btn__ico-in { transform: translateY(0); }
+.k-btn:focus-visible .k-btn__mark path { stroke-dashoffset: 0; transition: stroke-dashoffset 0.75s var(--e-glass) var(--k-mark-at, 0.08s); }
+.k-btn:focus-visible .k-btn__mark path:nth-child(2) { --k-mark-at: 0.22s; }
+.k-btn:focus-visible .k-btn__mark path:nth-child(3) { --k-mark-at: 0.36s; }
 
 /* reduced motion: no roll, no swap, and the flood appears rather than
    grows — JS never tweens the radius in this mode, so the state shows
@@ -2018,6 +2032,24 @@ html.lenis, html.lenis body { height: auto; }
 /* THE FIELD (FooterField.tsx, 2026-09-18): the lattice of points. The
    CSS lattice is the no-WebGL / no-JS ground; the canvas covers it once
    it draws. Same cell as the shader's. */
+/* THE DOTS (2026-10-01): the service ground's grid (run.css .ro-dots) in
+   light dots on the void, hidden at rest and seen in a circle under the
+   hand; SiteFooter.tsx places the circle and lights it */
+.ft-dots {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  /* white at 0.4, not a ramp grey: on the void the ramp's light end read
+     as near-nothing beside the paper page's dots */
+  background-image: radial-gradient(rgb(255 255 255 / 0.4) 1.1px, transparent 1.4px);
+  background-size: 2.1rem 2.1rem;
+  -webkit-mask-image: radial-gradient(24rem circle at var(--ft-x, 50%) var(--ft-y, 50%), #000 0%, rgb(0 0 0 / 0.5) 45%, transparent 100%);
+  mask-image: radial-gradient(24rem circle at var(--ft-x, 50%) var(--ft-y, 50%), #000 0%, rgb(0 0 0 / 0.5) 45%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.45s var(--e-glass);
+  pointer-events: none;
+}
+.ft-dots.is-hand { opacity: 1; }
 .ft-field {
   position: absolute;
   inset: 0;
@@ -2518,4 +2550,164 @@ html.k-hand * { cursor: none !important; }
 @media (hover: none) {
   .k-hand-disc,
   .k-hand-def { display: none; }
+}
+
+/* ============================================================
+   THE UNDERLAY (UnderlayMenu.tsx, 2026-09-30) — replaces the
+   aperture (its rules above stay, parked with ApertureMenu.tsx).
+   The user's "fixed underlay navigation" film: a white panel fixed
+   UNDER the page at the right; opening slides the whole page left by
+   the panel's width (the page is frozen into `.k-shift.is-frozen`
+   first — a fixed, viewport-sized box scrolled inside to its offset,
+   so fixed and sticky layers in it never jump); the page's moving
+   edge rounds and it dims; the links arrive from the right. The bar
+   above never moves; its "Menu" rolls to "Close".
+   Stacking at rest: .k-shift is in flow; the panel and the dim are
+   hidden. Open: panel 1 < page 2 < dim 3 < bar 50.
+   ============================================================ */
+.k-shift { position: relative; }
+/* THE SWAP's still: the outgoing page, a clone of the frozen box, rising
+   out of the slot while the new page rises in (UnderlayMenu.tsx) */
+.k-shift.is-frozen,
+.k-under-ghost {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  border-radius: 1.1rem;
+  background: var(--surface);
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+.k-under-dim {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  visibility: hidden;
+  opacity: 0;
+  border-radius: 1.1rem;
+  background: rgb(13 16 18 / 0.18);
+  transform-origin: 50% 50%;
+  cursor: pointer;
+  will-change: transform, opacity;
+}
+
+/* THE UNDERLAY: the whole screen, white — it shows at the right where
+   the page has gone and around the shrunk page's edges (the user: "the
+   background of the menu the same as the background around the page
+   edges"); its content is one column at the right */
+.k-under {
+  --k-under-w: 32rem;
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  justify-content: flex-end;
+  background: var(--n-0);
+  color: var(--ink);
+  visibility: hidden;
+}
+.k-under__col {
+  display: flex;
+  flex-direction: column;
+  width: var(--k-under-w);
+  height: 100%;
+  padding: 6rem 0 1.7rem;
+}
+.k-under__nav ul { margin: 0; padding: 0 0.85rem; list-style: none; }
+.k-under__link {
+  position: relative;
+  display: block;
+  padding: 0.04em 0.55rem 0.1em;
+  font-size: 3.1rem;
+  font-weight: 450;
+  font-variation-settings: 'wght' 450;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  text-decoration: none;
+  transition: color 0.35s var(--e-glass);
+}
+.k-under__link > span { position: relative; z-index: 1; }
+/* THE BAR: the current page's link stands on it; a hovered link draws
+   its own from the left */
+.k-under__link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 0.55s var(--e-glass);
+}
+.k-under__link.is-current,
+.k-under__link:hover,
+.k-under__link:focus-visible { color: var(--n-0); outline: none; }
+.k-under__link.is-current::before,
+.k-under__link:hover::before,
+.k-under__link:focus-visible::before { transform: scaleX(1); }
+
+/* THE FOOT: a hairline, then two small columns */
+.k-under__foot {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 1.5rem;
+  margin-top: auto;
+  padding: 1.1rem 1.4rem 0;
+}
+.k-under__rule { position: absolute; top: 0; left: 1.4rem; right: 1.4rem; height: 1px; background: var(--hairline); }
+.k-under__fcol { display: flex; flex-direction: column; align-items: flex-start; gap: 0.3rem; }
+.k-under__k { margin: 0 0 0.35rem; font-size: 0.72rem; line-height: 1.2; color: var(--n-6); }
+.k-under__fcol a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.82rem;
+  line-height: 1.3;
+  color: var(--ink);
+  text-decoration: none;
+}
+/* the foot's links only — scoped to the whole column, it underlined the
+   big links too: a dark stroke under each word at the bar's bottom left */
+.k-under__fcol a:hover { text-decoration: underline; text-underline-offset: 0.18em; }
+.k-under__fcol svg { width: 0.55rem; height: 0.55rem; fill: none; stroke: currentColor; stroke-width: 1.3; }
+
+/* THE BUTTON: "Menu" rolls to "Close", the two rules cross */
+.k-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #fff;
+  font: inherit;
+  font-size: var(--t-small);
+  cursor: pointer;
+}
+.k-menu-btn__roll { display: block; height: 1.2em; overflow: hidden; line-height: 1.2; }
+.k-menu-btn__roll > span { display: block; transition: transform 0.6s var(--e-glass); }
+.k-menu-btn.is-open .k-menu-btn__roll > span { transform: translateY(-100%); }
+.k-menu-btn__icon { position: relative; width: 1.05rem; height: 0.7rem; }
+.k-menu-btn__icon i {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1.5px;
+  background: currentColor;
+  transition: transform 0.6s var(--e-glass), top 0.6s var(--e-glass);
+}
+.k-menu-btn__icon i:first-child { top: 0.12rem; }
+.k-menu-btn__icon i:last-child { top: calc(100% - 0.12rem - 1.5px); }
+.k-menu-btn.is-open .k-menu-btn__icon i { top: calc(50% - 0.75px); }
+.k-menu-btn.is-open .k-menu-btn__icon i:first-child { transform: rotate(45deg); }
+.k-menu-btn.is-open .k-menu-btn__icon i:last-child { transform: rotate(-45deg); }
+.k-menu-btn:focus-visible { outline: 1px solid #fff; outline-offset: 4px; }
+
+@media (max-width: 57.5rem) {
+  .k-under { --k-under-w: 86vw; }
+  .k-under__col { padding-top: 5.5rem; }
+  .k-under__link { font-size: 2.5rem; }
 }

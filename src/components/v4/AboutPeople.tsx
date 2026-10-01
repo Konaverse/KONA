@@ -161,7 +161,6 @@ export default function AboutPeople({ people }: { people: readonly Person[] }) {
 
   return (
     <section ref={ref} className="ab-ppl" aria-label="Who we are">
-      <p className="ab-ppl-k">The three behind the work</p>
       <h2 className="ab-ppl-t">Who we are</h2>
 
       {people.map((p, i) => (

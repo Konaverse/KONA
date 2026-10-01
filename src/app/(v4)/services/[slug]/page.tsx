@@ -3,13 +3,12 @@ import { notFound } from 'next/navigation'
 import Button from '@/components/v4/Button'
 import ArrowLink from '@/components/v4/ArrowLink'
 import RunLight from '@/components/v4/RunLight'
-import RunBrief from '@/components/v4/RunBrief'
+import RunHero from '@/components/v4/RunHero'
+import RunGround from '@/components/v4/RunGround'
 import RunAnswer from '@/components/v4/RunAnswer'
-import RunFit from '@/components/v4/RunFit'
-import RunPlan from '@/components/v4/RunPlan'
+import RunTrack from '@/components/v4/RunTrack'
 import ServicePoster from '@/components/v4/ServicePoster'
 import Invitation from '@/components/v4/Invitation'
-import { SCENE } from '@/components/v4/ServiceScene'
 import { RUN_DECK, SERVICE_PAGES, getServicePage } from '@/lib/service-pages'
 import { CALENDLY_URL, SITE_URL } from '@/lib/site'
 import '../scenes.css'
@@ -32,6 +31,10 @@ import '../run.css'
  * ACCEPTED, AND THE JOB RUNS AS YOU SCROLL — the scroll is the agent's
  * clock. Five chapters, five different scroll mechanics, and every
  * readout on screen is a true fact from this page's data:
+ *
+ *   (1 was replaced 2026-09-30 by RunHero — THE SUNBURST: a big word
+ *   behind, a ring of rays, the h1 on top in difference, two CTAs; still.
+ *   RunBrief is parked. The rest of this note is the run as designed.)
  *
  *   1  THE BRIEF      RunBrief     a load pass — Kona's marquee renders
  *                                  the outlined h1 to ink; the tagline is
@@ -105,7 +108,6 @@ const INDEXABLE = false
 const CHAPTERS = [
   { id: 'brief', label: 'Brief' },
   { id: 'answer', label: 'Answer' },
-  { id: 'fit', label: 'Fit' },
   { id: 'plan', label: 'Plan' },
   { id: 'start', label: 'Start' },
 ] as const
@@ -206,51 +208,35 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
   return (
     <article className="sr" style={{ '--sr-word': `${page.wordSize}rem` } as React.CSSProperties}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      {/* the hero parks its entrance (run.css .rb-ent, the outlined word);
-          the no-JS page undoes it. Everything else hides only under a
+      {/* the hero is still and parks nothing; the run bar waits for JS and
+          the no-JS page shows it. Everything else hides only under a
           class its own driver sets. */}
       <noscript>
-        <style>{`.rb-ent{opacity:1!important;transform:none!important}.rb-word{--rb-x:300rem!important;-webkit-text-stroke-color:transparent!important}.rb-sel,.k-agent{display:none!important}.rn{opacity:1!important;transform:translateX(-50%)!important}`}</style>
+        <style>{`.rn{opacity:1!important;transform:translateX(-50%)!important}`}</style>
       </noscript>
 
-      {/* 1 — THE BRIEF: the h1, the tagline, the two CTAs */}
-      <RunBrief name={page.name} word={page.word} modifier={page.modifier} tagline={page.tagline} scene={SCENE[page.slug] ?? 'design'}>
-        {cta}
-      </RunBrief>
+      {/* ONE GROUND under the whole page (2026-09-30, RunGround: the
+          paper and the hover dots — the poster and the process card carry
+          their own dots layer, placed by the same driver) */}
+      <RunGround>
+        {/* 1 — THE HERO (THE SUNBURST): the big word, the rays, the h1
+            over them, the two CTAs. RunBrief.tsx is parked. */}
+        <RunHero name={page.name} word={page.word} modifier={page.modifier} back={page.back}>
+          {cta}
+        </RunHero>
 
-      {/* 2 + 3 — THE ANSWER and THE FIT share ONE GROUND: the user's
-          aerial crowd, sticky behind both (run.css .rs-ground); the plan
-          then scrolls over it */}
-      <div className="rs-ground">
-        <div className="rs-bg" aria-hidden="true">
-          <img
-            src="/services/walking-1400.webp"
-            srcSet="/services/walking-700.webp 700w, /services/walking-1000.webp 1000w, /services/walking-1400.webp 1400w"
-            sizes="100vw"
-            alt=""
-            width={1086}
-            height={1448}
-            loading="lazy"
-            decoding="async"
-            draggable={false}
-          />
-        </div>
+        {/* 2 — THE STATEMENT: the direct answer's first paragraph (the
+            second is cut from the page, 2026-09-30); the three facts as
+            cards in a row */}
+        <RunAnswer
+          label="The short answer"
+          answer={page.answer[0]}
+          facts={page.facts.map((f, i) => ({ value: f.value, label: f.label, cue: f.cue, plate: (page.deck ?? RUN_DECK)[i] }))}
+        />
 
-      {/* 2 — THE ANSWER: the direct answer; the three facts, a plate each */}
-      <RunAnswer
-        answer={page.answer}
-        facts={page.facts.map((f, i) => ({ value: f.value, label: f.label, cue: f.cue, plate: (page.deck ?? RUN_DECK)[i] }))}
-      />
-
-      {/* 3 — THE FIT: what it is, when it is the wrong choice */}
-      <RunFit
-        headline={page.plate.headline}
-        beats={page.plate.beats}
-        close={page.plate.close}
-        image={page.plate.image}
-        alt={page.plate.alt}
-      />
-      </div>
+      {/* THE FIT (what it is / when it is the wrong choice) was CUT from
+          the page 2026-09-30 by the owner; RunFit.tsx and its crowd ground
+          (.rs-ground) are parked */}
 
       {/* THE POSTER (2026-09-19): the interlude between the fit and the
           plan — the tagline at poster scale, cut by the service's object.
@@ -260,7 +246,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
       )}
 
       {/* 4 — THE PLAN: the process */}
-      <RunPlan steps={page.process} />
+      <RunTrack steps={page.process} />
 
       {/* 5 — THE CTA: the site's Invitation (2026-09-18, user: "replace
           the cta with the new one we built"). THE HANDOVER it replaces
@@ -279,6 +265,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
           </p>
         )}
       </nav>
+      </RunGround>
 
       {/* THE LIGHT and THE RUN BAR — both fixed, so they sit LAST in the
           source: nothing stands between a crawler and the h1 */}
