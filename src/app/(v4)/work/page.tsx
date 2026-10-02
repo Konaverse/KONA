@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import WorkCascade, { type CascadeCard } from '@/components/v4/WorkCascade'
 import { WORK_PROJECTS } from '@/lib/work-projects'
 import { getCaseStudy } from '@/lib/case-studies'
-import { SITE_URL } from '@/lib/site'
+import { OG_DEFAULTS, SITE_URL } from '@/lib/site'
 import './work.css'
 
 /**
@@ -41,21 +41,18 @@ import './work.css'
  * SERVER-RENDERED, every word in the raw HTML (SEO plan D5): the h1 is
  * the statement; the list's h2 ("Selected work") and the four names as
  * links. No video on the page: the reel is stacked captures cut by a
- * clock. NOT INDEXED YET — KONA_OPEN_ROUTES=/work lifts the launch
- * redirect locally.
+ * clock. INDEXED since 2026-10-02 (SEO plan v3 launch gate).
  */
-const INDEXABLE = false
-
-const TITLE = 'Work'
+const TITLE = 'Website Design Portfolio'
 const DESCRIPTION =
-  'Four websites designed and built by Konaverse in Cyprus — a videographer, a barbershop, a watchmaker and a financial advisory. Every one from a blank file.'
+  'Seven websites designed and built by Konaverse in Cyprus: a barbershop, a financial leadership firm, a cleaning company, a property developer, a design-and-build studio and two concepts. Every one from a blank file.'
 
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: `${SITE_URL}/work` },
-  robots: INDEXABLE ? { index: true, follow: true } : { index: false, follow: true },
   openGraph: {
+    ...OG_DEFAULTS,
     title: `${TITLE} | Konaverse`,
     description: DESCRIPTION,
     url: `${SITE_URL}/work`,
@@ -93,6 +90,9 @@ export default function WorkPage() {
       meta: p ? `${p.service}, ${p.year}` : '',
       href: p ? (getCaseStudy(slug) ? `/work/${slug}` : p.href) : undefined,
       src: `/work/covers/${slug}.webp`,
+      alt: p
+        ? `The ${p.name} website, designed and built by Konaverse`
+        : `The ${name ?? slug} website, by Konaverse`,
       small: `/work/covers/${slug}-960.webp`,
     }
   })

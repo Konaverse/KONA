@@ -107,6 +107,9 @@ export type CascadeCard = {
   /** the cover (16:9, the subject near its centre) and its 960w sibling */
   src: string
   small?: string
+  /** the cover described, for Google Images and as the link's text
+   *  (SEO plan v3: the hub's only words are its alts) */
+  alt: string
 }
 
 /* ---- the entrance ---- */
@@ -571,7 +574,7 @@ export default function WorkCascade({
                     src={c.src}
                     srcSet={c.small ? `${c.small} 960w, ${c.src} 1690w` : undefined}
                     sizes={last ? '100vw' : '(max-aspect-ratio: 1/1) 62vw, 36vw'}
-                    alt=""
+                    alt={c.alt}
                     width={1690}
                     height={930}
                     loading="eager"
@@ -598,7 +601,7 @@ export default function WorkCascade({
                     />
                   ) : null
                 return c.href ? (
-                  <a className="wc-card" href={c.href} aria-label={c.name} data-name={c.name} data-meta={c.meta} draggable={false}>
+                  <a className="wc-card" href={c.href} data-name={c.name} data-meta={c.meta} draggable={false}>
                     {img}
                     {over}
                   </a>

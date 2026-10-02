@@ -4,7 +4,8 @@ import Script from 'next/script'
 import JsonLd from '@/components/JsonLd'
 import CookieConsent from '@/components/layout/CookieConsent'
 import GoogleAnalytics from '@/components/layout/GoogleAnalytics'
-import { CONTACT_EMAIL, SITE_NAME, SITE_URL } from '@/lib/site'
+import { CONTACT_EMAIL, CONTACT_PHONE, SITE_NAME, SITE_URL } from '@/lib/site'
+import { SERVICE_PAGES } from '@/lib/service-pages'
 import './globals.css'
 
 // v4 "Whiteout" — the only family the new system uses. Weights are exactly the
@@ -125,65 +126,93 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${manrope.variable} ${cormorant.variable} ${inter.variable} ${dmSans.variable} ${geistMono.variable} ${anton.variable}`}
     >
       <body className="antialiased">
-        {/* Structured data, re-set for v4 (2026-08-28): the studio as it
-            is now — six services, socials as sameAs, Cyprus. The founders'
-            entries carry over. */}
+        {/* Structured data, ONE graph (SEO plan v3 §3, 2026-10-02): the
+            studio as Organization + ProfessionalService, the three
+            founders tied both ways, the site name. Every page references
+            these by @id; page-level graphs add their own nodes. sameAs are
+            the user's own URLs only — a wrong one splits the entity, so no
+            guesses. No street address until Google Business Profile is
+            verified: the two must match (NAP). */}
         <JsonLd data={{
           '@context': 'https://schema.org',
-          '@type': 'Organization',
-          '@id': `${SITE_URL}/#organization`,
-          name: SITE_NAME,
-          url: SITE_URL,
-          logo: { '@type': 'ImageObject', url: `${SITE_URL}/icon.png`, width: 512, height: 512 },
-          image: `${SITE_URL}/og-image.png`,
-          description:
-            'A web studio in Cyprus that designs and builds websites end to end — strategy, design, motion and engineering in one continuous process.',
-          email: CONTACT_EMAIL,
-          address: { '@type': 'PostalAddress', addressCountry: 'CY' },
-          areaServed: ['Cyprus', 'Europe', 'Middle East', 'North America'],
-          sameAs: [
-            'https://www.instagram.com/konaverse.cy/',
-            'https://www.facebook.com/konaverse',
-            'https://www.linkedin.com/company/konaverse',
+          '@graph': [
+            {
+              '@type': ['Organization', 'ProfessionalService'],
+              '@id': `${SITE_URL}/#organization`,
+              name: SITE_NAME,
+              url: SITE_URL,
+              logo: { '@type': 'ImageObject', url: `${SITE_URL}/icon.png`, width: 512, height: 512 },
+              image: `${SITE_URL}/og-image.png`,
+              description:
+                'A web studio in Cyprus that designs and builds websites end to end — web design, web development, 3D and immersive websites, one-page websites, redesigns and SEO.',
+              email: CONTACT_EMAIL,
+              telephone: CONTACT_PHONE,
+              address: { '@type': 'PostalAddress', addressCountry: 'CY' },
+              areaServed: [
+                { '@type': 'Country', name: 'Cyprus' },
+                'Europe',
+                'Worldwide',
+              ],
+              contactPoint: {
+                '@type': 'ContactPoint',
+                contactType: 'customer service',
+                email: CONTACT_EMAIL,
+                telephone: CONTACT_PHONE,
+                availableLanguage: ['English', 'Greek'],
+              },
+              sameAs: [
+                'https://www.instagram.com/konaverse.cy/',
+                'https://www.facebook.com/konaverse',
+                'https://www.linkedin.com/company/konaverse',
+              ],
+              knowsAbout: SERVICE_PAGES.map((s) => s.name),
+              hasOfferCatalog: {
+                '@type': 'OfferCatalog',
+                name: 'Services',
+                itemListElement: SERVICE_PAGES.map((s) => ({
+                  '@type': 'Offer',
+                  itemOffered: { '@id': `${SITE_URL}/services/${s.slug}#service` },
+                })),
+              },
+              founder: [
+                { '@id': `${SITE_URL}/#konstantinos` },
+                { '@id': `${SITE_URL}/#nabil` },
+                { '@id': `${SITE_URL}/#andreas` },
+              ],
+            },
+            {
+              '@type': 'Person',
+              '@id': `${SITE_URL}/#konstantinos`,
+              name: 'Konstantinos Kyprianou',
+              jobTitle: 'Technical Architect & Co-Founder',
+              worksFor: { '@id': `${SITE_URL}/#organization` },
+              sameAs: ['https://www.linkedin.com/in/kon-kyprianou-1011/'],
+            },
+            {
+              '@type': 'Person',
+              '@id': `${SITE_URL}/#nabil`,
+              name: 'Nabil Al Jbawi',
+              jobTitle: 'Creative Director & Co-Founder',
+              worksFor: { '@id': `${SITE_URL}/#organization` },
+              sameAs: ['https://www.linkedin.com/in/nabil-al-jbawi-257517291/'],
+            },
+            {
+              '@type': 'Person',
+              '@id': `${SITE_URL}/#andreas`,
+              name: 'Andreas Kyriakou',
+              jobTitle: 'Co-Founder',
+              worksFor: { '@id': `${SITE_URL}/#organization` },
+            },
+            {
+              '@type': 'WebSite',
+              '@id': `${SITE_URL}/#website`,
+              name: SITE_NAME,
+              alternateName: 'Kona-verse',
+              url: SITE_URL,
+              inLanguage: 'en',
+              publisher: { '@id': `${SITE_URL}/#organization` },
+            },
           ],
-          knowsAbout: [
-            '3D websites',
-            'Web design',
-            'Web development',
-            'One-page websites',
-            'Website redesign',
-            'SEO',
-          ],
-          founder: [{ '@id': `${SITE_URL}/#konstantinos` }, { '@id': `${SITE_URL}/#nabil` }],
-        }} />
-        {/* the founders as entities of their own, tied both ways to the
-            organisation (SEO plan 1.3); sameAs are the user's own LinkedIn
-            URLs (2026-08-28) — a wrong one splits the entity, so no guesses */}
-        <JsonLd data={{
-          '@context': 'https://schema.org',
-          '@type': 'Person',
-          '@id': `${SITE_URL}/#konstantinos`,
-          name: 'Konstantinos Kyprianou',
-          jobTitle: 'Technical Architect & Co-Founder',
-          worksFor: { '@id': `${SITE_URL}/#organization` },
-          sameAs: ['https://www.linkedin.com/in/kon-kyprianou-1011/'],
-        }} />
-        <JsonLd data={{
-          '@context': 'https://schema.org',
-          '@type': 'Person',
-          '@id': `${SITE_URL}/#nabil`,
-          name: 'Nabil Al Jbawi',
-          jobTitle: 'Creative Director & Co-Founder',
-          worksFor: { '@id': `${SITE_URL}/#organization` },
-          sameAs: ['https://www.linkedin.com/in/nabil-al-jbawi-257517291/'],
-        }} />
-        <JsonLd data={{
-          '@context': 'https://schema.org',
-          '@type': 'WebSite',
-          '@id': `${SITE_URL}/#website`,
-          name: SITE_NAME,
-          url: SITE_URL,
-          publisher: { '@id': `${SITE_URL}/#organization` },
         }} />
         {/* Site chrome (navbar, footer, cursor, smooth scroll) now lives in
             app/(site)/layout.tsx so v4 routes can render without it. Anything

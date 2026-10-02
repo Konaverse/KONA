@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Reveal from '@/components/v4/Reveal'
 import ContactForm from '@/components/v4/ContactForm'
 import CalendlyInline from '@/components/v4/CalendlyInline'
-import { CONTACT_EMAIL, SITE_URL } from '@/lib/site'
+import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_HREF, OG_DEFAULTS, SITE_URL } from '@/lib/site'
 import './contact.css'
 
 /**
@@ -26,18 +26,17 @@ import './contact.css'
  *
  * SERVER-RENDERED, every answer in the raw HTML; the form posts without
  * JS; the calendar has a plain link without JS. The page carries the
- * ProfessionalService node with the country (no street address exists
- * on the site yet) and the FAQPage node — the one page that should.
+ * ContactPage node; the studio itself (ProfessionalService, phone,
+ * email) is the root layout's graph. The questions stay visible but carry
+ * NO FAQPage markup: the rich result is gone since 2026-05-07 and
+ * controlled tests show no AI lift (SEO plan v3).
  *
  * HOURS AND THE REPLY PROMISE ARE FIRST DRAFTS (no such facts existed
  * anywhere on the site) — the user confirms them.
  *
- * NOT INDEXED YET — KONA_OPEN_ROUTES has /contact locally. Flip
- * INDEXABLE, drop the launch redirect and list it in sitemap.ts in the
- * same commit.
+ * INDEXED since 2026-10-02 (SEO plan v3 launch gate) and listed in
+ * sitemap.ts.
  */
-const INDEXABLE = false
-
 const TITLE = 'Contact'
 const DESCRIPTION =
   'Write to Konaverse or book a thirty-minute call. A web design and development studio in Cyprus, working with clients worldwide. Replies within one working day.'
@@ -46,13 +45,13 @@ export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: `${SITE_URL}/contact` },
-  robots: INDEXABLE ? { index: true, follow: true } : { index: false, follow: true },
-  openGraph: { title: `${TITLE} | Konaverse`, description: DESCRIPTION, url: `${SITE_URL}/contact`, type: 'website' },
+  openGraph: { ...OG_DEFAULTS, title: `${TITLE} | Konaverse`, description: DESCRIPTION, url: `${SITE_URL}/contact`, type: 'website' },
 }
 
 /** the facts on the hairline — hours and the reply promise are FIRST DRAFTS */
-const FACTS = [
+const FACTS: { label: string; value: string; href?: string }[] = [
   { label: 'Where', value: 'Cyprus, working worldwide' },
+  { label: 'Phone', value: CONTACT_PHONE, href: CONTACT_PHONE_HREF },
   { label: 'Hours', value: 'Monday to Friday, 9 to 18 EET' },
   { label: 'Replies', value: 'Within one working day' },
   { label: 'Languages', value: 'English, Greek' },
@@ -118,15 +117,6 @@ export default async function ContactPage({ searchParams }: { searchParams: Prom
         isPartOf: { '@id': `${SITE_URL}/#website` },
         about: { '@id': `${SITE_URL}/#organization` },
       },
-      {
-        '@type': 'FAQPage',
-        '@id': `${SITE_URL}/contact#faq`,
-        mainEntity: FAQ.map((f) => ({
-          '@type': 'Question',
-          name: f.q,
-          acceptedAnswer: { '@type': 'Answer', text: f.a },
-        })),
-      },
     ],
   }
 
@@ -161,7 +151,11 @@ export default async function ContactPage({ searchParams }: { searchParams: Prom
             <li key={f.label}>
               <Reveal className="ct-fact" index={Math.min(i, 3)}>
                 <span className="ct-fact-l">{f.label}</span>
-                <span className="ct-fact-v">{f.value}</span>
+                {f.href ? (
+                  <a className="ct-fact-v" href={f.href}>{f.value}</a>
+                ) : (
+                  <span className="ct-fact-v">{f.value}</span>
+                )}
               </Reveal>
             </li>
           ))}

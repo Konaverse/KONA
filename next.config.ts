@@ -12,7 +12,23 @@ const securityHeaders = [
 ];
 
 /**
- * ONE-PAGE LAUNCH (2026-08-25, docs/launch-plan.md §1). Every inner URL sends
+ * REDIRECT MAP (SEO plan v3 launch gate, 2026-10-02).
+ *
+ * PERMANENT (308) — URLs that are gone for good, sent to their nearest
+ * live page in ONE hop so Google moves the old URL's signals across
+ * (a 307 says "temporary" and keeps the old URL in the index):
+ *   www.kona-verse.com/*  → the apex, same path
+ *   /index                → /
+ *   /projects, /projects/* (the v3 portfolio, 72 impressions in GSC)
+ *                         → /work
+ *   /services/videography (a v3 service that no longer exists)
+ *                         → /services
+ *
+ * TEMPORARY (307) — pages that are coming back at the same URL:
+ *   /pricing → /services (67 GSC impressions; the v4 pricing page will
+ *   take the URL back), /blog → / (until the blog ships).
+ *
+ * HISTORY: ONE-PAGE LAUNCH (2026-08-25, docs/launch-plan.md §1). Every inner URL sends
  * the visitor home until its v4 page exists. `permanent: false` (307) on
  * purpose: a 308 is cached by browsers and crawlers, and the real pages
  * would inherit it. Config redirects run BEFORE the filesystem, so the
@@ -25,7 +41,15 @@ const securityHeaders = [
  * the legacy route (the v4 hub is /work); /pricing and /blog wait for
  * their pages.
  */
-const LAUNCH_REDIRECTS = ["/projects", "/pricing", "/blog"];
+const PERMANENT_REDIRECTS: [string, string][] = [
+  ["/index", "/"],
+  ["/projects", "/work"],
+  ["/services/videography", "/services"],
+];
+const LAUNCH_REDIRECTS: [string, string][] = [
+  ["/pricing", "/services"],
+  ["/blog", "/"],
+];
 const PROTO_REDIRECTS = [
   "/design-system",
   "/hero-object",
@@ -53,29 +77,37 @@ const nextConfig: NextConfig = {
      * redirects run BEFORE the public/ folder AND match case-insensitively,
      * so a bare `/work/:path*` swallowed public/work/tzankatian.webp and
      * `/about/:path*` swallowed public/About/KonaLogoNoBg.png. */
-    const toHome = (p: string) => [
-      { source: p, destination: "/", permanent: false },
-      { source: `${p}/:path([^.]+)*`, destination: "/", permanent: false },
+    const send = (p: string, to: string, permanent: boolean) => [
+      { source: p, destination: to, permanent },
+      { source: `${p}/:path([^.]+)*`, destination: to, permanent },
     ];
-    /* KONA_OPEN_ROUTES (comma list, .env.local only — never set on Vercel)
-     * lifts the launch redirect for routes under construction so they can
-     * be built and judged locally while production keeps sending them
-     * home. Inner-page phase, 2026-09-05. */
-    const open = (process.env.KONA_OPEN_ROUTES || "")
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean);
-    const list = [
-      ...LAUNCH_REDIRECTS.filter((p) => !open.includes(p)),
-      ...(process.env.NODE_ENV === "production" ? PROTO_REDIRECTS : []),
+    return [
+      /* www → apex, path kept, one hop */
+      {
+        source: "/:path*",
+        has: [{ type: "host" as const, value: "www.kona-verse.com" }],
+        destination: "https://kona-verse.com/:path*",
+        permanent: true,
+      },
+      ...PERMANENT_REDIRECTS.flatMap(([p, to]) => send(p, to, true)),
+      ...LAUNCH_REDIRECTS.flatMap(([p, to]) => send(p, to, false)),
+      ...(process.env.NODE_ENV === "production"
+        ? PROTO_REDIRECTS.flatMap((p) => send(p, "/", false))
+        : []),
     ];
-    return list.flatMap(toHome);
   },
   async headers() {
+    /* preview and development deployments never compete with production
+     * (SEO plan v3 §2): VERCEL_ENV is "production" only on the live
+     * deployment, so every preview URL carries noindex by header */
+    const noindex =
+      process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "production"
+        ? [{ key: "X-Robots-Tag", value: "noindex, nofollow" }]
+        : [];
     return [
       {
         source: "/(.*)",
-        headers: securityHeaders,
+        headers: [...securityHeaders, ...noindex],
       },
     ];
   },

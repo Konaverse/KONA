@@ -5,7 +5,7 @@ import Button from '@/components/v4/Button'
 import ArrowLink from '@/components/v4/ArrowLink'
 import { CASE_STUDIES, getCaseStudy, type CaseBlock } from '@/lib/case-studies'
 import { WORK_PROJECTS } from '@/lib/work-projects'
-import { CALENDLY_URL, CONTACT_EMAIL, SITE_URL } from '@/lib/site'
+import { CALENDLY_URL, CONTACT_EMAIL, OG_DEFAULTS, SITE_URL } from '@/lib/site'
 import './travel.css'
 
 /**
@@ -49,12 +49,10 @@ import './travel.css'
  * chapter on show, the index, the live site.
  *
  * SERVER-RENDERED, every word in the raw HTML in reading order (SEO plan
- * D5); phones, reduced motion and no JS get the same DOM in flow. NOT
- * INDEXED YET — KONA_OPEN_ROUTES=/work lifts the launch redirect locally.
- * Flip INDEXABLE and list the studies in sitemap.ts in the same commit.
+ * D5); phones, reduced motion and no JS get the same DOM in flow. INDEXED
+ * since 2026-10-02 (SEO plan v3 launch gate); sitemap.ts lists every
+ * slug from CASE_STUDIES.
  */
-const INDEXABLE = false
-
 export const dynamicParams = false
 
 export function generateStaticParams() {
@@ -74,8 +72,8 @@ export async function generateMetadata({
     title: study.title,
     description: study.description,
     alternates: { canonical: url },
-    robots: INDEXABLE ? { index: true, follow: true } : { index: false, follow: true },
     openGraph: {
+      ...OG_DEFAULTS,
       title: `${study.title} | Konaverse`,
       description: study.description,
       url,
@@ -180,7 +178,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
       {
         '@type': 'Article',
         '@id': `${url}#article`,
-        headline: study.name,
+        headline: study.title,
         description: study.description,
         url,
         image: `${SITE_URL}${study.still.src}`,
@@ -203,7 +201,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
             <ul className="cx-cards-row">
               {block.items.map((c, j) => (
                 <li key={c.title} className="cx-card" data-rate={[0.05, -0.03, 0.06][j % 3]}>
-                  <Plate src={deal()} shape="tile" />
+                  <Plate src={deal()} alt={`The ${study.name} website, a desktop screen`} shape="tile" />
                   <div className="cx-r" style={{ '--d': `${0.08 + j * 0.06}s` } as React.CSSProperties}>
                     <h3 className="cx-card-t">{c.title}</h3>
                     <p className="cx-card-b">{c.body}</p>
@@ -403,7 +401,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
                 ))}
               </div>
               </div>
-              <Plate src={dealPhone()} shape="tall" at={phones.length ? undefined : look()} />
+              <Plate src={dealPhone()} alt={phones.length ? `The ${study.name} website on a phone` : `The ${study.name} website, a desktop screen`} shape="tall" at={phones.length ? undefined : look()} />
             </div>
             {s.blocks.map((b, i) => spread(b, s.id + b.kind + i))}
           </section>

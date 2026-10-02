@@ -10,7 +10,7 @@ import WorkList from '@/components/v4/WorkList'
 import { CASE_STUDIES } from '@/lib/case-studies'
 import { WORK_PROJECTS } from '@/lib/work-projects'
 import Invitation from '@/components/v4/Invitation'
-import { SITE_URL } from '@/lib/site'
+import { OG_DEFAULTS, SITE_URL } from '@/lib/site'
 import './home.css'
 
 /**
@@ -32,6 +32,7 @@ export const metadata: Metadata = {
     'Konaverse is a web studio in Cyprus that designs and builds websites end to end — strategy, design, motion and engineering in one continuous process — for brands that have outgrown the template.',
   alternates: { canonical: SITE_URL },
   openGraph: {
+    ...OG_DEFAULTS,
     title: HOME_TITLE,
     description: HOME_OG,
     url: SITE_URL,

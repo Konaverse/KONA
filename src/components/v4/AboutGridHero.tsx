@@ -56,13 +56,13 @@ const CONTENT = {
    *  1672x941 renders), encoded to public/about-hero/ at 1600 wide; 04
    *  is the one they named for the first appearance. */
   tiles: [
-    { src: '/about-hero/01.webp', alt: '' },
-    { src: '/about-hero/02.webp', alt: '' },
-    { src: '/about-hero/03.webp', alt: '' },
-    { src: '/about-hero/04.webp', alt: '' } /* ← the opening picture */,
-    { src: '/about-hero/05.webp', alt: '' },
-    { src: '/about-hero/06.webp', alt: '' },
-    { src: '/about-hero/07.webp', alt: '' },
+    { src: '/about-hero/01.webp', alt: 'The Heimat Group website on a laptop held between two hands' },
+    { src: '/about-hero/02.webp', alt: 'The City Arcade real-estate website on a monitor between dark rocks' },
+    { src: '/about-hero/03.webp', alt: 'A luxury photobooth company’s website on a monitor rising out of grass' },
+    { src: '/about-hero/04.webp', alt: 'The Konaverse wordmark between two birds in flight' } /* ← the opening picture */,
+    { src: '/about-hero/05.webp', alt: 'A hand holding a glass card engraved with the Konaverse logo' },
+    { src: '/about-hero/06.webp', alt: 'The Lumière Éclat watch website on a monitor in a dark studio' },
+    { src: '/about-hero/07.webp', alt: 'A videographer’s website on a laptop resting on a rock' },
   ],
 }
 
@@ -219,8 +219,10 @@ export default function AboutGridHero() {
         {/* the title: two words at the edges, the rule drawing between */}
         <div className="ag-tw">
           <h1 className="ag-title">
-            <span className="ag-word">{CONTENT.left}</span>
-            <i className="ag-line" aria-hidden="true" />
+            {/* the spaces are for the heading's text ("About Konaverse",
+                not "AboutKonaverse"); flex drops them from the layout */}
+            <span className="ag-word">{CONTENT.left}</span>{' '}
+            <i className="ag-line" aria-hidden="true" />{' '}
             <span className="ag-word">{CONTENT.right}</span>
           </h1>
         </div>

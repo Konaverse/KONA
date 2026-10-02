@@ -11,7 +11,7 @@ import ServicePoster from '@/components/v4/ServicePoster'
 import { RunKind, RunFix, RunWork, RunGets, type RunWorkItem } from '@/components/v4/RunMore'
 import Invitation from '@/components/v4/Invitation'
 import { RUN_DECK, SERVICE_PAGES, getServicePage } from '@/lib/service-pages'
-import { CALENDLY_URL, SITE_URL } from '@/lib/site'
+import { CALENDLY_URL, OG_DEFAULTS, SITE_URL } from '@/lib/site'
 import { CASE_STUDIES } from '@/lib/case-studies'
 import { WORK_PROJECTS } from '@/lib/work-projects'
 import '../scenes.css'
@@ -106,14 +106,9 @@ import '../more.css'
  * give / You get", "n steps · week x of y", "Move to weigh it again",
  * the receipt's "Steps, planned", and the facts' `cue` phrases.
  *
- * NOT INDEXED YET. The route is reachable in development only
- * (KONA_OPEN_ROUTES in .env.local lifts the launch redirect for /services);
- * production still redirects home until the real copy exists.
- * Flip INDEXABLE, drop the redirect and list the pages in sitemap.ts in the
- * same commit.
+ * INDEXED since 2026-10-02 (SEO plan v3 launch gate); sitemap.ts lists
+ * every slug from SERVICE_PAGES.
  */
-const INDEXABLE = false
-
 /** THE RUN BAR's anchors, in page order — every section on the page
  *  (2026-10-02, owner: "fix the floating navbar to include every
  *  section"). The substance's four come only with `more` (THE WORK only
@@ -149,8 +144,8 @@ export async function generateMetadata({
     title: page.title,
     description: page.description,
     alternates: { canonical: url },
-    robots: INDEXABLE ? { index: true, follow: true } : { index: false, follow: true },
     openGraph: {
+      ...OG_DEFAULTS,
       title: `${page.title} | Konaverse`,
       description: page.description,
       url,
@@ -193,10 +188,17 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
           page.areaServed === 'Cyprus'
             ? { '@type': 'Country', name: 'Cyprus' }
             : 'Worldwide',
+        /* a STARTING price, so minPrice (not price); SEO is a monthly
+           retainer, so its unit says so (SEO plan v3 §3) */
         offers: {
           '@type': 'Offer',
           priceCurrency: 'EUR',
-          price: page.fromPrice,
+          priceSpecification: {
+            '@type': page.slug === 'seo' ? 'UnitPriceSpecification' : 'PriceSpecification',
+            minPrice: page.fromPrice,
+            priceCurrency: 'EUR',
+            ...(page.slug === 'seo' ? { unitText: 'MONTH' } : {}),
+          },
           description: 'Starting price',
           url,
         },

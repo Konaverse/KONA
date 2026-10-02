@@ -93,7 +93,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     slug: 'los-santos-barbers',
     name: 'Los Santos Barbershop',
-    title: 'Los Santos Barbershop — a one-page website that books | Case study',
+    title: 'Los Santos Barbershop — a one-page website that books',
     description:
       'How Konaverse designed and built lossantosbarbers.com: a one-page site for a Nicosia barbershop that turns a 4.9-star reputation into booked chairs — services with prices, reviews as text, and a booking button that is never more than a scroll away.',
     intro: [
@@ -142,12 +142,6 @@ export const CASE_STUDIES: CaseStudy[] = [
               'The business problem was friction. Someone new to Nicosia searches for a barber, finds the Google listing, likes the reviews, and then has to call or message to find out a price and get an appointment. Some of them do. Most of them pick the shop whose site already told them.',
               'The second problem was positioning. Los Santos charges a fair price for a premium cut, and without a site that looks premium the price reads as expensive rather than as worth it. The type, the photography and the pace of the page had to do that work before a single word of copy did.',
             ],
-          },
-          {
-            kind: 'quote',
-            text: 'People kept asking the same three questions in messages: how much, when, where. I wanted the site to answer them so I could cut hair.',
-            who: 'Fahed',
-            role: 'Master barber, Los Santos Barbershop',
           },
         ],
       },
@@ -289,7 +283,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     slug: 'lumiere-eclat',
     name: 'Lumière Éclat',
-    title: 'Lumière Éclat — a 3D scroll-driven watch story | Case study',
+    title: 'Lumière Éclat — a 3D scroll-driven watch story',
     description:
       'How Konaverse built Lumière Éclat: a scroll-driven 3D website for a fictional watchmaker, where one watch turns in light as the story scrolls — built as a working demonstration of what an immersive product site can do.',
     intro: [
@@ -338,12 +332,6 @@ export const CASE_STUDIES: CaseStudy[] = [
               'The business problem was ours. Immersive sites are the work we most want to do and the hardest to sell, because the value is in the feel and the feel cannot be described. A deck of screenshots undersells it. A video of someone else’s site raises the wrong question. The only proof that works is a site of our own.',
               'The design problem underneath it is the one every 3D site has: the object has to be the reason for the page without becoming a toy. It has to move because the story moves, not because it can.',
             ],
-          },
-          {
-            kind: 'quote',
-            text: 'A 3D site is easy to make impressive for five seconds. The work is making it still feel right at the fifth chapter.',
-            who: 'Konaverse',
-            role: 'Studio note, during the build',
           },
         ],
       },
@@ -483,7 +471,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     slug: 'velricon',
     name: 'Velricon',
-    title: 'Velricon — a website for senior financial leadership | Case study',
+    title: 'Velricon — a website for senior financial leadership',
     description:
       'How Konaverse designed and built velricon.com: a corporate site for a Cyprus financial leadership firm — CFO services, bank financing, investor packages — written to be found for the searches business owners type and built to convert a careful reader into a conversation.',
     intro: [
@@ -532,12 +520,6 @@ export const CASE_STUDIES: CaseStudy[] = [
               'The business problem was trust at a distance. A business owner preparing for a bank loan or an investor round is looking for someone senior, and decides in a minute whether a firm is. The old site made that minute hard: generic language, no structure that matched the decisions people actually face, and a contact path that asked for a form before it had earned one.',
               'The second problem was search. Owners in Cyprus type specific things — CFO services, bank financing preparation, investor package — and none of those searches led to Velricon. The firm grew by referral and had no way to be found by someone who had not been told the name.',
             ],
-          },
-          {
-            kind: 'quote',
-            text: 'Our clients come to us at a decisive moment. The site had to meet them there, not introduce us.',
-            who: 'Velricon',
-            role: 'Founding partner',
           },
         ],
       },
@@ -675,13 +657,13 @@ export const CASE_STUDIES: CaseStudy[] = [
      2026-10-01). Facts from the live chrisnclean.com. Left out on
      purpose: the client counts (the site gives 15K in three places with
      three meanings) and "licensed, insured" (nothing on the site backs
-     it). No SEO chapter: one shared title, no sitemap, no schema. The
-     quote is Chris's own line from the site.
+     it). No SEO chapter: one shared title, no sitemap, no schema. No
+     quote: every client quote came out 2026-10-02 (owner call).
      ------------------------------------------------------------------ */
   {
     slug: 'chris-n-clean',
     name: 'Chris N Clean',
-    title: 'Chris N Clean — a cleaning company’s website | Case study',
+    title: 'Chris N Clean — a cleaning company’s website',
     description:
       'How Konaverse designed and built chrisnclean.com for a Nicosia cleaning company working since 1992: a hero that turns a neglected house spotless under the scroll, four services in two languages, and a quote form on every page.',
     intro: [
@@ -729,12 +711,6 @@ export const CASE_STUDIES: CaseStudy[] = [
               'People do not compare cleaning companies on price first. They compare on trust: will they turn up, will it actually be clean, will they do it again next month. A cleaning site that looks thrown together answers all three questions badly before a word is read.',
               'The second problem was range. The same company cleans a family’s windows and an office block’s carpets, and the two visitors want different things from the same page. The site had to speak to a homeowner and a facilities manager without sounding like two companies.',
             ],
-          },
-          {
-            kind: 'quote',
-            text: 'A deep clean isn’t maintenance — it’s a reset. We bring every space back to day one.',
-            who: 'Chris',
-            role: 'Founder, Chris N Clean',
           },
         ],
       },
@@ -838,7 +814,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     slug: 'heimat-group',
     name: 'Heimat Group',
-    title: 'HEIMAT Development Group — a developer’s website | Case study',
+    title: 'HEIMAT Development Group — a developer’s website',
     description:
       'How Konaverse designed and built heimat-group.com for HEIMAT Development Group in Nicosia: a pinned, layered hero where the house rises out of its own landscape, project pages with floor plans, and structured data for every building.',
     intro: [
@@ -1009,13 +985,13 @@ export const CASE_STUDIES: CaseStudy[] = [
      TDK DESIGN & BUILD — the studio's site + its CMS (FIRST DRAFT,
      2026-10-01). Facts from the repo (TDK_Design_&_Build/tdkdb) and the
      live tdkdb.vercel.app. No SEO chapter: the live site still ships the
-     default title and an empty sitemap, so we claim none. The quote is
-     Theodora's own line from the site, not an invented one.
+     default title and an empty sitemap, so we claim none. No quote:
+     every client quote came out 2026-10-02 (owner call).
      ------------------------------------------------------------------ */
   {
     slug: 'tdk',
     name: 'TDK Design & Build',
-    title: 'TDK Design & Build — a residential studio’s website | Case study',
+    title: 'TDK Design & Build — a residential studio’s website',
     description:
       'How Konaverse designed and built the website for TDK Design & Build, a family design-and-build studio in Nicosia: an editorial site with a pinned project reel, a building that stands in front of its own name, and a CMS the studio runs itself.',
     intro: [
@@ -1063,12 +1039,6 @@ export const CASE_STUDIES: CaseStudy[] = [
               'A buyer looking at a new apartment in Nicosia is comparing developers, and most developers look the same online: a render, a floor plan PDF, a phone number. The difference TDK offers, that the architect stays on the project until handover, does not show in a render. It had to be told, and told quickly.',
               'The second problem was keeping the site true. Units sell, buildings finish, new projects start. A site the studio cannot update itself is out of date the month after launch, and an out-of-date availability table is worse than none.',
             ],
-          },
-          {
-            kind: 'quote',
-            text: 'A home is not a beautiful object. It is a space that makes daily life feel better.',
-            who: 'Theodora Kyprianou',
-            role: 'Architect, TDK Design & Build',
           },
         ],
       },
@@ -1174,7 +1144,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     slug: 'city-arcade',
     name: 'City Arcade',
-    title: 'City Arcade — a real-estate website concept | Case study',
+    title: 'City Arcade — a real-estate website concept',
     description:
       'How Konaverse built City Arcade: a one-page concept for a modern real-estate agency, where the building rises out of its own photograph and over the name, and the work slides across a pinned title.',
     intro: [

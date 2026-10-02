@@ -930,3 +930,4 @@ export const SERVICE_PAGES: ServicePage[] = [
 export const getServicePage = (slug: string) => SERVICE_PAGES.find((s) => s.slug === slug)
 
 export const formatEuro = (n: number) => `€${n.toLocaleString('en-US')}`
+

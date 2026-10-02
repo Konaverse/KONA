@@ -46,6 +46,8 @@ export type CarouselService = {
   name: string
   blurb: string
   image: string
+  /** the photograph described (SERVICE_PHOTO_ALT) */
+  alt?: string
 }
 
 /** the places: |place| → offset (card widths), scale, shade. Three
@@ -322,7 +324,7 @@ export default function ServiceCarousel({ services }: { services: readonly Carou
             <span className="sv-pic">
               <img
                 src={s.image}
-                alt=""
+                alt={s.alt ?? ''}
                 loading={i < 2 || i === n - 1 ? 'eager' : 'lazy'}
                 decoding="async"
                 draggable={false}

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { Fragment, useEffect, useRef } from 'react'
 import { gsap, EASE, DUR, rem } from '@/lib/motion-v4'
 
 /**
@@ -515,6 +515,7 @@ export default function HeroTitle() {
   }, [])
 
   return (
+    <>
     <h1
       ref={rootRef}
       className="hw-headline"
@@ -544,14 +545,20 @@ export default function HeroTitle() {
               </span>
             )
           }
+          /* the trailing space is for parsers, not layout: the flow is a
+             flex row, which drops whitespace, but the h1's textContent
+             (what Google and every AI fetcher read) gets real words
+             instead of "Buildthewebsite…" (SEO plan v3, 2026-10-02) */
           return (
-            <span key={n} className={`hw-it hw-w hw-${slot.voice}`}>
-              {slot.word}
-            </span>
+            <Fragment key={n}>
+              <span className={`hw-it hw-w hw-${slot.voice}`}>{slot.word}</span>{' '}
+            </Fragment>
           )
         })}
       </span>
+    </h1>
 
+      {/* outside the h1, so its CSS is not part of the heading's text */}
       <noscript>
         <style>{`
           .hw-flow.is-pre .hw-br{display:none!important}
@@ -559,6 +566,6 @@ export default function HeroTitle() {
           .hw-flow .hw-it{opacity:1!important;transform:none!important;filter:none!important}
         `}</style>
       </noscript>
-    </h1>
+    </>
   )
 }

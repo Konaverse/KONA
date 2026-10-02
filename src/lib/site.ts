@@ -42,3 +42,28 @@ export const SECTIONS = {
 export const SITE_URL = 'https://kona-verse.com'
 export const SITE_NAME = 'Konaverse'
 export const CONTACT_EMAIL = 'info@kona-verse.com'
+/** The one phone number, written the same everywhere: the site, the
+ *  schema, Google Business Profile, Bing, Apple, Clutch and every
+ *  directory (owner, 2026-10-02). A second spelling is a second entity. */
+export const CONTACT_PHONE = '+357 96 273855'
+export const CONTACT_PHONE_HREF = 'tel:+35796273855'
+
+/**
+ * The Open Graph fields every page must carry. Next merges metadata
+ * SHALLOWLY: a page that sets its own `openGraph` replaces the root's
+ * whole object, and the share card loses its image, site name and locale
+ * (SEO plan v3 §1, found 2026-10-02). Spread this into every page-level
+ * `openGraph`; a page with its own picture overrides `images` after it.
+ */
+export const OG_DEFAULTS = {
+  siteName: SITE_NAME,
+  locale: 'en_US',
+  images: [
+    {
+      url: '/og-image.png',
+      width: 1200,
+      height: 630,
+      alt: 'Konaverse — Build the website that will make you stand out',
+    },
+  ],
+}

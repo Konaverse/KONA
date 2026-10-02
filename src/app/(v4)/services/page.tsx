@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import ServiceCarousel, { type CarouselService } from '@/components/v4/ServiceCarousel'
 import { SERVICE_PAGES } from '@/lib/service-pages'
-import { SITE_URL } from '@/lib/site'
+import { SERVICE_PHOTO_ALT } from '@/lib/service-photo-alt'
+import { OG_DEFAULTS, SITE_URL } from '@/lib/site'
 import './hub.css'
 
 /**
@@ -65,15 +66,12 @@ import './hub.css'
  * statement, the prompt as a real form, the six names as h2 links with
  * their lines. The drivers are enhancements; the layout is the fallback.
  *
- * NOT INDEXED YET — same gate as the template: KONA_OPEN_ROUTES=/services
- * in .env.local lifts the launch redirect locally. Flip INDEXABLE, drop
- * the redirect and list the hub in sitemap.ts in one commit.
+ * INDEXED since 2026-10-02 (SEO plan v3 launch gate) and listed in
+ * sitemap.ts.
  *
  * ALL COPY IS PLACEHOLDER (the user's frame text, verbatim; the blurbs are
  * first drafts in service-pages.ts).
  */
-const INDEXABLE = false
-
 const TITLE = 'Web Design and Development Services'
 const DESCRIPTION =
   'Konaverse designs and builds websites in Cyprus — web design, web development, 3D and immersive sites, one-page sites, redesigns and SEO. Six services, one studio.'
@@ -82,8 +80,8 @@ export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: `${SITE_URL}/services` },
-  robots: INDEXABLE ? { index: true, follow: true } : { index: false, follow: true },
   openGraph: {
+    ...OG_DEFAULTS,
     title: `${TITLE} | Konaverse`,
     description: DESCRIPTION,
     url: `${SITE_URL}/services`,
@@ -133,6 +131,7 @@ export default function ServicesHubPage() {
     name: p.name,
     blurb: p.blurb,
     image: PHOTO[p.slug] ?? p.visual,
+    alt: PHOTO[p.slug] ? SERVICE_PHOTO_ALT[p.slug] : undefined,
   }))
 
   return (

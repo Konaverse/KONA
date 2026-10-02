@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { SERVICES } from '@/components/v4/services-data'
+import { SERVICE_PHOTO_ALT } from '@/lib/service-photo-alt'
 import { gsap } from '@/lib/motion-v4'
 
 /**
@@ -151,7 +152,7 @@ export default function ServiceSheets() {
               </ul>
               <p className="svs-para t-body">{s.para}</p>
               <span className="svs-pic">
-                <img src={PHOTOS[s.slug]} alt="" loading="lazy" decoding="async" />
+                <img src={PHOTOS[s.slug]} alt={SERVICE_PHOTO_ALT[s.slug] ?? ''} loading="lazy" decoding="async" />
               </span>
             </a>
           </li>

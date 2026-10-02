@@ -7,7 +7,7 @@ import AboutBento, { type Tool } from '@/components/v4/AboutBento'
 import SolveStack, { type SolveBeat } from '@/components/v4/SolveStack'
 import BlockReveal from '@/components/v4/BlockReveal'
 import Invitation from '@/components/v4/Invitation'
-import { SITE_URL } from '@/lib/site'
+import { OG_DEFAULTS, SITE_URL } from '@/lib/site'
 import './about.css'
 
 /**
@@ -95,16 +95,13 @@ import './about.css'
  * three bios, the five refusals. The drivers are enhancements; the
  * layout is the fallback and the noscript rule lifts the entrance.
  *
- * NOT INDEXED YET — KONA_OPEN_ROUTES=/about in .env.local lifts the
- * launch redirect locally. Flip INDEXABLE, drop the redirect and list
- * the page in sitemap.ts in one commit.
+ * INDEXED since 2026-10-02 (SEO plan v3 launch gate) and listed in
+ * sitemap.ts.
  *
  * COPY: the hero and the statement are the frame's, verbatim. The bios
  * and the refusals are FIRST DRAFTS — the user writes the real ones.
  */
-const INDEXABLE = false
-
-const TITLE = 'About Konaverse'
+const TITLE = 'About us'
 const DESCRIPTION =
   'Konaverse is three people in Cyprus — Konstantinos Kyprianou, technical architect, Nabil Al Jbawi, creative director, and Andreas Kyriakou — designing and building websites with a character of their own.'
 
@@ -112,8 +109,8 @@ export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: `${SITE_URL}/about` },
-  robots: INDEXABLE ? { index: true, follow: true } : { index: false, follow: true },
   openGraph: {
+    ...OG_DEFAULTS,
     title: `${TITLE} | Konaverse`,
     description: DESCRIPTION,
     url: `${SITE_URL}/about`,
@@ -160,7 +157,7 @@ const PEOPLE: readonly Person[] = [
     bg: '/people/andreas-bg.webp',
     cut: '/people/andreas-cut.webp',
     bio:
-      'Andreas is the third of us. What he owns, and the line in his own voice, go here once they are written — for now this paragraph stands in so the stage has three people to move through.',
+      '' /* not written yet: an empty bio is left out of the schema (SEO plan v3: no placeholder text in published data) */,
   },
 ]
 
@@ -248,7 +245,7 @@ export default function AboutPage() {
         '@id': `${SITE_URL}/#${p.id}`,
         name: p.name,
         jobTitle: p.role,
-        description: p.bio,
+        ...(p.bio ? { description: p.bio } : {}),
         image: `${SITE_URL}${p.portrait}`,
         url: `${SITE_URL}/about`,
         worksFor: { '@id': `${SITE_URL}/#organization` },

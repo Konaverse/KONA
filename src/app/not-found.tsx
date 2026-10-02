@@ -32,8 +32,8 @@ export default function NotFound() {
           This page <em>isn&rsquo;t here.</em>
         </Reveal>
         <Reveal as="p" className="t-body nf-lead" index={2}>
-          The address may be old, or the page may not exist yet — the site is one page for now,
-          and everything is on it.
+          The address may be old, or the page may have moved. Everything we do is one of these
+          three places away.
         </Reveal>
         <Reveal className="nf-actions" index={3}>
           <Button href="/" hoverLabel="Go home">

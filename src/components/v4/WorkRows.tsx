@@ -506,13 +506,13 @@ export default function WorkRows({ projects }: { projects: SheetProject[] }) {
                 Immersiveness
               </span>
             </span>
-          </span>
+          </span>{' '}
           <span className="wr-l2" aria-hidden="true">
             <span className="k-mask">
               <span className="k-reveal wr-w" style={{ '--i': 1 } as React.CSSProperties}>
                 through
               </span>
-            </span>
+            </span>{' '}
             <span className="k-mask">
               <span className="k-reveal wr-w" style={{ '--i': 2 } as React.CSSProperties}>
                 work
