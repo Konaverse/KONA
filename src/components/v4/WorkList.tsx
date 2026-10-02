@@ -209,7 +209,7 @@ export default function WorkList({
                 </span>
                 <span className="sr-only">{p.service}</span>
                 <span className="wl-prev" aria-hidden="true">
-                  <img src={p.image} alt="" loading="lazy" draggable={false} />
+                  <img src={p.image} alt={`The ${p.name} website`} loading="lazy" draggable={false} />
                 </span>
               </a>
             </li>

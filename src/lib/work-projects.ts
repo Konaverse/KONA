@@ -133,3 +133,15 @@ export const WORK_PROJECTS: WorkProject[] = [
     phones: Array.from({ length: 5 }, (_, i) => `/work/city-arcade/m-${String(i + 1).padStart(2, '0')}.webp`),
   },
 ]
+
+/** A project capture described from its path — `/work/<slug>/NN.webp` is a
+ *  desktop screen, `/work/<slug>/m-NN.webp` the site on a phone (the
+ *  capture pipeline's naming, above). Any other picture gets '' and stays
+ *  decoration. SEO plan v3: screenshots of our work are content, so
+ *  Google Images and AI fetchers should know whose site they show. */
+export function captureAlt(src: string): string {
+  const m = src.match(/^\/work\/([^/]+)\/(m-)?\d+\.webp$/)
+  const project = m && WORK_PROJECTS.find((p) => p.slug === m[1])
+  if (!project) return ''
+  return m[2] ? `The ${project.name} website on a phone` : `The ${project.name} website, a desktop screen`
+}
