@@ -18,6 +18,14 @@
  * `public/work/frames/<slug>/01.webp` … shot at the plate's ratio,
  * 19:10 (1900 x 1000 is the size to shoot at). Until a project has
  * them, the page cuts between two crops of its one capture.
+ *
+ * THE PHONES (2026-10-02, owner: "the containers… need to be the same as
+ * the screenshots so they fit perfectly"): `phones` are captures of the
+ * live site on a phone, `public/work/<slug>/m-01.webp` … at 390:844
+ * (390 x 844 CSS px @2 = 780 x 1688). The case study's tall plates are
+ * cut to exactly that ratio and every other plate to 19:10, so no
+ * capture is ever cropped. Shot with headless Chrome (scratchpad
+ * caps.js: desktop 1520 x 800 @1.25, phone iPhone UA @2).
  */
 export interface WorkProject {
   slug: string
@@ -34,6 +42,9 @@ export interface WorkProject {
   /** the card reel: eight to ten captures at 19:10, in order; absent
    *  until shot */
   frames?: string[]
+  /** the phone captures, 390:844 (shot at 390 x 844 @2 → 780 x 1688),
+   *  for the case study's tall plates; absent until shot */
+  phones?: string[]
 }
 
 export const WORK_PROJECTS: WorkProject[] = [
@@ -47,6 +58,7 @@ export const WORK_PROJECTS: WorkProject[] = [
     href: 'https://lossantosbarbers.com',
     image: '/work/lossantos.webp',
     frames: Array.from({ length: 7 }, (_, i) => `/work/los-santos-barbers/${String(i + 1).padStart(2, '0')}.webp`),
+    phones: Array.from({ length: 6 }, (_, i) => `/work/los-santos-barbers/m-${String(i + 1).padStart(2, '0')}.webp`),
   },
   {
     slug: 'lumiere-eclat',
@@ -58,6 +70,7 @@ export const WORK_PROJECTS: WorkProject[] = [
     href: 'https://watchweb.vercel.app',
     image: '/work/lumiere.webp',
     frames: Array.from({ length: 5 }, (_, i) => `/work/lumiere-eclat/${String(i + 1).padStart(2, '0')}.webp`),
+    phones: Array.from({ length: 6 }, (_, i) => `/work/lumiere-eclat/m-${String(i + 1).padStart(2, '0')}.webp`),
   },
   {
     slug: 'velricon',
@@ -69,6 +82,7 @@ export const WORK_PROJECTS: WorkProject[] = [
     href: 'https://velricon.com',
     image: '/work/velricon.webp',
     frames: Array.from({ length: 8 }, (_, i) => `/work/velricon/${String(i + 1).padStart(2, '0')}.webp`),
+    phones: Array.from({ length: 6 }, (_, i) => `/work/velricon/m-${String(i + 1).padStart(2, '0')}.webp`),
   },
   {
     slug: 'chris-n-clean',
@@ -79,6 +93,8 @@ export const WORK_PROJECTS: WorkProject[] = [
     serviceSlug: 'web-design',
     href: 'https://www.chrisnclean.com',
     image: '/work/covers/chris-n-clean.webp',
+    frames: Array.from({ length: 8 }, (_, i) => `/work/chris-n-clean/${String(i + 1).padStart(2, '0')}.webp`),
+    phones: Array.from({ length: 6 }, (_, i) => `/work/chris-n-clean/m-${String(i + 1).padStart(2, '0')}.webp`),
   },
   {
     slug: 'heimat-group',
@@ -89,6 +105,8 @@ export const WORK_PROJECTS: WorkProject[] = [
     serviceSlug: 'web-design',
     href: 'https://www.heimat-group.com',
     image: '/work/covers/heimat-group.webp',
+    frames: Array.from({ length: 7 }, (_, i) => `/work/heimat-group/${String(i + 1).padStart(2, '0')}.webp`),
+    phones: Array.from({ length: 5 }, (_, i) => `/work/heimat-group/m-${String(i + 1).padStart(2, '0')}.webp`),
   },
   {
     slug: 'tdk',
@@ -99,6 +117,8 @@ export const WORK_PROJECTS: WorkProject[] = [
     serviceSlug: 'web-development',
     href: 'https://tdkdb.vercel.app/en',
     image: '/work/covers/tdk.webp',
+    frames: Array.from({ length: 8 }, (_, i) => `/work/tdk/${String(i + 1).padStart(2, '0')}.webp`),
+    phones: Array.from({ length: 6 }, (_, i) => `/work/tdk/m-${String(i + 1).padStart(2, '0')}.webp`),
   },
   {
     slug: 'city-arcade',
@@ -109,5 +129,7 @@ export const WORK_PROJECTS: WorkProject[] = [
     serviceSlug: 'web-design',
     href: 'https://city-arcade-roan.vercel.app',
     image: '/work/covers/city-arcade.webp',
+    frames: Array.from({ length: 8 }, (_, i) => `/work/city-arcade/${String(i + 1).padStart(2, '0')}.webp`),
+    phones: Array.from({ length: 5 }, (_, i) => `/work/city-arcade/m-${String(i + 1).padStart(2, '0')}.webp`),
   },
 ]

@@ -158,7 +158,8 @@ export default function CaseTrack({
     const pack = (sel: string): Item[] => Array.from(root.querySelectorAll<HTMLElement>(sel)).map((el) => ({ el, x: 0, w: 0 }))
     const arrivals = pack('.cx-r')
     const depths = pack('[data-rate]').map((it) => ({ ...it, rate: parseFloat(it.el.dataset.rate || '0') }))
-    const prints = pack('.cx-print')
+    /* only the quote's ground slides: every plate shows its capture whole */
+    const prints = pack('.cx-quote-bg .cx-print')
     const vids = videos.map((el) => ({ el: el as HTMLElement, x: 0, w: 0, on: false }))
     const reelItems = reels.map((el) => ({ el, x: 0, w: 0 }))
     const spreads = pack('.cx-s')

@@ -66,7 +66,9 @@ export interface CaseStudy {
   still: { src: string; alt: string }
   /** the laptop render(s): the open one, and the closed one behind it.
    *  Optional: without one the opening shows the cover and the END TITLE
-   *  (the name cut by the laptop) is skipped */
+   *  (the name cut by the laptop) is skipped. NO STUDY HAS ONE since
+   *  2026-10-02 (owner: "remove the laptop mockups") — the renders stay
+   *  in public/work/<slug>/device.webp */
   device?: { front: string; back?: string }
   /** the screen recording */
   reel?: { mp4: string; webm?: string; poster: string }
@@ -83,8 +85,6 @@ export interface CaseStudy {
 const LS = '/work/los-santos-barbers'
 const LE = '/work/lumiere-eclat'
 const VE = '/work/velricon'
-/** the closed laptop behind the open one — shared by every study */
-const BACK = '/work/device-back.webp'
 
 export const CASE_STUDIES: CaseStudy[] = [
   /* ------------------------------------------------------------------
@@ -109,7 +109,6 @@ export const CASE_STUDIES: CaseStudy[] = [
     ],
     live: 'https://lossantosbarbers.com',
     still: { src: `${LS}/01.webp`, alt: 'The Los Santos Barbershop homepage — the name set large, the three services listed, a Book Appointment button' },
-    device: { front: `${LS}/device.webp`, back: BACK },
     reel: { mp4: `${LS}/reel.mp4`, webm: `${LS}/reel.webm`, poster: `${LS}/poster.webp` },
     sections: [
       {
@@ -306,7 +305,6 @@ export const CASE_STUDIES: CaseStudy[] = [
     ],
     live: 'https://watchweb.vercel.app',
     still: { src: `${LE}/01.webp`, alt: 'The Lumière Éclat opening: “Time, held — in a single point of light”' },
-    device: { front: `${LE}/device.webp`, back: BACK },
     reel: { mp4: `${LE}/reel.mp4`, webm: `${LE}/reel.webm`, poster: `${LE}/poster.webp` },
     sections: [
       {
@@ -501,7 +499,6 @@ export const CASE_STUDIES: CaseStudy[] = [
     ],
     live: 'https://velricon.com',
     still: { src: `${VE}/01.webp`, alt: 'The Velricon homepage: “Big financial decisions need senior finance behind them.”' },
-    device: { front: `${VE}/device.webp`, back: BACK },
     reel: { mp4: `${VE}/reel.mp4`, webm: `${VE}/reel.webm`, poster: `${VE}/poster.webp` },
     sections: [
       {
@@ -699,7 +696,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       { label: 'Location', value: 'Nicosia, Cyprus' },
     ],
     live: 'https://www.chrisnclean.com',
-    still: { src: '/work/covers/chris-n-clean.webp', alt: 'The Chris N Clean homepage — “From chaos to spotless.” over a house on a hillside' },
+    still: { src: '/work/chris-n-clean/01.webp', alt: 'The Chris N Clean homepage — “From chaos to spotless.” over a house on a hillside' },
     sections: [
       {
         id: 'overview',
@@ -856,7 +853,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       { label: 'Location', value: 'Nicosia, Cyprus' },
     ],
     live: 'https://www.heimat-group.com',
-    still: { src: '/work/covers/heimat-group.webp', alt: 'The HEIMAT Development Group homepage — “Building Homes Worth Coming Home To” over a house at dusk' },
+    still: { src: '/work/heimat-group/01.webp', alt: 'The HEIMAT Development Group homepage — “Building Homes Worth Coming Home To” over a house at dusk' },
     sections: [
       {
         id: 'overview',
@@ -1033,7 +1030,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       { label: 'Location', value: 'Nicosia, Cyprus' },
     ],
     live: 'https://tdkdb.vercel.app/en',
-    still: { src: '/work/covers/tdk.webp', alt: 'The TDK Design & Build homepage — the building standing in front of the letters TDK' },
+    still: { src: '/work/tdk/01.webp', alt: 'The TDK Design & Build homepage — the building standing in front of the letters TDK' },
     sections: [
       {
         id: 'overview',
@@ -1192,7 +1189,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       { label: 'Format', value: 'One page' },
     ],
     live: 'https://city-arcade-roan.vercel.app',
-    still: { src: '/work/covers/city-arcade.webp', alt: 'The City Arcade homepage — the name set large beside a glass building at golden hour' },
+    still: { src: '/work/city-arcade/01.webp', alt: 'The City Arcade homepage — the name set large beside a glass building at golden hour' },
     sections: [
       {
         id: 'overview',

@@ -22,10 +22,9 @@ import { gsap, EASE } from '@/lib/motion-v4'
  * page's h1, small; the active service's name, large; its line; the two
  * arrows. Below, THE RING: six landscape cards standing on one baseline,
  * the centre one whole, one a side behind it, the far ones cut by the
- * screen's edges. Each card is the service's OBJECT (its poster render,
- * a cut-out) standing on the service's FILM (one of the six ambient
- * loops): the centre card plays its film, the others hold its still —
- * one video at a time.
+ * screen's edges. Each card is the service's PHOTOGRAPH (2026-10-01:
+ * the owner's six — people at the work, one retoucher's edit each; they
+ * replace the films and the object stand-ins of 09-30).
  *
  * THE LOOP. One number, `target`, in cards; `pos` glides after it. A
  * card's PLACE is its index less `pos`, wrapped into −N/2 … N/2, and the
@@ -46,10 +45,7 @@ export type CarouselService = {
   slug: string
   name: string
   blurb: string
-  film: string
-  still: string
-  object: string
-  grade: 'none' | 'chrome' | 'glass'
+  image: string
 }
 
 /** the places: |place| → offset (card widths), scale, shade. Three
@@ -111,7 +107,6 @@ export default function ServiceCarousel({ services }: { services: readonly Carou
     if (!root) return
     const cards = Array.from(root.querySelectorAll<HTMLAnchorElement>('.sv-card'))
     const copies = Array.from(root.querySelectorAll<HTMLElement>('.sv-copy'))
-    const videos = cards.map((c) => c.querySelector<HTMLVideoElement>('video'))
     const ring = root.querySelector<HTMLElement>('.sv-ring')!
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -140,13 +135,6 @@ export default function ServiceCarousel({ services }: { services: readonly Carou
       cards.forEach((c, i) => {
         c.classList.toggle('is-on', i === near)
         c.setAttribute('tabindex', i === near ? '0' : '-1')
-      })
-      videos.forEach((v, i) => {
-        if (!v) return
-        if (i === near && !reduce) {
-          if (v.preload !== 'auto') v.preload = 'auto'
-          v.play().catch(() => {})
-        } else v.pause()
       })
     }
 
@@ -198,7 +186,10 @@ export default function ServiceCarousel({ services }: { services: readonly Carou
         if (pressed >= 0) {
           const d = wrap(pressed - Math.round(pos), n)
           if (d === 0) {
-            window.location.assign(cards[pressed].href)
+            /* a CLICK on the link, not a page load: the page transition
+               listens for link clicks (a synthetic click has detail 0, so
+               onClick below lets it through) — location.assign skipped it */
+            cards[pressed].click()
             return
           }
           target = Math.round(pos) + d
@@ -275,7 +266,6 @@ export default function ServiceCarousel({ services }: { services: readonly Carou
       prev.removeEventListener('click', onPrev)
       next.removeEventListener('click', onNext)
       window.removeEventListener('keydown', onKey)
-      videos.forEach((v) => v?.pause())
       root.classList.remove('is-live', 'is-dealing')
     }
   }, [n])
@@ -330,18 +320,8 @@ export default function ServiceCarousel({ services }: { services: readonly Carou
               {s.name}
             </span>
             <span className="sv-pic">
-              <video
-                src={s.film}
-                poster={s.still}
-                muted
-                loop
-                playsInline
-                preload="none"
-                aria-hidden="true"
-              />
               <img
-                className={`sv-obj sv-obj--${s.grade}`}
-                src={s.object}
+                src={s.image}
                 alt=""
                 loading={i < 2 || i === n - 1 ? 'eager' : 'lazy'}
                 decoding="async"

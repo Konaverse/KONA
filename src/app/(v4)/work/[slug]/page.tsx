@@ -97,7 +97,8 @@ function Plate({
 }: {
   src: string
   alt?: string
-  /** wide 19:10 by the stage's height · tall crop · tile · small */
+  /** wide 19:10 by the stage's height · tall = a phone capture, 390:844 ·
+   *  tile and small, 19:10 — every window is its capture's own ratio */
   shape: 'wide' | 'tall' | 'tile' | 'small'
   caption?: string
   /** where the crop looks, for the tall and tile crops */
@@ -111,8 +112,8 @@ function Plate({
           <img
             src={src}
             alt={alt}
-            width={1900}
-            height={1000}
+            width={shape === 'tall' ? 780 : 1900}
+            height={shape === 'tall' ? 1688 : 1000}
             loading={eager ? 'eager' : 'lazy'}
             decoding="async"
             draggable={false}
@@ -146,6 +147,11 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
   const frames = project?.frames?.length ? project.frames : [study.still.src]
   let dealt = 0
   const deal = () => frames[++dealt % frames.length]
+  /* the phone captures, for the tall plates (a desktop capture cropped
+     until the project has them) */
+  const phones = project?.phones ?? []
+  let dealtPhone = -1
+  const dealPhone = () => (phones.length ? phones[++dealtPhone % phones.length] : deal())
   let looked = 0
   const look = () => LOOKS[looked++ % LOOKS.length]
 
@@ -197,7 +203,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
             <ul className="cx-cards-row">
               {block.items.map((c, j) => (
                 <li key={c.title} className="cx-card" data-rate={[0.05, -0.03, 0.06][j % 3]}>
-                  <Plate src={deal()} shape="tile" at={look()} />
+                  <Plate src={deal()} shape="tile" />
                   <div className="cx-r" style={{ '--d': `${0.08 + j * 0.06}s` } as React.CSSProperties}>
                     <h3 className="cx-card-t">{c.title}</h3>
                     <p className="cx-card-b">{c.body}</p>
@@ -325,15 +331,16 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
             </span>
           </span>
         </figure>
-        <h1 className="cx-h1 cx-r" data-rate="-0.12">
-          {nameLines.map((ln, i) => (
-            <span key={ln + i} className="cx-mask">
-              <span className="cx-ln" style={{ '--d': `${0.1 + i * 0.1}s` } as React.CSSProperties}>
-                {ln}
-                {i < nameLines.length - 1 ? ' ' : ''}
-              </span>
+        {/* the name on ONE line, its left edge on the side column's
+            (owner, 2026-10-02: "always in one line and left aligned with
+            the first description text and button"); no drift, and the
+            size comes down with the name's length (--cx-n, travel.css) */}
+        <h1 className="cx-h1 cx-r" style={{ '--cx-n': study.name.length } as React.CSSProperties}>
+          <span className="cx-mask">
+            <span className="cx-ln" style={{ '--d': '0.1s' } as React.CSSProperties}>
+              {study.name}
             </span>
-          ))}
+          </span>
         </h1>
       </header>
 
@@ -396,7 +403,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
                 ))}
               </div>
               </div>
-              <Plate src={deal()} shape="tall" at={look()} />
+              <Plate src={dealPhone()} shape="tall" at={phones.length ? undefined : look()} />
             </div>
             {s.blocks.map((b, i) => spread(b, s.id + b.kind + i))}
           </section>
@@ -493,7 +500,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
           <figure className="cx-plate cx-plate-wide cx-r" aria-hidden="true">
             <span className="cx-win">
               <span className="cx-print">
-                <img src={next.image} alt="" width={1900} height={1000} loading="lazy" decoding="async" draggable={false} />
+                <img src={next.frames?.[0] ?? next.image} alt="" width={1900} height={1000} loading="lazy" decoding="async" draggable={false} />
               </span>
             </span>
           </figure>

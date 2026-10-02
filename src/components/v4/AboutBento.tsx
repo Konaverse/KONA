@@ -21,18 +21,25 @@ import { gsap } from '@/lib/motion-v4'
  * leaves free, floating on a drop shadow (the first cut hung them past
  * the edges — user: "terrible and confusing"; the card clips now).
  *
- * THE MOTION. Three light touches, no library beyond the shared
- * ticker: the cards and the objects rise in once as the grid enters
- * (IntersectionObserver, staggered by --i); the objects ride the
- * scroll a little slower than the page (`--sy` on the section, one
- * rect per frame); and on hover devices the objects lean away from
- * the pointer by their own depth (`--px`/`--py` on the section, each
- * object's `--d`). Hover on a card lifts its object and deepens the
- * wash — CSS.
+ * THE MOTION. Light touches, no library beyond the shared ticker: the
+ * cards and the logos rise in once as the grid enters
+ * (IntersectionObserver, staggered by --i); the logos ride the scroll
+ * a little slower than the page (`--sy` on the section, one rect per
+ * frame, each logo's `--d`). Hover on a card zooms its logo and
+ * deepens the wash — CSS.
  *
- * SERVER-RENDERED: the names as h3, the lines as p. The pictures are
- * the homepage's service objects FOR NOW (user: "images we will
- * generate later"); `art` in page.tsx is where they are swapped.
+ * THE LOGOS (2026-10-02, owner: "I no longer want objects… just the
+ * logo, black and white, with no background, placed inside the card and
+ * clipped by the corner"): each tool's mark, black with grain, set big
+ * in the card's free corner so the card's edge cuts it. NO LEAN (owner,
+ * 10-02: "the logos shouldn't move on hover, just zoom in"): hover only
+ * scales the hovered card's logo (CSS), nothing follows the pointer.
+ * THE RUN OF LIGHT: on hover a short line runs round the card's edge,
+ * clockwise and without end — opaque at its head, gone at its tail
+ * (a rotating conic gradient masked to the border; about.css).
+ *
+ * SERVER-RENDERED: the names as h3, the lines as p; the logos are
+ * decoration (the name says it). `art` in page.tsx is where they live.
  * Reduced motion: no entrance, no lean, no ride (CSS + the early
  * return). No JS: page.tsx's noscript lifts the entrance.
  */
@@ -40,14 +47,12 @@ import { gsap } from '@/lib/motion-v4'
 export type Tool = {
   name: string
   line: string
-  /** the object: a picture with alpha, set past the card's edge */
+  /** the logo: a picture with alpha, cut by the card's corner */
   art: { src: string; width: number; height: number }
 }
 
 /** how much of the page's scroll the objects give back */
 const RIDE = 0.04
-/** the lean, in px at the reference frame, at full depth */
-const LEAN = 8
 
 export default function AboutBento({ tools }: { tools: readonly Tool[] }) {
   const ref = useRef<HTMLElement | null>(null)
@@ -56,7 +61,6 @@ export default function AboutBento({ tools }: { tools: readonly Tool[] }) {
     const sec = ref.current
     if (!sec) return
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const hover = window.matchMedia('(hover: hover)').matches
 
     /* the entrance, once */
     const io = new IntersectionObserver(
@@ -86,31 +90,11 @@ export default function AboutBento({ tools }: { tools: readonly Tool[] }) {
     tick()
     gsap.ticker.add(tick)
 
-    /* the lean: the pointer's place across the section, -1..1 */
-    const onMove = (e: PointerEvent) => {
-      const r = sec.getBoundingClientRect()
-      const px = ((e.clientX - r.left) / r.width) * 2 - 1
-      const py = ((e.clientY - r.top) / r.height) * 2 - 1
-      sec.style.setProperty('--px', `${(-px * LEAN).toFixed(2)}px`)
-      sec.style.setProperty('--py', `${(-py * LEAN).toFixed(2)}px`)
-    }
-    const onLeave = () => {
-      sec.style.setProperty('--px', '0px')
-      sec.style.setProperty('--py', '0px')
-    }
-    if (hover) {
-      sec.addEventListener('pointermove', onMove)
-      sec.addEventListener('pointerleave', onLeave)
-    }
 
     return () => {
       io.disconnect()
       gsap.ticker.remove(tick)
-      sec.removeEventListener('pointermove', onMove)
-      sec.removeEventListener('pointerleave', onLeave)
       sec.style.removeProperty('--sy')
-      sec.style.removeProperty('--px')
-      sec.style.removeProperty('--py')
     }
   }, [])
 

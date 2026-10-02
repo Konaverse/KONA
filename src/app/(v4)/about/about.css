@@ -455,10 +455,8 @@
   z-index: 2;
   padding: 10rem 0 9rem;
   background: var(--ab-ground);
-  /* the ride and the lean, written by the driver */
+  /* the ride, written by the driver (the lean lives on each card) */
   --sy: 0px;
-  --px: 0px;
-  --py: 0px;
 }
 .ab-tools-t {
   margin: 0 0 3.2rem var(--ab-pad);
@@ -532,6 +530,34 @@
   pointer-events: none;
 }
 .ab-bento-card:hover::after { opacity: 1; }
+/* THE RUN OF LIGHT (2026-10-02): on hover a short line runs round the
+   edge, clockwise, without end — the head opaque, the tail gone. A conic
+   gradient turned by --ab-run, masked to a 1.5px ring. */
+.ab-bento-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: conic-gradient(from var(--ab-run), rgb(21 23 26 / 0) 0deg, rgb(21 23 26 / 0) 250deg, rgb(21 23 26 / 0.12) 290deg, var(--ink) 358deg, rgb(21 23 26 / 0) 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  opacity: 0;
+  transition: opacity var(--d-base) var(--e-settle);
+  pointer-events: none;
+}
+.ab-bento-card:hover::before {
+  opacity: 1;
+  animation: ab-run 3.2s linear infinite;
+}
+@property --ab-run {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes ab-run { to { --ab-run: 360deg; } }
 .ab-bento-grid.is-in .ab-bento-card { opacity: 1; translate: none; }
 
 .ab-bento-card:nth-child(1) { grid-area: a; --wash-angle: 160deg; }
@@ -565,8 +591,9 @@
   color: var(--text-muted);
 }
 
-/* THE OBJECTS: inside the card, in the free corner, with the ride and
-   the lean composed into one transform. `--d` is each object's depth. */
+/* THE LOGOS: big in the card's free corner, cut by the card's edge;
+   the scroll's ride and the hover's zoom are one transform.
+   `--d` is each logo's depth. No shadow: a flat mark, grained. */
 .ab-bento-obj {
   --d: 1;
   position: absolute;
@@ -575,32 +602,27 @@
   height: auto;
   max-width: none;
   pointer-events: none;
-  filter: drop-shadow(0 1.8rem 1.6rem rgb(21 23 26 / 0.26));
-  transform: translate3d(calc(var(--px) * var(--d)), calc(var(--py) * var(--d) + var(--sy) * var(--d)), 0) scale(var(--lift, 1));
+  transform: translate3d(0, calc(var(--sy) * var(--d)), 0) scale(var(--lift, 1));
   transition:
     opacity var(--d-cinema) var(--e-glass) calc(var(--i) * 70ms + 120ms),
-    --lift var(--d-base) var(--e-settle),
-    filter var(--d-base) var(--e-settle);
+    --lift 0.8s var(--e-glass);
   will-change: transform;
   opacity: 0;
 }
 .ab-bento-grid.is-in .ab-bento-obj { opacity: 1; }
-.ab-bento-card:hover .ab-bento-obj {
-  --lift: 1.04;
-  filter: drop-shadow(0 2.4rem 2rem rgb(21 23 26 / 0.3));
-}
-/* the sphere, upper half of the tall card */
-.ab-bento-card:nth-child(1) .ab-bento-obj { top: 3rem; left: 50%; margin-left: -8rem; width: 16rem; --d: 1.2; }
-/* the dashboard, right of the wide top card */
-.ab-bento-card:nth-child(2) .ab-bento-obj { top: 1.8rem; right: 2.2rem; width: 23.5rem; --d: 0.8; }
-/* the cursor, bottom right */
-.ab-bento-card:nth-child(3) .ab-bento-obj { bottom: 1.6rem; right: 2.2rem; width: 9rem; --d: 1.4; }
-/* the arrow, top right */
-.ab-bento-card:nth-child(4) .ab-bento-obj { top: 1.8rem; right: 2.2rem; width: 9rem; --d: 1.1; }
-/* the wireframe slab, right of the wide bottom card */
-.ab-bento-card:nth-child(5) .ab-bento-obj { bottom: 2rem; right: 2.4rem; width: 24rem; --d: 0.7; }
-/* the laptop back, bottom right */
-.ab-bento-card:nth-child(6) .ab-bento-obj { bottom: 1.4rem; right: 2rem; width: 10rem; --d: 1.3; }
+.ab-bento-card:hover .ab-bento-obj { --lift: 1.08; }
+/* Blender, off the tall card's top right */
+.ab-bento-card:nth-child(1) .ab-bento-obj { top: -3rem; right: -9rem; width: 31rem; --d: 1.2; }
+/* Next.js, off the wide top card's right */
+.ab-bento-card:nth-child(2) .ab-bento-obj { top: -7rem; right: -5rem; width: 27rem; --d: 0.9; }
+/* Three.js, off the square's bottom right (its text is at the top) */
+.ab-bento-card:nth-child(3) .ab-bento-obj { bottom: -9.5rem; right: -5rem; width: 19rem; --d: 1.3; }
+/* GSAP, off the square's top right */
+.ab-bento-card:nth-child(4) .ab-bento-obj { top: -1.2rem; right: -8rem; width: 26rem; --d: 1.1; }
+/* Figma, off the wide bottom card's bottom right */
+.ab-bento-card:nth-child(5) .ab-bento-obj { bottom: -9rem; right: 3rem; width: 17rem; --d: 0.8; }
+/* After Effects, off the square's bottom right */
+.ab-bento-card:nth-child(6) .ab-bento-obj { bottom: -7rem; right: -6rem; width: 17rem; --d: 1.3; }
 
 @property --lift {
   syntax: '<number>';
@@ -611,6 +633,7 @@
 @media (prefers-reduced-motion: reduce) {
   .ab-bento-card, .ab-bento-obj { opacity: 1; translate: none; transition: none; }
   .ab-bento-obj { transform: none; }
+  .ab-bento-card:hover::before { animation-duration: 12s; }
 }
 
 @media (max-width: 57.5rem) {
@@ -630,41 +653,51 @@
   .ab-bento-line { font-size: 0.9rem; }
   /* every object sits in the top right on phones (the grid class in
      the selector outweighs the desktop per-card rules) */
-  .ab-bento-grid .ab-bento-card .ab-bento-obj { top: 1.2rem; right: 1.2rem; bottom: auto; left: auto; margin: 0; width: 6.5rem; }
+  .ab-bento-grid .ab-bento-card .ab-bento-obj { top: -2rem; right: -3rem; bottom: auto; left: auto; margin: 0; width: 11rem; }
   .ab-bento-grid .ab-bento-card:nth-child(2) .ab-bento-obj,
-  .ab-bento-grid .ab-bento-card:nth-child(5) .ab-bento-obj { width: 10rem; }
+  .ab-bento-grid .ab-bento-card:nth-child(5) .ab-bento-obj { width: 12rem; }
 }
 
-/* ---------- §7 · HOW IT WENT — THE THREAD ----------
-   (AboutTimeline.tsx, 2026-09-17, user: "vertical scroll not
-   horizontal… an svg scroll follow lines animation… cool image
-   transitions… not too heavy"; it replaces THE TRAVEL's pinned
-   horizontal track.) A section on paper, in flow, no pin. The title
-   at the gutter; under it the entries a viewport apart (46rem — the
-   reference viewport is 45.6), alternating sides about the centre:
-   the plate one side, the year and the words the other, the year a
-   giant numeral that overhangs the plate's inner edge in the
-   difference blend. THE THREAD is an SVG the size of the section
-   UNDER the plates; the driver writes its route from the plates as
-   laid out here, so these numbers are the only ones. The hidden
-   states live under `.is-live` (the driver's): without it — no JS,
-   reduced motion — the entries stand open, in colour, no thread. */
+/* ---------- §7 · HOW IT WENT — THE SHEET (2026-10-02) ----------
+   The homepage's SolveStack (sheet.css): the years are the words, the
+   label and sentence the note at the foot-left. The section carries the
+   ground on over the opening's pinned picture (z-index 2), and hands
+   the sheet that ground for its difference blend (--sk-ground). The
+   title is THE CANVAS's (.ab-tl-t, below). */
+.ab-years {
+  position: relative;
+  z-index: 2;
+  padding: 9rem 0 2rem;
+  background: var(--ab-ground);
+  --sk-ground: var(--ab-ground);
+}
+.ab-years .ab-tl-t { margin-bottom: 0; }
+@media (max-width: 57.5rem) {
+  .ab-years { padding: 5rem 0 1rem; }
+}
+
+/* ---------- §7 (PARKED 2026-10-02) · HOW IT WENT — THE CANVAS ----------
+   (AboutTimeline.tsx, 2026-10-01, backlog 7c; THE THREAD is retired.)
+   Paper, the title at the gutter, then a split: the four years in
+   plain flow on the left, a block a viewport apart (46rem — the
+   reference viewport is 45.6); on the right ONE window held in place
+   (sticky), the agent's canvas, where each year's plate is carried
+   in from a bottom corner and brought up square (the driver's
+   transform). The plates are stacked in the window, the last on top. The hidden states live
+   under `.is-live` (the driver's): without it — no JS, reduced
+   motion — the years stand in ink and the window holds the last
+   plate in colour; no pill. No hairlines. */
 .ab-time {
   position: relative;
   /* on its own ground and above the opening's pinned picture (§4):
-     the toolset is the cover, but on phones and tall viewports it is
-     shorter than the viewport it covers, so this section carries the
-     ground on. The ground is also the years' backdrop: the section
-     is a stacking context, and a difference blend can only see what
-     is inside it */
+     on phones and tall viewports the toolset is shorter than the
+     viewport it covers, so this section carries the ground on */
   z-index: 2;
-  padding: 9rem 0 14rem;
+  padding: 9rem 0 10rem;
   overflow: clip;
   background: var(--ab-ground);
-  --ab-tl-plate-w: 24rem;
-  --ab-tl-plate-h: 32rem;
-  /* the plate's and the words' distance from the centre line */
-  --ab-tl-off: 4rem;
+  --ab-tl-win-w: 34rem;
+  --ab-tl-win-h: 38rem;
 }
 .ab-tl-t {
   position: relative;
@@ -678,133 +711,39 @@
   white-space: nowrap;
 }
 
-/* THE THREAD: under everything; hairlines stay px */
-.ab-tl-thread {
-  display: none;
-  position: absolute;
-  z-index: 0;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  pointer-events: none;
+.ab-tl-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--ab-tl-win-w);
+  column-gap: 6rem;
+  padding: 0 var(--ab-pad);
 }
-.ab-time.is-live .ab-tl-thread { display: block; }
-.ab-tl-ghost {
-  stroke: var(--n-5);
-  stroke-width: 1.5px;
-  stroke-dasharray: 1 8;
-  stroke-linecap: round;
-}
-.ab-tl-ink {
-  stroke: var(--ink);
-  stroke-width: 2px;
-  stroke-linecap: round;
-}
-/* THE HEAD: a ring on the end of the ink; the driver places its
-   centre (the box is pulled back by half its size) */
-.ab-tl-head {
-  display: none;
-  position: absolute;
-  z-index: 0;
-  left: -0.55rem;
-  top: -0.55rem;
-  width: 1.1rem;
-  height: 1.1rem;
-  border: 2px solid var(--ink);
-  border-radius: 50%;
-  background: var(--ab-ground);
-  box-shadow: 0 0 0 0.35rem var(--ab-ground);
-  opacity: 0;
-  pointer-events: none;
-  will-change: transform;
-}
-.ab-time.is-live .ab-tl-head { display: block; }
 
-/* THE ENTRIES. No stacking context between the section and a year
-   (no transform, opacity or z-index on the list, the entry, the body
-   or the name) — the year's blend must see the plate and the paper. */
+/* THE YEARS */
 .ab-tl-list {
-  position: relative;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 .ab-tl-entry {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
   height: 46rem;
+  padding-top: 6rem;
 }
-.ab-tl-plate {
-  position: relative;
-  z-index: 1;
-  grid-row: 1;
-  grid-column: 2;
-  justify-self: start;
-  width: var(--ab-tl-plate-w);
-  height: var(--ab-tl-plate-h);
-  margin: 0 0 0 var(--ab-tl-off);
-  border-radius: var(--r-lg);
-  overflow: hidden;
-  background: var(--n-10);
-  /* it hangs from where the thread enters it (the driver's swing) */
-  transform-origin: 50% 0;
-  will-change: clip-path, transform;
-}
-.ab-tl-body {
-  grid-row: 1;
-  grid-column: 1;
-  justify-self: end;
-  width: 25rem;
-  margin: 0 var(--ab-tl-off) 0 0;
-}
-/* the mirror */
-.ab-tl-entry:nth-child(even) .ab-tl-plate { grid-column: 1; justify-self: end; margin: 0 var(--ab-tl-off) 0 0; }
-.ab-tl-entry:nth-child(even) .ab-tl-body { grid-column: 2; justify-self: start; margin: 0 0 0 var(--ab-tl-off); }
-
-/* closed until the thread reaches it (the driver opens the iris) */
-.ab-time.is-live .ab-tl-plate { clip-path: circle(0 at 50% 0%); }
-.ab-tl-img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  will-change: transform;
-}
-.ab-tl-img-mono { filter: grayscale(1) brightness(0.96); }
-.ab-time.is-live .ab-tl-img-colour { opacity: 0; }
-
+.ab-tl-entry:last-child { height: 56rem; }
 .ab-tl-name {
-  margin: 0 0 0.9rem;
-  font-size: 2.3rem;
+  margin: 0 0 1.4rem;
+  font-size: 2.6rem;
   font-weight: var(--w-light);
   line-height: 1.05;
   letter-spacing: -0.02em;
   color: var(--text);
 }
-/* THE YEAR: white in the difference blend — ink on the paper, light
-   where it overhangs the picture; pulled across the gap and 5rem onto
-   the plate; the driver drifts it against the page */
 .ab-tl-when {
-  position: relative;
-  z-index: 2;
   display: block;
-  margin: 0 calc(-2 * var(--ab-tl-off) - 5rem) 1.6rem 0;
-  text-align: right;
-  font-size: 11.5rem;
-  line-height: 0.9;
-  letter-spacing: -0.045em;
+  margin: 0 0 1.2rem -0.06em;
+  font-size: 13rem;
+  line-height: 0.86;
+  letter-spacing: -0.05em;
   white-space: nowrap;
-  color: #fff;
-  mix-blend-mode: difference;
-  pointer-events: none;
-  will-change: transform;
-}
-.ab-tl-entry:nth-child(even) .ab-tl-when {
-  margin: 0 0 1.6rem calc(-2 * var(--ab-tl-off) - 5rem);
-  text-align: left;
 }
 /* the digits, each in its own mask */
 .ab-tl-d {
@@ -821,40 +760,134 @@
 .ab-tl-label { display: block; }
 .ab-tl-text {
   margin: 0;
-  max-width: 22rem;
-  font-size: 1rem;
+  max-width: 26rem;
+  font-size: 1.15rem;
   line-height: 1.5;
   color: var(--text-muted);
 }
-.ab-tl-label,
-.ab-tl-text {
+.ab-tl-label {
   transition:
-    opacity var(--d-slow) var(--e-glass) 0.25s,
-    transform var(--d-slow) var(--e-glass) 0.25s;
+    opacity var(--d-slow) var(--e-glass) 0.2s,
+    transform var(--d-slow) var(--e-glass) 0.2s;
 }
-.ab-tl-text { transition-delay: 0.35s; }
-/* the hush: until the entry is on (and again below it, quickly) */
-.ab-time.is-live .ab-tl-entry:not(.is-on) .ab-tl-d > span { transform: translateY(108%); transition-delay: 0s; }
-.ab-time.is-live .ab-tl-entry:not(.is-on) .ab-tl-label,
-.ab-time.is-live .ab-tl-entry:not(.is-on) .ab-tl-text { opacity: 0; transform: translateY(1.2rem); transition-delay: 0s; }
+/* the sentence wipes in, left to right; the name and the sentence
+   step back (opacity) once the act is over */
+.ab-tl-text { transition: clip-path 1.1s var(--e-glass) 0.35s, opacity 0.6s var(--e-glass); }
+.ab-tl-name { transition: opacity 0.6s var(--e-glass); }
 
-/* PHONES: one column — the plate, the year over its foot, the words;
-   no thread (the route would run through the words), the iris still
-   opens on the same clock */
+/* the hush: until the act starts (and again under it, quickly) */
+.ab-time.is-live .ab-tl-entry:not(.is-on) .ab-tl-d > span { transform: translateY(108%); transition-delay: 0s; }
+.ab-time.is-live .ab-tl-entry:not(.is-on) .ab-tl-label { opacity: 0; transform: translateY(1.2rem); transition-delay: 0s; }
+.ab-time.is-live .ab-tl-entry:not(.is-on) .ab-tl-text { clip-path: inset(0 100% 0 0); transition-delay: 0s; }
+.ab-time.is-live .ab-tl-text { clip-path: inset(0 0 0 0); }
+/* a year whose act is over steps back while the next one works */
+.ab-time.is-live .ab-tl-entry.is-past .ab-tl-name,
+.ab-time.is-live .ab-tl-entry.is-past .ab-tl-text { opacity: 0.22; }
+
+/* THE WINDOW: held about the viewport's middle */
+.ab-tl-side { position: relative; }
+.ab-tl-win {
+  position: sticky;
+  top: calc(50svh - var(--ab-tl-win-h) / 2);
+  width: var(--ab-tl-win-w);
+  height: var(--ab-tl-win-h);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  isolation: isolate;
+  /* a design tool's canvas: faint dots on a pale ground */
+  background:
+    radial-gradient(circle at 1px 1px, rgb(21 23 26 / 0.16) 1px, transparent 1.4px) 0 0 / 1.4rem 1.4rem,
+    var(--n-2);
+  box-shadow: 0 2.4rem 5rem -2.6rem rgb(13 16 18 / 0.35);
+}
+.ab-tl-plate {
+  position: absolute;
+  z-index: calc(1 + var(--i));
+  inset: 0;
+  margin: 0;
+  overflow: hidden;
+  background: var(--n-10);
+  will-change: transform;
+}
+.ab-time.is-live .ab-tl-plate { visibility: hidden; }
+/* every plate is carried: it has corners and a shadow */
+.ab-tl-plate {
+  border-radius: var(--r-lg);
+  box-shadow: 0 1.6rem 3rem -1rem rgb(13 16 18 / 0.45);
+}
+.ab-tl-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ab-tl-mono { filter: grayscale(1) brightness(0.94) contrast(1.05); }
+.ab-time.is-live .ab-tl-colour { opacity: 0; }
+
+/* THE PILL: the agent's status, in the window's corner */
+.ab-tl-pill {
+  position: absolute;
+  z-index: 9;
+  left: 1.1rem;
+  top: 1.1rem;
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: calc(100% - 2.2rem);
+  padding: 0.5rem 0.9rem 0.5rem 0.6rem;
+  border-radius: 2rem;
+  background: rgb(255 255 255 / 0.78);
+  backdrop-filter: blur(0.8rem) saturate(1.4);
+  box-shadow: 0 0.6rem 1.6rem -0.6rem rgb(13 16 18 / 0.35);
+  font-size: 0.82rem;
+  line-height: 1;
+  color: var(--ink);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.4s var(--e-glass);
+}
+.ab-time.is-live .ab-tl-pill { display: flex; }
+.ab-tl-pill b {
+  padding: 0.26rem 0.5rem;
+  border-radius: 1rem;
+  background: var(--ink);
+  color: var(--n-0);
+  font-size: 0.7rem;
+  font-weight: var(--w-medium);
+}
+.ab-tl-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--ink);
+  animation: ab-tl-beat 1.6s ease-in-out infinite;
+}
+@keyframes ab-tl-beat { 50% { transform: scale(0.55); opacity: 0.45; } }
+.ab-tl-say { overflow: hidden; text-overflow: ellipsis; }
+/* thinking: the words shimmer */
+.ab-tl-pill.is-thinking .ab-tl-say {
+  background: linear-gradient(90deg, var(--n-6) 0%, var(--ink) 45%, var(--n-6) 70%) 0 0 / 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: ab-tl-shim 1.4s linear infinite;
+}
+@keyframes ab-tl-shim { to { background-position: -200% 0; } }
+
+/* PHONES: the window held at the top, the years scrolling under it */
 @media (max-width: 57.5rem) {
   .ab-time { padding: 5rem 0 4rem; }
-  .ab-time.is-live .ab-tl-thread,
-  .ab-time.is-live .ab-tl-head { display: none; }
-  .ab-tl-t { font-size: 2.8rem; margin-bottom: 2.5rem; }
-  .ab-tl-entry { display: block; height: auto; padding: 0 var(--ab-pad) 4rem; }
-  .ab-tl-plate,
-  .ab-tl-entry:nth-child(even) .ab-tl-plate { width: 100%; height: auto; aspect-ratio: 3 / 4; margin: 0; }
-  .ab-tl-body,
-  .ab-tl-entry:nth-child(even) .ab-tl-body { width: auto; margin: 0; }
-  .ab-tl-when,
-  .ab-tl-entry:nth-child(even) .ab-tl-when { margin: -2.7rem 0 0.8rem; font-size: 5.4rem; text-align: left; }
-  .ab-tl-name { font-size: 1.5rem; margin-bottom: 0.5rem; }
-  .ab-tl-text { font-size: 0.9rem; max-width: none; }
+  .ab-tl-t { font-size: 2.8rem; margin-bottom: 2rem; }
+  .ab-tl-split { display: flex; flex-direction: column-reverse; padding: 0 var(--ab-pad); }
+  .ab-tl-side { position: sticky; top: 4.5rem; z-index: 3; }
+  .ab-tl-win { position: relative; top: auto; width: 100%; height: auto; aspect-ratio: 4 / 3.4; }
+  .ab-tl-entry,
+  .ab-tl-entry:last-child { height: auto; min-height: 60svh; padding-top: 3rem; }
+  .ab-tl-when { font-size: 5.6rem; margin-bottom: 0.6rem; }
+  .ab-tl-name { font-size: 1.6rem; margin-bottom: 0.6rem; }
+  .ab-tl-text { font-size: 0.95rem; max-width: none; }
+  .ab-tl-pill { left: 0.7rem; top: 0.7rem; font-size: 0.72rem; }
 }
 
 @media (max-width: 57.5rem) {

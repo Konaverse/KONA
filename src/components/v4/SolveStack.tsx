@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { gsap } from '@/lib/motion-v4'
+import './sheet.css'
 
 /**
  * §3 — THE PRESS SHEET (2026-09-17). Built in three passes, all the
@@ -79,6 +80,14 @@ import { gsap } from '@/lib/motion-v4'
  * only the driver ever adds it. The section's argument is carried by
  * the statement above (SOLVE_LINE in page.tsx), which is why the sheet
  * itself can afford to be this bare.
+ *
+ * REUSED ON /about (2026-10-02, owner: "have the image stack, instead of
+ * words in the middle, we add the years, and… bottom left… the
+ * description"): the word is the YEAR, and a beat may carry a `note`
+ * (a label and a sentence) that sits at the sheet's foot-left and hands
+ * over on the word's own clock. The rules moved from home.css to
+ * sheet.css (imported here) so any page can have the sheet; a page whose
+ * ground is not --surface sets --sk-ground.
  */
 
 export type SolveBeat = {
@@ -86,6 +95,8 @@ export type SolveBeat = {
   word: string
   src: string
   alt: string
+  /** optional: a label and a sentence at the sheet's foot-left */
+  note?: { label: string; text: string }
 }
 
 /* The recede, extrapolated straight from the measurement at rise 0.474
@@ -126,6 +137,7 @@ export default function SolveStack({ beats }: { beats: readonly SolveBeat[] }) {
 
     const pin = sec.querySelector<HTMLElement>('.sk-pin')
     const cards = Array.from(sec.querySelectorAll<HTMLElement>('.sk-beat'))
+    const notes = Array.from(sec.querySelectorAll<HTMLElement>('.sk-note'))
     const plates = Array.from(sec.querySelectorAll<HTMLElement>('.sk-plate'))
     const pics = plates.map((el) => el.querySelector<HTMLElement>('img'))
     if (!pin || plates.length < 2) return
@@ -171,6 +183,12 @@ export default function SolveStack({ beats }: { beats: readonly SolveBeat[] }) {
         const go = clamp01((d - i) / WORD_OUT)
         el.style.setProperty('--o', (come * (1 - go)).toFixed(3))
         el.style.setProperty('--y', `${((1 - come) * SHIFT - go * SHIFT).toFixed(3)}rem`)
+        /* the beat's note, if it has one, on the same pair */
+        const note = notes.find((x) => x.dataset.beat === String(i))
+        if (note) {
+          note.style.setProperty('--o', (come * (1 - go)).toFixed(3))
+          note.style.setProperty('--y', `${((1 - come) * SHIFT - go * SHIFT).toFixed(3)}rem`)
+        }
       })
     }
 
@@ -185,6 +203,9 @@ export default function SolveStack({ beats }: { beats: readonly SolveBeat[] }) {
         if (pic) pic.style.transform = ''
       })
       cards.forEach((el) => {
+        el.style.cssText = ''
+      })
+      notes.forEach((el) => {
         el.style.cssText = ''
       })
     }
@@ -216,9 +237,31 @@ export default function SolveStack({ beats }: { beats: readonly SolveBeat[] }) {
                   ))}
                 </span>
               </p>
+              {/* the note: in flow under the word for a plain reader;
+                  live, the driver's twin below is the one on show */}
+              {b.note ? (
+                <p className="sk-note sk-note-plain">
+                  <b>{b.note.label}</b>
+                  <span>{b.note.text}</span>
+                </p>
+              ) : null}
             </article>
           ))}
         </div>
+        {/* the notes, live: pinned at the viewport's foot-left (outside
+            the sheet, which is only the plate's height) */}
+        {beats.some((b) => b.note) ? (
+          <div className="sk-notes" aria-hidden="true">
+            {beats.map((b, i) =>
+              b.note ? (
+                <p className="sk-note sk-note-live" data-beat={i} key={b.src}>
+                  <b>{b.note.label}</b>
+                  <span>{b.note.text}</span>
+                </p>
+              ) : null,
+            )}
+          </div>
+        ) : null}
       </div>
     </div>
   )

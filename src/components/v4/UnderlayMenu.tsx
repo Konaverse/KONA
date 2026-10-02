@@ -487,37 +487,30 @@ export default function UnderlayMenu() {
   }, [pathname, unfreeze])
 
   /**
-   * Scroll behaviour (kept from the aperture): THE BAR LIVES IN THE HERO
-   * ONLY, at every width — past the hero's end it hides in either scroll
-   * direction; the open menu pins it visible. gsap.ticker + position
-   * reads, no scroll listener.
+   * Scroll behaviour (2026-10-02, owner: "make the navbar consistently
+   * present until we reach the footer — it needs to be accessible
+   * everywhere"): THE BAR STAYS, on every page and in both scroll
+   * directions, and leaves only once the footer has come up to it (the
+   * footer's top edge crosses the bar's foot); scrolling back off the
+   * footer brings it back. Pages without a footer (FooterGate) keep it
+   * throughout. The open menu pins it visible. It used to live in the
+   * hero only and hide past it. gsap.ticker + one rect, no scroll
+   * listener.
    */
   useEffect(() => {
     const bar = barRef.current
     if (!bar) return
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     let hidden = false
-    let heroEnd = 0
-    const measure = () => {
-      const hero = document.querySelector<HTMLElement>('.hw-hero, [data-nav-hero]')
-      const frac = hero ? parseFloat(hero.dataset.navHero || '') : NaN
-      if (hero) {
-        const r = hero.getBoundingClientRect()
-        const end = Number.isFinite(frac) ? r.top + r.height * frac : r.bottom
-        heroEnd = end + window.scrollY - bar.offsetHeight
-      } else {
-        heroEnd = 160 * rem()
-      }
-    }
-    measure()
-    window.addEventListener('resize', measure)
     const update = () => {
       if (reduce) return
-      const inHero = openRef.current || frozenAt.current != null || window.scrollY < heroEnd
-      if (inHero && hidden) {
+      const foot = document.querySelector<HTMLElement>('footer.ft')
+      const atFoot = !!foot && foot.getBoundingClientRect().top < bar.offsetHeight
+      const show = openRef.current || frozenAt.current != null || !atFoot
+      if (show && hidden) {
         hidden = false
         bar.classList.remove('is-hidden')
-      } else if (!inHero && !hidden) {
+      } else if (!show && !hidden) {
         hidden = true
         bar.classList.add('is-hidden')
       }
@@ -525,7 +518,7 @@ export default function UnderlayMenu() {
     gsap.ticker.add(update)
     return () => {
       gsap.ticker.remove(update)
-      window.removeEventListener('resize', measure)
+      bar.classList.remove('is-hidden')
     }
   }, [pathname])
 

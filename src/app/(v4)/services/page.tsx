@@ -91,18 +91,15 @@ export const metadata: Metadata = {
   },
 }
 
-/** each card's picture: the service's OBJECT (its poster render, a
- *  cut-out — the same table as the service template's POSTER) on its
- *  FILM (public/services/films: the six ambient loops, re-encoded
- *  1280 wide, and a still of each). STAND-INS until the user supplies
- *  photography of their own. */
-const ART: Record<string, { object: string; grade: CarouselService['grade'] }> = {
-  'web-design': { object: '/services/web-design/main.webp', grade: 'none' },
-  'web-development': { object: '/services/3d-websites/glass-screen.webp', grade: 'glass' },
-  '3d-websites': { object: '/services/3d-websites/knot.webp', grade: 'chrome' },
-  'one-page-websites': { object: '/services/one-page-art/mockup.webp', grade: 'none' },
-  'website-redesign': { object: '/services/redesign-art/arrow.webp', grade: 'chrome' },
-  seo: { object: '/services/seo-art/sphere.webp', grade: 'chrome' },
+/** each card's picture: the owner's photograph of the service at work
+ *  (2026-10-01; they replace the films + object stand-ins of 09-30) */
+const PHOTO: Record<string, string> = {
+  'web-design': '/services/web-design/web-design-service-image.webp',
+  'web-development': '/services/web-dev/web-dev-service-image.webp',
+  '3d-websites': '/services/3d-websites/3d-websites-service-image.webp',
+  'one-page-websites': '/services/one-page-art/one-page-design-service-image.webp',
+  'website-redesign': '/services/redesign-art/website-redesign-service-image.webp',
+  seo: '/services/seo-art/seo-service-image.webp',
 }
 
 export default function ServicesHubPage() {
@@ -135,10 +132,7 @@ export default function ServicesHubPage() {
     slug: p.slug,
     name: p.name,
     blurb: p.blurb,
-    film: `/services/films/${p.slug}.mp4`,
-    still: `/services/films/${p.slug}.webp`,
-    object: ART[p.slug]?.object ?? p.visual,
-    grade: ART[p.slug]?.grade ?? 'none',
+    image: PHOTO[p.slug] ?? p.visual,
   }))
 
   return (

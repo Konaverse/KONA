@@ -4,7 +4,7 @@ import AboutPeople, { type Person } from '@/components/v4/AboutPeople'
 import AboutOpen, { type Beat } from '@/components/v4/AboutOpen'
 import AboutWords from '@/components/v4/AboutWords'
 import AboutBento, { type Tool } from '@/components/v4/AboutBento'
-import AboutTimeline from '@/components/v4/AboutTimeline'
+import SolveStack, { type SolveBeat } from '@/components/v4/SolveStack'
 import BlockReveal from '@/components/v4/BlockReveal'
 import Invitation from '@/components/v4/Invitation'
 import { SITE_URL } from '@/lib/site'
@@ -78,16 +78,15 @@ import './about.css'
  * "this very heavy drag section") is parked, unimported, with its hand
  * lens; the objects are PLACEHOLDERS from the homepage's services.
  *
- * §7 HOW IT WENT — THE THREAD (2026-09-17, user: "more impressive…
- * vertical scroll not horizontal… an svg scroll follow lines
- * animation, cool image transitions… not too heavy"; it replaces THE
- * TRAVEL's pinned horizontal track of 09-16): in flow, no pin, the
- * four entries alternating sides a viewport apart; one SVG line drawn
- * by the scroll swings from plate to plate behind them, and each
- * picture opens in a circle from the point the line reaches it; the
- * years are giant numerals over the plates' edges in the difference
- * blend, their digits rising as the entry speaks.
- * AboutTimeline.tsx.
+ * §7 HOW IT WENT — THE SHEET (2026-10-02, owner: "the one with the
+ * pinned image stack and the words per image… instead of words in the
+ * middle, we add the years… bottom left… the description"): the
+ * homepage's parked SolveStack, reused — each year's plate rises over
+ * the last while the one under it sinks, shrinks and tips; the YEAR is
+ * the word, its digits justified across the sheet and cut by the plate;
+ * the label and the sentence sit at the foot-left. THE CANVAS of
+ * 10-01 (AboutTimeline.tsx: the window, the carry, the status pill) is
+ * parked, unimported, with its .ab-tl-* rules.
  *
  * §8 THE INVITATION follows in flow and carries the footer out.
  *
@@ -192,15 +191,17 @@ const WORDS = ['Branding', 'Design', 'Experience', 'Motion'] as const
 
 /** the toolset — the six cards of the bento, in the grid's order (tall
  *  left, wide top right, two squares, wide bottom left, square bottom
- *  right). Lines FIRST DRAFT. The `art` is a PLACEHOLDER from the
- *  homepage's service objects — the user generates the real ones. */
+ *  right). Lines FIRST DRAFT. The `art` is each tool's own
+ *  LOGO (2026-10-02, owner: "just the logo, black and white, no
+ *  background… clipped by the corner"): Simple Icons' marks rendered
+ *  black with grain, public/tools/logo-*.webp. */
 const TOOLS: readonly Tool[] = [
-  { name: 'Blender', line: 'Every 3D object on our sites is modelled, lit and rendered here, then brought to the browser as a loop.', art: { src: '/services/seo-art/sphere.webp', width: 900, height: 906 } },
-  { name: 'Next.js', line: 'The frame every site is built in: server-rendered, fast, and honest to crawlers.', art: { src: '/services/web-design/main.webp', width: 1200, height: 877 } },
-  { name: 'Three.js', line: 'The WebGL layer: the shaders, the fluids and the objects that answer the cursor.', art: { src: '/services/web-design/orb-4.webp', width: 460, height: 513 } },
-  { name: 'GSAP', line: 'Every entrance, roll and scrub on the page runs on one clock.', art: { src: '/services/redesign-art/arrow.webp', width: 900, height: 952 } },
-  { name: 'Figma', line: 'Where the picture is decided before a line of code: the type, the space, the motion.', art: { src: '/services/one-page-art/mockup.webp', width: 1000, height: 542 } },
-  { name: 'After Effects', line: 'The motion is drawn before it is coded; the loops and the reels start here.', art: { src: '/work/device-back.webp', width: 522, height: 546 } },
+  { name: 'Blender', line: 'Every 3D object on our sites is modelled, lit and rendered here, then brought to the browser as a loop.', art: { src: '/tools/logo-blender.webp', width: 1400, height: 1138 } },
+  { name: 'Next.js', line: 'The frame every site is built in: server-rendered, fast, and honest to crawlers.', art: { src: '/tools/logo-nextjs.webp', width: 1400, height: 1400 } },
+  { name: 'Three.js', line: 'The WebGL layer: the shaders, the fluids and the objects that answer the cursor.', art: { src: '/tools/logo-threejs.webp', width: 1388, height: 1400 } },
+  { name: 'GSAP', line: 'Every entrance, roll and scrub on the page runs on one clock.', art: { src: '/tools/logo-gsap.webp', width: 1400, height: 516 } },
+  { name: 'Figma', line: 'Where the picture is decided before a line of code: the type, the space, the motion.', art: { src: '/tools/logo-figma.webp', width: 974, height: 1400 } },
+  { name: 'After Effects', line: 'The motion is drawn before it is coded; the loops and the reels start here.', art: { src: '/tools/logo-aftereffects.webp', width: 1400, height: 1366 } },
 ]
 
 /** the timeline — four years; only the LAST digit changes, so every
@@ -211,6 +212,15 @@ const YEARS = [
   { year: '2025', label: 'The studio', plate: '/work/hall.webp', text: 'The practice becomes a studio: a process, a price list, and a team of two that stays two.' },
   { year: '2026', label: 'The redesign', plate: '/work/corridor.webp', text: 'The site you are reading, rebuilt in black and white from the first pixel.' },
 ]
+
+/** the years as the sheet's beats: the year is the word, the label and
+ *  the sentence its note */
+const SHEET: SolveBeat[] = YEARS.map((y) => ({
+  word: y.year,
+  src: y.plate,
+  alt: y.label,
+  note: { label: y.label, text: y.text },
+}))
 
 export default function AboutPage() {
   const jsonLd = {
@@ -294,8 +304,11 @@ export default function AboutPage() {
       {/* §6 — OUR TOOLSET: the bento */}
       <AboutBento tools={TOOLS} />
 
-      {/* §7 — HOW IT WENT: the travel */}
-      <AboutTimeline eras={YEARS} />
+      {/* §7 — HOW IT WENT: the sheet */}
+      <section className="ab-years" aria-label="How it went">
+        <h2 className="ab-tl-t">How it <em>went</em></h2>
+        <SolveStack beats={SHEET} />
+      </section>
 
       {/* §8 — THE INVITATION */}
       <div className="ab-cta">

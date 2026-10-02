@@ -8,11 +8,15 @@ import RunGround from '@/components/v4/RunGround'
 import RunAnswer from '@/components/v4/RunAnswer'
 import RunTrack from '@/components/v4/RunTrack'
 import ServicePoster from '@/components/v4/ServicePoster'
+import { RunKind, RunFix, RunWork, RunGets, type RunWorkItem } from '@/components/v4/RunMore'
 import Invitation from '@/components/v4/Invitation'
 import { RUN_DECK, SERVICE_PAGES, getServicePage } from '@/lib/service-pages'
 import { CALENDLY_URL, SITE_URL } from '@/lib/site'
+import { CASE_STUDIES } from '@/lib/case-studies'
+import { WORK_PROJECTS } from '@/lib/work-projects'
 import '../scenes.css'
 import '../run.css'
+import '../more.css'
 
 /**
  * THE SERVICE PAGE TEMPLATE — THE RUN. One component, six instances
@@ -82,7 +86,13 @@ import '../run.css'
  *   6  the up-link to /services and the one link to the sister page
  *
  * LOCKED 2026-09-08 (user): no proof section and no "what changes the
- * price" section — after the process comes the CTA.
+ * price" section — after the process comes the CTA. REOPENED 2026-10-02
+ * (owner: "we've stripped a lot… no problem solving, problem-focused
+ * content"): a page with `more` (service-pages.ts) carries THE
+ * SUBSTANCE (RunMore.tsx, more.css), all in flow — after the statement
+ * THE FIT (what it is / when it is the wrong choice, from `plate`) and
+ * THE PROBLEMS; after the poster THE WORK (its case studies) and WHAT
+ * YOU GET; then the process and the CTA. Web design first.
  *
  * SERVER-RENDERED, every word in the raw HTML (SEO plan D5). The five
  * chapters are client components, which Next still renders on the
@@ -104,13 +114,21 @@ import '../run.css'
  */
 const INDEXABLE = false
 
-/** the run's five chapters: the bar's anchors (PLACEHOLDER labels) */
-const CHAPTERS = [
+/** THE RUN BAR's anchors, in page order — every section on the page
+ *  (2026-10-02, owner: "fix the floating navbar to include every
+ *  section"). The substance's four come only with `more` (THE WORK only
+ *  when the page names studies); "Start" is the Invitation (#contact) —
+ *  it pointed at the parked handover's #start and went nowhere. The
+ *  poster is an interlude, not a chapter. */
+const chaptersFor = (more: boolean, work: boolean) => [
   { id: 'brief', label: 'Brief' },
   { id: 'answer', label: 'Answer' },
+  ...(more ? [{ id: 'fit', label: 'Fit' }, { id: 'fixes', label: 'Fixes' }] : []),
+  ...(more && work ? [{ id: 'work', label: 'Work' }] : []),
+  ...(more ? [{ id: 'gets', label: 'You get' }] : []),
   { id: 'plan', label: 'Plan' },
-  { id: 'start', label: 'Start' },
-] as const
+  { id: 'contact', label: 'Start' },
+]
 
 export const dynamicParams = false
 
@@ -144,12 +162,12 @@ export async function generateMetadata({
 /** THE POSTER's object per service, and the noir grade it takes
  *  (ServicePoster.tsx, run.css `.pst-obj--*`) */
 const POSTER: Record<string, { src: string; grade: 'none' | 'chrome' | 'glass' }> = {
-  'web-design': { src: '/services/web-design/main.webp', grade: 'none' },
-  'web-development': { src: '/services/3d-websites/glass-screen.webp', grade: 'glass' },
-  '3d-websites': { src: '/services/3d-websites/knot.webp', grade: 'chrome' },
-  'one-page-websites': { src: '/services/one-page-art/mockup.webp', grade: 'none' },
-  'website-redesign': { src: '/services/redesign-art/arrow.webp', grade: 'chrome' },
-  seo: { src: '/services/seo-art/sphere.webp', grade: 'chrome' },
+  'web-design': { src: '/services/web-design/web-design-floating.webp', grade: 'none' },
+  'web-development': { src: '/services/web-dev/web-dev-floating.webp', grade: 'none' },
+  '3d-websites': { src: '/services/3d-websites/3d-design-floating.webp', grade: 'none' },
+  'one-page-websites': { src: '/services/one-page-art/one-page-floating.webp', grade: 'none' },
+  'website-redesign': { src: '/services/redesign-art/website-redesign-floating.webp', grade: 'none' },
+  seo: { src: '/services/seo-art/seo-floating.webp', grade: 'none' },
 }
 
 export default async function ServicePage({ params }: { params: Promise<{ slug: string }> }) {
@@ -194,6 +212,24 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
     ],
   }
 
+  /* THE WORK: the case studies the page names, with their captures */
+  const work: RunWorkItem[] = (page.more?.work ?? []).flatMap((w) => {
+    const study = CASE_STUDIES.find((c) => c.slug === w.slug)
+    const project = WORK_PROJECTS.find((p) => p.slug === w.slug)
+    if (!study || !project) return []
+    const sector = study.facts.find((f) => f.label === 'Sector')?.value
+    return [
+      {
+        slug: w.slug,
+        name: study.name,
+        meta: [sector, project.year].filter(Boolean).join(' · '),
+        line: w.line,
+        desk: project.frames?.[0] ?? study.still.src,
+        phone: project.phones?.[0],
+      },
+    ]
+  })
+
   const cta = (
     <>
       <Button href="/contact" hoverLabel="Say hello">
@@ -236,7 +272,14 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
 
       {/* THE FIT (what it is / when it is the wrong choice) was CUT from
           the page 2026-09-30 by the owner; RunFit.tsx and its crowd ground
-          (.rs-ground) are parked */}
+          (.rs-ground) are parked. It is BACK, in flow, on a page with
+          `more` (2026-10-02): RunKind, then the problems it fixes. */}
+      {page.more && (
+        <>
+          <RunKind headline={page.plate.headline} beats={page.plate.beats} image={page.plate.image} alt={page.plate.alt} pictures={page.more.kindPictures} />
+          <RunFix title={page.more.fixTitle} problems={page.more.problems} />
+        </>
+      )}
 
       {/* THE POSTER (2026-09-19): the interlude between the fit and the
           plan — the tagline at poster scale, cut by the service's object.
@@ -244,6 +287,10 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
       {POSTER[page.slug] && (
         <ServicePoster tagline={page.tagline} object={POSTER[page.slug].src} grade={POSTER[page.slug].grade} />
       )}
+
+      {/* THE WORK and WHAT YOU GET (2026-10-02), before the process */}
+      {page.more && work.length > 0 && <RunWork title={page.more.workTitle} items={work} />}
+      {page.more && <RunGets title={page.more.getsTitle} gets={page.more.gets} />}
 
       {/* 4 — THE PLAN: the process */}
       <RunTrack steps={page.process} />
@@ -269,7 +316,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
 
       {/* THE LIGHT and THE RUN BAR — both fixed, so they sit LAST in the
           source: nothing stands between a crawler and the h1 */}
-      <RunLight chapters={CHAPTERS} />
+      <RunLight chapters={chaptersFor(!!page.more, work.length > 0)} />
     </article>
   )
 }

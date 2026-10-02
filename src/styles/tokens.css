@@ -1639,7 +1639,13 @@ html.lenis, html.lenis body { height: auto; }
   padding: var(--s-5) var(--page-pad);
   color: #fff;
   mix-blend-mode: difference;
+  /* the strip is CLICK-THROUGH (2026-10-02, owner: "everything is
+     inaccessible in that transparent container… I had to scroll
+     upwards to access the buttons"): it spans the page's width with
+     nothing in the middle, so only its own controls take the pointer */
+  pointer-events: none;
 }
+.k-nav-bar > * { pointer-events: auto; }
 .k-nav-brand {
   margin-right: auto;
   display: block; line-height: 0;
@@ -1927,10 +1933,12 @@ html.lenis, html.lenis body { height: auto; }
    be buried behind a click. */
 
 /* ---------- nav scroll behaviour (2026-08-18, homepage pass) ----------
-   Two states, class-toggled from ApertureMenu's ticker:
-     in the hero   -- transparent, blending (the bar's own block above)
-     past the hero -- .is-hidden: the bar leaves and stays gone. The
-                      menu being open pins it visible.
+   Two states, class-toggled from UnderlayMenu's ticker:
+     everywhere    -- transparent, blending (the bar's own block above)
+     at the footer -- .is-hidden: the bar leaves once the footer's top
+                      reaches it, and comes back off it (2026-10-02,
+                      owner: "accessible everywhere"; it used to hide
+                      past the hero). The open menu pins it visible.
    .is-grounded (the near-solid white plate + hairline after 8px of
    scroll) is GONE (2026-09-12, user: no background) — the difference
    blend is what keeps the chrome legible over anything.

@@ -38,13 +38,15 @@ import { gsap } from '@/lib/motion-v4'
  * flow. Every word is server-rendered.
  */
 
+/** the owner's six service photographs (2026-10-02 — the same set as
+ *  the services hub's carousel) */
 const PHOTOS: Record<string, string> = {
-  '3d-websites': '/services/3d.webp',
-  'web-design': '/services/design.webp',
-  'web-development': '/services/development.webp',
-  'one-page-websites': '/services/one-page.webp',
-  'website-redesign': '/services/redesign.webp',
-  seo: '/services/seo.webp',
+  '3d-websites': '/services/3d-websites/3d-websites-service-image.webp',
+  'web-design': '/services/web-design/web-design-service-image.webp',
+  'web-development': '/services/web-dev/web-dev-service-image.webp',
+  'one-page-websites': '/services/one-page-art/one-page-design-service-image.webp',
+  'website-redesign': '/services/redesign-art/website-redesign-service-image.webp',
+  seo: '/services/seo-art/seo-service-image.webp',
 }
 
 /** the tip of a fully tucked sheet, in degrees, about its top-left */
