@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from 'next'
 import { Anton, Cormorant_Garamond, DM_Sans, Geist_Mono, Inter, Manrope } from 'next/font/google'
 import Script from 'next/script'
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import JsonLd from '@/components/JsonLd'
 import CookieConsent from '@/components/layout/CookieConsent'
 import GoogleAnalytics from '@/components/layout/GoogleAnalytics'
@@ -227,6 +229,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           strategy="afterInteractive"
         />
         <CookieConsent />
+        {/* Vercel Web Analytics + Speed Insights — cookieless, no consent gate */}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
