@@ -9,13 +9,14 @@ import {
   LegalExt,
 } from '@/components/v4/Legal'
 import CookiePreferences from '@/components/layout/CookiePreferences'
-import { CONTACT_EMAIL, SITE_URL } from '@/lib/site'
+import { CONTACT_EMAIL, OG_DEFAULTS, SITE_URL } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'Cookie Policy',
   description:
     'Which cookies kona-verse.com sets, what they do, how long they last, and how to change your choice at any time.',
   alternates: { canonical: `${SITE_URL}/cookies` },
+  openGraph: { ...OG_DEFAULTS, type: 'website', title: 'Cookie Policy | Konaverse', url: `${SITE_URL}/cookies` },
   robots: { index: true, follow: true },
 }
 

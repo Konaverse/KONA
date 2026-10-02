@@ -6,13 +6,14 @@ import {
   LegalList,
   LegalCard,
 } from '@/components/v4/Legal'
-import { CONTACT_EMAIL, SITE_URL } from '@/lib/site'
+import { CONTACT_EMAIL, OG_DEFAULTS, SITE_URL } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'Terms of Use',
   description:
     'The terms that govern the use of kona-verse.com and the services Konaverse provides.',
   alternates: { canonical: `${SITE_URL}/terms` },
+  openGraph: { ...OG_DEFAULTS, type: 'website', title: 'Terms of Use | Konaverse', url: `${SITE_URL}/terms` },
   robots: { index: true, follow: true },
 }
 

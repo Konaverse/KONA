@@ -7,13 +7,14 @@ import {
   LegalCard,
   LegalExt,
 } from '@/components/v4/Legal'
-import { CONTACT_EMAIL, SITE_URL } from '@/lib/site'
+import { CONTACT_EMAIL, OG_DEFAULTS, SITE_URL } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
   description:
     'How Konaverse collects, uses and protects your personal data, in accordance with the GDPR and the laws of the Republic of Cyprus.',
   alternates: { canonical: `${SITE_URL}/privacy` },
+  openGraph: { ...OG_DEFAULTS, type: 'website', title: 'Privacy Policy | Konaverse', url: `${SITE_URL}/privacy` },
   robots: { index: true, follow: true },
 }
 

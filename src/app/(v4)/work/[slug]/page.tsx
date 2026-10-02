@@ -179,6 +179,10 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
         '@type': 'Article',
         '@id': `${url}#article`,
         headline: study.title,
+        /* the day the study went live on this site (SEO plan v3 launch);
+           move dateModified with any real edit to the study, never by build */
+        datePublished: '2026-10-02',
+        dateModified: '2026-10-02',
         description: study.description,
         url,
         image: `${SITE_URL}${study.still.src}`,
