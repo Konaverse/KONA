@@ -30,7 +30,7 @@ checklist + research record. Evidence tags: P = official Google/vendor doc, S = 
 3. AI training bots — **ALLOW** (D7 stands). Owner action: turn OFF Cloudflare "Block AI bots" (and AI Labyrinth / managed robots.txt if on) for kona-verse.com.
 4. Case-study quotes — **REMOVED** (all five, 2026-10-02).
 5. Clutch reviews — **OPEN, deferred** by the owner ("we'll check Clutch reviews another time"). Still the #1 off-page lever (Clutch on 10/16 CY money SERPs; the CY web-designers page lists 11 firms). Revisit at the week-2 profile setup.
-6. Prices — **OPEN, being finalised** by the owner. Blocks content pieces 1–2 and /pricing; the service pages and Offer schema carry the current "from" figures until then.
+6. Prices — **OPEN, being finalised** by the owner. Blocks the two cost pieces (docs/blog-plan-2026.md #5, #10); the service pages and Offer schema carry the current "from" figures until then.
 7. Dtzankatian as a named case study — open.
 8. YouTube — open.
 
@@ -41,7 +41,7 @@ checklist + research record. Evidence tags: P = official Google/vendor doc, S = 
 - [x] Split-text H1/H2 fixed (HeroTitle, AboutGridHero, WorkRows); noscript moved out of the h1
 - [x] `OG_DEFAULTS` (site.ts) spread into every page openGraph
 - [x] llms.txt + 8 .md mirrors deleted (404)
-- [x] Redirect map in next.config.ts: www→apex 308, /index→/ 308, /projects(/*)→/work 308, /services/videography→/services 308; /pricing→/services 307, /blog→/ 307 (both coming back) — [ ] GSC known-URL review after launch
+- [x] Redirect map in next.config.ts: www→apex 308, /index→/ 308, /projects(/*)→/work 308, /services/videography→/services 308; /pricing→/services 308 (no pricing page will exist, owner 2026-10-03), /blog→/ 307 (coming back) — [ ] GSC known-URL review after launch
 - [x] `/api/contact` is in the build — [ ] send a test lead on the live domain after deploy
 - [~] P1 alt DONE for work covers, case-study plates, the 6 service photos (`src/lib/service-photo-alt.ts`), about tiles — [ ] service-template images (RunMore/RunAnswer/ServicePoster)
 - [ ] P1 /work hub: project name + line as real text; footer back on /work and /services
@@ -81,12 +81,12 @@ compress og-image.png (661 KB) + brand/mark.png (114 KB) · GA4 page_view on cli
 | /services/website-redesign | website redesign cyprus → website redesign services later | no dedicated redesign page in the CY top 10 |
 | /services/one-page-websites | one page website design | win on the cost question |
 | /services | web design agency cyprus | H1 → "Web design, development and 3D website services" |
-| /pricing (new) | web design cyprus prices | #1 autocomplete modifier; only OnCyprus (€600–1k) and Web Theoria (€3k+) publish |
+| (no /pricing — owner 2026-10-03) | web design cyprus prices | carried by /services/web-design + the Cyprus cost piece (blog plan #5) |
 | /work | — | H1 → "Websites we designed and built" |
-Greek: no build this quarter (autocomplete returns English for "web design κύπρος"; Greek suggestions are Greece-only).
+Greek: no build this quarter. CORRECTED 2026-10-03: with hl=el&gl=cy autocomplete DOES return Cyprus Greek suggestions ("κατασκευη ιστοσελιδασ κυπροσ", "…τιμεσ κυπροσ"); "web design κύπρος" still completes to English and KP shows no data. Small but real demand — revisit in Q1 with GSC.
 City pages: none (10–100 volume, doorway risk).
 
-## 7. Content (one every 2 weeks; each links to exactly one service page)
+## 7. Content — SUPERSEDED 2026-10-03 by docs/blog-plan-2026.md (researched list; launch only with 3 pieces ready)
 1. 3D website cost 2026 → 3d-websites (beat svilenkovic.com: line items, 3-way video/Spline/Three.js table, own builds, measured LCP)
 2. Website + SEO cost in Cyprus 2026 → /pricing (AI Overview from 6 CY posts; PAA SEO cost)
 3. Scrollytelling: what, cost, 10 examples → 3d-websites (unowned)

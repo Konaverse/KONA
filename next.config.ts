@@ -23,10 +23,12 @@ const securityHeaders = [
  *                         → /work
  *   /services/videography (a v3 service that no longer exists)
  *                         → /services
+ *   /pricing (no pricing page will exist — owner, 2026-10-02; prices
+ *            live on the service pages; 67 GSC impressions move across)
+ *                         → /services
  *
  * TEMPORARY (307) — pages that are coming back at the same URL:
- *   /pricing → /services (67 GSC impressions; the v4 pricing page will
- *   take the URL back), /blog → / (until the blog ships).
+ *   /blog → / (until the blog ships).
  *
  * HISTORY: ONE-PAGE LAUNCH (2026-08-25, docs/launch-plan.md §1). Every inner URL sends
  * the visitor home until its v4 page exists. `permanent: false` (307) on
@@ -45,9 +47,9 @@ const PERMANENT_REDIRECTS: [string, string][] = [
   ["/index", "/"],
   ["/projects", "/work"],
   ["/services/videography", "/services"],
+  ["/pricing", "/services"],
 ];
 const LAUNCH_REDIRECTS: [string, string][] = [
-  ["/pricing", "/services"],
   ["/blog", "/"],
 ];
 const PROTO_REDIRECTS = [
