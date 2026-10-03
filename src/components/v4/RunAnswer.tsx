@@ -2,6 +2,7 @@
 
 import { Fragment, useEffect, useRef } from 'react'
 import { gsap } from '@/lib/motion-v4'
+import { responsive } from '@/lib/img'
 
 /**
  * THE RUN · 2 — THE STATEMENT, AND THE THREE CARDS (service pages;
@@ -248,7 +249,7 @@ export default function RunAnswer({
             <li key={f.label} className="ra-slot">
               <div className="ra-fact">
                 <span className="ra-img">
-                  <img src={f.plate} alt="" loading="lazy" decoding="async" draggable={false} />
+                  <img {...responsive(f.plate)} alt="" loading="lazy" decoding="async" draggable={false} />
                 </span>
                 <span className="ra-cap">
                   <span className="ra-label">{f.label}</span>

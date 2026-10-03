@@ -1,10 +1,15 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Canvas } from '@react-three/fiber'
-import { EffectComposer } from '@react-three/postprocessing'
-import Fluid from './fluid/Fluid'
-import { MONO_PALETTE, type FluidPalette } from './fluid/FluidEffect'
+import dynamic from 'next/dynamic'
+/* TYPE ONLY: FluidEffect.ts imports three and postprocessing, so a value
+   import here would pull them back into every page */
+import type { FluidPalette } from './fluid/FluidEffect'
+
+/* the WebGL half arrives only when the trail will actually run (see
+   FluidCanvas.tsx) — never on touch, never under reduced motion, never
+   before the page has painted */
+const FluidCanvas = dynamic(() => import('./FluidCanvas'), { ssr: false })
 
 /**
  * FLUID CURSOR — the trail that inverts what it touches.
@@ -52,7 +57,7 @@ import { MONO_PALETTE, type FluidPalette } from './fluid/FluidEffect'
  * will not use it.
  */
 export default function FluidCursor({
-  palette = MONO_PALETTE,
+  palette,
   /** Density-to-colour gain. Raise to make the trail read STRONGER. */
   intensity = 55,
   /** Density floor. Raise to make the trail END SOONER — below it nothing is
@@ -84,7 +89,16 @@ export default function FluidCursor({
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     if (!window.matchMedia('(hover: hover)').matches) return
-    setOn(true)
+    /* after the page has painted and gone quiet, so the WebGL download and
+       shader compile never compete with the first paint (performance pass,
+       2026-10-03) */
+    const ric = (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback
+    if (ric) {
+      const id = ric(() => setOn(true), { timeout: 2500 })
+      return () => (window as Window & { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback?.(id)
+    }
+    const t = window.setTimeout(() => setOn(true), 1200)
+    return () => window.clearTimeout(t)
   }, [])
 
   useEffect(() => {
@@ -96,35 +110,14 @@ export default function FluidCursor({
   if (!on) return null
 
   return (
-    <Canvas
-      flat
-      linear
-      // The source project ran this at [0.1, 0.5] — a tenth of native, upscaled
-      // ten times, which reads as atmosphere on a dark page. Raised to [0.5, 1]
-      // when the trail had to survive `multiply` on white, and KEPT there under
-      // difference: the core is a hard inversion now, and a hard edge upscaled
-      // ten times is a visibly blocky one. Still under native, so still cheap.
-      dpr={[0.5, 1]}
-      frameloop={paused ? 'never' : 'always'}
-      gl={{ antialias: false, stencil: false, depth: false }}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex,
-        pointerEvents: 'none',
-        mixBlendMode: blend,
-        // BLACK, and it must be exactly black: difference with 0 is the
-        // identity, so this is what makes the page show through untouched
-        // everywhere the trail is not.
-        background: 'black',
-        opacity: paused ? 0 : 1,
-        transition: 'opacity 0.25s ease',
-      }}
-      aria-hidden="true"
-    >
-      <EffectComposer>
-        <Fluid palette={palette} intensity={intensity} fade={fade} decay={decay} />
-      </EffectComposer>
-    </Canvas>
+    <FluidCanvas
+      palette={palette}
+      intensity={intensity}
+      fade={fade}
+      decay={decay}
+      zIndex={zIndex}
+      blend={blend}
+      paused={paused}
+    />
   )
 }

@@ -288,7 +288,7 @@ export default function SiteFooter() {
             <p className="ft-fine t-small">
               <img
                 className="ft-logo"
-                src="/brand/mark.png"
+                src="/brand/mark-192.webp"
                 alt=""
                 width="28"
                 height="28"

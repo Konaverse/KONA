@@ -7,6 +7,7 @@ import { CASE_STUDIES, getCaseStudy, type CaseBlock } from '@/lib/case-studies'
 import { WORK_PROJECTS } from '@/lib/work-projects'
 import { CALENDLY_URL, CONTACT_EMAIL, OG_DEFAULTS, SITE_URL } from '@/lib/site'
 import './travel.css'
+import { responsive } from '@/lib/img'
 
 /**
  * THE CASE STUDY — /work/[slug]. SECOND BUILD, 2026-09-18 (user: "poor
@@ -108,7 +109,7 @@ function Plate({
       <span className="cx-win">
         <span className="cx-print">
           <img
-            src={src}
+            {...responsive(src)}
             alt={alt}
             width={shape === 'tall' ? 780 : 1900}
             height={shape === 'tall' ? 1688 : 1000}
@@ -220,7 +221,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
           <div key={key} className="cx-s cx-quote k-dark">
             <span className="cx-quote-bg" aria-hidden="true">
               <span className="cx-print">
-                <img src={deal()} alt="" width={1900} height={1000} loading="lazy" decoding="async" draggable={false} />
+                <img {...responsive(deal())} alt="" width={1900} height={1000} loading="lazy" decoding="async" draggable={false} />
               </span>
             </span>
             <blockquote className="cx-quote-in cx-r" data-rate="-0.06">
@@ -248,7 +249,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
               <span className="cx-win">
                 <span className="cx-print">
                   {pics.map((src, j) => (
-                    <img key={src + j} className={`cx-notes-f${j === 0 ? ' is-on' : ''}`} src={src} alt="" width={1900} height={1000} loading="lazy" decoding="async" draggable={false} />
+                    <img key={src + j} className={`cx-notes-f${j === 0 ? ' is-on' : ''}`} {...responsive(src)} alt="" width={1900} height={1000} loading="lazy" decoding="async" draggable={false} />
                   ))}
                 </span>
               </span>
@@ -320,7 +321,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
                 <img
                   key={src}
                   className={j === 0 ? 'is-on' : ''}
-                  src={src}
+                  {...responsive(src)}
                   alt={j === 0 ? study.still.alt : ''}
                   width={1900}
                   height={1000}
@@ -433,7 +434,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
         <img
           className="cx-title-dev"
           data-rate="0.1"
-          src={study.device.front}
+          {...responsive(study.device.front)}
           alt=""
           loading="lazy"
           decoding="async"
@@ -453,7 +454,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
       <section className="cx-s cx-result k-dark" id="result" aria-labelledby="result-h">
         <span className="cx-quote-bg" aria-hidden="true">
           <span className="cx-print">
-            <img src={study.still.src} alt="" width={1900} height={1000} loading="lazy" decoding="async" draggable={false} />
+            <img {...responsive(study.still.src)} alt="" width={1900} height={1000} loading="lazy" decoding="async" draggable={false} />
           </span>
         </span>
         <div className="cx-result-in">
@@ -502,7 +503,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
           <figure className="cx-plate cx-plate-wide cx-r" aria-hidden="true">
             <span className="cx-win">
               <span className="cx-print">
-                <img src={next.frames?.[0] ?? next.image} alt="" width={1900} height={1000} loading="lazy" decoding="async" draggable={false} />
+                <img {...responsive(next.frames?.[0] ?? next.image)} alt="" width={1900} height={1000} loading="lazy" decoding="async" draggable={false} />
               </span>
             </span>
           </figure>

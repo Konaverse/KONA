@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { gsap } from '@/lib/motion-v4'
+import { responsive } from '@/lib/img'
 
 /**
  * THE ABOUT HERO — THE GRID (2026-09-14, user: "the same hero as
@@ -62,7 +63,7 @@ const CONTENT = {
     { src: '/about-hero/04.webp', alt: 'The Konaverse wordmark between two birds in flight' } /* ← the opening picture */,
     { src: '/about-hero/05.webp', alt: 'A hand holding a glass card engraved with the Konaverse logo' },
     { src: '/about-hero/06.webp', alt: 'The Lumière Éclat watch website on a monitor in a dark studio' },
-    { src: '/about-hero/07.webp', alt: 'A videographer’s website on a laptop resting on a rock' },
+    { src: '/about-hero/07.webp', alt: 'The Velricon website: a lone figure walking through a dark maze toward the light' },
   ],
 }
 
@@ -84,7 +85,7 @@ function Tile({ i, eager }: { i: number; eager?: boolean }) {
   const t = CONTENT.tiles[i]
   return (
     <div className="ag-tile">
-      <img src={t.src} alt={t.alt} loading={eager ? 'eager' : 'lazy'} draggable={false} />
+      <img {...responsive(t.src)} alt={t.alt} loading={eager ? 'eager' : 'lazy'} draggable={false} />
     </div>
   )
 }

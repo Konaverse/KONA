@@ -28,16 +28,33 @@ export default function CalendlyInline() {
     const host = hostRef.current
     if (!host) return
     let cancelled = false
-    loadCalendlyScript()
-      .then(() => {
-        if (cancelled || !window.Calendly) return
-        host.innerHTML = ''
-        window.Calendly.initInlineWidget({ url: INLINE_URL, parentElement: host })
-        host.classList.add('is-live')
-      })
-      .catch(() => {})
+    /* AFTER THE PAGE (performance pass, 2026-10-03): the widget pulls about
+       3 MB (Calendly's booking bundle and CSS, Stripe, its trackers) and
+       was fetched with the page's own first paint. It now waits for the
+       load event and an idle moment; the plain "Open the calendar" link
+       holds the card until then, as it always did while the script came. */
+    const mount = () =>
+      loadCalendlyScript()
+        .then(() => {
+          if (cancelled || !window.Calendly) return
+          host.innerHTML = ''
+          window.Calendly.initInlineWidget({ url: INLINE_URL, parentElement: host })
+          host.classList.add('is-live')
+        })
+        .catch(() => {})
+    type IdleWindow = Window & {
+      requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number
+    }
+    const idle = () => {
+      const ric = (window as IdleWindow).requestIdleCallback
+      if (ric) ric(mount, { timeout: 2000 })
+      else window.setTimeout(mount, 600)
+    }
+    if (document.readyState === 'complete') idle()
+    else window.addEventListener('load', idle, { once: true })
     return () => {
       cancelled = true
+      window.removeEventListener('load', idle)
     }
   }, [])
 

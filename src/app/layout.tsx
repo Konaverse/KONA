@@ -28,35 +28,35 @@ const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
   weight: ['300', '400', '600'],
   style: ['normal', 'italic'],
-  variable: '--font-cormorant',
+  variable: '--font-cormorant', preload: false,
   display: 'swap',
 })
 
 const inter = Inter({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-inter',
+  variable: '--font-inter', preload: false,
   display: 'swap',
 })
 
 const dmSans = DM_Sans({
   subsets: ['latin'],
   weight: ['300', '400', '500'],
-  variable: '--font-dm-sans',
+  variable: '--font-dm-sans', preload: false,
   display: 'swap',
 })
 
 const geistMono = Geist_Mono({
   subsets: ['latin'],
   weight: ['400'],
-  variable: '--font-geist-mono',
+  variable: '--font-geist-mono', preload: false,
   display: 'swap',
 })
 
 const anton = Anton({
   subsets: ['latin'],
   weight: '400',
-  variable: '--font-anton',
+  variable: '--font-anton', preload: false,
   display: 'swap',
 })
 
@@ -102,7 +102,7 @@ export const metadata: Metadata = {
     locale: 'en_US',
     images: [
       {
-        url: '/og-image.png',
+        url: '/og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'Konaverse — Build the website that will make you stand out',
@@ -111,7 +111,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    images: ['/og-image.png'],
+    images: ['/og-image.jpg'],
   },
 }
 
@@ -144,7 +144,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               name: SITE_NAME,
               url: SITE_URL,
               logo: { '@type': 'ImageObject', url: `${SITE_URL}/icon.png`, width: 512, height: 512 },
-              image: `${SITE_URL}/og-image.png`,
+              image: `${SITE_URL}/og-image.jpg`,
               description:
                 'A web studio in Cyprus that designs and builds websites end to end — web design, web development, 3D and immersive websites, one-page websites, redesigns and SEO.',
               email: CONTACT_EMAIL,

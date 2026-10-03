@@ -39,6 +39,28 @@ import { SHAPE_PATH } from '@/lib/hero-shape'
 export default function HeroPortrait() {
   const rootRef = useRef<HTMLElement | null>(null)
 
+  /* ONE VIDEO, NOT TWO (performance pass, 2026-10-03): the loop is in the
+     markup twice — the desktop portrait's foreignObject and the phone's
+     plate — and CSS hides whichever the layout does not use. A hidden
+     <video src autoplay> still downloads, so the file (1.1 MB) came down
+     twice. The URL now sits in data-src and goes onto the copy that is
+     actually laid out, and again on a resize that swaps the layouts. The
+     poster is in the HTML, so the frame is there before and without JS. */
+  useEffect(() => {
+    const root = rootRef.current
+    if (!root) return
+    const attach = () => {
+      root.querySelectorAll<HTMLVideoElement>('video[data-src]').forEach((v) => {
+        if (v.src || !v.getClientRects().length) return
+        v.src = v.dataset.src as string
+        v.play().catch(() => {})
+      })
+    }
+    attach()
+    window.addEventListener('resize', attach)
+    return () => window.removeEventListener('resize', attach)
+  }, [])
+
   useEffect(() => {
     const root = rootRef.current
     if (!root) return
@@ -191,7 +213,7 @@ export default function HeroPortrait() {
                 <video
                   className="hw-vid"
                   poster="/home/portrait-glass-mono.webp"
-                  src="/home/hero-loop.mp4"
+                  data-src="/home/hero-loop.mp4"
                   autoPlay
                   muted
                   loop
@@ -216,7 +238,7 @@ export default function HeroPortrait() {
         <video
           className="hw-mimg hw-ent"
           poster="/home/portrait-glass-mono.webp"
-          src="/home/hero-loop.mp4"
+          data-src="/home/hero-loop.mp4"
           autoPlay
           muted
           loop

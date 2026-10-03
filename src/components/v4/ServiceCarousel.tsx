@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { gsap, EASE } from '@/lib/motion-v4'
+import { responsive } from '@/lib/img'
 
 /**
  * /services — THE CAROUSEL (2026-09-30; replaces the hub's hero + bench,
@@ -327,7 +328,7 @@ export default function ServiceCarousel({ services }: { services: readonly Carou
             </span>
             <span className="sv-pic">
               <img
-                src={s.image}
+                {...responsive(s.image)}
                 alt={s.alt ?? ''}
                 loading={i < 2 || i === n - 1 ? 'eager' : 'lazy'}
                 decoding="async"

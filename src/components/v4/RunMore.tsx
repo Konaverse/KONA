@@ -4,6 +4,7 @@ import { Fragment, useEffect, useRef, type CSSProperties } from 'react'
 import { gsap } from '@/lib/motion-v4'
 import ArrowLink from '@/components/v4/ArrowLink'
 import { captureAlt } from '@/lib/work-projects'
+import { responsive } from '@/lib/img'
 
 /**
  * THE SUBSTANCE — four sections for a service page (2026-10-02, the
@@ -153,10 +154,10 @@ export function RunKind({
           {pictures ? (
             <span className="rk-shots" aria-hidden="true">
               <span className="rk-desk" data-drift="-0.04">
-                <img src={pictures[0]} alt={captureAlt(pictures[0])} loading="lazy" decoding="async" draggable={false} />
+                <img {...responsive(pictures[0])} alt={captureAlt(pictures[0])} loading="lazy" decoding="async" draggable={false} />
               </span>
               <span className="rk-phone" data-drift="-0.1">
-                <img src={pictures[1]} alt={captureAlt(pictures[1])} loading="lazy" decoding="async" draggable={false} />
+                <img {...responsive(pictures[1])} alt={captureAlt(pictures[1])} loading="lazy" decoding="async" draggable={false} />
               </span>
             </span>
           ) : null}
@@ -166,7 +167,7 @@ export function RunKind({
         <div className="rk-card rk-not k-dark" data-in>
           <span className="rk-pic" aria-hidden="true">
             <span className="rk-print" data-drift="-0.06">
-              <img src={image} alt={alt} loading="lazy" decoding="async" draggable={false} />
+              <img {...responsive(image)} alt={alt} loading="lazy" decoding="async" draggable={false} />
             </span>
           </span>
           <div className="rk-body">
@@ -204,7 +205,7 @@ export function RunFix({
               <figure className="rx-plate" data-drift="-0.05">
                 {p.pictures.map((src, j) => (
                   <span key={src} className="rx-win" style={{ '--j': j } as CSSProperties}>
-                    <img src={src} alt={captureAlt(src)} loading="lazy" decoding="async" draggable={false} />
+                    <img {...responsive(src)} alt={captureAlt(src)} loading="lazy" decoding="async" draggable={false} />
                   </span>
                 ))}
               </figure>
@@ -253,12 +254,12 @@ export function RunWork({ title, items }: { title: string; items: readonly RunWo
             <a className="rw-card" href={`/work/${w.slug}`}>
               <span className="rw-frame">
                 <span className="rw-win">
-                  <img src={w.desk} alt={`${w.name}, the website`} loading="lazy" decoding="async" draggable={false} />
+                  <img {...responsive(w.desk)} alt={`${w.name}, the website`} loading="lazy" decoding="async" draggable={false} />
                 </span>
                 {w.phone ? (
                   <span className="rw-phone-at" data-drift="-0.09" aria-hidden="true">
                     <span className="rw-phone">
-                      <img src={w.phone} alt={`${w.name} on a phone`} loading="lazy" decoding="async" draggable={false} />
+                      <img {...responsive(w.phone)} alt={`${w.name} on a phone`} loading="lazy" decoding="async" draggable={false} />
                     </span>
                   </span>
                 ) : null}
@@ -303,7 +304,7 @@ export function RunGets({
                     className={`rg-pic${/\/m-\d+\.webp$/.test(src) ? ' is-phone' : ''}`}
                     style={{ '--j': j } as CSSProperties}
                   >
-                    <img src={src} alt={captureAlt(src)} loading="lazy" decoding="async" draggable={false} />
+                    <img {...responsive(src)} alt={captureAlt(src)} loading="lazy" decoding="async" draggable={false} />
                   </span>
                 ))}
               </span>

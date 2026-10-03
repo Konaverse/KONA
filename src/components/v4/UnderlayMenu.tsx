@@ -546,7 +546,7 @@ export default function UnderlayMenu() {
       {/* ---- the bar: above the page and the panel; nothing here moves ---- */}
       <div ref={barRef} className={`k-nav-bar${open ? ' is-open' : ''}`}>
         <a href="/" className="k-nav-brand">
-          <img className="k-nav-mark" src="/brand/mark.png" alt="Konaverse" width="552" height="512" />
+          <img className="k-nav-mark" src="/brand/mark-192.webp" alt="Konaverse" width="552" height="512" />
         </a>
         <a href={ROUTES.contact} className="k-nav-contact">
           <NavLabel text="Contact" />
