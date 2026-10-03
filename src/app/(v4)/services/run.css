@@ -585,11 +585,10 @@
 .ro-foot i { font-style: normal; color: var(--n-5); }
 
 @media (max-width: 57.5rem) {
-  /* phones TURN the word: it runs up the tall frame, cut top and
-     bottom — the reference's crop, on the long axis */
-  .ro { --ro-cy: 46%; --ro-span: 1.04; --ro-turn: 1; min-height: 36rem; }
-  /* the trailing translate re-centres the ink (lowercase sits low in its box) */
-  .ro-back { transform: translate(-50%, -50%) rotate(-90deg) translateY(-0.1em); font-size: calc(100svh * var(--ro-span) / (var(--ro-n) * 0.6)); }
+  /* the word lies ACROSS the frame as on the desktop, cut by both edges
+     (2026-10-03, owner: "horizontal like it's on desktop, instead of
+     vertically placed" — phones used to turn it up the long axis) */
+  .ro { --ro-cy: 46%; min-height: 36rem; }
   .ro-rays { width: 26rem; height: 26rem; margin: -13rem 0 0 -13rem; }
   .ro-h1 { font-size: clamp(2.4rem, 11.5vw, 3.8rem); }
   .ro-h1.is-long .ro-mod { margin-top: 0.8rem; font-size: 1.1rem; }

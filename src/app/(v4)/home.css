@@ -690,13 +690,16 @@
     border-radius: var(--r-lg);
     margin: var(--s-6) 0 0;
   }
-  /* the flow still re-wraps here — it just does it in a narrower box
-     at the shared h1 size, so the pills feel like inline thumbnails */
+  /* NO PILLS on the phone (2026-10-03, owner: "remove the inline images
+     from the heading on mobile"): the sentence stands on its three
+     lines, pure type; HeroTitle only reveals it. */
   .hw-headline {
     position: static;
     width: auto;
     font-size: var(--t-h1);
   }
+  .hw-headline .hw-pill { display: none; }
+  .hw-headline .hw-br { display: block; }
   /* (the one-voice rule that lived here moved up to the base styles
      2026-08-31 — the user retired the voice split on desktop too) */
   /* THE PILLS ON A PHONE (2026-08-26, user: "too laggy"). A beat tweens the

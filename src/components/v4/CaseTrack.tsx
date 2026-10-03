@@ -46,6 +46,20 @@ import { gsap, rem } from '@/lib/motion-v4'
  *
  * Phones, reduced motion and no JS get the same DOM in flow: the spreads
  * stack, top to bottom, every word and picture in place.
+ *
+ * 2026-10-03 (owner):
+ *   · THE ISLAND IS ON PHONES TOO ("present and working on mobile") —
+ *     in flow (`.cx.is-flow`) it is fixed to the screen's foot; progress
+ *     is the page's own scroll, the chapter the last one past the
+ *     screen's upper half, and a jump scrolls to the chapter's top.
+ *   · THE RESULT HOLDS and the next project comes over it ("the section
+ *     stays pinned and the next project scrolls over it. On mobile it
+ *     scrolls vertically and on desktop horizontally"). In the run the
+ *     result is walked forward by exactly what the track has moved since
+ *     its right edge met the screen's, so it stands still and the next
+ *     spread — after it in the DOM, so above it — slides across. In flow
+ *     it is `position: sticky` at the height written here (--cx-res-h;
+ *     travel.css), and the next spread rises over it.
  */
 
 /** how many px the run travels per px of scroll */
@@ -113,6 +127,50 @@ export default function CaseTrack({
       }
     }
 
+    /* THE ISLAND's own wiring, the same in the run and in flow: open and
+       close, a jump (the caller knows how to get to a chapter), a press
+       elsewhere and Escape shut it */
+    const setOpen = (on: boolean) => {
+      isle.classList.toggle('is-open', on)
+      isleBtn.setAttribute('aria-expanded', on ? 'true' : 'false')
+    }
+    const wireIsle = (gotoId: (id: string) => void) => {
+      const onIsleBtn = () => setOpen(!isle.classList.contains('is-open'))
+      const onIsleLink = (ev: MouseEvent) => {
+        const a = (ev.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#"]')
+        if (!a) return
+        ev.preventDefault()
+        gotoId(a.getAttribute('href')!.slice(1))
+        setOpen(false)
+      }
+      const onDocDown = (ev: PointerEvent) => {
+        if (!isle.contains(ev.target as Node)) setOpen(false)
+      }
+      const onEsc = (ev: KeyboardEvent) => {
+        if (ev.key === 'Escape') setOpen(false)
+      }
+      isleBtn.addEventListener('click', onIsleBtn)
+      isle.addEventListener('click', onIsleLink)
+      document.addEventListener('pointerdown', onDocDown)
+      window.addEventListener('keydown', onEsc)
+      return () => {
+        isleBtn.removeEventListener('click', onIsleBtn)
+        isle.removeEventListener('click', onIsleLink)
+        document.removeEventListener('pointerdown', onDocDown)
+        window.removeEventListener('keydown', onEsc)
+        setOpen(false)
+      }
+    }
+    /** the island names chapter `now` (one LINE per chapter, 1.3rem —
+     *  .cx-isle-roll span; a % here is of the whole roll, and the first
+     *  step pushed every title out) */
+    const nameChapter = (now: number) => {
+      isleRoll.style.transform = `translate3d(0, ${-now * 1.3}rem, 0)`
+      isle.querySelectorAll('.cx-isle-list li').forEach((li, i) => li.classList.toggle('is-on', i === now))
+    }
+    const result = root.querySelector<HTMLElement>('.cx-result')
+    const nextEl = root.querySelector<HTMLElement>('.cx-next')
+
     if (reduce || phone) {
       /* in flow: arrive on sight, play on sight */
       const io = new IntersectionObserver(
@@ -127,18 +185,76 @@ export default function CaseTrack({
       )
       root.querySelectorAll('.cx-r').forEach((el) => io.observe(el))
       if (!reduce) videos.forEach((v) => io.observe(v))
+
+      root.classList.add('is-flow')
+      /* THE RESULT HOLDS: its height, for the sticky offset (a section
+         taller than the screen holds by its foot) */
+      const ro = new ResizeObserver(() => {
+        if (result) root.style.setProperty('--cx-res-h', `${result.offsetHeight}px`)
+      })
+      if (result && nextEl) {
+        ro.observe(result)
+        root.classList.add('is-held')
+      }
+
+      /* a chapter's top on the page. A held (sticky) section reports where
+         it is stuck, so it is read off the foot of the section before it. */
+      const marks = chapters.map((c) => root.querySelector<HTMLElement>(`#${CSS.escape(c.id)}`))
+      const topOf = (el: HTMLElement) => {
+        const prev = el.previousElementSibling as HTMLElement | null
+        if (prev && getComputedStyle(el).position === 'sticky') return prev.getBoundingClientRect().bottom
+        return el.getBoundingClientRect().top
+      }
+      const offIsle = wireIsle((id) => {
+        const el = marks[chapters.findIndex((c) => c.id === id)]
+        if (!el) return
+        /* a chapter lands clear of the bar; the cover and the held result
+           are whole screens and land flush */
+        const flush = id === chapters[0].id || getComputedStyle(el).position === 'sticky'
+        const y = Math.max(0, topOf(el) + window.scrollY - (flush ? 0 : 4.5 * 16 * rem()))
+        const lenis = getLenis()
+        if (lenis) lenis.scrollTo(y, { duration: 1.2 })
+        else window.scrollTo({ top: y, behavior: reduce ? 'auto' : 'smooth' })
+      })
+
+      let chapter = -1
+      let wroteP = -1
       const t = (_t?: number, deltaTime?: number) => {
         const vh = window.innerHeight
         const dt = Math.min(0.05, (deltaTime ?? 16.7) / 1000)
-        reels.forEach((r, i) => {
-          const b = r.getBoundingClientRect()
-          if (b.bottom > 0 && b.top < vh) cutReel(i, dt)
+        if (!reduce)
+          reels.forEach((r, i) => {
+            const b = r.getBoundingClientRect()
+            if (b.bottom > 0 && b.top < vh) cutReel(i, dt)
+          })
+        /* THE ISLAND */
+        const r = root.getBoundingClientRect()
+        const p = clamp(-r.top / Math.max(1, r.height - vh), 0, 1)
+        if (Math.abs(p - wroteP) > 0.002) {
+          wroteP = p
+          isle.style.setProperty('--cx-p', `${(p * 100).toFixed(1)}%`)
+        }
+        let now = 0
+        marks.forEach((el, i) => {
+          if (el && el.getBoundingClientRect().top <= vh * 0.45) now = i
         })
+        if (now !== chapter) {
+          chapter = now
+          nameChapter(now)
+        }
+        isle.classList.toggle('is-away', r.bottom < vh * 0.6)
       }
-      if (!reduce) gsap.ticker.add(t)
+      t()
+      gsap.ticker.add(t)
       return () => {
         io.disconnect()
+        ro.disconnect()
+        offIsle()
         gsap.ticker.remove(t)
+        root.classList.remove('is-flow', 'is-held')
+        root.style.removeProperty('--cx-res-h')
+        isle.style.removeProperty('--cx-p')
+        isleRoll.style.transform = ''
       }
     }
 
@@ -159,7 +275,12 @@ export default function CaseTrack({
     const arrivals = pack('.cx-r')
     const depths = pack('[data-rate]').map((it) => ({ ...it, rate: parseFloat(it.el.dataset.rate || '0') }))
     /* only the quote's ground slides: every plate shows its capture whole */
-    const prints = pack('.cx-quote-bg .cx-print')
+    const prints = pack('.cx-quote-bg .cx-print').map((it) => ({ ...it, held: !!result?.contains(it.el) }))
+    /* THE RESULT HOLDS (see the header): where it stands, and the run's
+       place at which its right edge meets the screen's */
+    const held = result && nextEl ? { el: result, x: 0, w: 0 } : null
+    let holdAt = Infinity
+    let wroteHold = 0
     const vids = videos.map((el) => ({ el: el as HTMLElement, x: 0, w: 0, on: false }))
     const reelItems = reels.map((el) => ({ el, x: 0, w: 0 }))
     const spreads = pack('.cx-s')
@@ -185,13 +306,14 @@ export default function CaseTrack({
       trackW = track.scrollWidth
       travel = Math.max(1, trackW - W)
       run.style.height = `${Math.round(window.innerHeight + travel / SPEED)}px`
-      ;[arrivals, depths, prints, vids, reelItems, spreads, notes].forEach((list) =>
+      ;[arrivals, depths, prints, vids, reelItems, spreads, notes, held ? [held] : []].forEach((list) =>
         (list as Item[]).forEach((it) => {
           it.x = leftIn(it.el)
           it.w = it.el.offsetWidth
         }),
       )
       marks.forEach((m) => (m.x = m.el ? leftIn(m.el) : 0))
+      holdAt = held ? Math.max(0, held.x + held.w - W) : Infinity
     }
     measure()
     const ro = new ResizeObserver(measure)
@@ -215,29 +337,11 @@ export default function CaseTrack({
     }
 
     /* THE ISLAND: open and close, jump */
-    const setOpen = (on: boolean) => {
-      isle.classList.toggle('is-open', on)
-      isleBtn.setAttribute('aria-expanded', on ? 'true' : 'false')
-    }
-    const onIsleBtn = () => setOpen(!isle.classList.contains('is-open'))
-    isleBtn.addEventListener('click', onIsleBtn)
-    const onIsleLink = (ev: MouseEvent) => {
-      const a = (ev.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#"]')
-      if (!a) return
-      ev.preventDefault()
-      gotoId(a.getAttribute('href')!.slice(1))
-      setOpen(false)
-    }
-    isle.addEventListener('click', onIsleLink)
-    const onDocDown = (ev: PointerEvent) => {
-      if (!isle.contains(ev.target as Node)) setOpen(false)
-    }
-    document.addEventListener('pointerdown', onDocDown)
+    const offIsle = wireIsle((id) => gotoId(id))
 
     /* the keyboard: arrows step through the spreads; Escape shuts the index */
     let x = 0
     const onKey = (ev: KeyboardEvent) => {
-      if (ev.key === 'Escape') return setOpen(false)
       if (ev.key !== 'ArrowRight' && ev.key !== 'ArrowLeft') return
       const tag = (ev.target as HTMLElement)?.tagName
       if (tag === 'INPUT' || tag === 'TEXTAREA' || ev.metaKey || ev.ctrlKey || ev.altKey) return
@@ -328,6 +432,15 @@ export default function CaseTrack({
 
       track.style.transform = `translate3d(${(-x).toFixed(1)}px, 0, 0)`
       track.style.setProperty('--cx-shear', `${shear.toFixed(3)}deg`)
+      /* THE RESULT HOLDS: walked forward by what the track has moved
+         since its right edge met the screen's */
+      if (held) {
+        const s = Math.max(0, x - holdAt)
+        if (s !== wroteHold) {
+          wroteHold = s
+          held.el.style.transform = s ? `translate3d(${s.toFixed(1)}px, 0, 0)` : ''
+        }
+      }
 
       /* ARRIVAL */
       for (const it of arrivals) {
@@ -340,8 +453,10 @@ export default function CaseTrack({
         it.el.style.transform = `translate3d(${(d * it.rate).toFixed(1)}px, 0, 0)`
       }
       for (const it of prints) {
-        if (it.x + it.w < lo || it.x > hi) continue
-        const d = (it.x + it.w / 2 - (x + W / 2)) / W
+        /* a held page's ground stops with it */
+        const px = it.held ? Math.min(x, holdAt) : x
+        if (!it.held && (it.x + it.w < lo || it.x > hi)) continue
+        const d = (it.x + it.w / 2 - (px + W / 2)) / W
         it.el.style.transform = `translate3d(${(-d * PRINT * it.w).toFixed(1)}px, 0, 0)`
       }
       /* THE NOTES: the agent walks them as the spread crosses the screen */
@@ -367,10 +482,7 @@ export default function CaseTrack({
       })
       if (now !== chapter) {
         chapter = now
-        /* one LINE per chapter (1.3rem, .cx-isle-roll span) — a % here is
-           of the whole roll, and the first step pushed every title out */
-        isleRoll.style.transform = `translate3d(0, ${-now * 1.3}rem, 0)`
-        isle.querySelectorAll('.cx-isle-list li').forEach((li, i) => li.classList.toggle('is-on', i === now))
+        nameChapter(now)
       }
       isle.classList.toggle('is-away', r.bottom < vh * 0.6)
     }
@@ -381,9 +493,7 @@ export default function CaseTrack({
       gsap.ticker.remove(tick)
       ro.disconnect()
       offs.forEach((f) => f())
-      isleBtn.removeEventListener('click', onIsleBtn)
-      isle.removeEventListener('click', onIsleLink)
-      document.removeEventListener('pointerdown', onDocDown)
+      offIsle()
       window.removeEventListener('keydown', onKey)
       track.removeEventListener('focusin', onFocus)
       stage.removeEventListener('scroll', onStageScroll)
@@ -392,6 +502,7 @@ export default function CaseTrack({
       track.removeAttribute('style')
       isleRoll.style.transform = ''
       ;[...depths, ...prints].forEach((it) => (it.el.style.transform = ''))
+      if (held) held.el.style.transform = ''
       notes.forEach((n) => n.cursor && (n.cursor.style.transform = ''))
     }
   }, [chapters])

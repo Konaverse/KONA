@@ -2058,6 +2058,18 @@ html.lenis, html.lenis body { height: auto; }
   pointer-events: none;
 }
 .ft-dots.is-hand { opacity: 1; }
+/* touch (2026-10-03, owner: "the dots animated by itself, with light on
+   dots animated on their own"): two pools of light drift over the dots,
+   placed per frame by SiteFooter.tsx */
+.ft-dots.is-auto {
+  opacity: 1;
+  -webkit-mask-image:
+    radial-gradient(15rem circle at var(--ft-x, 30%) var(--ft-y, 30%), #000 0%, rgb(0 0 0 / 0.5) 45%, transparent 100%),
+    radial-gradient(12rem circle at var(--ft-x2, 70%) var(--ft-y2, 70%), #000 0%, rgb(0 0 0 / 0.45) 45%, transparent 100%);
+  mask-image:
+    radial-gradient(15rem circle at var(--ft-x, 30%) var(--ft-y, 30%), #000 0%, rgb(0 0 0 / 0.5) 45%, transparent 100%),
+    radial-gradient(12rem circle at var(--ft-x2, 70%) var(--ft-y2, 70%), #000 0%, rgb(0 0 0 / 0.45) 45%, transparent 100%);
+}
 .ft-field {
   position: absolute;
   inset: 0;
@@ -2283,38 +2295,54 @@ html.lenis, html.lenis body { height: auto; }
   }
 }
 
+/* PHONES (2026-10-03, owner: "it needs to fit into one viewport"): the
+   footer is ONE screen — claim, the two columns, the address across the
+   width, the bar — and grows past it only on a screen too short to hold
+   them. The links keep a 44px hit box by padding, not by gap. */
 @media (max-width: 57.5rem) {
   .ft-inner {
-    min-height: 0;
-    padding-top: clamp(5rem, 14svh, 8rem);
+    min-height: 100svh;
+    padding-top: clamp(2.5rem, 7svh, 4.5rem);
   }
   .ft-top {
     grid-template-columns: minmax(0, 1fr);
-    row-gap: var(--s-8);
+    row-gap: clamp(1.25rem, 3.5svh, 2.25rem);
   }
   .ft-claim {
-    max-width: 14ch;
+    max-width: none;
+    font-size: clamp(1.6rem, 7.6vw, 2.6rem);
   }
-  .ft-mail {
-    margin-top: var(--s-7);
-    font-size: var(--t-h3);
-  }
+  .ft-sub { margin-top: var(--s-5); }
+  .ft-sub:empty { display: none; }
   .ft-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 var(--s-6);
     justify-content: start;
     padding-top: 0;
   }
-  .ft-bar {
-    padding-top: var(--s-9);
+  .ft-col { gap: 0; }
+  .ft-col .ft-link {
+    padding-block: 0.5rem;
+    font-size: 1.25rem;
   }
+  .ft-mail-row { padding-top: var(--s-5); }
+  .ft-mail {
+    padding-block: 0.4rem;
+    font-size: 9.3vw;
+    letter-spacing: -0.05em;
+  }
+  .ft-bar { padding-top: 0; }
   .ft-bar-in {
     flex-wrap: wrap;
-    row-gap: var(--s-5);
+    row-gap: 0;
+    padding-block: var(--s-3) var(--s-4);
   }
   /* the legal links take their own row under the mark and the arrow */
   .ft-legal {
     order: 3;
     flex-basis: 100%;
   }
+  .ft-legal .ft-link { padding-block: 0.7rem; }
 }
 
 /* ============================================================
@@ -2649,11 +2677,19 @@ html.k-hand * { cursor: none !important; }
   transition: transform 0.55s var(--e-glass);
 }
 .k-under__link.is-current,
-.k-under__link:hover,
 .k-under__link:focus-visible { color: var(--n-0); outline: none; }
 .k-under__link.is-current::before,
-.k-under__link:hover::before,
 .k-under__link:focus-visible::before { transform: scaleX(1); }
+/* the hover bar is for a pointer that can hover ONLY (2026-10-03, owner:
+   "on mobile I have to click them twice, once to get highlighted and
+   once to go"): a touch browser spends the first tap on a :hover that
+   changes the element, and only the second tap is the click */
+@media (hover: hover) {
+  .k-under__link:hover { color: var(--n-0); }
+  .k-under__link:hover::before { transform: scaleX(1); }
+  .k-under__fcol a:hover { text-decoration: underline; text-underline-offset: 0.18em; }
+}
+.k-under__link, .k-under__fcol a { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 
 /* THE FOOT: a hairline, then two small columns */
 .k-under__foot {
@@ -2678,40 +2714,44 @@ html.k-hand * { cursor: none !important; }
 }
 /* the foot's links only — scoped to the whole column, it underlined the
    big links too: a dark stroke under each word at the bar's bottom left */
-.k-under__fcol a:hover { text-decoration: underline; text-underline-offset: 0.18em; }
 .k-under__fcol svg { width: 0.55rem; height: 0.55rem; fill: none; stroke: currentColor; stroke-width: 1.3; }
 
-/* THE BUTTON: "Menu" rolls to "Close", the two rules cross */
+/* THE BUTTON (2026-10-03, owner: "three lines, without the menu label,
+   and a bit bigger" — and it was hard to hit on a phone): three rules
+   in a 3rem box, the hit area a further 0.5rem out on every side; open,
+   the outer two cross and the middle one goes. The box overhangs the
+   page pad by its own inset so the rules still end on the margin. */
 .k-menu-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  height: 2.75rem;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  margin-right: -0.55rem;
   padding: 0;
   border: 0;
   background: none;
   color: #fff;
-  font: inherit;
-  font-size: var(--t-small);
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
-.k-menu-btn__roll { display: block; height: 1.2em; overflow: hidden; line-height: 1.2; }
-.k-menu-btn__roll > span { display: block; transition: transform 0.6s var(--e-glass); }
-.k-menu-btn.is-open .k-menu-btn__roll > span { transform: translateY(-100%); }
-.k-menu-btn__icon { position: relative; width: 1.05rem; height: 0.7rem; }
+.k-menu-btn::before { content: ''; position: absolute; inset: -0.5rem; }
+.k-menu-btn__icon { position: relative; width: 1.9rem; height: 1.15rem; }
 .k-menu-btn__icon i {
   position: absolute;
   left: 0;
   right: 0;
-  height: 1.5px;
+  top: calc(50% - 1px);
+  height: 2px;
   background: currentColor;
-  transition: transform 0.6s var(--e-glass), top 0.6s var(--e-glass);
+  transition: transform 0.6s var(--e-glass), opacity 0.3s var(--e-glass);
 }
-.k-menu-btn__icon i:first-child { top: 0.12rem; }
-.k-menu-btn__icon i:last-child { top: calc(100% - 0.12rem - 1.5px); }
-.k-menu-btn.is-open .k-menu-btn__icon i { top: calc(50% - 0.75px); }
-.k-menu-btn.is-open .k-menu-btn__icon i:first-child { transform: rotate(45deg); }
-.k-menu-btn.is-open .k-menu-btn__icon i:last-child { transform: rotate(-45deg); }
+.k-menu-btn__icon i:nth-child(1) { transform: translateY(-0.5rem); }
+.k-menu-btn__icon i:nth-child(3) { transform: translateY(0.5rem); }
+.k-menu-btn.is-open .k-menu-btn__icon i:nth-child(1) { transform: rotate(45deg); }
+.k-menu-btn.is-open .k-menu-btn__icon i:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.k-menu-btn.is-open .k-menu-btn__icon i:nth-child(3) { transform: rotate(-45deg); }
 .k-menu-btn:focus-visible { outline: 1px solid #fff; outline-offset: 4px; }
 
 @media (max-width: 57.5rem) {

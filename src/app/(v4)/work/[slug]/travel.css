@@ -39,7 +39,7 @@
 .cx-film-fig figcaption { margin-top: 0.8rem; font-size: 0.875rem; line-height: 1.4; color: var(--n-7); }
 /* every window is its capture's ratio (2026-10-02): 19:10 by default,
    a phone's 390:844 for the tall plates, 16:9 for the screen recording */
-.cx-plate-tall .cx-win { aspect-ratio: 390 / 844; max-width: 20rem; }
+.cx-plate-tall .cx-win { aspect-ratio: 390 / 844; max-width: 20rem; margin-inline: auto; }
 .cx-film .cx-win { aspect-ratio: 16 / 9; }
 /* stacked captures: a reel's clock, or the notes, names the one on show */
 .cx-reel img,
@@ -56,6 +56,9 @@
 .cx-h1 { order: -2; margin: 0 0 2rem; font-size: min(13vw, calc(165vw / var(--cx-n, 12))); font-weight: var(--w-light); line-height: 0.95; letter-spacing: -0.055em; white-space: nowrap; }
 .cx-cover-side { order: -1; display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1.5rem; margin-bottom: 2rem; }
 .cx-facts { list-style: none; margin: 0; padding: 0; font-size: 1.02rem; line-height: 1.85; color: var(--n-7); }
+/* a fact's label: read out everywhere, SHOWN where the facts are set as a
+   grid (phones, below); the run lists the values alone */
+.cx-fact-k { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* the opening */
 .cx-lede { margin: 0; max-width: 44rem; font-size: clamp(1.4rem, 4.4vw, 2.05rem); font-weight: var(--w-light); line-height: 1.22; letter-spacing: -0.03em; }
@@ -117,6 +120,26 @@
 .cx-next-go { display: flex; align-items: center; gap: 0.5rem; margin-top: 1.2rem; font-weight: var(--w-medium); color: var(--text); }
 .cx-next-go svg { width: 1rem; height: 1rem; transition: transform 0.6s var(--e-settle); }
 .cx-isle { display: none; }
+
+/* THE ISLAND's parts (shared by the run and by flow; where it STANDS is
+   set per mode below) */
+.cx-isle-bar,
+.cx-isle-panel { background: rgb(13 16 18 / 0.86); -webkit-backdrop-filter: blur(14px) saturate(1.4); backdrop-filter: blur(14px) saturate(1.4); box-shadow: 0 1rem 2.4rem -0.8rem rgb(0 0 0 / 0.55), inset 0 0 0 1px rgb(255 255 255 / 0.1); }
+.cx-isle-bar { display: flex; align-items: center; gap: 0.3rem; height: 3.1rem; padding: 0 0.45rem 0 0.4rem; border-radius: 1.6rem; }
+.cx-isle-btn { display: flex; align-items: center; gap: 0.7rem; height: 100%; padding: 0 0.7rem 0 0.4rem; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; }
+.cx-isle-ring { flex: none; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: conic-gradient(#fff var(--cx-p, 0%), rgb(255 255 255 / 0.2) 0); -webkit-mask: radial-gradient(circle, transparent 50%, #000 53%); mask: radial-gradient(circle, transparent 50%, #000 53%); }
+.cx-isle-now { display: block; min-width: 9.5rem; height: 1.3rem; overflow: hidden; line-height: 1.3rem; text-align: left; }
+.cx-isle-roll { display: block; transition: transform 0.75s var(--e-glass); }
+.cx-isle-roll span { display: block; height: 1.3rem; white-space: nowrap; }
+.cx-isle-chev { flex: none; width: 0.9rem; height: 0.9rem; opacity: 0.7; transition: transform 0.5s var(--e-settle); }
+.cx-isle.is-open .cx-isle-chev { transform: rotate(180deg); }
+.cx-isle-live { display: flex; align-items: center; gap: 0.4rem; height: 2.2rem; padding: 0 0.95rem; border-radius: 1.1rem; background: #fff; color: var(--ink); font-size: 0.85rem; font-weight: var(--w-medium); text-decoration: none; white-space: nowrap; transition: gap 0.5s var(--e-settle); }
+.cx-isle-live svg { width: 0.8rem; height: 0.8rem; }
+.cx-isle-panel { position: absolute; left: 0; right: 0; bottom: calc(100% + 0.5rem); padding: 0.55rem; border-radius: 1.3rem; opacity: 0; transform: translate3d(0, 0.6rem, 0) scale(0.98); transform-origin: 50% 100%; pointer-events: none; transition: opacity 0.3s linear, transform 0.55s var(--e-settle); }
+.cx-isle.is-open .cx-isle-panel { opacity: 1; transform: none; pointer-events: auto; }
+.cx-isle-list { list-style: none; margin: 0; padding: 0; }
+.cx-isle-list a { display: block; padding: 0.5rem 0.85rem; border-radius: 0.8rem; color: rgb(255 255 255 / 0.62); font-size: 0.95rem; text-decoration: none; transition: color 0.3s linear, background-color 0.3s linear; }
+.cx-isle-list li.is-on a { color: #fff; background: rgb(255 255 255 / 0.08); }
 
 /* ============================================================
    LIVE — the run
@@ -201,8 +224,11 @@
   .cx.is-live .cx-quote-bg .cx-print { inset: 0 -8%; }
   .cx.is-live .cx-quote-in { will-change: transform; }
   .cx.is-live .cx-quote-in p { font-size: 3.7rem; }
-  .cx.is-live .cx-result { min-width: 100vw; gap: 9rem; padding-left: 9rem; padding-right: 9rem; }
-  .cx.is-live .cx-result-in { flex: none; width: 48rem; }
+  /* the result is ONE screen exactly (it holds while the next project
+     slides over it, so nothing of it may lie past the screen's edge):
+     96rem is the viewport, 6 + 46 + 7 + 30 + 6 = 95 */
+  .cx.is-live .cx-result { width: 100vw; min-width: 0; gap: 7rem; padding-left: 6rem; padding-right: 6rem; }
+  .cx.is-live .cx-result-in { flex: none; width: 46rem; }
   .cx.is-live .cx-result .cx-h2 { margin-bottom: 2.4rem; }
   .cx.is-live .cx-invite { flex: none; width: 30rem; margin: 0; }
 
@@ -225,31 +251,17 @@
   .cx.is-live .cx-list-in { width: 54rem; max-width: none; columns: 2; }
 
   /* THE NEXT: the name across the plate's edge */
-  .cx.is-live .cx-next { display: flex; align-items: center; gap: 4rem; padding-left: 9rem; padding-right: 9rem; }
+  /* the result holds (CaseTrack) and this spread slides across it: a
+     full screen at least, so it covers it whole, its shadow on the page
+     under it */
+  .cx.is-live .cx-next { display: flex; align-items: center; gap: 4rem; min-width: 100vw; padding-left: 9rem; padding-right: 9rem; box-shadow: -2.5rem 0 5rem -1.5rem rgb(0 0 0 / 0.6); }
+  .cx.is-live .cx-result { will-change: transform; }
   .cx.is-live .cx-next-n { position: absolute; left: 4rem; bottom: calc(var(--cx-bot) + 0.6rem); z-index: 3; margin: 0; font-size: 8.6rem; white-space: nowrap; color: #fff; mix-blend-mode: difference; pointer-events: none; will-change: transform; }
   .cx.is-live .cx-next-line { flex: none; width: 22rem; margin: 0; align-self: flex-start; padding-top: 2rem; }
 
   /* THE ISLAND */
   .cx.is-live .cx-isle { display: block; position: absolute; left: 50%; bottom: 1.2rem; z-index: 20; transform: translate3d(-50%, 0, 0); color: #fff; font-size: 0.92rem; transition: opacity 0.4s linear, transform 0.7s var(--e-settle); }
   .cx.is-live .cx-isle.is-away { opacity: 0; transform: translate3d(-50%, 1.6rem, 0); pointer-events: none; }
-  .cx-isle-bar,
-  .cx-isle-panel { background: rgb(13 16 18 / 0.86); -webkit-backdrop-filter: blur(14px) saturate(1.4); backdrop-filter: blur(14px) saturate(1.4); box-shadow: 0 1rem 2.4rem -0.8rem rgb(0 0 0 / 0.55), inset 0 0 0 1px rgb(255 255 255 / 0.1); }
-  .cx-isle-bar { display: flex; align-items: center; gap: 0.3rem; height: 3.1rem; padding: 0 0.45rem 0 0.4rem; border-radius: 1.6rem; }
-  .cx-isle-btn { display: flex; align-items: center; gap: 0.7rem; height: 100%; padding: 0 0.7rem 0 0.4rem; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; }
-  .cx-isle-ring { flex: none; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: conic-gradient(#fff var(--cx-p, 0%), rgb(255 255 255 / 0.2) 0); -webkit-mask: radial-gradient(circle, transparent 50%, #000 53%); mask: radial-gradient(circle, transparent 50%, #000 53%); }
-  .cx-isle-now { display: block; min-width: 9.5rem; height: 1.3rem; overflow: hidden; line-height: 1.3rem; text-align: left; }
-  .cx-isle-roll { display: block; transition: transform 0.75s var(--e-glass); }
-  .cx-isle-roll span { display: block; height: 1.3rem; white-space: nowrap; }
-  .cx-isle-chev { flex: none; width: 0.9rem; height: 0.9rem; opacity: 0.7; transition: transform 0.5s var(--e-settle); }
-  .cx-isle.is-open .cx-isle-chev { transform: rotate(180deg); }
-  .cx-isle-live { display: flex; align-items: center; gap: 0.4rem; height: 2.2rem; padding: 0 0.95rem; border-radius: 1.1rem; background: #fff; color: var(--ink); font-size: 0.85rem; font-weight: var(--w-medium); text-decoration: none; white-space: nowrap; transition: gap 0.5s var(--e-settle); }
-  .cx-isle-live svg { width: 0.8rem; height: 0.8rem; }
-  .cx-isle-panel { position: absolute; left: 0; right: 0; bottom: calc(100% + 0.5rem); padding: 0.55rem; border-radius: 1.3rem; opacity: 0; transform: translate3d(0, 0.6rem, 0) scale(0.98); transform-origin: 50% 100%; pointer-events: none; transition: opacity 0.3s linear, transform 0.55s var(--e-settle); }
-  .cx-isle.is-open .cx-isle-panel { opacity: 1; transform: none; pointer-events: auto; }
-  .cx-isle-list { list-style: none; margin: 0; padding: 0; }
-  .cx-isle-list a { display: block; padding: 0.5rem 0.85rem; border-radius: 0.8rem; color: rgb(255 255 255 / 0.62); font-size: 0.95rem; text-decoration: none; transition: color 0.3s linear, background-color 0.3s linear; }
-  .cx-isle-list li.is-on a { color: #fff; background: rgb(255 255 255 / 0.08); }
-
   @media (hover: hover) {
     .cx-isle-list a:hover { color: #fff; background: rgb(255 255 255 / 0.08); }
     .cx-isle-live:hover { gap: 0.7rem; }
@@ -260,10 +272,100 @@
   }
 }
 
+/* ============================================================
+   PHONES (2026-10-03, owner: "fix on mobile the hero of the project
+   pages, I want more coherence… all portrait image containers centred…
+   the floating navbar present and working… the result stays pinned and
+   the next project scrolls over it").
+   THE HERO reads top to bottom as one thing: the name, the cover under
+   it, then the facts as a two-column grid WITH their labels, and the
+   button. (It used to run name, a bare list of five values, button,
+   cover.)
+   ============================================================ */
 @media (max-width: 57.5rem) {
   .cx-s { padding: 3rem var(--page-pad); }
-  .cx-cover { padding-top: 6.5rem; }
   .cx-list-in { font-size: 1.1rem; }
+
+  .cx-cover { padding-top: 6.5rem; padding-bottom: 2.5rem; }
+  .cx-h1 { order: 0; margin: 0 0 1.5rem -0.03em; }
+  .cx-plate-cover { order: 1; }
+  .cx-cover-side { order: 2; display: block; margin: 1.75rem 0 0; }
+  .cx-facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-flow: row dense;
+    gap: 1.25rem 1.5rem;
+    font-size: 1rem;
+    line-height: 1.35;
+    color: var(--text);
+  }
+  .cx-fact-k {
+    position: static;
+    display: block;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+    margin-bottom: 0.2rem;
+    font-size: 0.8rem;
+    color: var(--n-7);
+  }
+  /* five facts: the longest (the services) takes a row to itself */
+  .cx-facts li:nth-child(4) { grid-column: 1 / -1; }
+  .cx-cover-act { margin-top: 1.75rem; }
+
+  /* the opening's picture stands clear of its last paragraph */
+  .cx-open { padding-top: 2rem; }
+  .cx-open > .cx-plate,
+  .cx-device { margin-top: 2.25rem; }
+  /* PORTRAIT WINDOWS: centred on the page, with air above */
+  .cx-text .cx-plate-tall { margin-top: 2.5rem; }
+  .cx-plate-tall .cx-win { width: min(100%, 19rem); max-width: none; }
+
+  /* THE ISLAND, in flow: fixed to the screen's foot */
+  .cx.is-flow .cx-isle {
+    display: block;
+    position: fixed;
+    left: 50%;
+    bottom: calc(0.9rem + env(safe-area-inset-bottom, 0px));
+    z-index: 30;
+    max-width: calc(100vw - 1.5rem);
+    transform: translate3d(-50%, 0, 0);
+    color: #fff;
+    font-size: 0.92rem;
+    transition: opacity 0.4s linear, transform 0.7s var(--e-settle);
+  }
+  .cx.is-flow .cx-isle.is-away { opacity: 0; transform: translate3d(-50%, 1.6rem, 0); pointer-events: none; }
+  .cx.is-flow .cx-isle-now { min-width: 7.6rem; }
+  .cx.is-flow .cx-isle-btn { gap: 0.6rem; padding-right: 0.5rem; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+  .cx.is-flow .cx-isle-list a { padding: 0.7rem 0.85rem; }
+  /* the last spread's foot clears the island */
+  .cx.is-flow .cx-next { padding-bottom: 6.5rem; }
+
+  /* THE RESULT HOLDS and the next project rises over it. A section
+     taller than the screen holds by its foot: top = screen − its height
+     (CaseTrack writes the height). The next spread is the sheet: a full
+     screen, rounded at the top, its shadow on the page under it. */
+  .cx.is-held .cx-result {
+    position: sticky;
+    top: min(0px, calc(100svh - var(--cx-res-h, 100svh)));
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100svh;
+    padding-top: 5.5rem;
+    padding-bottom: 6.5rem;
+  }
+  .cx.is-held .cx-next {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100svh;
+    border-radius: 1.6rem 1.6rem 0 0;
+    box-shadow: 0 -1.5rem 3.5rem -1rem rgb(0 0 0 / 0.55);
+  }
 }
 
 /* ============================================================

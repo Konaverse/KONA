@@ -3,6 +3,7 @@ import Reveal from '@/components/v4/Reveal'
 import ContactForm from '@/components/v4/ContactForm'
 import CalendlyInline from '@/components/v4/CalendlyInline'
 import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_HREF, OG_DEFAULTS, SITE_URL } from '@/lib/site'
+import FaqMotion from '@/components/v4/FaqMotion'
 import './contact.css'
 
 /**
@@ -21,8 +22,8 @@ import './contact.css'
  * §2 THE QUESTIONS — one viewport. A dark card set into the paper (the
  *    object flips polarity, the page does not — the seam is the card's
  *    edge): the heading and a line at the left, eight questions as
- *    native <details> rows at the right, an exclusive accordion by
- *    `name`, animated where the browser can (::details-content).
+ *    native <details> rows at the right, no numbering; FaqMotion opens
+ *    and shuts them smoothly, one at a time (2026-10-03).
  *
  * SERVER-RENDERED, every answer in the raw HTML; the form posts without
  * JS; the calendar has a plain link without JS. The page carries the
@@ -174,11 +175,12 @@ export default async function ContactPage({ searchParams }: { searchParams: Prom
             </Reveal>
           </div>
           <Reveal className="ct-faq-list-wrap" index={1}>
+            {/* the rows open and shut smoothly, one at a time (FaqMotion) */}
+            <FaqMotion />
             <div className="ct-faq-list">
               {FAQ.map((f, i) => (
-                <details key={f.q} className="ct-q" name="ct-faq" open={i === 0}>
+                <details key={f.q} className="ct-q" open={i === 0}>
                   <summary>
-                    <span className="ct-q-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
                     <span className="ct-q-t">{f.q}</span>
                     <span className="ct-q-i" aria-hidden="true" />
                   </summary>

@@ -73,7 +73,8 @@ import { gsap, EASE } from '@/lib/motion-v4'
  *                trackpad). A drag let go carries its speed on first.
  *   THE FOCUS    the card at the centre comes up a few percent and the
  *                corner names it, so a touch screen gets the names with
- *                no hover. A card under the pointer names itself instead.
+ *                no hover. A card under the pointer names itself instead;
+ *                a touched card keeps the name until the next touch.
  *   THE BREATH   the step OPENS with the run's speed and closes again at
  *                rest: a fast hand fans the deck apart. It is the one
  *                move here that makes the hand's speed visible.
@@ -210,16 +211,37 @@ export default function WorkCascade({
       const i = hover >= 0 ? hover : focus
       if (i >= 0) label.textContent = nameOf(i)
     }
+    /* MOUSE: the card under the pointer, while it is under it. TOUCH
+       (2026-10-03, owner: "the name appears and disappears very quickly…
+       wherever I touch needs to be displayed until I touch somewhere
+       else"): a finger enters on touchstart and leaves the moment the drag
+       captures it, so the name flashed. A touch NAMES the card it lands on
+       and that name stays — through the drag and after it — until the next
+       touch names another (or lands off the cards, and the centre card
+       speaks again). */
     links.forEach((el, i) => {
-      on(el, 'pointerenter', () => {
+      on(el, 'pointerenter', (e: PointerEvent) => {
+        if (e.pointerType !== 'mouse') return
         hover = i
         say()
       })
-      on(el, 'pointerleave', () => {
+      on(el, 'pointerleave', (e: PointerEvent) => {
+        if (e.pointerType !== 'mouse') return
         hover = -1
         say()
       })
     })
+    on(
+      root,
+      'pointerdown',
+      (e: PointerEvent) => {
+        if (e.pointerType === 'mouse') return
+        const card = (e.target as HTMLElement | null)?.closest?.<HTMLElement>('.wc-card')
+        hover = card ? links.indexOf(card) : -1
+        say()
+      },
+      { capture: true },
+    )
 
     /* ================= THE TRAVEL ================= */
     let live = false

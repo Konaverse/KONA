@@ -141,6 +141,10 @@ export default function SiteFooter() {
     let lit = false
     let dx = -1
     let dy = -1
+    /* no hand to follow (touch): the light moves on its own — two pools
+       drifting across the dots on slow, unrelated loops */
+    const fine = window.matchMedia('(hover: hover)').matches
+    if (!fine) dots?.classList.add('is-auto')
     const tick = () => {
       const r = root.getBoundingClientRect()
       const vh = window.innerHeight
@@ -151,6 +155,16 @@ export default function SiteFooter() {
       gsap.set(inner, { y: -DRAG * Math.max(0, rest) })
 
       if (!dots) return
+      if (!fine) {
+        if (r.bottom < 0) return
+        const t = gsap.ticker.time
+        const at = (n: number) => `${(n * 100).toFixed(2)}%`
+        dots.style.setProperty('--ft-x', at(0.5 + 0.44 * Math.sin(t * 0.52)))
+        dots.style.setProperty('--ft-y', at(0.42 + 0.36 * Math.sin(t * 0.37 + 1.3)))
+        dots.style.setProperty('--ft-x2', at(0.5 + 0.46 * Math.sin(t * 0.33 + 2.4)))
+        dots.style.setProperty('--ft-y2', at(0.6 + 0.36 * Math.cos(t * 0.46 + 0.6)))
+        return
+      }
       const on = px >= 0 && py >= r.top && py <= r.bottom
       if (on !== lit) {
         lit = on
@@ -176,7 +190,6 @@ export default function SiteFooter() {
       py = ev.clientY
     }
     const onGone = () => (px = -1)
-    const fine = window.matchMedia('(hover: hover)').matches
     if (fine) {
       window.addEventListener('pointermove', onMove, { passive: true })
       document.documentElement.addEventListener('pointerleave', onGone)
@@ -210,9 +223,8 @@ export default function SiteFooter() {
       window.removeEventListener('pointermove', onMove)
       document.documentElement.removeEventListener('pointerleave', onGone)
       letters.forEach((l) => (l.style.fontVariationSettings = ''))
-      dots?.classList.remove('is-hand')
-      dots?.style.removeProperty('--ft-x')
-      dots?.style.removeProperty('--ft-y')
+      dots?.classList.remove('is-hand', 'is-auto')
+      ;['--ft-x', '--ft-y', '--ft-x2', '--ft-y2'].forEach((v) => dots?.style.removeProperty(v))
       gsap.set(inner, { clearProps: 'transform' })
     }
   }, [])

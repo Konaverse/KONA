@@ -21,7 +21,8 @@
  *   The current page's link sits on a solid bar the panel's width.
  *   THE FOOT: a hairline, then two small columns (a grey label over
  *   links) — they come in last, fading.
- *   THE BUTTON: "Menu ≡" rolls to "Close ×" in place.
+ *   THE BUTTON: "Menu ≡" rolls to "Close ×" in place. (2026-10-03,
+ *   owner: three lines, no label, a bit bigger — the lines cross to ×.)
  *   THE CLOSE is quicker than the open: the links and the foot are gone
  *   in a blink while the page slides back on the same curve.
  *
@@ -188,8 +189,14 @@ export default function UnderlayMenu() {
      page is frozen as soon as the hand reaches the button — it looks
      identical — and the click finds it ready. A hand that leaves without
      clicking lets it go. Pointer only: the close hands focus back to the
-     button, and a focus warm-up would re-freeze the page right there. */
-  const warm = useCallback(() => {
+     button, and a focus warm-up would re-freeze the page right there.
+     MOUSE only (2026-10-03, owner: "the burger is kind of unclickable
+     on mobile, especially when I scroll down a bit"): a finger "enters"
+     on touchstart, so the page froze under the tap itself — the window
+     jumped from its offset to 0 mid-touch, the browser read that as a
+     scroll and dropped the click. A tap has no hover to warm on. */
+  const warm = useCallback((e: React.PointerEvent) => {
+    if (e.pointerType !== 'mouse') return
     if (openRef.current || frozenAt.current != null) return
     freeze()
     if (panelRef.current) panelRef.current.style.visibility = 'visible'
@@ -562,11 +569,8 @@ export default function UnderlayMenu() {
           onPointerLeave={cool}
         >
           <span className="sr-only">{open ? 'Close menu' : 'Open menu'}</span>
-          <span className="k-menu-btn__roll" aria-hidden="true">
-            <span>Menu</span>
-            <span>Close</span>
-          </span>
           <span className="k-menu-btn__icon" aria-hidden="true">
+            <i />
             <i />
             <i />
           </span>

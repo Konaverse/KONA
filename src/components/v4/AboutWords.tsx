@@ -58,7 +58,14 @@ import { gsap, EASE } from '@/lib/motion-v4'
  * THE FLIGHT's distance is the row's inner width less the word's
  * width, measured once (and again on resize).
  *
- * Reduced motion and no JS: the four words in flow, in ink.
+ * TOUCH IS THE SCROLL ITSELF (2026-10-03, owner, on the phone: "I want
+ * it scroll driven instead of scroll activated"). First the glide's lag
+ * and top speed made a fling look like nothing happened and then an
+ * instant change; a real-time playback tried the same day "restarts on
+ * its own and it's laggy". So on touch each word's progress IS its
+ * place in its window — no top speed, and only a breath of easing
+ * (GLIDE_TOUCH) to take the steps out of a finger's scroll. Where the
+ * page is, the words are; up and down read the same.
  */
 
 /** the ghost's ink */
@@ -77,6 +84,8 @@ const GAP = -0.26
 /** THE GLIDE: the time constant (s) of each word's ease after its
  *  target — ~63% of the way there in this long, settled in about four */
 const GLIDE = 0.4
+/** on touch the words follow the scroll all but directly */
+const GLIDE_TOUCH = 0.06
 /** THE TOP SPEED: the least time (s) a word's whole clock may take */
 const FASTEST = 1.8
 /** how much of the page's scroll the rose gives back */
@@ -109,6 +118,9 @@ export default function AboutWords({ words }: { words: readonly string[] }) {
       return () => sec.classList.remove('is-still')
     }
 
+    /* touch: the scroll itself, no top speed (see the header) */
+    const touch =
+      window.matchMedia('(max-width: 57.5rem)').matches || window.matchMedia('(pointer: coarse)').matches
     const letters = rows.map((r) => Array.from(r.querySelectorAll<HTMLElement>('.ab-wd-l')))
     const wordEls = rows.map((r) => r.querySelector<HTMLElement>('.ab-wd-word')!)
 
@@ -174,8 +186,8 @@ export default function AboutWords({ words }: { words: readonly string[] }) {
       if (!seen && cur[0] >= 0 && cur.every((c, i) => c === last[i])) return
       /* the share of the way to the target this frame covers */
       const dt = (deltaTime ?? 16.7) / 1000
-      const k = 1 - Math.exp(-dt / GLIDE)
-      const cap = dt / FASTEST
+      const k = 1 - Math.exp(-dt / (touch ? GLIDE_TOUCH : GLIDE))
+      const cap = touch ? 1 : dt / FASTEST
       /* the rose rides a little slower than the page (the drift) */
       if (rose) rose.style.transform = `translate3d(0, ${((vh / 2 - (r.top + r.height / 2)) * ROSE_DRIFT).toFixed(2)}px, 0)`
       for (let i = 0; i < n; i++) {
@@ -193,7 +205,13 @@ export default function AboutWords({ words }: { words: readonly string[] }) {
     gsap.ticker.add(tick)
 
     let raf = 0
+    let width = window.innerWidth
     const onResize = () => {
+      /* a phone's browser bar sliding in or out is a resize too: the
+         height alone changed, and rebuilding there reset the words
+         mid-scroll */
+      if (touch && window.innerWidth === width) return
+      width = window.innerWidth
       cancelAnimationFrame(raf)
       raf = requestAnimationFrame(() => {
         build()

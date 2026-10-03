@@ -9,7 +9,7 @@
       heading at the left, eight <details> rows at the right.
 
    No pin, no scrub. The house reveal carries the entrance; the rows
-   open with the browser's own details animation where it has one.
+   open and shut by FaqMotion.tsx (the answer's box, 0 to its height).
    THE PICTURE RULE HOLDS: rem everywhere, hairlines px.
    ============================================================ */
 
@@ -268,10 +268,13 @@
 }
 .ct-q summary {
   display: grid;
-  grid-template-columns: 2.4rem minmax(0, 1fr) 1.2rem;
+  /* no numbering (2026-10-03, owner): the question and its mark */
+  grid-template-columns: minmax(0, 1fr) 1.2rem;
   align-items: center;
   gap: 0.8rem;
-  padding: 0.85rem 0;
+  padding: 1rem 0;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   list-style: none;
   cursor: pointer;
   font-size: 1.05rem;
@@ -280,14 +283,13 @@
   transition: color var(--d-quick) var(--e-settle);
 }
 .ct-q summary::-webkit-details-marker { display: none; }
-.ct-q summary:hover,
 .ct-q[open] summary { color: var(--n-0); }
-.ct-q-n {
-  font-size: 0.74rem;
-  letter-spacing: 0.06em;
-  color: var(--text-faint);
-  font-variant-numeric: tabular-nums;
+@media (hover: hover) {
+  .ct-q summary:hover { color: var(--n-0); }
 }
+/* with FaqMotion running, the row's look follows `is-open` (set at the
+   click) and not `open` (which outlives a close until its box is shut) */
+.ct-q[open]:not(.is-open) summary { color: var(--n-4); }
 /* the mark: a plus that turns to a minus */
 .ct-q-i {
   position: relative;
@@ -311,26 +313,21 @@
 .ct-q[open] .ct-q-i::after { transform: translate(-50%, -50%) rotate(0deg); }
 .ct-q[open] .ct-q-i::before,
 .ct-q[open] .ct-q-i::after { background: var(--n-0); }
+.ct-q[open]:not(.is-open) .ct-q-i::after { transform: translate(-50%, -50%) rotate(90deg); }
+.ct-q[open]:not(.is-open) .ct-q-i::before,
+.ct-q[open]:not(.is-open) .ct-q-i::after { background: var(--n-5); }
+/* the answer's box is what FaqMotion runs between 0 and its content's
+   height; the padding is the paragraph's, so the box can shut to nothing */
 .ct-a {
-  padding: 0 2.6rem 1.2rem 3.2rem;
+  overflow: hidden;
 }
 .ct-a p {
   margin: 0;
+  padding: 0 2.6rem 1.3rem 0;
   font-size: 0.92rem;
   line-height: 1.6;
   color: var(--text-muted);
 }
-/* the open: the browser animates the content box where it can */
-@supports (interpolate-size: allow-keywords) {
-  .ct-q { interpolate-size: allow-keywords; }
-  .ct-q::details-content {
-    height: 0;
-    overflow: clip;
-    transition: height var(--d-base) var(--e-settle), content-visibility var(--d-base) allow-discrete;
-  }
-  .ct-q[open]::details-content { height: auto; }
-}
-
 /* ---------- PHONES ---------- */
 @media (max-width: 57.5rem) {
   .ct { --ct-pad: 1.25rem; }
@@ -351,6 +348,6 @@
   .ct-faq { grid-template-columns: minmax(0, 1fr); row-gap: 1.8rem; padding: 1.8rem 1.4rem; }
   .ct-faq-l { position: static; }
   .ct-faq-h { font-size: 2rem; }
-  .ct-q summary { grid-template-columns: 2rem minmax(0, 1fr) 1.2rem; font-size: 0.98rem; }
-  .ct-a { padding-left: 2.8rem; padding-right: 1rem; }
+  .ct-q summary { font-size: 1rem; }
+  .ct-a p { padding-right: 1.6rem; }
 }

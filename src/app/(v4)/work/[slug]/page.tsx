@@ -301,7 +301,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
           <ul className="cx-facts cx-r" style={{ '--d': '0.5s' } as React.CSSProperties}>
             {study.facts.map((f) => (
               <li key={f.label}>
-                <span className="sr-only">{f.label}: </span>
+                <span className="cx-fact-k">{f.label}<span className="sr-only">: </span></span>
                 {f.value}
               </li>
             ))}

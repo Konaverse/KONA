@@ -311,6 +311,12 @@
 .ab-op.is-still .ab-op-note { color: var(--text-muted); }
 
 @media (max-width: 57.5rem) {
+  /* the stage is the LARGEST viewport (2026-10-03, owner: "the image
+     doesn't expand fully, there's a little white space on the bottom"):
+     at 100svh it stopped short of the screen's foot once the browser's
+     bar had slid away, and the paper showed under the picture. With the
+     bar out the extra is simply under it. */
+  .ab-op-stage { height: 100vh; height: 100lvh; }
   .ab-op-t { top: 17svh; font-size: 2.9rem; }
   .ab-op-box { width: 13rem; height: 13rem; border-radius: 6.5rem; transform: translate3d(calc(50vw - 6.5rem), calc(72svh - 6.5rem), 0); }
   .ab-op-line { font-size: 2.4rem; }
@@ -1185,23 +1191,26 @@
   color: var(--n-4);
 }
 
-/* PHONES: in flow, one under the other, alternating sides, no parallax */
+/* PHONES: in flow, one under the other, no parallax. FULL MEASURE and
+   on one line (2026-10-03, owner: "bigger, almost covering full width —
+   as much margin on the right as there is on the left; all cards
+   aligned perfectly"); they used to be 18rem and alternate sides. */
 @media (max-width: 57.5rem) {
   .ab-ppl {
     height: auto;
     padding: 5rem 0 4rem;
-    --ab-card: 18rem;
+    --ab-card: 100%;
   }
   .ab-ppl-k { position: relative; left: auto; top: auto; padding: 0 var(--ab-pad); margin-bottom: 0.7rem; }
   .ab-ppl-t { position: relative; left: auto; top: auto; padding: 0 var(--ab-pad) 3rem; font-size: 2.8rem; }
   .ab-ppl-card {
     position: relative;
     inset: auto;
-    margin: 0 var(--ab-pad) 3.5rem;
+    margin: 0 var(--ab-pad) 1.25rem;
     width: auto;
-    max-width: 22rem;
+    max-width: none;
   }
-  .ab-ppl-card-2 { margin-left: auto; }
-  .ab-ppl-card-3 { margin-left: 2.5rem; }
+  .ab-ppl-card:last-child { margin-bottom: 0; }
   .ab-ppl-pic { width: var(--ab-card); }
+  .ab-ppl-name { font-size: 1.75rem; }
 }

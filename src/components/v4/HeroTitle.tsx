@@ -226,6 +226,52 @@ export default function HeroTitle() {
       return
     }
 
+    /* THE PHONE HAS NO PILLS (2026-10-03, owner: "remove the inline images
+       from the heading on mobile"). CSS takes them out and holds the three
+       lines; what is left of the entrance is the reveal — each line rising
+       through its own box on the opening gate — and there is no walk. */
+    if (phone) {
+      let done = false
+      const rise = () => {
+        if (done) return
+        done = true
+        const tops: number[] = []
+        flow.classList.remove('is-pre')
+        words.forEach((el) => {
+          const top = el.getBoundingClientRect().top
+          let row = tops.findIndex((t) => Math.abs(t - top) < 8)
+          if (row < 0) row = tops.push(top) - 1
+          gsap.fromTo(
+            el,
+            { yPercent: 100, clipPath: 'inset(0px 0px 100% 0px)' },
+            {
+              yPercent: 0,
+              clipPath: 'inset(0px 0px 0% 0px)',
+              duration: ENTER.reveal,
+              ease: EASE.glass,
+              delay: row * ENTER.lineStep,
+              clearProps: 'clipPath,transform',
+            },
+          )
+        })
+        window.dispatchEvent(new Event('k-hero-sew'))
+      }
+      window.addEventListener('k-hero-open', rise, { once: true })
+      let wait = setTimeout(rise, 2600)
+      const armed = () => {
+        clearTimeout(wait)
+        wait = setTimeout(rise, 4500)
+      }
+      window.addEventListener('k-peel-armed', armed, { once: true })
+      return () => {
+        done = true
+        window.removeEventListener('k-hero-open', rise)
+        window.removeEventListener('k-peel-armed', armed)
+        clearTimeout(wait)
+        gsap.killTweensOf(words)
+      }
+    }
+
     let live = true
     let comp = HOME
 
