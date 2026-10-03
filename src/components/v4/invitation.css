@@ -28,6 +28,15 @@
   font-size: 6.4rem;
   font-weight: var(--w-light);
 }
+/* THE WIPE'S LINES ARE CENTRED TOO (2026-10-03, owner: "the title enters
+   with the curtain as left aligned and when the curtain leaves, the title
+   gets centered, I want it centered from the start"): while the wipe
+   plays each line is a block fitted to its own text, and a fitted block
+   sits at the left of a centred heading unless its margins are auto.
+   Phones set the section left-aligned (below), and stay so. */
+@media (min-width: 57.5rem) {
+  .inv-line.is-wipe .k-wipe-l { margin-inline: auto; }
+}
 
 /* ---------- THE ASK, and Book beside it ---------- */
 .inv-row {

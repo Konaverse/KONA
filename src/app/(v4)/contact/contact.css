@@ -156,40 +156,20 @@
   height: 100%;
   border: 0;
 }
-/* THE ASK (2026-10-03): the calendar loads only on click, so until then
-   the white card carries an invitation in the same place and size */
+/* the frame is in the server HTML (2026-10-03, owner: "rendered from the
+   start… without delay"); under it, until it paints, a plain link to the
+   booking page */
 .ct-cal-wrap { position: relative; }
-.ct-cal-ask {
+.ct-cal-out {
   position: absolute;
   inset: 0;
   display: grid;
-  place-content: center;
-  justify-items: center;
-  gap: 0.9rem;
-  padding: 2rem;
-  text-align: center;
-}
-.ct-cal-t {
-  margin: 0;
-  font-size: var(--t-h3);
-  font-weight: var(--w-medium);
-  line-height: var(--lh-tight);
-  color: var(--text);
-}
-.ct-cal-b {
-  margin: 0 0 0.6rem;
-  max-width: 26rem;
-  font-size: var(--t-small);
-  line-height: var(--lh-body);
-  color: var(--text-muted);
-  text-wrap: balance;
-}
-.ct-cal-out {
+  place-items: center;
   font-size: var(--t-small);
   color: var(--text-muted);
   text-underline-offset: 0.2em;
 }
-.ct-cal-out:hover { color: var(--text); }
+.ct-cal-host iframe { background: var(--surface-raised); }
 
 /* THE FACTS: one hairline row across the hero's foot, under both
    columns */

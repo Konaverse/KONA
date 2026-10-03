@@ -71,26 +71,11 @@ export default function HeroPortrait() {
       return
     }
 
-    // pointer parallax: the picture leans a few px toward the cursor,
-    // lerped on the shared ticker so it drifts rather than tracks
-    const pan = root.querySelector<SVGGElement>('.hw-pan')
-    let tx = 0
-    let ty = 0
-    let px = 0
-    let py = 0
-    const onMove = (e: PointerEvent) => {
-      const r = root.getBoundingClientRect()
-      tx = ((e.clientX - r.left) / r.width - 0.5) * 2
-      ty = ((e.clientY - r.top) / r.height - 0.5) * 2
-    }
-    const panTick = () => {
-      if (!pan) return
-      px += (tx - px) * 0.055
-      py += (ty - py) * 0.055
-      gsap.set(pan, { x: px * 10, y: py * 8 })
-    }
-    root.addEventListener('pointermove', onMove)
-    gsap.ticker.add(panTick)
+    /* THE POINTER PARALLAX IS OFF (2026-10-03, owner: "remove the mouse
+       parallax movement for the homepage hero, for the video inside the
+       container"). The picture used to lean a few px toward the cursor
+       (.hw-pan, lerped on the ticker); it now stands still. HeroPeel
+       still reads .hw-pan's x/y, which stay 0. */
 
     // the loop must actually loop: autoplay of muted inline video is allowed
     // everywhere, but a nudge covers the browsers that defer it anyway
@@ -145,12 +130,10 @@ export default function HeroPortrait() {
     const fallback = setTimeout(begin, 1200)
 
     return () => {
-      root.removeEventListener('pointermove', onMove)
       window.removeEventListener('k-peel-armed', begin)
       window.removeEventListener('k-hero-sew', beginCopy)
       clearTimeout(fallback)
       clearTimeout(copyFallback)
-      gsap.ticker.remove(panTick)
       tl.kill()
       copy.kill()
     }

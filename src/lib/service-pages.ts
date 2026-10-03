@@ -257,7 +257,6 @@ export const SERVICE_PAGES: ServicePage[] = [
     ],
     addons: [
       { name: 'Extra page', text: 'Each main page beyond the five, designed at desktop and phone size.', price: 'from €150' },
-      { name: 'Custom motion', text: 'A section choreographed to the scroll, beyond the standard entrances.', price: 'from €300 a section' },
       { name: 'Copywriting', text: 'We write the page from a conversation with you.', price: 'from €100 a page' },
       { name: 'An extra round', text: 'A third visual direction, or a round of changes beyond the one included.', price: '€200' },
       { name: 'The build', text: 'The design built by us instead of handed to your developer.', price: 'from €700' },
@@ -655,11 +654,9 @@ export const SERVICE_PAGES: ServicePage[] = [
       { title: 'Build and launch', give: 'Final copy, domain access.', get: 'The page live, with analytics and a contact route that works.', time: '1 week' , weeks: 1 },
     ],
     addons: [
-      { name: 'Extra section', text: 'Each section beyond the eight the page starts with.', price: 'from €100' },
       { name: 'Bookings', text: 'A booking system wired into the page.', price: 'from €300' },
       { name: 'A second language', text: 'The page in two languages, each with its own address.', price: 'from €300' },
       { name: 'Copywriting', text: 'We write the page from a conversation with you.', price: 'from €200' },
-      { name: 'Custom motion', text: 'A section choreographed to the scroll, beyond the standard entrances.', price: 'from €300' },
     ],
     invite: 'Let’s make your page.',
     more: {

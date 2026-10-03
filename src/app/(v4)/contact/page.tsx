@@ -141,11 +141,13 @@ export default async function ContactPage({ searchParams }: { searchParams: Prom
           </Reveal>
         </div>
 
-        <Reveal className="ct-book" index={2}>
+        {/* no reveal on the calendar: it is there from the first paint
+            (owner, 2026-10-03: "show it without delay") */}
+        <div className="ct-book">
           <div className="ct-cal">
             <CalendlyInline />
           </div>
-        </Reveal>
+        </div>
 
         <ul className="ct-facts" aria-label="At a glance">
           {FACTS.map((f, i) => (
