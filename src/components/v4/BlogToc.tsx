@@ -13,7 +13,7 @@ import { gsap } from '@/lib/motion-v4'
  * This only marks the entry whose section is being read: the last heading
  * that has climbed past the upper third of the screen. One read per frame
  * off gsap.ticker, one class written when the answer changes; the look
- * (ink, a step to the right, a touch larger, a rule drawn beside it) is
+ * (ink, heavier, a touch larger; no rule or bullet, the owner cut it) is
  * blog.css `.bl-toc li.is-on`. No JS: the list, unmarked.
  */
 export default function BlogToc({ items }: { items: { id: string; text: string }[] }) {

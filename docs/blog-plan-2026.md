@@ -60,6 +60,24 @@ Scores from topic research, 1–5: Demand, Weakness of the current answers, buye
 | 5 | **What a website costs in Cyprus in 2026, including SEO** | website design cyprus prices · website cost cyprus · how much does seo cost in cyprus | web-design (+ seo) | 4/2/5/4 | Top autocomplete modifier, also in Greek. AIO plus PAA. Domainstar's version is prose with no table and doesn't rank on Google. madevisible's SEO-cost post leaves out AI search | Our real tiers in a table, what moves the price, what €600 sites leave out, the monthly SEO band, Cyprus anchors from public sources | **Owner: final prices** |
 | 6 | **Scrollytelling: what it is, what it costs, and why AI-made versions all look the same** | scrollytelling · scrollytelling website examples | 3d-websites | 4/4/4/5 | KP 1K–10K WW. Rising autocomplete. r/webdev threads 2026 ("vibecode a 3D scrollytelling website?", "how are cinematic scrollytelling pages built?"). Unowned by studios | Technique per example (GSAP ScrollTrigger, Lenis, pinned sections, pre-rendered vs live), a cost band, the AI-tool comparison; the page itself a light scrollytelling demo, copy in SSR HTML | Nothing |
 
+## 2b. Status and the owner's next piece (3 Oct 2026)
+
+**Published 3 Oct 2026** (the owner asked for two at the opening, overriding rule 6 once):
+- `/blog/website-cost-cyprus` (piece #5 above).
+- `/blog/redesign-website-without-losing-seo` (piece #1 above, anonymised). Its headline changed: the project's record does not support "176 URLs, zero lost". The real numbers are 172 live URLs, 224 known to Search Console, 57 redirects, indexed 135 before and 143 nine days after; no traffic or ranking outcome was recorded.
+
+One author for the whole blog: Konstantinos Kyprianou (owner, 3 Oct 2026).
+
+**NEXT, requested by the owner on 3 Oct 2026: what moves the price of a website.**
+- The owner's words: "a blog article that explains the pricing but it will be mostly about how the pricing is affected. Like what can take a web development project that starts from 1500€ to take it to 2500€. We need a super comprehensive blog post like that."
+- It is NOT a second price list. The cost article already gives the starting prices; this one is about the distance between a starting price and a final quote.
+- Shape (proposal, to confirm with the owner before writing): one section per price driver, each with what it is, why it costs time, and a worked example in euros from a starting price to a final one. Candidate drivers: pages beyond five, custom motion, 3D, a CMS, bookings and payments, integrations, a second language, content and photography supplied or not, migrating an old site, deadlines.
+- **Blocked by the owner:** the real increments. We have starting prices only. Every "this adds about €X" must come from the owner or from real past quotes; none may be invented.
+- Target queries to validate first: "what affects website cost", "why do websites cost so much", "website cost breakdown", "web development cost factors".
+- Feeds: web-development (its one service link), and it should link to the cost article.
+
+**Prices as confirmed by the owner, 3 Oct 2026:** one-page from €1,000; web design alone €1,500; web development alone €1,500; design and development together €2,000 minimum (a standard site of five main pages); redesign from €2,000; 3D from €4,000; SEO audit €500, then from €300 a month.
+
 ## 3. The next six, in order (Feb – Apr 2027)
 
 | # | Piece | Feeds | D/W/I/F | Note |

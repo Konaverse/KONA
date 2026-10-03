@@ -45,7 +45,7 @@ export const SITE_URL = 'https://kona-verse.com'
 /** The blog's author, in one paragraph: shown under every article and
  *  carried by his Person node in the root layout's graph (one wording). */
 export const AUTHOR_BIO =
-  'Konstantinos Kyprianou is the technical architect and a co-founder of Konaverse, a web studio in Cyprus. He builds the studio’s websites: the code, the performance, the integrations and the search work, on Next.js and WebGL. He writes here about what websites cost, how they are built and how they get found.'
+  'Konstantinos Kyprianou is the technical architect and a co-founder of Konaverse, a web studio in Cyprus. He builds the studio’s websites: the code, the performance, the integrations and the search work, on Next.js and WebGL.'
 export const SITE_NAME = 'Konaverse'
 export const CONTACT_EMAIL = 'info@kona-verse.com'
 /** The one phone number, written the same everywhere: the site, the

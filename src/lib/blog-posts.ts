@@ -94,7 +94,7 @@ export const BLOG_POSTS: BlogPost[] = [
     title: 'How much does a website cost in Cyprus in 2026?',
     metaTitle: 'Website Cost in Cyprus (2026): Real Prices and What Moves Them',
     description:
-      'What a website costs in Cyprus in 2026, from a studio that publishes its prices: one-page sites from €1,000, five-page websites from €2,000, 3D websites from €4,000, and what moves each number.',
+      'What a website costs in Cyprus in 2026, from a studio that publishes its prices: one-page sites from €1,000, five-page websites from €2,000 designed and built, 3D websites from €4,000, and what moves each number.',
     excerpt:
       'Our real prices in one table, what moves each number, and how to compare two quotes that look nothing alike.',
     topic: 'Pricing',
@@ -109,7 +109,7 @@ export const BLOG_POSTS: BlogPost[] = [
       position: '50% 40%',
     },
     answer:
-      'A professionally designed website in Cyprus costs from €1,000 for a one-page site, from €2,000 for a standard website of five main pages, and from €4,000 for a 3D or immersive website. Those are our own starting prices at Konaverse for 2026. The final number depends on how many pages you need, how much of the site is custom motion, and what the site has to connect to.',
+      'A professionally designed website in Cyprus costs from €1,000 for a one-page site, from €2,000 for a standard website of five main pages, designed and built, and from €4,000 for a 3D or immersive website. Those are our own starting prices at Konaverse for 2026. The final number depends on how many pages you need, how much of the site is custom motion, and what the site has to connect to.',
     blocks: [
       { kind: 'h2', id: 'prices', text: 'Website prices in Cyprus, in one table' },
       {
@@ -122,15 +122,16 @@ export const BLOG_POSTS: BlogPost[] = [
         head: ['Type of website', 'Starting price', 'Timeline', 'Right for'],
         rows: [
           ['One-page website', '€1,000', '2 to 3 weeks', 'A practice, a launch or a campaign with one thing to say'],
-          ['Web design, five main pages', '€2,000', '4 to 6 weeks', 'A business that has outgrown its template'],
-          ['Web development', '€2,000', '4 to 8 weeks', 'A site with a CMS, bookings, forms or integrations'],
+          ['Website, designed and built (five main pages)', '€2,000', '4 to 8 weeks', 'A business that has outgrown its template'],
+          ['Web design only', '€1,500', '4 to 6 weeks', 'You have a developer and need the design'],
+          ['Web development only', '€1,500', '4 to 8 weeks', 'You have a finished design and need it built'],
           ['Website redesign', '€2,000', '4 to 8 weeks', 'An existing site that has fallen behind the company'],
           ['3D or immersive website', '€4,000', '8 to 12 weeks', 'A brand that needs presence, not only information'],
         ],
       },
       {
         kind: 'p',
-        text: 'Web design and web development are priced separately because clients arrive with different halves already done. Some bring a finished design and need it built. Some have a developer and need the design. A redesign is priced like a new design and build, because it is one: the difference is the audit at the start and the redirects at the end.',
+        text: 'Most clients want both halves, so the number to remember is €2,000: a standard website of five main pages, designed and built by us. Web design and web development are also sold on their own, at €1,500 each, because some clients arrive with one half already done. Some bring a finished design and need it built. Some have a developer and need the design. A redesign is a new design and build, so it is priced as one: the difference is the audit at the start and the redirects at the end.',
       },
       { kind: 'h2', id: 'what-moves-the-price', text: 'What moves the price' },
       {
@@ -216,7 +217,7 @@ export const BLOG_POSTS: BlogPost[] = [
     service: {
       slug: 'web-design',
       label: 'Web design in Cyprus',
-      line: 'A five-page website designed around your brand, from €2,000, live in four to six weeks.',
+      line: 'A five-page website designed around your brand: from €1,500 for the design, or €2,000 designed and built.',
     },
     studies: ['los-santos-barbers', 'velricon'],
   },

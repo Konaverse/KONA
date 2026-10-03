@@ -62,7 +62,7 @@ const FACTS: { label: string; value: string; href?: string }[] = [
 const FAQ: { q: string; a: string }[] = [
   {
     q: 'How much does a website cost?',
-    a: 'A one-page website starts at €1,000. A standard website of five main pages starts at €2,000, for the design or for the development. A 3D website starts at €4,000. What moves the number is the amount of content, the number of pages, and how much of the site is custom motion or 3D. Every service page carries its starting price.',
+    a: 'A one-page website starts at €1,000. For a standard website of five main pages, the design on its own starts at €1,500 and the development on its own starts at €1,500. Designed and built by us together, it starts at €2,000. A 3D website starts at €4,000. What moves the number is the amount of content, the number of pages, and how much of the site is custom motion or 3D. Every service page carries its starting price.',
   },
   {
     q: 'How long does it take?',
@@ -82,7 +82,7 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: 'Do you redesign existing websites?',
-    a: 'Yes. A redesign is priced like a new design and build, from €2,000, and begins with an audit of the site you have, so we keep what works and rebuild what does not. It takes four to eight weeks.',
+    a: 'Yes. A redesign is a new design and build, so it starts at €2,000, and begins with an audit of the site you have, so we keep what works and rebuild what does not. It takes four to eight weeks.',
   },
   {
     q: 'What happens after launch?',

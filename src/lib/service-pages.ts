@@ -16,9 +16,10 @@
  * join.
  *
  * PRICES ARE THE OWNER'S (confirmed 2026-10-03): one-page from €1,000;
- * web design €2,000 for a standard site of five main pages; web
- * development from €2,000; redesign priced as design and development,
- * from €2,000; 3D from €4,000; SEO audit €500, then from €300 a month.
+ * web design ON ITS OWN €1,500 and web development ON ITS OWN €1,500
+ * (a standard site of five main pages), TOGETHER €2,000 minimum;
+ * redesign (design and build) from €2,000; 3D from €4,000; SEO audit
+ * €500, then from €300 a month.
  * Timelines are still ours.
  * COPY RULE (owner, same day): written for search, and NO EM DASHES in
  * anything a visitor or a crawler reads (tools/dashes.js checks).
@@ -173,7 +174,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     back: 'design',
     title: 'Web Design in Cyprus',
     description:
-      'Custom web design in Cyprus: a website designed around your brand, never assembled from a template. From €2,000 for a five-page site, live in four to six weeks.',
+      'Custom web design in Cyprus: a website designed around your brand, never assembled from a template. From €1,500 for the design of a five-page site, or €2,000 designed and built.',
     areaServed: 'Cyprus',
     tagline: 'Tailored design according to your brand’s aesthetic',
     blurb:
@@ -181,16 +182,16 @@ export const SERVICE_PAGES: ServicePage[] = [
     visual: '/home/inline-1.webp',
     visualPos: '50% 40%',
     answer: [
-      'Web design at Konaverse is a custom website designed from your brand outward: layout, type, imagery and motion decided for you, not picked from a theme. It is for Cyprus businesses that have outgrown the template and want a site people remember. A standard website of five main pages starts at €2,000 and takes four to six weeks from the first call to launch.',
+      'Web design at Konaverse is a custom website designed from your brand outward: layout, type, imagery and motion decided for you, not picked from a theme. It is for Cyprus businesses that have outgrown the template and want a site people remember. The design of a standard website of five main pages starts at €1,500 and takes four to six weeks. Designed and built by us together, the same website starts at €2,000.',
       'We aim to fill the internet with websites that carry a strong character. No more plain and lifeless pages: a personalised structure, layout and motion, so that your website stands out and stays in mind.',
     ],
     facts: [
-      { value: '€2,000', label: 'Starting at', plate: 1, cue: '€2,000' },
+      { value: '€1,500', label: 'Design, starting at', plate: 1, cue: '€1,500' },
       { value: '4–6 weeks', label: 'From call to launch', plate: 2, cue: 'four to six weeks' },
-      { value: '1 designer', label: 'Start to finish', plate: 3 },
+      { value: '€2,000', label: 'Designed and built', plate: 3, cue: '€2,000' },
     ],
     deck: ['/about-hero/02.webp', '/about-hero/03.webp', '/about-hero/01.webp'],
-    fromPrice: 2000,
+    fromPrice: 1500,
     plate: {
       image: '/home/bosra-2000.webp',
       alt: 'Roman columns in black and white, lit from one side against a black sky',
@@ -316,7 +317,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     back: 'build',
     title: 'Web Development in Cyprus',
     description:
-      'Web development in Cyprus on Next.js: fast, server-rendered websites with the CMS and integrations your business runs on. From €2,000, live in four to eight weeks.',
+      'Web development in Cyprus on Next.js: fast, server-rendered websites with the CMS and integrations your business runs on. From €1,500 for the build, or €2,000 designed and built.',
     areaServed: 'Cyprus',
     tagline: 'Built to load fast, rank, and never fight you',
     blurb:
@@ -324,16 +325,16 @@ export const SERVICE_PAGES: ServicePage[] = [
     visual: '/home/inline-2.webp',
     visualPos: '50% 55%',
     answer: [
-      'Web development at Konaverse is the build of a website on a modern stack (Next.js, server-rendered, deployed on Vercel) with the CMS, forms, bookings and integrations your business needs wired in. It is for Cyprus companies whose site has to perform, not just exist. Builds start at €2,000 and take four to eight weeks depending on the integrations.',
+      'Web development at Konaverse is the build of a website on a modern stack (Next.js, server-rendered, deployed on Vercel) with the CMS, forms, bookings and integrations your business needs wired in. It is for Cyprus companies whose site has to perform, not just exist. The build of a standard website of five main pages starts at €1,500 and takes four to eight weeks depending on the integrations. Designed and built by us together, it starts at €2,000.',
       'Every page ships as real HTML, so search engines and AI assistants read all of it. Core Web Vitals are a delivery requirement, not an afterthought.',
     ],
     facts: [
-      { value: '€2,000', label: 'Starting at', plate: 2, cue: '€2,000' },
+      { value: '€1,500', label: 'Build, starting at', plate: 2, cue: '€1,500' },
       { value: '4–8 weeks', label: 'Typical build', plate: 3, cue: 'four to eight weeks' },
       { value: '< 2.5 s', label: 'Largest paint, guaranteed', plate: 1, cue: 'Core Web Vitals' },
     ],
     deck: ['/about-hero/07.webp', '/about-hero/01.webp', '/about-hero/06.webp'],
-    fromPrice: 2000,
+    fromPrice: 1500,
     plate: {
       image: '/work/hall.webp',
       alt: 'A vast dark hall, one shaft of light falling on small figures crossing the floor',
@@ -708,7 +709,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     visual: '/home/inline-1.webp',
     visualPos: '80% 60%',
     answer: [
-      'A website redesign at Konaverse starts with what your current site already does right (its traffic, its content, its rankings) and rebuilds the design and structure around it. It is for businesses whose site has fallen behind the company. A redesign is priced like a new design and build, so it starts at €2,000 and takes four to eight weeks, and every old URL is redirected so nothing you rank for is lost.',
+      'A website redesign at Konaverse starts with what your current site already does right (its traffic, its content, its rankings) and rebuilds the design and structure around it. It is for businesses whose site has fallen behind the company. A redesign is a new design and build, so it is priced as one and starts at €2,000 and takes four to eight weeks, and every old URL is redirected so nothing you rank for is lost.',
       'Before and after is the easiest proof there is. Half of our redesigns begin with an audit you can act on whether or not you hire us.',
     ],
     facts: [

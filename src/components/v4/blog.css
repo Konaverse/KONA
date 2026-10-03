@@ -265,25 +265,12 @@
   transition: color 0.4s var(--e-settle), transform 0.6s var(--e-glass);
 }
 .bl-toc a:hover { color: var(--text); }
-/* YOU ARE HERE (BlogToc): the section being read stands in ink, a touch
-   larger and a step to the right, with a rule drawn in beside it */
-.bl-toc li::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0.62em;
-  width: 1rem;
-  height: 1px;
-  background: var(--text);
-  transform: scaleX(0);
-  transform-origin: 0 50%;
-  transition: transform 0.6s var(--e-glass);
-}
-.bl-toc li.is-on::before { transform: scaleX(1); }
+/* YOU ARE HERE (BlogToc): the section being read stands in ink, heavier
+   and a touch larger. No rule, no bullet (owner, 2026-10-03). */
 .bl-toc li.is-on a {
   color: var(--text);
   font-weight: var(--w-medium);
-  transform: translate3d(1.6rem, 0, 0) scale(1.12);
+  transform: scale(1.12);
 }
 
 .bl-body { min-width: 0; }
@@ -472,7 +459,6 @@ ol.bl-list li::before {
   }
   .bl-toc a { padding-block: 0.3rem; }
   /* in flow above the text there is no "here" to mark */
-  .bl-toc li::before { display: none; }
   .bl-toc li.is-on a { color: var(--n-6); font-weight: inherit; transform: none; }
   .bl-body p.bl-answer { font-size: 1.3rem; }
   .bl-body p,
