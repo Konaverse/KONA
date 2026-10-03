@@ -15,11 +15,13 @@
  * (objects, light angles). Same six slugs, different job; the slug is the
  * join.
  *
- * PRICES ARE THE OWNER'S (confirmed 2026-10-03): one-page from €1,000;
- * web design ON ITS OWN €1,500 and web development ON ITS OWN €1,500
- * (a standard site of five main pages), TOGETHER €2,000 minimum;
- * redesign (design and build) from €2,000; 3D from €4,000; SEO audit
- * €500, then from €300 a month.
+ * PRICES ARE THE OWNER'S (raised and confirmed 2026-10-03, after the
+ * pricing review): one-page from €1,200; web design ON ITS OWN €1,800
+ * and web development ON ITS OWN €1,800 (a standard site of five main
+ * pages), TOGETHER €2,500 minimum; redesign (design and build) from
+ * €2,500; 3D from €6,000; SEO audit €500, then from €300 a month with a
+ * three-month minimum; hosting and maintenance €40 a month, €90 with a
+ * CMS (HOSTING, below). Published add-on prices do not exist yet.
  * Timelines are still ours.
  * COPY RULE (owner, same day): written for search, and NO EM DASHES in
  * anything a visitor or a crawler reads (tools/dashes.js checks).
@@ -174,7 +176,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     back: 'design',
     title: 'Web Design in Cyprus',
     description:
-      'Custom web design in Cyprus: a website designed around your brand, never assembled from a template. From €1,500 for the design of a five-page site, or €2,000 designed and built.',
+      'Custom web design in Cyprus: a website designed around your brand, never assembled from a template. From €1,800 for the design of a five-page site, or €2,500 designed and built.',
     areaServed: 'Cyprus',
     tagline: 'Tailored design according to your brand’s aesthetic',
     blurb:
@@ -182,16 +184,16 @@ export const SERVICE_PAGES: ServicePage[] = [
     visual: '/home/inline-1.webp',
     visualPos: '50% 40%',
     answer: [
-      'Web design at Konaverse is a custom website designed from your brand outward: layout, type, imagery and motion decided for you, not picked from a theme. It is for Cyprus businesses that have outgrown the template and want a site people remember. The design of a standard website of five main pages starts at €1,500 and takes four to six weeks. Designed and built by us together, the same website starts at €2,000.',
+      'Web design at Konaverse is a custom website designed from your brand outward: layout, type, imagery and motion decided for you, not picked from a theme. It is for Cyprus businesses that have outgrown the template and want a site people remember. The design of a standard website of five main pages starts at €1,800 and takes four to six weeks. Designed and built by us together, the same website starts at €2,500.',
       'We aim to fill the internet with websites that carry a strong character. No more plain and lifeless pages: a personalised structure, layout and motion, so that your website stands out and stays in mind.',
     ],
     facts: [
-      { value: '€1,500', label: 'Design, starting at', plate: 1, cue: '€1,500' },
+      { value: '€1,800', label: 'Design, starting at', plate: 1, cue: '€1,800' },
       { value: '4–6 weeks', label: 'From call to launch', plate: 2, cue: 'four to six weeks' },
-      { value: '€2,000', label: 'Designed and built', plate: 3, cue: '€2,000' },
+      { value: '€2,500', label: 'Designed and built', plate: 3, cue: '€2,500' },
     ],
     deck: ['/about-hero/02.webp', '/about-hero/03.webp', '/about-hero/01.webp'],
-    fromPrice: 1500,
+    fromPrice: 1800,
     plate: {
       image: '/home/bosra-2000.webp',
       alt: 'Roman columns in black and white, lit from one side against a black sky',
@@ -317,7 +319,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     back: 'build',
     title: 'Web Development in Cyprus',
     description:
-      'Web development in Cyprus on Next.js: fast, server-rendered websites with the CMS and integrations your business runs on. From €1,500 for the build, or €2,000 designed and built.',
+      'Web development in Cyprus on Next.js: fast, server-rendered websites with the CMS and integrations your business runs on. From €1,800 for the build, or €2,500 designed and built.',
     areaServed: 'Cyprus',
     tagline: 'Built to load fast, rank, and never fight you',
     blurb:
@@ -325,16 +327,16 @@ export const SERVICE_PAGES: ServicePage[] = [
     visual: '/home/inline-2.webp',
     visualPos: '50% 55%',
     answer: [
-      'Web development at Konaverse is the build of a website on a modern stack (Next.js, server-rendered, deployed on Vercel) with the CMS, forms, bookings and integrations your business needs wired in. It is for Cyprus companies whose site has to perform, not just exist. The build of a standard website of five main pages starts at €1,500 and takes four to eight weeks depending on the integrations. Designed and built by us together, it starts at €2,000.',
+      'Web development at Konaverse is the build of a website on a modern stack (Next.js, server-rendered, deployed on Vercel) with the CMS, forms, bookings and integrations your business needs wired in. It is for Cyprus companies whose site has to perform, not just exist. The build of a standard website of five main pages starts at €1,800 and takes four to eight weeks depending on the integrations. Designed and built by us together, it starts at €2,500.',
       'Every page ships as real HTML, so search engines and AI assistants read all of it. Core Web Vitals are a delivery requirement, not an afterthought.',
     ],
     facts: [
-      { value: '€1,500', label: 'Build, starting at', plate: 2, cue: '€1,500' },
+      { value: '€1,800', label: 'Build, starting at', plate: 2, cue: '€1,800' },
       { value: '4–8 weeks', label: 'Typical build', plate: 3, cue: 'four to eight weeks' },
       { value: '< 2.5 s', label: 'Largest paint, guaranteed', plate: 1, cue: 'Core Web Vitals' },
     ],
     deck: ['/about-hero/07.webp', '/about-hero/01.webp', '/about-hero/06.webp'],
-    fromPrice: 1500,
+    fromPrice: 1800,
     plate: {
       image: '/work/hall.webp',
       alt: 'A vast dark hall, one shaft of light falling on small figures crossing the floor',
@@ -456,7 +458,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     back: 'depth',
     title: '3D and Immersive Website Design',
     description:
-      'Immersive website design and 3D websites: rendered objects, scroll-driven scenes and WebGL, built to stay fast on every device. From €4,000, live in eight to twelve weeks.',
+      'Immersive website design and 3D websites: rendered objects, scroll-driven scenes and WebGL, built to stay fast on every device. From €6,000, live in eight to twelve weeks.',
     areaServed: 'Worldwide',
     tagline: 'Presence you feel before you read a word',
     blurb:
@@ -464,16 +466,16 @@ export const SERVICE_PAGES: ServicePage[] = [
     visual: '/home/inline-3.webp',
     visualPos: '50% 50%',
     answer: [
-      'A 3D website at Konaverse is an immersive website built around real dimension: pre-rendered, path-traced objects and scroll-driven scenes that move with the visitor. It is for product, hospitality and technology brands that need their presence felt rather than described, wherever they sell. Projects start at €4,000 and take eight to twelve weeks.',
+      'A 3D website at Konaverse is an immersive website built around real dimension: pre-rendered, path-traced objects and scroll-driven scenes that move with the visitor. It is for product, hospitality and technology brands that need their presence felt rather than described, wherever they sell. Projects start at €6,000 and take eight to twelve weeks.',
       'The objects are rendered offline and delivered as light video and imagery, so the site stays fast on a phone. WebGL is used where it earns its cost, never for its own sake.',
     ],
     facts: [
-      { value: '€4,000', label: 'Starting at', plate: 3, cue: '€4,000' },
+      { value: '€6,000', label: 'Starting at', plate: 3, cue: '€6,000' },
       { value: '8–12 weeks', label: 'Concept to launch', plate: 1, cue: 'eight to twelve weeks' },
       { value: '60 fps', label: 'On a mid-range phone', plate: 2, cue: 'fast on a phone' },
     ],
     deck: ['/about-hero/06.webp', '/about-hero/07.webp', '/about-hero/02.webp'],
-    fromPrice: 4000,
+    fromPrice: 6000,
     plate: {
       image: '/work/orb.webp',
       alt: 'A dark sphere hanging over a lit glass floor, figures walking beneath it',
@@ -582,7 +584,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     back: 'focus',
     title: 'One-page Website Design',
     description:
-      'One-page website design from €1,000, designed and built in two to three weeks. A single page that makes one argument, for launches, practices and campaigns.',
+      'One-page website design from €1,200, designed and built in two to three weeks. A single page that makes one argument, for launches, practices and campaigns.',
     areaServed: 'Cyprus',
     tagline: 'One page, one argument, no scroll wasted',
     blurb:
@@ -590,16 +592,16 @@ export const SERVICE_PAGES: ServicePage[] = [
     visual: '/home/bosra-1200.webp',
     visualPos: '50% 35%',
     answer: [
-      'A one-page website at Konaverse is a single, long page designed and built to make one argument: who you are, what you offer and how to reach you. It is for practices, launches and campaigns that do not need a site map. It costs from €1,000 and is live in two to three weeks.',
+      'A one-page website at Konaverse is a single, long page designed and built to make one argument: who you are, what you offer and how to reach you. It is for practices, launches and campaigns that do not need a site map. It costs from €1,200 and is live in two to three weeks.',
       'It is the smallest thing we make and it is made the same way as the largest: designed for your brand, built as real HTML, fast on a phone.',
     ],
     facts: [
-      { value: '€1,000', label: 'Starting at', plate: 1, cue: '€1,000' },
+      { value: '€1,200', label: 'Starting at', plate: 1, cue: '€1,200' },
       { value: '2–3 weeks', label: 'To live', plate: 3, cue: 'two to three weeks' },
       { value: '1 page', label: 'Everything on it', plate: 2, cue: 'a single, long page' },
     ],
     deck: ['/about-hero/03.webp', '/about-hero/02.webp', '/about-hero/07.webp'],
-    fromPrice: 1000,
+    fromPrice: 1200,
     plate: {
       image: '/home/inline-2.webp',
       alt: 'A single line of light along a dark horizon',
@@ -701,7 +703,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     back: 'renew',
     title: 'Website Redesign Services',
     description:
-      'Website redesign services from €2,000. We keep what works, redesign what does not, and redirect every old URL so your rankings survive the move. Four to eight weeks.',
+      'Website redesign services from €2,500. We keep what works, redesign what does not, and redirect every old URL so your rankings survive the move. Four to eight weeks.',
     areaServed: 'Worldwide',
     tagline: 'Keep what works. Redesign what doesn’t.',
     blurb:
@@ -709,16 +711,16 @@ export const SERVICE_PAGES: ServicePage[] = [
     visual: '/home/inline-1.webp',
     visualPos: '80% 60%',
     answer: [
-      'A website redesign at Konaverse starts with what your current site already does right (its traffic, its content, its rankings) and rebuilds the design and structure around it. It is for businesses whose site has fallen behind the company. A redesign is a new design and build, so it is priced as one and starts at €2,000 and takes four to eight weeks, and every old URL is redirected so nothing you rank for is lost.',
+      'A website redesign at Konaverse starts with what your current site already does right (its traffic, its content, its rankings) and rebuilds the design and structure around it. It is for businesses whose site has fallen behind the company. A redesign is a new design and build, so it is priced as one and starts at €2,500 and takes four to eight weeks, and every old URL is redirected so nothing you rank for is lost.',
       'Before and after is the easiest proof there is. Half of our redesigns begin with an audit you can act on whether or not you hire us.',
     ],
     facts: [
-      { value: '€2,000', label: 'Starting at', plate: 2, cue: '€2,000' },
+      { value: '€2,500', label: 'Starting at', plate: 2, cue: '€2,500' },
       { value: '4–8 weeks', label: 'Audit to launch', plate: 1, cue: 'four to eight weeks' },
       { value: '0 lost', label: 'Old URLs redirected', plate: 3, cue: 'every old URL is redirected' },
     ],
     deck: ['/about-hero/01.webp', '/about-hero/02.webp', '/about-hero/03.webp'],
-    fromPrice: 2000,
+    fromPrice: 2500,
     plate: {
       image: '/work/fog.webp',
       alt: 'Towers rising out of fog over a city, in black and white',
@@ -825,7 +827,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     visual: '/home/inline-2.webp',
     visualPos: '30% 50%',
     answer: [
-      'SEO at Konaverse is the work of making a Cyprus business visible where people actually search: Google, and increasingly ChatGPT, Perplexity and Gemini. It starts with the technical foundation of the site and continues with content that answers real questions. It is for businesses with a site worth ranking. An SEO audit is €500; ongoing work starts at €300 a month.',
+      'SEO at Konaverse is the work of making a Cyprus business visible where people actually search: Google, and increasingly ChatGPT, Perplexity and Gemini. It starts with the technical foundation of the site and continues with content that answers real questions. It is for businesses with a site worth ranking. An SEO audit is €500; ongoing work starts at €300 a month, with a three-month minimum.',
       'We do not sell rankings. We sell the pages, the structure and the citations that earn them, and we report what moved each month.',
     ],
     facts: [
@@ -931,6 +933,13 @@ export const SERVICE_PAGES: ServicePage[] = [
     },
   },
 ]
+
+/** HOSTING AND MAINTENANCE (owner, 2026-10-03: "we never mentioned that
+ *  there's hosting, and we lose money on hosting and maintenance"). One
+ *  plan, two prices, a month. The contact page's answer and the cost
+ *  article state the same two numbers in their own sentences: change
+ *  all three together. */
+export const HOSTING = { base: 40, cms: 90 } as const
 
 export const getServicePage = (slug: string) => SERVICE_PAGES.find((s) => s.slug === slug)
 

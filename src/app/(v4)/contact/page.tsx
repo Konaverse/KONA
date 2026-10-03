@@ -62,7 +62,7 @@ const FACTS: { label: string; value: string; href?: string }[] = [
 const FAQ: { q: string; a: string }[] = [
   {
     q: 'How much does a website cost?',
-    a: 'A one-page website starts at €1,000. For a standard website of five main pages, the design on its own starts at €1,500 and the development on its own starts at €1,500. Designed and built by us together, it starts at €2,000. A 3D website starts at €4,000. What moves the number is the amount of content, the number of pages, and how much of the site is custom motion or 3D. Every service page carries its starting price.',
+    a: 'A one-page website starts at €1,200. For a standard website of five main pages, the design on its own starts at €1,800 and the development on its own starts at €1,800. Designed and built by us together, it starts at €2,500. A 3D website starts at €6,000. What moves the number is the amount of content, the number of pages, and how much of the site is custom motion or 3D. Every service page carries its starting price.',
   },
   {
     q: 'How long does it take?',
@@ -82,11 +82,11 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: 'Do you redesign existing websites?',
-    a: 'Yes. A redesign is a new design and build, so it starts at €2,000, and begins with an audit of the site you have, so we keep what works and rebuild what does not. It takes four to eight weeks.',
+    a: 'Yes. A redesign is a new design and build, so it starts at €2,500, and begins with an audit of the site you have, so we keep what works and rebuild what does not. It takes four to eight weeks.',
   },
   {
     q: 'What happens after launch?',
-    a: 'Hosting is set up in your name and the site is handed over. If you want ongoing work, SEO is available from €300 a month, and we are one email away for changes.',
+    a: 'The site is handed over and stays yours. Hosting and maintenance are €40 a month, or €90 a month for a site with a CMS: we keep it online, updated, backed up and monitored. If you want ongoing search work, SEO is available from €300 a month with a three-month minimum, and we are one email away for changes.',
   },
   {
     q: 'Can we talk before deciding anything?',

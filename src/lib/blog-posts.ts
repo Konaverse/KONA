@@ -106,7 +106,7 @@ export const BLOG_POSTS: BlogPost[] = [
     title: 'How much does a website cost in Cyprus in 2026?',
     metaTitle: 'Website Cost in Cyprus (2026): Real Prices and What Moves Them',
     description:
-      'What a website costs in Cyprus in 2026, from a studio that publishes its prices: one-page sites from €1,000, five-page websites from €2,000 designed and built, 3D websites from €4,000, and what moves each number.',
+      'What a website costs in Cyprus in 2026, from a studio that publishes its prices: one-page sites from €1,200, five-page websites from €2,500 designed and built, 3D websites from €6,000, and what moves each number.',
     excerpt:
       'Our real prices in one table, what moves each number, and how to compare two quotes that look nothing alike.',
     topic: 'Pricing',
@@ -121,7 +121,7 @@ export const BLOG_POSTS: BlogPost[] = [
       position: '50% 40%',
     },
     answer:
-      'A professionally designed website in Cyprus costs from €1,000 for a one-page site, from €2,000 for a standard website of five main pages, designed and built, and from €4,000 for a 3D or immersive website. Those are our own starting prices at Konaverse for 2026. The final number depends on how many pages you need, how much of the site is custom motion, and what the site has to connect to.',
+      'A professionally designed website in Cyprus costs from €1,200 for a one-page site, from €2,500 for a standard website of five main pages, designed and built, and from €6,000 for a 3D or immersive website. Those are our own starting prices at Konaverse for 2026. The final number depends on how many pages you need, how much of the site is custom motion, and what the site has to connect to.',
     blocks: [
       { kind: 'h2', id: 'prices', text: 'Website prices in Cyprus, in one table' },
       {
@@ -133,17 +133,17 @@ export const BLOG_POSTS: BlogPost[] = [
         caption: 'Konaverse starting prices and timelines, 2026',
         head: ['Type of website', 'Starting price', 'Timeline', 'Right for'],
         rows: [
-          ['One-page website', '€1,000', '2 to 3 weeks', 'A practice, a launch or a campaign with one thing to say'],
-          ['Website, designed and built (five main pages)', '€2,000', '4 to 8 weeks', 'A business that has outgrown its template'],
-          ['Web design only', '€1,500', '4 to 6 weeks', 'You have a developer and need the design'],
-          ['Web development only', '€1,500', '4 to 8 weeks', 'You have a finished design and need it built'],
-          ['Website redesign', '€2,000', '4 to 8 weeks', 'An existing site that has fallen behind the company'],
-          ['3D or immersive website', '€4,000', '8 to 12 weeks', 'A brand that needs presence, not only information'],
+          ['One-page website', '€1,200', '2 to 3 weeks', 'A practice, a launch or a campaign with one thing to say'],
+          ['Website, designed and built (five main pages)', '€2,500', '4 to 8 weeks', 'A business that has outgrown its template'],
+          ['Web design only', '€1,800', '4 to 6 weeks', 'You have a developer and need the design'],
+          ['Web development only', '€1,800', '4 to 8 weeks', 'You have a finished design and need it built'],
+          ['Website redesign', '€2,500', '4 to 8 weeks', 'An existing site that has fallen behind the company'],
+          ['3D or immersive website', '€6,000', '8 to 12 weeks', 'A brand that needs presence, not only information'],
         ],
       },
       {
         kind: 'p',
-        text: 'Most clients want both halves, so the number to remember is €2,000: a standard website of five main pages, designed and built by us. Web design and web development are also sold on their own, at €1,500 each, because some clients arrive with one half already done. Some bring a finished design and need it built. Some have a developer and need the design. A redesign is a new design and build, so it is priced as one: the difference is the audit at the start and the redirects at the end.',
+        text: 'Most clients want both halves, so the number to remember is €2,500: a standard website of five main pages, designed and built by us. Web design and web development are also sold on their own, at €1,800 each, because some clients arrive with one half already done. Some bring a finished design and need it built. Some have a developer and need the design. A redesign is a new design and build, so it is priced as one: the difference is the audit at the start and the redirects at the end.',
       },
       { kind: 'h2', id: 'what-moves-the-price', text: 'What moves the price' },
       {
@@ -160,7 +160,7 @@ export const BLOG_POSTS: BlogPost[] = [
           '**Whether an old site has to be moved.** Search rankings live on URLs. Moving them safely is its own piece of work, and we have written up [how we redesign a site without losing its rankings](/blog/redesign-website-without-losing-seo).',
         ],
       },
-      { kind: 'h2', id: 'one-page-or-full-site', text: 'Is a €1,000 one-page website enough?' },
+      { kind: 'h2', id: 'one-page-or-full-site', text: 'Is a €1,200 one-page website enough?' },
       {
         kind: 'p',
         text: 'Often, yes. If your business has one audience and one thing to sell, a single well-ordered page does the job and nothing gets lost between the price and the button. [Los Santos Barbershop](/work/los-santos-barbers) in Nicosia is one page: the services with their prices, the reviews, and a booking button in every section.',
@@ -194,7 +194,7 @@ export const BLOG_POSTS: BlogPost[] = [
       { kind: 'h2', id: 'seo-cost', text: 'What SEO costs in Cyprus' },
       {
         kind: 'p',
-        text: 'Search work is priced separately from the site because it does not end at launch. At Konaverse an SEO audit is €500: a prioritised list of technical and content fixes, with the expected effect of each. Ongoing work starts at €300 a month, which covers one strong page written and published, the off-site work, and a report in plain language.',
+        text: 'Search work is priced separately from the site because it does not end at launch. At Konaverse an SEO audit is €500: a prioritised list of technical and content fixes, with the expected effect of each. Ongoing work starts at €300 a month with a three-month minimum, which covers one strong page written and published, the off-site work, and a report in plain language.',
       },
       {
         kind: 'p',
@@ -203,7 +203,7 @@ export const BLOG_POSTS: BlogPost[] = [
       { kind: 'h2', id: 'running-costs', text: 'What you pay after launch' },
       {
         kind: 'p',
-        text: 'A website has running costs after launch: the domain, the hosting, and the maintenance that keeps it secure and working. How much depends on the site: its traffic, what it connects to, and how often it changes. We quote them with the project, so you know the yearly cost before you sign. Changes you ask for later are quoted when you ask. Ongoing search work is the monthly SEO service above.',
+        text: 'A website has running costs after launch: the domain, the hosting, and the maintenance that keeps it secure and working. Our hosting and maintenance plan is €40 a month, or €90 a month for a site with a CMS. It covers keeping the site online, updated, backed up and monitored. The domain is yours and is billed to you by the registrar. Changes you ask for later are quoted when you ask. Ongoing search work is the monthly SEO service above.',
       },
       { kind: 'h2', id: 'compare-quotes', text: 'How to compare two quotes' },
       {
@@ -229,7 +229,7 @@ export const BLOG_POSTS: BlogPost[] = [
     service: {
       slug: 'web-design',
       label: 'Web design in Cyprus',
-      line: 'A five-page website designed around your brand: from €1,500 for the design, or €2,000 designed and built.',
+      line: 'A five-page website designed around your brand: from €1,800 for the design, or €2,500 designed and built.',
     },
     studies: ['los-santos-barbers', 'velricon'],
   },
@@ -416,7 +416,7 @@ export const BLOG_POSTS: BlogPost[] = [
     service: {
       slug: 'website-redesign',
       label: 'Website redesign services',
-      line: 'An audit of what your site already earns, then a redesign that keeps it. From €2,000, four to eight weeks.',
+      line: 'An audit of what your site already earns, then a redesign that keeps it. From €2,500, four to eight weeks.',
     },
     studies: ['velricon'],
   },

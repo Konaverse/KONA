@@ -77,7 +77,7 @@ One author for the whole blog: Konstantinos Kyprianou (owner, 3 Oct 2026).
 - Target queries to validate first: "what affects website cost", "why do websites cost so much", "website cost breakdown", "web development cost factors".
 - Feeds: web-development (its one service link), and it should link to the cost article.
 
-**Prices as confirmed by the owner, 3 Oct 2026:** one-page from €1,000; web design alone €1,500; web development alone €1,500; design and development together €2,000 minimum (a standard site of five main pages); redesign from €2,000; 3D from €4,000; SEO audit €500, then from €300 a month.
+**Prices as confirmed by the owner, 3 Oct 2026 (raised the same day after a pricing review):** one-page from €1,200; web design alone €1,800; web development alone €1,800; design and development together €2,500 minimum (a standard site of five main pages); redesign from €2,500; 3D from €6,000; SEO audit €500, then from €300 a month with a three-month minimum; hosting and maintenance €40 a month, €90 with a CMS. Add-on prices (extra page, CMS, second language, bookings) were proposed as estimates only and are NOT published: the owner sets them from real hours, and they are the backbone of the pricing-drivers article.
 
 ## 3. The next six, in order (Feb – Apr 2027)
 
