@@ -31,7 +31,7 @@ checklist + research record. Evidence tags: P = official Google/vendor doc, S = 
 4. Case-study quotes — **REMOVED** (all five, 2026-10-02).
 5. Clutch reviews — **OPEN, deferred** by the owner ("we'll check Clutch reviews another time"). Still the #1 off-page lever (Clutch on 10/16 CY money SERPs; the CY web-designers page lists 11 firms). Revisit at the week-2 profile setup.
 6. Prices — **OPEN, being finalised** by the owner. Blocks the two cost pieces (docs/blog-plan-2026.md #5, #10); the service pages and Offer schema carry the current "from" figures until then.
-7. Dtzankatian as a named case study — open.
+7. Dtzankatian — must NOT be named or identifiable (owner 2026-10-03); the migration story is told anonymised.
 8. YouTube — open.
 
 ## 2. Launch gate (week 1) — P0 unless marked
@@ -91,7 +91,7 @@ City pages: none (10–100 volume, doorway risk).
 2. Website + SEO cost in Cyprus 2026 → /pricing (AI Overview from 6 CY posts; PAA SEO cost)
 3. Scrollytelling: what, cost, 10 examples → 3d-websites (unowned)
 4. Best 3D websites 2026 with measured stacks → 3d-websites
-5. Redesign without losing rankings (Dtzankatian) → website-redesign (needs decision 7)
+5. Redesign without losing rankings (anonymised migration) → website-redesign
 6. Honest Cyprus agency comparison, Konaverse in its niche rather than #1, ONE list only → /services
 Prerequisite: /blog route + BlogPosting template (byline → /about person, visible dates, tables, sitemap, IndexNow).
 

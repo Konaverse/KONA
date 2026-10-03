@@ -275,7 +275,11 @@ export default function ServiceCarousel({ services }: { services: readonly Carou
   return (
     <div ref={ref} className="sv">
       <div className="sv-top">
-        <h1 className="sv-h1">Services</h1>
+        {/* the label and what the page is, in the words people search (SEO
+            plan v3, owner-approved 2026-10-03) */}
+        <h1 className="sv-h1">
+          Services <span className="sv-h1-mod">Web design, development and 3D websites, from Cyprus</span>
+        </h1>
 
         {/* THE COPY: all six in the HTML, the active one shown */}
         <div className="sv-copies" aria-live="polite">

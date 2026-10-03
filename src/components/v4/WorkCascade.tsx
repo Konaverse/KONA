@@ -155,11 +155,15 @@ const SWELL_MAX = 0.28
 export default function WorkCascade({
   cards,
   title,
+  modifier,
   line,
   opener,
 }: {
   cards: CascadeCard[]
   title: string
+  /** the h1's second line: what the page is, in the words people search
+   *  (SEO plan v3, owner-approved 2026-10-03). Set small beside the spine. */
+  modifier?: string
   line: string
   /** THE OPENING FRAME: a picture the plate wears at full bleed instead
    *  of its own cover, swapped for the cover mid-draw-in */
@@ -625,7 +629,10 @@ export default function WorkCascade({
               slides (GSAP never meets the rotation), the inner is turned */}
           <h1 className="wc-title" id="wc-h">
             <span className="wc-title-m">
-              <span className="wc-title-t">{title}</span>
+              <span className="wc-title-t">
+                {title}
+                {modifier ? <> <span className="wc-title-mod">{modifier}</span></> : null}
+              </span>
             </span>
           </h1>
           <p className="wc-now wc-ent" aria-live="polite">

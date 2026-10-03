@@ -1258,6 +1258,15 @@
   letter-spacing: 0;
   color: var(--text-muted);
 }
+/* the h1's second line: the label stays the voice, this is the subject */
+.sv-h1-mod {
+  display: block;
+  margin-top: 0.45rem;
+  line-height: 1.35;
+  text-wrap: balance;
+  font-weight: var(--w-regular);
+  color: var(--text);
+}
 /* THE COPY: six stacked in one cell, the active one shown */
 .sv-copies { display: grid; width: 44rem; margin-top: 1rem; }
 .sv-copy {

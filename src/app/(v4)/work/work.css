@@ -986,6 +986,18 @@
   transform: rotate(180deg);
   white-space: nowrap;
 }
+/* the spine's subtitle: a block in a vertical line box is a second,
+   thin column, so it stands beside the title and reads the same way
+   (bottom to top); on the horizontal phone layout it is a line under it */
+.wc-title-mod {
+  display: block;
+  font-size: var(--t-small);
+  font-weight: var(--w-regular);
+  letter-spacing: 0;
+  line-height: 1.4;
+  color: var(--text-muted);
+  margin-inline-start: 0.15em;
+}
 .wc-now {
   margin: 0 0 0.55rem;
   font-size: var(--t-body);

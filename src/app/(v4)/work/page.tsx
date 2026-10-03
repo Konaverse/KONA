@@ -145,6 +145,7 @@ export default function WorkPage() {
       <WorkCascade
         cards={cards}
         title="Selected work"
+        modifier="Websites we designed and built"
         line="Every one from a blank file."
         opener={{ src: '/work/covers/opener.webp', small: '/work/covers/opener-960.webp' }}
       />
