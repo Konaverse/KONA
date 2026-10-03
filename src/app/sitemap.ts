@@ -27,6 +27,8 @@ const COPY_PASS = new Date('2026-10-03')
 const UPDATED: Record<string, Date> = {
   '': COPY_PASS,
   '/contact': COPY_PASS,
+  /* the booking calendar's cookies, added to the policy */
+  '/cookies': new Date('2026-10-04'),
 }
 
 const entry = (path: string, fallback: Date = LAUNCH) => ({

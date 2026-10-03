@@ -25,8 +25,13 @@ export const metadata: Metadata = {
  * lives in localStorage (not a cookie), Google Analytics runs under Consent
  * Mode v2 and sets _ga / _ga_* only after "Accept", Ahrefs is cookieless.
  * The "change your choice" control is the withdrawal the GDPR asks for.
+ *
+ * 2026-10-04: the contact page's calendar is Calendly's page in a frame,
+ * in the page from the first paint (owner, 2026-10-03). Its cookies are
+ * Calendly's, set on load and outside our banner, and the policy now
+ * says so (section 3C and the note in section 5).
  */
-const UPDATED = 'August 2026'
+const UPDATED = 'October 2026'
 
 export default function CookiesPage() {
   return (
@@ -63,6 +68,11 @@ export default function CookiesPage() {
           <strong>analytics</strong>: they help us understand how the site is used so we can
           improve it. Analytics cookies are set only if you accept them.
         </p>
+        <p>
+          One page also carries a third party&rsquo;s tool: the booking calendar on our contact
+          page is provided by Calendly, which sets its own cookies. They are described in section
+          3C.
+        </p>
       </LegalSection>
 
       <LegalSection title="3. What we set">
@@ -90,6 +100,16 @@ export default function CookiesPage() {
           choice.{' '}
           <LegalExt href="https://ahrefs.com/privacy">Ahrefs privacy policy</LegalExt>
         </p>
+
+        <h3>C. The booking calendar on the contact page</h3>
+        <p>
+          The calendar on our <a href="/contact">contact page</a> is <strong>Calendly</strong>
+          &rsquo;s booking page, shown inside a frame. It loads with the page, and Calendly sets
+          its own cookies in that frame to run the calendar, to keep it secure and to measure its
+          use. These cookies are set by Calendly, not by us: we cannot read them, and the choice
+          you make in our banner does not switch them on or off.{' '}
+          <LegalExt href="https://calendly.com/legal/privacy-notice">Calendly privacy notice</LegalExt>
+        </p>
       </LegalSection>
 
       <LegalSection title="4. Google Consent Mode v2">
@@ -110,6 +130,10 @@ export default function CookiesPage() {
         <p>
           You can also block or delete cookies through your browser&rsquo;s settings. The site
           works fully without analytics cookies.
+        </p>
+        <p>
+          To avoid Calendly&rsquo;s cookies, block third-party cookies in your browser, or skip
+          the calendar: the form and the email address on the contact page reach us without it.
         </p>
       </LegalSection>
 
