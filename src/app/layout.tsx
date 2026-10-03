@@ -6,7 +6,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import JsonLd from '@/components/JsonLd'
 import CookieConsent from '@/components/layout/CookieConsent'
 import GoogleAnalytics from '@/components/layout/GoogleAnalytics'
-import { CONTACT_EMAIL, CONTACT_PHONE, SITE_NAME, SITE_URL } from '@/lib/site'
+import { AUTHOR_BIO, CONTACT_EMAIL, CONTACT_PHONE, SITE_NAME, SITE_URL } from '@/lib/site'
 import { SERVICE_PAGES } from '@/lib/service-pages'
 import './globals.css'
 
@@ -187,6 +187,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               '@id': `${SITE_URL}/#konstantinos`,
               name: 'Konstantinos Kyprianou',
               jobTitle: 'Technical Architect & Co-Founder',
+              /* the blog's author (2026-10-03): the bio under every
+                 article, his portrait and his page, on the one node */
+              description: AUTHOR_BIO,
+              image: `${SITE_URL}/people/konstantinos-portrait.webp`,
+              url: `${SITE_URL}/about`,
+              knowsAbout: ['Web development', 'Next.js', 'WebGL', 'Technical SEO', 'Website migration'],
               worksFor: { '@id': `${SITE_URL}/#organization` },
               sameAs: ['https://www.linkedin.com/in/kon-kyprianou-1011/'],
             },

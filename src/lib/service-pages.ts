@@ -18,8 +18,8 @@
  * PRICES ARE THE OWNER'S (confirmed 2026-10-03): one-page from €1,000;
  * web design €2,000 for a standard site of five main pages; web
  * development from €2,000; redesign priced as design and development,
- * from €2,000; 3D from €4,000. The SEO figures (€800 audit, €500 a
- * month) were not part of that confirmation. Timelines are still ours.
+ * from €2,000; 3D from €4,000; SEO audit €500, then from €300 a month.
+ * Timelines are still ours.
  * COPY RULE (owner, same day): written for search, and NO EM DASHES in
  * anything a visitor or a crawler reads (tools/dashes.js checks).
  */
@@ -816,7 +816,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     back: 'search',
     title: 'SEO Services in Cyprus',
     description:
-      'SEO services in Cyprus that start with the technical foundation (server-rendered pages, structured data, real content) and continue monthly from €500. For Google and for AI search.',
+      'SEO services in Cyprus that start with the technical foundation (server-rendered pages, structured data, real content) and continue monthly from €300. For Google and for AI search.',
     areaServed: 'Cyprus',
     tagline: 'Be the answer when they ask',
     blurb:
@@ -824,16 +824,16 @@ export const SERVICE_PAGES: ServicePage[] = [
     visual: '/home/inline-2.webp',
     visualPos: '30% 50%',
     answer: [
-      'SEO at Konaverse is the work of making a Cyprus business visible where people actually search: Google, and increasingly ChatGPT, Perplexity and Gemini. It starts with the technical foundation of the site and continues with content that answers real questions. It is for businesses with a site worth ranking. A foundation audit is €800; ongoing work starts at €500 a month.',
+      'SEO at Konaverse is the work of making a Cyprus business visible where people actually search: Google, and increasingly ChatGPT, Perplexity and Gemini. It starts with the technical foundation of the site and continues with content that answers real questions. It is for businesses with a site worth ranking. An SEO audit is €500; ongoing work starts at €300 a month.',
       'We do not sell rankings. We sell the pages, the structure and the citations that earn them, and we report what moved each month.',
     ],
     facts: [
-      { value: '€500 / mo', label: 'Ongoing, from', plate: 3, cue: '€500 a month' },
-      { value: '€800', label: 'Foundation audit', plate: 2, cue: '€800' },
+      { value: '€300 / mo', label: 'Ongoing, from', plate: 3, cue: '€300 a month' },
+      { value: '€500', label: 'SEO audit', plate: 2, cue: '€500' },
       { value: 'Monthly', label: 'Report you can read', plate: 1, cue: 'each month' },
     ],
     deck: ['/about-hero/06.webp', '/about-hero/03.webp', '/about-hero/07.webp'],
-    fromPrice: 500,
+    fromPrice: 300,
     plate: {
       image: '/work/city.webp',
       alt: 'A city at night, one tower lit above all the others',
@@ -845,7 +845,7 @@ export const SERVICE_PAGES: ServicePage[] = [
       close: 'Search is a habit your customers already have',
     },
     process: [
-      { title: 'Foundation audit', give: 'Search Console and analytics access.', get: 'A prioritised list of technical and content fixes, with the expected effect of each.', time: '2 weeks' , weeks: 2 },
+      { title: 'SEO audit', give: 'Search Console and analytics access.', get: 'A prioritised list of technical and content fixes, with the expected effect of each.', time: '2 weeks' , weeks: 2 },
       { title: 'Fixes', give: 'Access to the site, or your developer’s.', get: 'Every technical item done and verified in Search Console.', time: '2–4 weeks' , weeks: 3 },
       { title: 'Monthly', give: 'An hour a month with whoever knows the customers.', get: 'One page written and published, off-site work done, a report in plain language.', time: 'Ongoing' , weeks: 4 },
     ],
@@ -901,7 +901,7 @@ export const SERVICE_PAGES: ServicePage[] = [
       getsTitle: 'What you get',
       gets: [
         {
-          title: 'A foundation audit',
+          title: 'An SEO audit',
           text: 'A prioritised list of technical and content fixes, with the expected effect of each.',
         },
         {

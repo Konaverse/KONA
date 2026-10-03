@@ -3,7 +3,8 @@ import { Fragment, type ReactNode } from 'react'
 import { notFound } from 'next/navigation'
 import JsonLd from '@/components/JsonLd'
 import ArrowLink from '@/components/v4/ArrowLink'
-import { BlogCard } from '@/components/v4/BlogCards'
+import { BlogGrid } from '@/components/v4/BlogCards'
+import BlogToc from '@/components/v4/BlogToc'
 import Invitation from '@/components/v4/Invitation'
 import Reveal from '@/components/v4/Reveal'
 import { AUTHORS, BLOG_POSTS, getPost, longDate, postsByDate, readMinutes, wordCount, type Block } from '@/lib/blog-posts'
@@ -201,14 +202,14 @@ export default async function BlogArticle({ params }: { params: Promise<{ slug: 
               <li aria-current="page">{post.topic}</li>
             </ol>
           </nav>
-          <Reveal masked as="h1" className="bl-art-h1">
+          <Reveal as="h1" className="bl-art-h1">
             <span>{post.title}</span>
           </Reveal>
           <Reveal as="div" index={1}>
             <ul className="bl-art-meta">
               <li>
                 <b>
-                  <a href="/about" rel="author">
+                  <a href="#author" rel="author">
                     {author.name}
                   </a>
                 </b>
@@ -249,16 +250,8 @@ export default async function BlogArticle({ params }: { params: Promise<{ slug: 
         </header>
 
         <div className="k-page bl-art-grid">
-          <nav className="bl-toc" aria-label="In this article">
-            <p className="bl-toc-k">In this article</p>
-            <ol>
-              {contents.map((c) => (
-                <li key={c.id}>
-                  <a href={`#${c.id}`}>{c.text}</a>
-                </li>
-              ))}
-            </ol>
-          </nav>
+          {/* the contents, marking the section being read (BlogToc) */}
+          <BlogToc items={contents} />
 
           <div className="bl-body">
             {/* THE ANSWER: first, whole, liftable */}
@@ -286,12 +279,36 @@ export default async function BlogArticle({ params }: { params: Promise<{ slug: 
               </nav>
             ) : null}
 
-            <footer className="bl-by">
-              <p>
-                Written by {author.name}, {author.role.charAt(0).toLowerCase() + author.role.slice(1)}. Published{' '}
-                <time dateTime={post.published}>{longDate(post.published)}</time>. Every number in this article is from our own
-                projects or price list; where we do not have a figure, we say so.
-              </p>
+            {/* THE AUTHOR (owner, 2026-10-03: "we need an author bio with
+                structured data"): the portrait, the name, the bio. The
+                same words are the `description` of his Person node in
+                the root layout's graph, which this article's `author`
+                points at by @id. */}
+            <footer className="bl-author" id="author" aria-label="About the author">
+              <img className="bl-author-pic" src={author.portrait} alt={`${author.name}, ${author.role}`} width={160} height={192} loading="lazy" decoding="async" />
+              <div className="bl-author-in">
+                <p className="bl-author-k">Written by</p>
+                <p className="bl-author-n">{author.name}</p>
+                <p className="bl-author-r">{author.role}</p>
+                <p className="bl-author-b">{author.bio}</p>
+                <p className="bl-author-l">
+                  {author.links.map((l) =>
+                    l.href.startsWith('http') ? (
+                      <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer me">
+                        {l.label}
+                      </a>
+                    ) : (
+                      <a key={l.href} href={l.href}>
+                        {l.label}
+                      </a>
+                    ),
+                  )}
+                </p>
+                <p className="bl-author-d">
+                  Published <time dateTime={post.published}>{longDate(post.published)}</time>. Every number in this article is from our own projects or
+                  price list; where we do not have a figure, we say so.
+                </p>
+              </div>
             </footer>
           </div>
         </div>
@@ -302,11 +319,7 @@ export default async function BlogArticle({ params }: { params: Promise<{ slug: 
           <h2 className="bl-more-h" id="bl-more-h">
             More from the blog
           </h2>
-          <div className="bl-hub-grid" style={{ paddingBottom: 0 }}>
-            {others.slice(0, 2).map((p, i) => (
-              <BlogCard key={p.slug} post={p} index={i} />
-            ))}
-          </div>
+          <BlogGrid posts={others.slice(0, 3)} />
         </section>
       ) : null}
 

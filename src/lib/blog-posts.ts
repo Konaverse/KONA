@@ -1,3 +1,5 @@
+import { AUTHOR_BIO } from '@/lib/site'
+
 /**
  * THE BLOG — one record per /blog/[slug] (docs/blog-plan-2026.md; opened
  * 2026-10-03, owner: "I want the blog built, with two articles posted…
@@ -8,7 +10,7 @@
  *   · nothing that could be written without our own work: our prices, our
  *     timelines, our measurements, our migrations;
  *   · buying-stage questions only, answered in the first two sentences;
- *   · one named author, real dates. `updated` moves only with a real edit
+ *   · one named author (Konstantinos), real dates. `updated` moves only with a real edit
  *     (the sitemap's lastmod reads it);
  *   · EXACTLY ONE link to a service page (`service`), plus the case
  *     studies it cites; the service page links back (service-pages.ts);
@@ -26,11 +28,27 @@
  * outcome, because none was recorded.
  */
 
-export type AuthorKey = 'konstantinos' | 'nabil'
+/** ONE AUTHOR (owner, 2026-10-03: "the author is only one, Konstantinos
+ *  Kyprianou. We need an author bio with structured data"). `id` is the
+ *  Person node in the root layout's graph, which carries the same bio,
+ *  portrait and links, so the byline and the entity are one. */
+export type AuthorKey = 'konstantinos'
 
-export const AUTHORS: Record<AuthorKey, { name: string; role: string; id: string }> = {
-  konstantinos: { name: 'Konstantinos Kyprianou', role: 'Technical architect, Konaverse', id: '#konstantinos' },
-  nabil: { name: 'Nabil Al Jbawi', role: 'Creative director, Konaverse', id: '#nabil' },
+export const AUTHORS: Record<
+  AuthorKey,
+  { name: string; role: string; id: string; portrait: string; bio: string; links: { label: string; href: string }[] }
+> = {
+  konstantinos: {
+    name: 'Konstantinos Kyprianou',
+    role: 'Technical architect and co-founder, Konaverse',
+    id: '#konstantinos',
+    portrait: '/people/konstantinos-portrait.webp',
+    bio: AUTHOR_BIO,
+    links: [
+      { label: 'About Konaverse', href: '/about' },
+      { label: 'LinkedIn', href: 'https://www.linkedin.com/in/kon-kyprianou-1011/' },
+    ],
+  },
 }
 
 export type Block =
@@ -82,7 +100,7 @@ export const BLOG_POSTS: BlogPost[] = [
     topic: 'Pricing',
     published: '2026-10-03',
     updated: '2026-10-03',
-    author: 'nabil',
+    author: 'konstantinos',
     cover: {
       src: '/work/cathedral.webp',
       alt: 'A tall stone interior in black and white, light falling from high windows',
@@ -163,7 +181,7 @@ export const BLOG_POSTS: BlogPost[] = [
       { kind: 'h2', id: 'seo-cost', text: 'What SEO costs in Cyprus' },
       {
         kind: 'p',
-        text: 'Search work is priced separately from the site because it does not end at launch. At Konaverse a foundation audit is €800: a prioritised list of technical and content fixes, with the expected effect of each. Ongoing work starts at €500 a month, which covers one strong page written and published, the off-site work, and a report in plain language.',
+        text: 'Search work is priced separately from the site because it does not end at launch. At Konaverse an SEO audit is €500: a prioritised list of technical and content fixes, with the expected effect of each. Ongoing work starts at €300 a month, which covers one strong page written and published, the off-site work, and a report in plain language.',
       },
       {
         kind: 'p',

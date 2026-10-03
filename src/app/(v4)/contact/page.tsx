@@ -86,7 +86,7 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: 'What happens after launch?',
-    a: 'Hosting is set up in your name and the site is handed over. If you want ongoing work, SEO is available from €500 a month, and we are one email away for changes.',
+    a: 'Hosting is set up in your name and the site is handed over. If you want ongoing work, SEO is available from €300 a month, and we are one email away for changes.',
   },
   {
     q: 'Can we talk before deciding anything?',

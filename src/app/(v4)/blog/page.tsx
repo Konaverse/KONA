@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import JsonLd from '@/components/JsonLd'
-import { BlogCard } from '@/components/v4/BlogCards'
+import { BlogGrid } from '@/components/v4/BlogCards'
 import Invitation from '@/components/v4/Invitation'
 import Reveal from '@/components/v4/Reveal'
 import { AUTHORS, postsByDate } from '@/lib/blog-posts'
@@ -68,7 +68,8 @@ export default function BlogIndex() {
     <main className="bl-hub">
       <JsonLd data={jsonLd} />
       <header className="k-page bl-hub-head">
-        <Reveal masked as="h1" className="bl-hub-h1">
+        {/* not masked: a mask crops the "g" */}
+        <Reveal as="h1" className="bl-hub-h1">
           <span>
             Blog{' '}
             <span className="bl-hub-mod">
@@ -77,10 +78,8 @@ export default function BlogIndex() {
           </span>
         </Reveal>
       </header>
-      <div className="k-page bl-hub-grid">
-        {posts.map((p, i) => (
-          <BlogCard key={p.slug} post={p} index={i} level="h2" />
-        ))}
+      <div className="k-page bl-hub-list">
+        <BlogGrid posts={posts} level="h2" />
       </div>
       <Invitation />
     </main>
