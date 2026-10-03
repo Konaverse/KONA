@@ -8,9 +8,9 @@ import RunGround from '@/components/v4/RunGround'
 import RunAnswer from '@/components/v4/RunAnswer'
 import RunTrack from '@/components/v4/RunTrack'
 import ServicePoster from '@/components/v4/ServicePoster'
-import { RunKind, RunFix, RunWork, RunGets, type RunWorkItem } from '@/components/v4/RunMore'
+import { RunKind, RunFix, RunWork, RunGets, RunAddons, type RunWorkItem } from '@/components/v4/RunMore'
 import Invitation from '@/components/v4/Invitation'
-import { RUN_DECK, SERVICE_PAGES, getServicePage } from '@/lib/service-pages'
+import { RUN_DECK, RUNNING, SERVICE_PAGES, formatEuro, getServicePage } from '@/lib/service-pages'
 import { CALENDLY_URL, OG_DEFAULTS, SITE_URL } from '@/lib/site'
 import { CASE_STUDIES } from '@/lib/case-studies'
 import { BLOG_POSTS } from '@/lib/blog-posts'
@@ -122,6 +122,7 @@ const chaptersFor = (more: boolean, work: boolean) => [
   ...(more ? [{ id: 'fit', label: 'Fit' }, { id: 'fixes', label: 'Fixes' }] : []),
   ...(more && work ? [{ id: 'work', label: 'Work' }] : []),
   ...(more ? [{ id: 'gets', label: 'You get' }] : []),
+  { id: 'addons', label: 'Add-ons' },
   { id: 'plan', label: 'Plan' },
   { id: 'contact', label: 'Start' },
 ]
@@ -294,6 +295,12 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
       {/* THE WORK and WHAT YOU GET (2026-10-02), before the process */}
       {page.more && work.length > 0 && <RunWork title={page.more.workTitle} items={work} />}
       {page.more && <RunGets title={page.more.getsTitle} gets={page.more.gets} />}
+      {/* the priced extras and the running costs, stated up front */}
+      <RunAddons
+        addons={page.addons}
+        running={page.slug === 'seo' ? undefined : RUNNING}
+        from={page.slug === 'seo' ? `${formatEuro(page.fromPrice)} a month` : formatEuro(page.fromPrice)}
+      />
 
       {/* 4 — THE PLAN: the process */}
       <RunTrack steps={page.process} />

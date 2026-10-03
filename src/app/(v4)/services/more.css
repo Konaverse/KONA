@@ -19,7 +19,8 @@
 .rk,
 .rx,
 .rw,
-.rg {
+.rg,
+.ra {
   position: relative;
   padding: 10rem var(--page-pad) 0;
   color: var(--text);
@@ -426,16 +427,56 @@
 @keyframes rg-run { to { --rg-run: 360deg; } }
 
 /* the last of the four leaves room before the process card */
-.rg { padding-bottom: 10rem; }
+/* the add-ons sheet follows (.ra) and carries the foot's space */
+.rg { padding-bottom: 0; }
 
 @media (prefers-reduced-motion: reduce) {
   .rg-card:hover::before { animation-duration: 12s; }
 }
 
 /* ---------------- PHONES: one column, no blend ---------------- */
+/* ---------------- ADD-ONS AND RUNNING COSTS: two price sheets ---------------- */
+.ra { padding-bottom: 10rem; }
+.ra-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+.ra-cols.is-one { grid-template-columns: minmax(0, 1fr); max-width: 62rem; }
+.ra-sheet {
+  padding: 2.4rem 2.5rem 1.4rem;
+  border-radius: var(--r-lg);
+  background: var(--n-0);
+  box-shadow: 0 1.5rem 3rem -2.2rem rgb(21 23 26 / 0.28);
+  transition: opacity var(--d-slow) var(--e-glass), translate var(--d-slow) var(--e-glass);
+}
+.ra.is-live .ra-sheet:not(.is-in) { opacity: 0; translate: 0 2rem; }
+.ra.is-live .ra-sheet:nth-child(2) { transition-delay: 90ms; }
+.ra-t { margin: 0; font-size: 2rem; font-weight: var(--w-medium); line-height: 1.05; letter-spacing: -0.035em; }
+.ra-note { margin: 0.7rem 0 1.2rem; max-width: 34rem; font-size: 1rem; line-height: 1.55; color: var(--text-muted); }
+.ra-list { margin: 0; padding: 0; list-style: none; }
+.ra-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 2rem;
+  align-items: baseline;
+  padding: 1.05rem 0;
+  border-top: 1px solid var(--hairline);
+}
+.ra-n { display: block; font-size: 1.15rem; font-weight: var(--w-medium); line-height: 1.25; letter-spacing: -0.015em; }
+.ra-x { display: block; margin-top: 0.25rem; font-size: 0.95rem; line-height: 1.5; color: var(--text-muted); }
+.ra-v { font-size: 1.15rem; line-height: 1.25; letter-spacing: -0.015em; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
 @media (max-width: 57.5rem) {
-  .rk, .rx, .rw, .rg { padding-top: 6rem; }
-  .rg { padding-bottom: 6rem; }
+  .rk, .rx, .rw, .rg, .ra { padding-top: 6rem; }
+  .rg { padding-bottom: 0; }
+  .ra { padding-bottom: 6rem; }
+  .ra-cols { grid-template-columns: minmax(0, 1fr); }
+  .ra-sheet { padding: 1.8rem 1.5rem 0.8rem; }
+  .ra-t { font-size: 1.6rem; }
+  .ra-row { column-gap: 1rem; }
+  .ra-n, .ra-v { font-size: 1.05rem; }
   .rx { padding-bottom: 6rem; }
   .rm-h2 { margin-bottom: 2.4rem; font-size: 2.6rem; }
   .rk-row { grid-template-columns: minmax(0, 1fr); }

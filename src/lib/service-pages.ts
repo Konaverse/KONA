@@ -121,6 +121,11 @@ export type ServicePage = {
     close: string
   }
   process: ProcessStep[]
+  /** THE ADD-ONS: what can be added to the starting price, each with
+   *  its own. FIGURES PROPOSED 2026-10-03 from the studio's ~€50 hour
+   *  (a €2,000 site in ~40 hours) and published at the owner's word
+   *  ("list any possible add-on"); the owner reviews each number. */
+  addons: Addon[]
   /** the CTA block's line */
   invite: string
   /** the sister page — linked ONCE, in the foot (§2a.8). Design ↔ development. */
@@ -134,6 +139,16 @@ export type ServicePage = {
    *  produced, what you get. Optional: a page without it keeps the lean
    *  run. FIRST DRAFT copy, written from the case studies. */
   more?: ServiceMore
+}
+
+/** A PRICED EXTRA (2026-10-03, owner: "the add-on prices can be good to
+ *  be added on each service page, along with hosting and maintenance. It
+ *  can be good to be clear up-front and list any possible add-on").
+ *  `price` reads as it prints: "from €500", "€400 to €800". */
+export interface Addon {
+  name: string
+  text: string
+  price: string
 }
 
 export interface ServiceProblem {
@@ -239,6 +254,13 @@ export const SERVICE_PAGES: ServicePage[] = [
         time: '1–2 weeks',
         weeks: 1.5,
       },
+    ],
+    addons: [
+      { name: 'Extra page', text: 'Each main page beyond the five, designed at desktop and phone size.', price: 'from €150' },
+      { name: 'Custom motion', text: 'A section choreographed to the scroll, beyond the standard entrances.', price: 'from €300 a section' },
+      { name: 'Copywriting', text: 'We write the page from a conversation with you.', price: 'from €100 a page' },
+      { name: 'An extra round', text: 'A third visual direction, or a round of changes beyond the one included.', price: '€200' },
+      { name: 'The build', text: 'The design built by us instead of handed to your developer.', price: 'from €700' },
     ],
     invite: 'Let’s design yours.',
     sister: {
@@ -358,6 +380,14 @@ export const SERVICE_PAGES: ServicePage[] = [
       { title: 'Build', give: 'Access to the accounts we integrate with.', get: 'A staging site you can click through, updated every few days.', time: '2–5 weeks' , weeks: 4 },
       { title: 'Content and QA', give: 'Final content in the CMS. We train you in an hour.', get: 'Every page tested on real devices, performance measured, accessibility checked.', time: '1 week' , weeks: 1 },
       { title: 'Launch', give: 'DNS access, or your IT contact.', get: 'The site live, monitored, with analytics and search console connected.', time: '2 days' , weeks: 0.4 },
+    ],
+    addons: [
+      { name: 'Extra page', text: 'Each main page beyond the five, built and tested at both sizes.', price: 'from €150' },
+      { name: 'A CMS', text: 'Pages, projects or posts as content your team edits, with no developer in between.', price: 'from €500' },
+      { name: 'A second language', text: 'Every page in two languages, each with its own address.', price: 'from €500' },
+      { name: 'Bookings or payments', text: 'A booking system or a payment provider wired into the site.', price: '€400 to €800' },
+      { name: 'A blog', text: 'An index, article pages and the structured data search engines read.', price: 'from €300' },
+      { name: 'Other integrations', text: 'A CRM, a newsletter tool, maps or analytics events, each one.', price: 'from €200' },
     ],
     invite: 'Let’s build yours.',
     sister: {
@@ -498,6 +528,13 @@ export const SERVICE_PAGES: ServicePage[] = [
       { title: 'Build', give: 'Copy.', get: 'The site with every scene wired to the scroll, measured on real devices.', time: '3–4 weeks' , weeks: 3.5 },
       { title: 'Launch', give: 'Sign-off.', get: 'Live, with a fallback that reads fully with no JavaScript at all.', time: '1 week' , weeks: 1 },
     ],
+    addons: [
+      { name: 'Extra scene', text: 'Another scroll-driven scene beyond the storyboard that was agreed.', price: 'from €800' },
+      { name: 'Product modelling', text: 'Your product modelled from files or photographs when no 3D file exists.', price: 'from €600' },
+      { name: 'Extra page', text: 'Each page beyond the main scroll, designed and built.', price: 'from €250' },
+      { name: 'A second language', text: 'Every page in two languages, each with its own address.', price: 'from €500' },
+      { name: 'A CMS', text: 'Content your team edits, with no developer in between.', price: 'from €500' },
+    ],
     invite: 'Let’s make yours.',
     more: {
       kindPictures: ['/work/lumiere-eclat/02.webp', '/work/lumiere-eclat/m-03.webp'],
@@ -616,6 +653,13 @@ export const SERVICE_PAGES: ServicePage[] = [
       { title: 'Brief', give: 'A call, your logo, the text you already have.', get: 'The page’s outline and a quote.', time: '2 days' , weeks: 0.4 },
       { title: 'Design', give: 'One round of feedback.', get: 'The page designed at desktop and phone size.', time: '1 week' , weeks: 1 },
       { title: 'Build and launch', give: 'Final copy, domain access.', get: 'The page live, with analytics and a contact route that works.', time: '1 week' , weeks: 1 },
+    ],
+    addons: [
+      { name: 'Extra section', text: 'Each section beyond the eight the page starts with.', price: 'from €100' },
+      { name: 'Bookings', text: 'A booking system wired into the page.', price: 'from €300' },
+      { name: 'A second language', text: 'The page in two languages, each with its own address.', price: 'from €300' },
+      { name: 'Copywriting', text: 'We write the page from a conversation with you.', price: 'from €200' },
+      { name: 'Custom motion', text: 'A section choreographed to the scroll, beyond the standard entrances.', price: 'from €300' },
     ],
     invite: 'Let’s make your page.',
     more: {
@@ -737,6 +781,13 @@ export const SERVICE_PAGES: ServicePage[] = [
       { title: 'Design and build', give: 'Feedback in two rounds.', get: 'The redesigned site on staging, content migrated.', time: '2–5 weeks' , weeks: 4 },
       { title: 'Launch', give: 'A go date.', get: 'Live, redirects in place, rankings monitored for the following month.', time: '1 week' , weeks: 1 },
     ],
+    addons: [
+      { name: 'Extra page', text: 'Each main page beyond the five, designed and built.', price: 'from €250' },
+      { name: 'Content migration', text: 'Moving existing pages or posts across, beyond the first twenty.', price: 'from €30 a page' },
+      { name: 'A CMS', text: 'Pages, projects or posts as content your team edits.', price: 'from €500' },
+      { name: 'A second language', text: 'Every page in two languages, each with its own address.', price: 'from €500' },
+      { name: 'Bookings or payments', text: 'A booking system or a payment provider wired into the site.', price: '€400 to €800' },
+    ],
     invite: 'Let’s redesign yours.',
     more: {
       kindPictures: ['/work/velricon/03.webp', '/work/velricon/m-05.webp'],
@@ -852,6 +903,11 @@ export const SERVICE_PAGES: ServicePage[] = [
       { title: 'Fixes', give: 'Access to the site, or your developer’s.', get: 'Every technical item done and verified in Search Console.', time: '2–4 weeks' , weeks: 3 },
       { title: 'Monthly', give: 'An hour a month with whoever knows the customers.', get: 'One page written and published, off-site work done, a report in plain language.', time: 'Ongoing' , weeks: 4 },
     ],
+    addons: [
+      { name: 'Extra page a month', text: 'A second page or article written and published in the same month.', price: 'from €150' },
+      { name: 'Google Business Profile', text: 'The profile set up or cleaned up, with categories, services and photographs.', price: '€150' },
+      { name: 'Fixes on a site we did not build', text: 'Technical fixes from the audit, done on your existing site.', price: 'Quoted' },
+    ],
     invite: 'Let’s get you found.',
     more: {
       kindPictures: ['/work/heimat-group/07.webp', '/work/los-santos-barbers/m-05.webp'],
@@ -940,6 +996,31 @@ export const SERVICE_PAGES: ServicePage[] = [
  *  article state the same two numbers in their own sentences: change
  *  all three together. */
 export const HOSTING = { base: 40, cms: 90 } as const
+
+/** AFTER LAUNCH: the running costs, the same on every page that builds a
+ *  site (the SEO page lists its own monthly work instead) */
+export const RUNNING: Addon[] = [
+  {
+    name: 'Hosting and maintenance',
+    text: 'We keep the site online, updated, backed up and monitored.',
+    price: `€${HOSTING.base} a month`,
+  },
+  {
+    name: 'Hosting and maintenance, with a CMS',
+    text: 'The same, for a site with a content system or a database behind it.',
+    price: `€${HOSTING.cms} a month`,
+  },
+  {
+    name: 'Domain',
+    text: 'Registered in your name and billed to you by the registrar.',
+    price: 'At cost',
+  },
+  {
+    name: 'Changes after launch',
+    text: 'New sections, pages or features, quoted when you ask for them.',
+    price: 'Quoted',
+  },
+]
 
 export const getServicePage = (slug: string) => SERVICE_PAGES.find((s) => s.slug === slug)
 

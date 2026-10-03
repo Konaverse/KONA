@@ -319,3 +319,54 @@ export function RunGets({
     </section>
   )
 }
+
+/* ------------------------------------------------------------------ */
+
+/** ADD-ONS AND RUNNING COSTS (2026-10-03, owner: "be clear up-front and
+ *  list any possible add-on", with hosting and maintenance). Two sheets
+ *  side by side: what can be added to the starting price, and what the
+ *  site costs once it is live. Every row is a name, a line and a price,
+ *  all in the server HTML. */
+export function RunAddons({
+  addons,
+  running,
+  from,
+}: {
+  addons: readonly { name: string; text: string; price: string }[]
+  /** absent on a page that builds no site (SEO) */
+  running?: readonly { name: string; text: string; price: string }[]
+  /** the starting price the add-ons are added to, as it prints */
+  from: string
+}) {
+  const ref = useRef<HTMLElement | null>(null)
+  useRun(ref)
+  const sheet = (title: string, note: string, rows: readonly { name: string; text: string; price: string }[]) => (
+    <div className="ra-sheet" data-in>
+      <h3 className="ra-t">{title}</h3>
+      <p className="ra-note">{note}</p>
+      <ul className="ra-list">
+        {rows.map((r) => (
+          <li key={r.name} className="ra-row">
+            <span className="ra-what">
+              <span className="ra-n">{r.name}</span>
+              <span className="ra-x">{r.text}</span>
+            </span>
+            <span className="ra-v">{r.price}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+  return (
+    <section ref={ref} id="addons" className="ra" aria-label="Add-ons and running costs">
+      <h2 className="rm-h2" data-in>
+        <Words text={running ? 'Add-ons and running costs' : 'Add-ons'} />
+      </h2>
+      <div className={`ra-cols${running ? '' : ' is-one'}`}>
+        {sheet('Add-ons', `What can be added to the starting price of ${from}. Anything not on this list is quoted before work starts.`, addons)}
+        {running ? sheet('After launch', 'What the site costs once it is live.', running) : null}
+      </div>
+    </section>
+  )
+}
+
