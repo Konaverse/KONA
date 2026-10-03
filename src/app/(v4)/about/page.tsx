@@ -103,7 +103,7 @@ import './about.css'
  */
 const TITLE = 'About us'
 const DESCRIPTION =
-  'Konaverse is three people in Cyprus — Konstantinos Kyprianou, technical architect, Nabil Al Jbawi, creative director, and Andreas Kyriakou — designing and building websites with a character of their own.'
+  'Konaverse is three people in Cyprus (Konstantinos Kyprianou, technical architect, Nabil Al Jbawi, creative director, and Andreas Kyriakou) designing and building websites with a character of their own.'
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -132,7 +132,7 @@ const PEOPLE: readonly Person[] = [
     bg: '/people/konstantinos-bg.webp',
     cut: '/people/konstantinos-cut.webp',
     bio:
-      'Konstantinos is the technical architect. He builds the sites: the code, the performance, the integrations, and the part nobody sees that makes the part everybody sees work. Next.js, WebGL, the 3D pipeline, the search work — if it has to load in under a second and move at sixty frames, it goes through him.',
+      'Konstantinos is the technical architect. He builds the sites: the code, the performance, the integrations, and the part nobody sees that makes the part everybody sees work. Next.js, WebGL, the 3D pipeline, the search work: if it has to load in under a second and move at sixty frames, it goes through him.',
   },
   {
     id: 'nabil',

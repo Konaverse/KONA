@@ -93,9 +93,9 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     slug: 'los-santos-barbers',
     name: 'Los Santos Barbershop',
-    title: 'Los Santos Barbershop — a one-page website that books',
+    title: 'Los Santos Barbershop: a one-page website that books',
     description:
-      'How Konaverse designed and built lossantosbarbers.com: a one-page site for a Nicosia barbershop that turns a 4.9-star reputation into booked chairs — services with prices, reviews as text, and a booking button that is never more than a scroll away.',
+      'How Konaverse designed and built lossantosbarbers.com: a one-page site for a Nicosia barbershop that turns a 4.9-star reputation into booked chairs: services with prices, reviews as text, and a booking button that is never more than a scroll away.',
     intro: [
       'Los Santos is a barbershop in Nicosia run by Fahed, a master barber cutting since 2015. Classic cuts, beard sculpting, hot-towel shaves, and a 4.9 rating from the people who sit in his chair.',
       'The shop had a reputation and a full book of walk-ins. What it did not have was a place online that looked as sharp as the fades, said what a cut costs, and let a new client book without a phone call.',
@@ -108,7 +108,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       { label: 'Pages', value: 'One' },
     ],
     live: 'https://lossantosbarbers.com',
-    still: { src: `${LS}/01.webp`, alt: 'The Los Santos Barbershop homepage — the name set large, the three services listed, a Book Appointment button' },
+    still: { src: `${LS}/01.webp`, alt: 'The Los Santos Barbershop homepage: the name set large, the three services listed, a Book Appointment button' },
     reel: { mp4: `${LS}/reel.mp4`, webm: `${LS}/reel.webm`, poster: `${LS}/poster.webp` },
     sections: [
       {
@@ -216,7 +216,7 @@ export const CASE_STUDIES: CaseStudy[] = [
             items: [
               { title: 'One page, on purpose', body: 'Every extra page was a place to lose someone between the price and the button.' },
               { title: 'Prices on the page', body: 'A client who books knowing the price shows up. The comparison risk was worth it.' },
-              { title: 'The barber on the page', body: 'Fahed’s section — since 2015, the languages he speaks, what he specialises in — is the trust the reviews point at.' },
+              { title: 'The barber on the page', body: 'Fahed’s section (since 2015, the languages he speaks, what he specialises in) is the trust the reviews point at.' },
             ],
           },
         ],
@@ -283,12 +283,12 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     slug: 'lumiere-eclat',
     name: 'Lumière Éclat',
-    title: 'Lumière Éclat — a 3D scroll-driven watch story',
+    title: 'Lumière Éclat: a 3D scroll-driven watch story',
     description:
-      'How Konaverse built Lumière Éclat: a scroll-driven 3D website for a fictional watchmaker, where one watch turns in light as the story scrolls — built as a working demonstration of what an immersive product site can do.',
+      'How Konaverse built Lumière Éclat: a scroll-driven 3D website for a fictional watchmaker, where one watch turns in light as the story scrolls, built as a working demonstration of what an immersive product site can do.',
     intro: [
       'Lumière is a watchmaker that does not exist. Éclat is its one watch. We built the site as a studio piece: a scroll-driven story of light and steel, with the watch itself rendered in three dimensions and turning under the reader’s scroll.',
-      'It exists to answer the question every prospective client asks about 3D websites — what does it actually feel like — with a site they can scroll rather than a sentence they have to believe.',
+      'It exists to answer the question every prospective client asks about 3D websites (what does it actually feel like?) with a site they can scroll rather than a sentence they have to believe.',
     ],
     facts: [
       { label: 'Client', value: 'Studio concept' },
@@ -298,7 +298,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       { label: 'Format', value: 'One scroll, five chapters' },
     ],
     live: 'https://watchweb.vercel.app',
-    still: { src: `${LE}/01.webp`, alt: 'The Lumière Éclat opening: “Time, held — in a single point of light”' },
+    still: { src: `${LE}/01.webp`, alt: 'The Lumière Éclat opening: “Time, held, in a single point of light”' },
     reel: { mp4: `${LE}/reel.mp4`, webm: `${LE}/reel.webm`, poster: `${LE}/poster.webp` },
     sections: [
       {
@@ -358,7 +358,7 @@ export const CASE_STUDIES: CaseStudy[] = [
             items: [
               { title: 'One lit object', body: 'The page is dark and the watch is the light source. Nothing else on the page is allowed to glow.' },
               { title: 'The scroll is the story', body: 'Every turn, every change of scale is tied to the reader’s scroll. Nothing plays on its own.' },
-              { title: 'A turn east', body: 'The collection chapter runs horizontally — same grid, same rules, a different direction — so the page has a second act.' },
+              { title: 'A turn east', body: 'The collection chapter runs horizontally (same grid, same rules, a different direction) so the page has a second act.' },
             ],
           },
         ],
@@ -441,7 +441,7 @@ export const CASE_STUDIES: CaseStudy[] = [
           {
             kind: 'text',
             paragraphs: [
-              'A complete, deployable 3D product site — and the template we now start from when a client asks for one.',
+              'A complete, deployable 3D product site, and the template we now start from when a client asks for one.',
             ],
           },
           {
@@ -471,9 +471,9 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     slug: 'velricon',
     name: 'Velricon',
-    title: 'Velricon — a website for senior financial leadership',
+    title: 'Velricon: a website for senior financial leadership',
     description:
-      'How Konaverse designed and built velricon.com: a corporate site for a Cyprus financial leadership firm — CFO services, bank financing, investor packages — written to be found for the searches business owners type and built to convert a careful reader into a conversation.',
+      'How Konaverse designed and built velricon.com: a corporate site for a Cyprus financial leadership firm (CFO services, bank financing, investor packages), written to be found for the searches business owners type and built to convert a careful reader into a conversation.',
     intro: [
       'Velricon provides senior financial leadership to businesses in Cyprus: the analysis, the reporting, the projections and the conversations with banks, investors and buyers, without the business hiring a full-time CFO.',
       'It is a firm whose product is judgement, and its website had to carry that: composed, precise, quick to understand, and unmistakably senior. Nothing on it could look like a template.',
@@ -496,7 +496,7 @@ export const CASE_STUDIES: CaseStudy[] = [
           {
             kind: 'text',
             paragraphs: [
-              'Velricon came to us with a clear service and an unclear site. The firm does four things — ongoing financial leadership, bank financing, investor-ready packages, and the financial side of transactions — and does them for owners who are about to make a large decision. The old site described the firm. It did not describe the decision the reader was facing, and so it did not get read.',
+              'Velricon came to us with a clear service and an unclear site. The firm does four things (ongoing financial leadership, bank financing, investor-ready packages, and the financial side of transactions) and does them for owners who are about to make a large decision. The old site described the firm. It did not describe the decision the reader was facing, and so it did not get read.',
               'The brief was a site that speaks to the owner at the moment of the decision, sets out the four services as four doors, and makes the first conversation easy to start.',
             ],
           },
@@ -518,7 +518,7 @@ export const CASE_STUDIES: CaseStudy[] = [
             kind: 'text',
             paragraphs: [
               'The business problem was trust at a distance. A business owner preparing for a bank loan or an investor round is looking for someone senior, and decides in a minute whether a firm is. The old site made that minute hard: generic language, no structure that matched the decisions people actually face, and a contact path that asked for a form before it had earned one.',
-              'The second problem was search. Owners in Cyprus type specific things — CFO services, bank financing preparation, investor package — and none of those searches led to Velricon. The firm grew by referral and had no way to be found by someone who had not been told the name.',
+              'The second problem was search. Owners in Cyprus type specific things (CFO services, bank financing preparation, investor package) and none of those searches led to Velricon. The firm grew by referral and had no way to be found by someone who had not been told the name.',
             ],
           },
         ],
@@ -530,7 +530,7 @@ export const CASE_STUDIES: CaseStudy[] = [
           {
             kind: 'text',
             paragraphs: [
-              'The concept is composure. A restrained palette, generous space, type set with the confidence of a firm that does not need to raise its voice. The homepage opens on one sentence — big financial decisions need senior finance behind them — and the rest of the page earns it: three counters, four services stated as what they do for the owner, and one calm invitation to start a financial conversation.',
+              'The concept is composure. A restrained palette, generous space, type set with the confidence of a firm that does not need to raise its voice. The homepage opens on one sentence (big financial decisions need senior finance behind them) and the rest of the page earns it: three counters, four services stated as what they do for the owner, and one calm invitation to start a financial conversation.',
               'Each service is a chapter of its own, written for the decision it serves. Bank financing is written for the owner about to walk into a bank. The investor package is written for the owner about to raise. The site does not explain finance; it explains what happens next.',
             ],
           },
@@ -545,7 +545,7 @@ export const CASE_STUDIES: CaseStudy[] = [
             kind: 'cards',
             items: [
               { title: 'Written for the decision', body: 'Every service page is addressed to the owner at the moment they need it, not to a general reader.' },
-              { title: 'Numbers that count up', body: 'Three counters — decisions executed, industries, years — arrive as the page does. Quiet proof, no badges.' },
+              { title: 'Numbers that count up', body: 'Three counters (decisions executed, industries, years) arrive as the page does. Quiet proof, no badges.' },
               { title: 'A conversation, not a form', body: 'The call to action is to start a financial conversation. The form exists, but the language does not lead with it.' },
             ],
           },
@@ -564,7 +564,7 @@ export const CASE_STUDIES: CaseStudy[] = [
           {
             kind: 'steps',
             items: [
-              { title: 'Four service pages, one template', body: 'The services share one structure — the decision, what we do, what you get, the invitation — so they read as a set and are easy to extend.' },
+              { title: 'Four service pages, one template', body: 'The services share one structure (the decision, what we do, what you get, the invitation) so they read as a set and are easy to extend.' },
               { title: 'Insights', body: 'A writing section built for the firm to publish on the questions its clients ask, each post a page that can rank on its own.' },
               { title: 'The counters', body: 'The three figures count up once, when they enter, and never again. The numbers are in the HTML before any script runs.' },
               { title: 'Built to be maintained', body: 'Copy, services and posts are structured content the firm can edit without touching layout.' },
@@ -663,7 +663,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     slug: 'chris-n-clean',
     name: 'Chris N Clean',
-    title: 'Chris N Clean — a cleaning company’s website',
+    title: 'Chris N Clean: a cleaning company’s website',
     description:
       'How Konaverse designed and built chrisnclean.com for a Nicosia cleaning company working since 1992: a hero that turns a neglected house spotless under the scroll, four services in two languages, and a quote form on every page.',
     intro: [
@@ -678,7 +678,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       { label: 'Location', value: 'Nicosia, Cyprus' },
     ],
     live: 'https://www.chrisnclean.com',
-    still: { src: '/work/chris-n-clean/01.webp', alt: 'The Chris N Clean homepage — “From chaos to spotless.” over a house on a hillside' },
+    still: { src: '/work/chris-n-clean/01.webp', alt: 'The Chris N Clean homepage: “From chaos to spotless.” over a house on a hillside' },
     sections: [
       {
         id: 'overview',
@@ -814,7 +814,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     slug: 'heimat-group',
     name: 'Heimat Group',
-    title: 'HEIMAT Development Group — a developer’s website',
+    title: 'HEIMAT Development Group: a developer’s website',
     description:
       'How Konaverse designed and built heimat-group.com for HEIMAT Development Group in Nicosia: a pinned, layered hero where the house rises out of its own landscape, project pages with floor plans, and structured data for every building.',
     intro: [
@@ -829,7 +829,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       { label: 'Location', value: 'Nicosia, Cyprus' },
     ],
     live: 'https://www.heimat-group.com',
-    still: { src: '/work/heimat-group/01.webp', alt: 'The HEIMAT Development Group homepage — “Building Homes Worth Coming Home To” over a house at dusk' },
+    still: { src: '/work/heimat-group/01.webp', alt: 'The HEIMAT Development Group homepage: “Building Homes Worth Coming Home To” over a house at dusk' },
     sections: [
       {
         id: 'overview',
@@ -991,7 +991,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     slug: 'tdk',
     name: 'TDK Design & Build',
-    title: 'TDK Design & Build — a residential studio’s website',
+    title: 'TDK Design & Build: a residential studio’s website',
     description:
       'How Konaverse designed and built the website for TDK Design & Build, a family design-and-build studio in Nicosia: an editorial site with a pinned project reel, a building that stands in front of its own name, and a CMS the studio runs itself.',
     intro: [
@@ -1006,7 +1006,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       { label: 'Location', value: 'Nicosia, Cyprus' },
     ],
     live: 'https://tdkdb.vercel.app/en',
-    still: { src: '/work/tdk/01.webp', alt: 'The TDK Design & Build homepage — the building standing in front of the letters TDK' },
+    still: { src: '/work/tdk/01.webp', alt: 'The TDK Design & Build homepage: the building standing in front of the letters TDK' },
     sections: [
       {
         id: 'overview',
@@ -1144,7 +1144,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     slug: 'city-arcade',
     name: 'City Arcade',
-    title: 'City Arcade — a real-estate website concept',
+    title: 'City Arcade: a real-estate website concept',
     description:
       'How Konaverse built City Arcade: a one-page concept for a modern real-estate agency, where the building rises out of its own photograph and over the name, and the work slides across a pinned title.',
     intro: [
@@ -1159,7 +1159,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       { label: 'Format', value: 'One page' },
     ],
     live: 'https://city-arcade-roan.vercel.app',
-    still: { src: '/work/city-arcade/01.webp', alt: 'The City Arcade homepage — the name set large beside a glass building at golden hour' },
+    still: { src: '/work/city-arcade/01.webp', alt: 'The City Arcade homepage: the name set large beside a glass building at golden hour' },
     sections: [
       {
         id: 'overview',

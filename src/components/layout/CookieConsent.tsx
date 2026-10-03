@@ -82,8 +82,8 @@ export default function CookieConsent() {
     >
       <p className="k-cookie__title">Cookies, plainly.</p>
       <p className="k-cookie__body">
-        One is essential and remembers this choice. The rest are analytics —
-        they tell us how the site is used so we can improve it — and they are
+        One is essential and remembers this choice. The rest are analytics
+        (they tell us how the site is used so we can improve it) and they are
         yours to allow.
       </p>
       <div className="k-cookie__actions">

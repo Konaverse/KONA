@@ -42,7 +42,7 @@ export default function CookiesPage() {
         <p>
           This policy explains how Konaverse (&ldquo;we&rdquo;, &ldquo;us&rdquo;,
           &ldquo;our&rdquo;) uses cookies and similar technologies on{' '}
-          <strong>kona-verse.com</strong> — what they are, why we use them, and how you control
+          <strong>kona-verse.com</strong>: what they are, why we use them, and how you control
           them.
         </p>
       </LegalIntro>
@@ -75,7 +75,7 @@ export default function CookiesPage() {
           </LegalRow>
         </LegalCard>
 
-        <h3>B. Analytics — only after you accept</h3>
+        <h3>B. Analytics: only after you accept</h3>
         <p>
           <strong>Google Analytics</strong> (gtag.js) reports how visitors use the site in
           aggregate. It does not identify you to us.
@@ -85,8 +85,8 @@ export default function CookiesPage() {
           <LegalRow name="_ga_*">Keeps the session state for that visitor. 2 years.</LegalRow>
         </LegalCard>
         <p>
-          <strong>Ahrefs Web Analytics</strong> also measures traffic, and sets no cookies at all
-          — it counts page views without a persistent identifier, so it runs regardless of your
+          <strong>Ahrefs Web Analytics</strong> also measures traffic, and sets no cookies at all.
+          It counts page views without a persistent identifier, so it runs regardless of your
           choice.{' '}
           <LegalExt href="https://ahrefs.com/privacy">Ahrefs privacy policy</LegalExt>
         </p>

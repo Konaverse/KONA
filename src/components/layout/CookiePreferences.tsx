@@ -49,7 +49,7 @@ const getServerSnapshot = (): Choice => 'unknown'
 const LINE: Record<Choice, string> = {
   accepted: 'You currently accept analytics cookies.',
   declined: 'You currently keep to essential cookies only.',
-  none: 'You have not made a choice yet — the banner will ask.',
+  none: 'You have not made a choice yet. The banner will ask.',
   unknown: ' ',
 }
 

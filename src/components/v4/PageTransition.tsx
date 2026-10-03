@@ -60,7 +60,7 @@ import { getLenis } from './SmoothScroll'
  */
 
 /** Every route inside app/(v4). ADD NEW V4 ROUTES HERE — see the warn below. */
-export const V4_ROUTES = ['/', '/privacy', '/terms', '/cookies', '/design-system', '/work', '/services', '/about', '/contact', '/hero-object']
+export const V4_ROUTES = ['/', '/privacy', '/terms', '/cookies', '/design-system', '/work', '/services', '/about', '/contact', '/blog', '/hero-object']
 
 const isV4Route = (path: string) =>
   V4_ROUTES.some((r) => path === r || path.startsWith(`${r}/`))
@@ -266,7 +266,7 @@ export default function PageTransition({ children }: { children: React.ReactNode
          * pointed at the legacy /projects. */
         if (process.env.NODE_ENV !== 'production') {
           console.warn(
-            `[k-pt] no transition for "${url.pathname}" — not in V4_ROUTES. ` +
+            `[k-pt] no transition for "${url.pathname}": not in V4_ROUTES. ` +
               `If that route lives in app/(v4), add it there; if it is a legacy ` +
               `route, this is expected.`,
           )

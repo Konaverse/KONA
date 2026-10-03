@@ -286,14 +286,14 @@ export default function WorkDeck({ projects }: { projects: SheetProject[] }) {
         <div className="wd-deck">
           {projects.map((p, i) => (
             <div className="wd-slot" key={p.title} style={{ zIndex: i + 1 }}>
-              <a className="wd-card" href={p.href} aria-label={`${p.title} — view the project`}>
+              <a className="wd-card" href={p.href} aria-label={`${p.title}: view the project`}>
                 <span className="wd-win">
                   {p.image && (
                     <img
                       src={p.image}
                       srcSet={`${p.image.replace(/\.webp$/, '-1080.webp')} 1080w, ${p.image.replace(/\.webp$/, '-1600.webp')} 1600w, ${p.image} 2880w`}
                       sizes="92vw"
-                      alt={`${p.title} — website by Konaverse`}
+                      alt={`${p.title}, a website by Konaverse`}
                       decoding="async"
                       loading={i === 0 ? 'eager' : 'lazy'}
                     />

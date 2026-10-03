@@ -49,9 +49,9 @@ const PERMANENT_REDIRECTS: [string, string][] = [
   ["/services/videography", "/services"],
   ["/pricing", "/services"],
 ];
-const LAUNCH_REDIRECTS: [string, string][] = [
-  ["/blog", "/"],
-];
+/* empty since the blog opened (2026-10-03): /blog was the last page
+   waiting behind a temporary redirect */
+const LAUNCH_REDIRECTS: [string, string][] = [];
 const PROTO_REDIRECTS = [
   "/design-system",
   "/hero-object",

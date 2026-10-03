@@ -10,6 +10,8 @@ import WorkList from '@/components/v4/WorkList'
 import { CASE_STUDIES } from '@/lib/case-studies'
 import { WORK_PROJECTS } from '@/lib/work-projects'
 import Invitation from '@/components/v4/Invitation'
+import { BlogRow } from '@/components/v4/BlogCards'
+import { postsByDate } from '@/lib/blog-posts'
 import { OG_DEFAULTS, SITE_URL } from '@/lib/site'
 import './home.css'
 
@@ -22,14 +24,14 @@ import './home.css'
  * first word. Description is the hero's paragraph, cut to a result's
  * width. The OG image is the v4 hero (public/og-image.jpg, 1200x630).
  */
-const HOME_TITLE = 'Konaverse — Build the website that will make you stand out'
+const HOME_TITLE = 'Konaverse: Build the website that will make you stand out'
 const HOME_OG =
   'A web studio in Cyprus. Strategy, design, motion and engineering in one continuous process, for brands that have outgrown the template.'
 
 export const metadata: Metadata = {
   title: { absolute: HOME_TITLE },
   description:
-    'Konaverse is a web studio in Cyprus that designs and builds websites end to end — strategy, design, motion and engineering in one continuous process — for brands that have outgrown the template.',
+    'Konaverse is a web studio in Cyprus that designs and builds websites end to end: strategy, design, motion and engineering in one continuous process, for brands that have outgrown the template.',
   alternates: { canonical: SITE_URL },
   openGraph: {
     ...OG_DEFAULTS,
@@ -193,6 +195,12 @@ export default function HomePage() {
           launch (/work redirects home). It returns with the /work page:
           a `k-page hm-workfoot` div holding an ArrowLink to /work, CSS in
           git (5da89b2). */}
+
+      {/* §8 — FROM THE BLOG (BlogCards.tsx, 2026-10-03, owner: "a section
+          in the homepage below the projects for the blogs. A nice
+          horizontally cards aligned section"): the pieces in one row,
+          newest first, each a link to its article. */}
+      <BlogRow posts={postsByDate()} />
 
       {/* §9 — the invitation: the line, the button, the address */}
       <Invitation />

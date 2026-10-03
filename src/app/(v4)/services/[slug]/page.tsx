@@ -13,6 +13,7 @@ import Invitation from '@/components/v4/Invitation'
 import { RUN_DECK, SERVICE_PAGES, getServicePage } from '@/lib/service-pages'
 import { CALENDLY_URL, OG_DEFAULTS, SITE_URL } from '@/lib/site'
 import { CASE_STUDIES } from '@/lib/case-studies'
+import { BLOG_POSTS } from '@/lib/blog-posts'
 import { WORK_PROJECTS } from '@/lib/work-projects'
 import '../scenes.css'
 import '../run.css'
@@ -313,6 +314,13 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
             <a href={`/services/${page.sister.slug}`}>{page.sister.name}</a>
           </p>
         )}
+        {/* the link back to the article this service is the subject of
+            (blog plan §5: the piece links here once, the page links back) */}
+        {BLOG_POSTS.filter((p) => p.service.slug === page.slug).map((p) => (
+          <p key={p.slug} className="rs-sister">
+            From the blog: <a href={`/blog/${p.slug}`}>{p.title}</a>
+          </p>
+        ))}
       </nav>
       </RunGround>
 

@@ -74,7 +74,7 @@ import './hub.css'
  */
 const TITLE = 'Web Design and Development Services'
 const DESCRIPTION =
-  'Konaverse designs and builds websites in Cyprus — web design, web development, 3D and immersive sites, one-page sites, redesigns and SEO. Six services, one studio.'
+  'Konaverse designs and builds websites in Cyprus: web design, web development, 3D and immersive sites, one-page sites, redesigns and SEO. Six services, one studio.'
 
 export const metadata: Metadata = {
   title: TITLE,

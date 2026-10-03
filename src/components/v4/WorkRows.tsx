@@ -535,14 +535,14 @@ export default function WorkRows({ projects }: { projects: SheetProject[] }) {
                   <h3 className="wr-name t-h1">{p.title}</h3>
                   <span className="wr-year t-small">{p.year}</span>
                 </div>
-                <a className="wr-thumb" href={p.href} aria-label={`${p.title} — view the project`}>
+                <a className="wr-thumb" href={p.href} aria-label={`${p.title}: view the project`}>
                   {p.image && (
                     /* eager: each is one turn from being the wave's texture */
                     <img
                       src={p.image}
                       srcSet={`${p.image.replace(/\.webp$/, '-1600.webp')} 1600w, ${p.image} 2880w`}
                       sizes="62vw"
-                      alt={`${p.title} — website by Konaverse`}
+                      alt={`${p.title}, a website by Konaverse`}
                       decoding="async"
                     />
                   )}

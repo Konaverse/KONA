@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: 'Konaverse',
     short_name: 'Konaverse',
     description:
-      'A web studio in Cyprus that designs and builds websites end to end — strategy, design, motion and engineering in one continuous process.',
+      'A web studio in Cyprus that designs and builds websites end to end: strategy, design, motion and engineering in one continuous process.',
     start_url: '/',
     display: 'standalone',
     background_color: '#FFFFFF',

@@ -239,7 +239,7 @@ export default function ProjectSheets({
                   src={p.image}
                   srcSet={`${p.image.replace(/\.webp$/, '-1080.webp')} 1080w, ${p.image.replace(/\.webp$/, '-1600.webp')} 1600w, ${p.image} 2880w`}
                   sizes="100vw"
-                  alt={`${p.title} — website by Konaverse`}
+                  alt={`${p.title}, a website by Konaverse`}
                   decoding="async"
                 />
               )}

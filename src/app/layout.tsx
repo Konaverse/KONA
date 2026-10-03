@@ -70,11 +70,11 @@ const anton = Anton({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} — Web studio, Cyprus`,
+    default: `${SITE_NAME} | Web studio, Cyprus`,
     template: `%s | ${SITE_NAME}`,
   },
   description:
-    'Konaverse is a web studio in Cyprus that designs and builds websites end to end — strategy, design, motion and engineering in one continuous process.',
+    'Konaverse is a web studio in Cyprus that designs and builds websites end to end: strategy, design, motion and engineering in one continuous process.',
   authors: [{ name: SITE_NAME, url: SITE_URL }],
   creator: SITE_NAME,
   publisher: SITE_NAME,
@@ -105,7 +105,7 @@ export const metadata: Metadata = {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'Konaverse — Build the website that will make you stand out',
+        alt: 'Konaverse: Build the website that will make you stand out',
       },
     ],
   },
@@ -146,7 +146,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               logo: { '@type': 'ImageObject', url: `${SITE_URL}/icon.png`, width: 512, height: 512 },
               image: `${SITE_URL}/og-image.jpg`,
               description:
-                'A web studio in Cyprus that designs and builds websites end to end — web design, web development, 3D and immersive websites, one-page websites, redesigns and SEO.',
+                'A web studio in Cyprus that designs and builds websites end to end: web design, web development, 3D and immersive websites, one-page websites, redesigns and SEO.',
               email: CONTACT_EMAIL,
               telephone: CONTACT_PHONE,
               address: { '@type': 'PostalAddress', addressCountry: 'CY' },

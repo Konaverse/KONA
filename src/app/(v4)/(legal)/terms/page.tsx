@@ -64,7 +64,7 @@ export default function TermsPage() {
           <li>Provide accurate, complete and timely information and materials</li>
           <li>Name one point of contact for decisions</li>
           <li>Respond to requests for feedback or approval within the agreed time (by default, 5 business days)</li>
-          <li>Hold the rights to every material they provide — images, text, logos, trademarks</li>
+          <li>Hold the rights to every material they provide: images, text, logos, trademarks</li>
         </LegalList>
         <p>
           Delays caused by a client&rsquo;s failure to meet these responsibilities may move the
@@ -108,7 +108,7 @@ export default function TermsPage() {
       <LegalSection title="7. Intellectual property">
         <p>
           On receipt of full payment, Konaverse assigns to the client full ownership of the final
-          deliverables created specifically for the project — the website, custom code and final
+          deliverables created specifically for the project: the website, custom code and final
           design files.
         </p>
         <p>
@@ -117,7 +117,7 @@ export default function TermsPage() {
         <LegalList>
           <li>Proprietary tools, frameworks, libraries or code developed independently by Konaverse</li>
           <li>
-            Third-party assets licensed for the project (fonts, plugins and the like) — the client
+            Third-party assets licensed for the project (fonts, plugins and the like): the client
             obtains their own licences where required
           </li>
           <li>Project files and source materials not explicitly agreed as deliverables</li>
@@ -156,7 +156,7 @@ export default function TermsPage() {
       <LegalSection title="10. Warranties and limitation of liability">
         <p>
           Konaverse warrants that its services are performed with reasonable skill and care. We do
-          not guarantee specific business outcomes — search rankings, conversion rates, revenue —
+          not guarantee specific business outcomes (search rankings, conversion rates, revenue)
           resulting from our work.
         </p>
         <p>
@@ -172,7 +172,7 @@ export default function TermsPage() {
 
       <LegalSection title="11. Use of the website">
         <p>
-          The content of kona-verse.com — text, images, design and code — is the intellectual
+          The content of kona-verse.com (text, images, design and code) is the intellectual
           property of Konaverse and may not be reproduced, copied or distributed without prior
           written consent. You may view the site for personal, informational purposes only.
         </p>

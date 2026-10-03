@@ -5,8 +5,9 @@
  * and blogs are done"). Navigation is by ROUTES now: the burger, the footer
  * and the homepage's sections link to the pages, not to in-page anchors.
  * The one-page launch's SECTIONS stay for the homepage's own landmarks
- * (SmoothScroll still eases to a hash on `/`). Pricing and the blog are
- * still redirected home (next.config.ts) and are not linked anywhere.
+ * (SmoothScroll still eases to a hash on `/`). There is no pricing page
+ * (/pricing redirects to /services). THE BLOG OPENED 2026-10-03: /blog,
+ * linked from the footer and from the homepage's row under the work.
  */
 
 /** The site's pages, in menu order. */
@@ -15,6 +16,7 @@ export const ROUTES = {
   services: '/services',
   work: '/work',
   about: '/about',
+  blog: '/blog',
   contact: '/contact',
 } as const
 
@@ -63,7 +65,7 @@ export const OG_DEFAULTS = {
       url: '/og-image.jpg',
       width: 1200,
       height: 630,
-      alt: 'Konaverse — Build the website that will make you stand out',
+      alt: 'Konaverse: Build the website that will make you stand out',
     },
   ],
 }

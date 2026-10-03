@@ -62,7 +62,7 @@ const PROBLEMS: { q: string; a: string; speed: number }[] = [
   },
   {
     q: 'Visitors leave before they understand what you do.',
-    a: 'The work is good. The site never gets to that part — the story is buried somewhere under the interface.',
+    a: 'The work is good. The site never gets to that part: the story is buried somewhere under the interface.',
     speed: 1.16,
   },
   {
@@ -72,7 +72,7 @@ const PROBLEMS: { q: string; a: string; speed: number }[] = [
   },
   {
     q: 'You’re invisible where people actually search.',
-    a: 'Customers ask search engines and AI the exact questions you answer — and your site never comes up.',
+    a: 'Customers ask search engines and AI the exact questions you answer, and your site never comes up.',
     speed: 1.08,
   },
 ]

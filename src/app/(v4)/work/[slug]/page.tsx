@@ -364,7 +364,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
             {study.device.back ? (
               <img className="cx-device-back" data-rate="0.16" src={study.device.back} alt="" loading="lazy" decoding="async" draggable={false} aria-hidden="true" />
             ) : null}
-            <img className="cx-device-front" data-rate="-0.08" src={study.device.front} alt={`${study.name} — the website on a laptop`} loading="lazy" decoding="async" draggable={false} />
+            <img className="cx-device-front" data-rate="-0.08" src={study.device.front} alt={`${study.name}: the website on a laptop`} loading="lazy" decoding="async" draggable={false} />
           </div>
         ) : (
           <Plate src={study.still.src} alt={study.still.alt} shape="wide" />
@@ -376,7 +376,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
         <section className="cx-s cx-film k-dark" id="film" aria-label="The film">
           <figure className="cx-film-fig cx-r">
             <span className="cx-win">
-              <video autoPlay muted loop playsInline preload="metadata" poster={study.reel.poster} aria-label={`${study.name} — a screen recording of the live site`}>
+              <video autoPlay muted loop playsInline preload="metadata" poster={study.reel.poster} aria-label={`${study.name}: a screen recording of the live site`}>
                 {study.reel.webm ? <source src={study.reel.webm} type="video/webm" /> : null}
                 <source src={study.reel.mp4} type="video/mp4" />
               </video>

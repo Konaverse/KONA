@@ -67,13 +67,13 @@ export default function PrivacyPage() {
       <LegalSection title="2. What we collect">
         <p>Information you give us, when you:</p>
         <LegalList>
-          <li>Email us — your name, your email address and whatever you write.</li>
+          <li>Email us: your name, your email address and whatever you write.</li>
           <li>
-            Use the form on our contact page — your name, your email address and your message,
+            Use the form on our contact page: your name, your email address and your message,
             delivered to us as an email.
           </li>
           <li>
-            Book a call through Calendly — your name, your email address and any notes you add to
+            Book a call through Calendly: your name, your email address and any notes you add to
             the booking.
           </li>
         </LegalList>
@@ -84,7 +84,7 @@ export default function PrivacyPage() {
             hosting provider for security and deleted automatically after 30 days.
           </li>
           <li>
-            <strong>Analytics</strong> — Google Analytics, only after you accept it in the cookie
+            <strong>Analytics</strong>: Google Analytics, only after you accept it in the cookie
             banner, and Ahrefs Web Analytics, which is cookieless and stores no personal data. The
             details are in our <a href="/cookies">Cookie Policy</a>.
           </li>
@@ -95,15 +95,15 @@ export default function PrivacyPage() {
         <p>We process personal data on the following bases:</p>
         <LegalList>
           <li>
-            <strong>Contractual necessity</strong> — to answer your enquiry and provide the services
+            <strong>Contractual necessity</strong>: to answer your enquiry and provide the services
             you ask for.
           </li>
           <li>
-            <strong>Legitimate interests</strong> — to run our business relationship and to
+            <strong>Legitimate interests</strong>: to run our business relationship and to
             understand how the site is used, so we can improve it.
           </li>
           <li>
-            <strong>Consent</strong> — where you have given it explicitly, such as accepting
+            <strong>Consent</strong>: where you have given it explicitly, such as accepting
             analytics cookies.
           </li>
         </LegalList>
@@ -124,29 +124,29 @@ export default function PrivacyPage() {
         <p>We rely on the following services to run the site and the studio:</p>
         <LegalList>
           <li>
-            <strong>Vercel</strong> — hosts the website. Standard server logs may be processed by
+            <strong>Vercel</strong>: hosts the website. Standard server logs may be processed by
             Vercel.{' '}
             <LegalExt href="https://vercel.com/legal/privacy-policy">Vercel privacy policy</LegalExt>
           </li>
           <li>
-            <strong>Resend</strong> — delivers the messages sent through our contact form to our
+            <strong>Resend</strong>: delivers the messages sent through our contact form to our
             inbox. Your name, email address and message pass through Resend to reach us.{' '}
             <LegalExt href="https://resend.com/legal/privacy-policy">Resend privacy policy</LegalExt>
           </li>
           <li>
-            <strong>Calendly</strong> — handles call bookings. The details you enter when booking
+            <strong>Calendly</strong>: handles call bookings. The details you enter when booking
             are processed by Calendly.{' '}
             <LegalExt href="https://calendly.com/legal/privacy-notice">
               Calendly privacy notice
             </LegalExt>
           </li>
           <li>
-            <strong>Google Analytics</strong> — measures how the site is used, only with your
+            <strong>Google Analytics</strong>: measures how the site is used, only with your
             consent.{' '}
             <LegalExt href="https://policies.google.com/privacy">Google privacy policy</LegalExt>
           </li>
           <li>
-            <strong>Ahrefs Web Analytics</strong> — aggregate, cookieless traffic measurement.{' '}
+            <strong>Ahrefs Web Analytics</strong>: aggregate, cookieless traffic measurement.{' '}
             <LegalExt href="https://ahrefs.com/privacy">Ahrefs privacy policy</LegalExt>
           </li>
         </LegalList>
@@ -165,27 +165,27 @@ export default function PrivacyPage() {
         <p>If you are in the European Economic Area, you have the right to:</p>
         <LegalList>
           <li>
-            <strong>Access</strong> — ask for a copy of the personal data we hold about you.
+            <strong>Access</strong>: ask for a copy of the personal data we hold about you.
           </li>
           <li>
-            <strong>Rectification</strong> — have inaccurate or incomplete data corrected.
+            <strong>Rectification</strong>: have inaccurate or incomplete data corrected.
           </li>
           <li>
-            <strong>Erasure</strong> — have your data deleted where there is no compelling reason
+            <strong>Erasure</strong>: have your data deleted where there is no compelling reason
             to keep processing it.
           </li>
           <li>
-            <strong>Restriction</strong> — ask us to limit how we process your data.
+            <strong>Restriction</strong>: ask us to limit how we process your data.
           </li>
           <li>
-            <strong>Portability</strong> — receive your data in a structured, machine-readable
+            <strong>Portability</strong>: receive your data in a structured, machine-readable
             format.
           </li>
           <li>
-            <strong>Objection</strong> — object to processing based on legitimate interests.
+            <strong>Objection</strong>: object to processing based on legitimate interests.
           </li>
           <li>
-            <strong>Withdraw consent</strong> — at any time, as easily as you gave it. For
+            <strong>Withdraw consent</strong>: at any time, as easily as you gave it. For
             analytics cookies, use the control on the <a href="/cookies">Cookie Policy</a> page.
           </li>
         </LegalList>
@@ -211,7 +211,7 @@ export default function PrivacyPage() {
 
       <LegalSection title="9. Security">
         <p>
-          We use industry-standard measures — HTTPS everywhere, secured credentials, restricted
+          We use industry-standard measures: HTTPS everywhere, secured credentials, restricted
           access to data. No method of transmission over the internet is completely secure, so we
           cannot guarantee absolute security.
         </p>

@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
       from: 'Konaverse <noreply@kona-verse.com>',
       to: CONTACT_EMAIL,
       replyTo: email,
-      subject: `New enquiry — ${name}`,
+      subject: `New enquiry: ${name}`,
       text: `From: ${name} <${email}>\n\n${message}`,
       html: `
         <div style="font-family: Manrope, system-ui, sans-serif; max-width: 600px; color: #15171A; line-height: 1.6;">

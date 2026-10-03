@@ -75,6 +75,7 @@ const PAGES: { label: string; href: string }[] = [
   { label: 'Services', href: ROUTES.services },
   { label: 'Work', href: ROUTES.work },
   { label: 'About', href: ROUTES.about },
+  { label: 'Blog', href: ROUTES.blog },
   { label: 'Contact', href: ROUTES.contact },
 ]
 

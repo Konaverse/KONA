@@ -204,7 +204,7 @@ export default function WorkCascade({
     let hover = -1
     const nameOf = (i: number) => {
       const d = links[i]?.dataset
-      return d ? (d.meta ? `${d.name} — ${d.meta}` : `${d.name}`) : ''
+      return d ? (d.meta ? `${d.name}, ${d.meta}` : `${d.name}`) : ''
     }
     const say = () => {
       if (!label) return

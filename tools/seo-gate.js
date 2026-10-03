@@ -29,7 +29,6 @@ const REDIRECTS = [
   ['/projects/web-development', '/work', true],
   ['/services/videography', '/services', true],
   ['/pricing', '/services', true],
-  ['/blog', '/', false],
 ]
 const GONE = ['/llms.txt', '/about.md', '/services/videography.md']
 
