@@ -156,16 +156,40 @@
   height: 100%;
   border: 0;
 }
-.ct-cal-fallback {
+/* THE ASK (2026-10-03): the calendar loads only on click, so until then
+   the white card carries an invitation in the same place and size */
+.ct-cal-wrap { position: relative; }
+.ct-cal-ask {
   position: absolute;
   inset: 0;
   display: grid;
-  place-items: center;
-  font-size: 0.95rem;
-  color: var(--text-muted);
-  text-decoration: none;
+  place-content: center;
+  justify-items: center;
+  gap: 0.9rem;
+  padding: 2rem;
+  text-align: center;
 }
-.ct-cal-host.is-live .ct-cal-fallback { display: none; }
+.ct-cal-t {
+  margin: 0;
+  font-size: var(--t-h3);
+  font-weight: var(--w-medium);
+  line-height: var(--lh-tight);
+  color: var(--text);
+}
+.ct-cal-b {
+  margin: 0 0 0.6rem;
+  max-width: 26rem;
+  font-size: var(--t-small);
+  line-height: var(--lh-body);
+  color: var(--text-muted);
+  text-wrap: balance;
+}
+.ct-cal-out {
+  font-size: var(--t-small);
+  color: var(--text-muted);
+  text-underline-offset: 0.2em;
+}
+.ct-cal-out:hover { color: var(--text); }
 
 /* THE FACTS: one hairline row across the hero's foot, under both
    columns */

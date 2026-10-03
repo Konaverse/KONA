@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useRef, useState } from 'react'
+import Button from '@/components/v4/Button'
 import { loadCalendlyScript } from '@/components/v4/CalendlyPopover'
 import { CALENDLY_URL } from '@/lib/site'
 
@@ -15,7 +16,7 @@ import { CALENDLY_URL } from '@/lib/site'
  * paid feature this account does not have, so the pane is white and
  * sits on the paper as one white card.
  *
- * Without JS the card holds a plain link to the booking page.
+ * Without JS the card still holds a plain link to the booking page.
  */
 /** the user's embed URL (hide_gdpr_banner) plus hide_event_type_details,
  *  so the pane is the calendar alone and can be short (user, 2026-09-12:
@@ -23,46 +24,46 @@ import { CALENDLY_URL } from '@/lib/site'
 const INLINE_URL = `${CALENDLY_URL}?hide_event_type_details=1&hide_gdpr_banner=1`
 export default function CalendlyInline() {
   const hostRef = useRef<HTMLDivElement | null>(null)
+  /* ON CLICK ONLY (owner, 2026-10-03). The widget is Calendly's page in an
+     iframe, and that page loads Stripe and Calendly's own trackers (a
+     Facebook pixel among them) — third-party cookies the Cyprus
+     Commissioner's rules say need consent first, and about 3 MB nobody
+     asked for yet. So the card holds an invitation, and the calendar comes
+     in only when the visitor asks for it. */
+  const [state, setState] = useState<'idle' | 'loading' | 'live'>('idle')
 
-  useEffect(() => {
+  const open = () => {
     const host = hostRef.current
-    if (!host) return
-    let cancelled = false
-    /* AFTER THE PAGE (performance pass, 2026-10-03): the widget pulls about
-       3 MB (Calendly's booking bundle and CSS, Stripe, its trackers) and
-       was fetched with the page's own first paint. It now waits for the
-       load event and an idle moment; the plain "Open the calendar" link
-       holds the card until then, as it always did while the script came. */
-    const mount = () =>
-      loadCalendlyScript()
-        .then(() => {
-          if (cancelled || !window.Calendly) return
-          host.innerHTML = ''
-          window.Calendly.initInlineWidget({ url: INLINE_URL, parentElement: host })
-          host.classList.add('is-live')
-        })
-        .catch(() => {})
-    type IdleWindow = Window & {
-      requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number
-    }
-    const idle = () => {
-      const ric = (window as IdleWindow).requestIdleCallback
-      if (ric) ric(mount, { timeout: 2000 })
-      else window.setTimeout(mount, 600)
-    }
-    if (document.readyState === 'complete') idle()
-    else window.addEventListener('load', idle, { once: true })
-    return () => {
-      cancelled = true
-      window.removeEventListener('load', idle)
-    }
-  }, [])
+    if (!host || state !== 'idle') return
+    setState('loading')
+    loadCalendlyScript()
+      .then(() => {
+        if (!window.Calendly) return setState('idle')
+        window.Calendly.initInlineWidget({ url: INLINE_URL, parentElement: host })
+        setState('live')
+      })
+      .catch(() => setState('idle'))
+  }
 
   return (
-    <div ref={hostRef} className="ct-cal-host">
-      <a className="ct-cal-fallback" href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
-        Open the calendar
-      </a>
+    <div className="ct-cal-wrap">
+      {/* the widget mounts here; React never renders into it */}
+      <div ref={hostRef} className={`ct-cal-host${state === 'live' ? ' is-live' : ''}`} />
+      {state !== 'live' ? (
+        <div className="ct-cal-ask">
+          <p className="ct-cal-t">Book a thirty-minute call</p>
+          <p className="ct-cal-b">
+            Pick a time that suits you. The calendar is Calendly's, and it loads its own cookies
+            once you open it.
+          </p>
+          <Button onClick={open} hoverLabel="Open the calendar">
+            {state === 'loading' ? 'Opening…' : 'Show the calendar'}
+          </Button>
+          <a className="ct-cal-out" href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
+            or open it on Calendly
+          </a>
+        </div>
+      ) : null}
     </div>
   )
 }
