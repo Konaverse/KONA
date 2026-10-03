@@ -6,7 +6,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import JsonLd from '@/components/JsonLd'
 import CookieConsent from '@/components/layout/CookieConsent'
 import GoogleAnalytics from '@/components/layout/GoogleAnalytics'
-import { AUTHOR_BIO, CONTACT_EMAIL, CONTACT_PHONE, SITE_NAME, SITE_URL } from '@/lib/site'
+import { AUTHOR_BIO, NABIL_BIO, CONTACT_EMAIL, CONTACT_PHONE, SITE_NAME, SITE_URL } from '@/lib/site'
 import { SERVICE_PAGES } from '@/lib/service-pages'
 import './globals.css'
 
@@ -201,6 +201,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               '@id': `${SITE_URL}/#nabil`,
               name: 'Nabil Al Jbawi',
               jobTitle: 'Creative Director & Co-Founder',
+              description: NABIL_BIO,
+              image: `${SITE_URL}/people/nabil-portrait.webp`,
+              url: `${SITE_URL}/about`,
+              knowsAbout: ['Web design', 'Art direction', 'Motion design', 'Brand identity'],
               worksFor: { '@id': `${SITE_URL}/#organization` },
               sameAs: ['https://www.linkedin.com/in/nabil-al-jbawi-257517291/'],
             },

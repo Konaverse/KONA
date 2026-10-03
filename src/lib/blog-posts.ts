@@ -1,4 +1,4 @@
-import { AUTHOR_BIO } from '@/lib/site'
+import { AUTHOR_BIO, NABIL_BIO } from '@/lib/site'
 
 /**
  * THE BLOG — one record per /blog/[slug] (docs/blog-plan-2026.md; opened
@@ -10,7 +10,7 @@ import { AUTHOR_BIO } from '@/lib/site'
  *   · nothing that could be written without our own work: our prices, our
  *     timelines, our measurements, our migrations;
  *   · buying-stage questions only, answered in the first two sentences;
- *   · one named author (Konstantinos), real dates. `updated` moves only with a real edit
+ *   · one named author per piece (Konstantinos or Nabil), real dates. `updated` moves only with a real edit
  *     (the sitemap's lastmod reads it);
  *   · EXACTLY ONE link to a service page (`service`), plus the case
  *     studies it cites; the service page links back (service-pages.ts);
@@ -28,11 +28,12 @@ import { AUTHOR_BIO } from '@/lib/site'
  * outcome, because none was recorded.
  */
 
-/** ONE AUTHOR (owner, 2026-10-03: "the author is only one, Konstantinos
- *  Kyprianou. We need an author bio with structured data"). `id` is the
- *  Person node in the root layout's graph, which carries the same bio,
- *  portrait and links, so the byline and the entity are one. */
-export type AuthorKey = 'konstantinos'
+/** TWO AUTHORS (owner, 2026-10-03, after asking whether one is better
+ *  for SEO: it is not; what matters is that each piece names who wrote
+ *  it and that person is one consistent entity). `id` is the Person node
+ *  in the root layout's graph, which carries the same bio, portrait and
+ *  links, so the byline and the entity are one. */
+export type AuthorKey = 'konstantinos' | 'nabil'
 
 export const AUTHORS: Record<
   AuthorKey,
@@ -47,6 +48,17 @@ export const AUTHORS: Record<
     links: [
       { label: 'About Konaverse', href: '/about' },
       { label: 'LinkedIn', href: 'https://www.linkedin.com/in/kon-kyprianou-1011/' },
+    ],
+  },
+  nabil: {
+    name: 'Nabil Al Jbawi',
+    role: 'Creative director and co-founder, Konaverse',
+    id: '#nabil',
+    portrait: '/people/nabil-portrait.webp',
+    bio: NABIL_BIO,
+    links: [
+      { label: 'About Konaverse', href: '/about' },
+      { label: 'LinkedIn', href: 'https://www.linkedin.com/in/nabil-al-jbawi-257517291/' },
     ],
   },
 }
@@ -100,7 +112,7 @@ export const BLOG_POSTS: BlogPost[] = [
     topic: 'Pricing',
     published: '2026-10-03',
     updated: '2026-10-03',
-    author: 'konstantinos',
+    author: 'nabil',
     cover: {
       src: '/work/cathedral.webp',
       alt: 'A tall stone interior in black and white, light falling from high windows',
@@ -191,7 +203,7 @@ export const BLOG_POSTS: BlogPost[] = [
       { kind: 'h2', id: 'running-costs', text: 'What you pay after launch' },
       {
         kind: 'p',
-        text: 'We do not charge a monthly fee for a site we have finished. The domain and the hosting are set up in your name and billed to you by the provider, and the source code is handed over at launch with the credentials. If you want changes later, you ask for them and they are quoted. If you want ongoing search work, that is the monthly SEO service above.',
+        text: 'A website has running costs after launch: the domain, the hosting, and the maintenance that keeps it secure and working. How much depends on the site: its traffic, what it connects to, and how often it changes. We quote them with the project, so you know the yearly cost before you sign. Changes you ask for later are quoted when you ask. Ongoing search work is the monthly SEO service above.',
       },
       { kind: 'h2', id: 'compare-quotes', text: 'How to compare two quotes' },
       {

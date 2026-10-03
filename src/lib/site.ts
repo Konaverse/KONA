@@ -42,8 +42,11 @@ export const SECTIONS = {
 } as const
 
 export const SITE_URL = 'https://kona-verse.com'
-/** The blog's author, in one paragraph: shown under every article and
- *  carried by his Person node in the root layout's graph (one wording). */
+/** The blog's authors, one paragraph each: shown under their articles
+ *  and carried by their Person nodes in the root layout's graph (one
+ *  wording per person). */
+export const NABIL_BIO =
+  'Nabil Al Jbawi is the creative director and a co-founder of Konaverse, a web studio in Cyprus. He decides what the studio’s websites look like and how they move: the layout, the type, the imagery and the motion, starting from the brand and never from a template.'
 export const AUTHOR_BIO =
   'Konstantinos Kyprianou is the technical architect and a co-founder of Konaverse, a web studio in Cyprus. He builds the studio’s websites: the code, the performance, the integrations and the search work, on Next.js and WebGL.'
 export const SITE_NAME = 'Konaverse'
