@@ -85,6 +85,17 @@ export default function CookiesPage() {
           <LegalRow name="_ga_*">Keeps the session state for that visitor. 2 years.</LegalRow>
         </LegalCard>
         <p>
+          <strong>Microsoft Clarity</strong> provides heatmaps and session recordings to help us
+          understand clicks, scrolling and navigation. Analytics cookies are enabled only after
+          you accept; until then, Clarity runs in a limited mode without cookies. Advertising
+          storage stays disabled. Changing your choice below also updates Clarity.{' '}
+          <LegalExt href="https://www.microsoft.com/privacy/privacystatement">Microsoft privacy statement</LegalExt>
+        </p>
+        <LegalCard>
+          <LegalRow name="_clck">Remembers the Clarity visitor ID and preferences.</LegalRow>
+          <LegalRow name="_clsk">Connects page views into a single session recording.</LegalRow>
+        </LegalCard>
+        <p>
           <strong>Ahrefs Web Analytics</strong> also measures traffic, and sets no cookies at all.
           It counts page views without a persistent identifier, so it runs regardless of your
           choice.{' '}

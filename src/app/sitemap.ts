@@ -27,6 +27,9 @@ const COPY_PASS = new Date('2026-10-03')
 const UPDATED: Record<string, Date> = {
   '': COPY_PASS,
   '/contact': COPY_PASS,
+  /* Microsoft Clarity added to the policies */
+  '/cookies': new Date('2026-10-07'),
+  '/privacy': new Date('2026-10-07'),
 }
 
 const entry = (path: string, fallback: Date = LAUNCH) => ({

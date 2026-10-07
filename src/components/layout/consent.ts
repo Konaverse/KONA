@@ -17,7 +17,7 @@ export const CONSENT_CHOICE_EVENT = 'konaverse:cookie-choice'
 
 export type Consent = 'accepted' | 'declined'
 
-/** Push the choice to Google Consent Mode v2, if gtag is on the page. */
+/** Push the choice to Google and Clarity, if their tags are on the page. */
 export function applyConsent(value: Consent) {
   const granted = value === 'accepted' ? 'granted' : 'denied'
   const gtag = (window as { gtag?: (...args: unknown[]) => void }).gtag
@@ -26,5 +26,10 @@ export function applyConsent(value: Consent) {
     ad_user_data: granted,
     ad_personalization: granted,
     analytics_storage: granted,
+  })
+  const clarity = (window as { clarity?: (...args: unknown[]) => void }).clarity
+  clarity?.('consentv2', {
+    ad_Storage: 'denied',
+    analytics_Storage: granted,
   })
 }
