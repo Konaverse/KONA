@@ -27,7 +27,7 @@ export const metadata: Metadata = {
  * 2026-09-12: the contact form is BACK on /contact (site-architecture
  * §5a), delivered by Resend — §2 lists the form, §5 names Resend again.
  */
-const UPDATED = 'September 2026'
+const UPDATED = 'October 2026'
 
 export default function PrivacyPage() {
   return (
@@ -86,7 +86,10 @@ export default function PrivacyPage() {
           <li>
             <strong>Analytics</strong>: Google Analytics, only after you accept it in the cookie
             banner, and Ahrefs Web Analytics, which is cookieless and stores no personal data. The
-            details are in our <a href="/cookies">Cookie Policy</a>.
+            site also uses Microsoft Clarity for heatmaps and session recordings of clicks,
+            scrolling and navigation. Clarity uses analytics cookies after you accept and runs
+            in a limited mode without cookies otherwise. Advertising storage stays disabled.
+            The details are in our <a href="/cookies">Cookie Policy</a>.
           </li>
         </LegalList>
       </LegalSection>
@@ -148,6 +151,13 @@ export default function PrivacyPage() {
           <li>
             <strong>Ahrefs Web Analytics</strong>: aggregate, cookieless traffic measurement.{' '}
             <LegalExt href="https://ahrefs.com/privacy">Ahrefs privacy policy</LegalExt>
+          </li>
+          <li>
+            <strong>Microsoft Clarity</strong>: heatmaps and session recordings to improve the
+            site, with analytics cookie storage controlled by your banner choice.{' '}
+            <LegalExt href="https://www.microsoft.com/privacy/privacystatement">
+              Microsoft privacy statement
+            </LegalExt>
           </li>
         </LegalList>
       </LegalSection>

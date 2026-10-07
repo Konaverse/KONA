@@ -6,6 +6,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import JsonLd from '@/components/JsonLd'
 import CookieConsent from '@/components/layout/CookieConsent'
 import GoogleAnalytics from '@/components/layout/GoogleAnalytics'
+import MicrosoftClarity from '@/components/layout/MicrosoftClarity'
 import { AUTHOR_BIO, NABIL_BIO, CONTACT_EMAIL, CONTACT_PHONE, SITE_NAME, SITE_URL } from '@/lib/site'
 import { SERVICE_PAGES } from '@/lib/service-pages'
 import './globals.css'
@@ -232,6 +233,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             consent — stays here. */}
         {children}
         <GoogleAnalytics GA_MEASUREMENT_ID="G-2PEZX44FP9" />
+        <MicrosoftClarity />
         {/* Ahrefs Web Analytics — cookieless, so it sits outside the consent gate */}
         <Script
           src="https://analytics.ahrefs.com/analytics.js"
