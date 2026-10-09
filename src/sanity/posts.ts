@@ -1,9 +1,10 @@
 import 'server-only'
 import {cache} from 'react'
 import type {BlogPost, Block} from '@/lib/blog-posts'
+import {postsByDate} from '@/lib/blog-posts'
 import type {POSTS_QUERY_RESULT} from './sanity.types'
 import {client} from './client'
-import {sanityFetch} from './live'
+import {fetchBlogContent} from './blog-content'
 import {POST_QUERY, POSTS_QUERY} from './queries'
 import {urlFor} from './images'
 
@@ -80,17 +81,27 @@ function toPost(post: SanityPost | null): BlogPost | null {
 }
 
 export const getPosts = cache(async (): Promise<BlogPost[]> => {
-  const {data} = await sanityFetch({query: POSTS_QUERY, stega: false})
-  return data.map(toPost).filter((post): post is BlogPost => post !== null)
+  try {
+    const data = await fetchBlogContent(POSTS_QUERY)
+    return data.map(toPost).filter((post): post is BlogPost => post !== null)
+  } catch (error) {
+    // Keep local UI previews available when the dev server cannot reach Sanity.
+    // Production and non-network errors must still surface normally.
+    const networkError = typeof error === 'object' && error !== null &&
+      'isNetworkError' in error && error.isNetworkError === true
+    if (process.env.NODE_ENV !== 'development' || !networkError) throw error
+    console.warn('[sanity] Network unavailable; using local blog posts for development.')
+    return postsByDate()
+  }
 })
 
 export const getPost = cache(async (slug: string): Promise<BlogPost | null> => {
-  const {data} = await sanityFetch({query: POST_QUERY, params: {slug}, stega: false})
+  const data = await fetchBlogContent(POST_QUERY, {slug})
   return toPost(data)
 })
 
 /** Metadata routes cannot subscribe to browser live events. Refresh on request after 60 seconds. */
 export async function getSitemapPosts(): Promise<BlogPost[]> {
-  const data = await client.fetch(POSTS_QUERY, {}, {perspective: 'published', stega: false, next: {revalidate: 60}})
+  const data = await client.withConfig({useCdn: false}).fetch(POSTS_QUERY, {}, {perspective: 'published', stega: false, next: {revalidate: 60}})
   return data.map(toPost).filter((post): post is BlogPost => post !== null)
 }

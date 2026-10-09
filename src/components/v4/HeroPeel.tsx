@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { gsap, EASE, DUR, rem } from '@/lib/motion-v4'
+import { HERO_VIDEO_RECT, SHAPE_H, SHAPE_W } from '@/lib/hero-shape'
 
 /**
  * THE HERO PEEL (2026-08-19) — our own move, built on the Lusion mechanic.
@@ -502,12 +503,9 @@ function createGL(
   }
 }
 
-/* the SVG's authored plate placement, from HeroPortrait.tsx: the
-   <foreignObject x=-213 y=-6 width=1208 height=680> carrying the looping
-   video, in viewBox 815x375. (The ken-burns origin that lived here left
-   with the ken-burns, 2026-08-24 — the footage moves on its own.) */
-const VB = { w: 815, h: 375 }
-const IMG = { x: -213, y: -6, w: 1208, h: 680 }
+/* Share the HTML video's authored placement so DOM and GL crops agree. */
+const VB = { w: SHAPE_W, h: SHAPE_H }
+const IMG = HERO_VIDEO_RECT
 
 export default function HeroPeel() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -519,7 +517,7 @@ export default function HeroPeel() {
 
     const main = canvas.closest<HTMLElement>('main.hm')
     const heropin = document.querySelector<HTMLElement>('.hm-heropin')
-    const stair = document.querySelector<SVGSVGElement>('.hw-hero .hw-shape')
+    const stair = document.querySelector<HTMLDivElement>('.hw-hero .hw-shape')
     const crop = document.querySelector<HTMLVideoElement>('.hw-hero .hw-mimg')
     const claim = document.querySelector<HTMLElement>('.hm-claim')
     const land = document.querySelector<HTMLElement>('.hm-claim-land')
@@ -532,7 +530,7 @@ export default function HeroPeel() {
     const mobile = !isOn(stair) && isOn(crop)
     const shape: Element | null = mobile ? crop : isOn(stair) ? stair : null
     if (!shape) return
-    const pan = mobile ? null : document.querySelector<SVGGElement>('.hw-hero .hw-pan')
+    const pan = mobile ? null : document.querySelector<HTMLDivElement>('.hw-hero .hw-pan')
     const vid = mobile ? crop : document.querySelector<HTMLVideoElement>('.hw-hero .hw-vid')
     if (!vid || (!mobile && !pan)) return
     /* the crop's shape, read once off its computed style — both are tokens

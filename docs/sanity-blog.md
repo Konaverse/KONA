@@ -28,15 +28,20 @@ continue to be managed by the website code.
 ## Publishing and hosting
 
 Published posts feed /blog, /blog/[slug], homepage cards, related articles and service
-backlinks through next-sanity Live Content. The sitemap refreshes on request after
-a 60-second revalidation interval. Article metadata and BlogPosting structured data
+backlinks from Sanity. Published queries use a shared Next.js cache tag and a
+60-second revalidation interval, fetching from Sanity's origin API. Live Content
+events immediately expire that cache before refreshing connected browsers. If an
+event is missed (or nobody is visiting when a post is published), the next request
+after the interval triggers a background refresh; a subsequent request receives
+the updated content. Draft previews still use next-sanity Live Content directly.
+The sitemap also refreshes on request after a 60-second revalidation interval.
+Article metadata and BlogPosting structured data
 come from the same CMS content. New slugs can render without a new deployment.
 Drafts are visible only in authenticated preview.
 
-The Next.js integration still needs its initial website deployment to be live.
 Published-content queries use the public dataset and need no secret in the browser.
 For draft preview, add `SANITY_API_READ_TOKEN` from the ignored KONA/.env.local
-to the website hosting environment before that deployment. It is a Viewer token.
+to the website hosting environment. It is a Viewer token.
 Optional public variables are listed in .env.example; their defaults are the
 project and dataset above. Never commit the token.
 
@@ -44,6 +49,11 @@ The editor is deployed at https://studio-konaverse.sanity.studio. For future edi
 `SANITY_STUDIO_PREVIEW_ORIGIN` can override it. Studio deployments are required for
 schema/editor changes, not for posting articles. The Studio folder is outside the
 KONA repository and should be versioned separately.
+
+If localhost logs `[sanity] Network unavailable; using local blog posts for
+development.`, it is displaying the original import source, including its covers.
+CMS edits cannot appear there until the local server can reach Sanity. This
+network fallback is development-only; production failures surface normally.
 
 ## Schema and query changes
 

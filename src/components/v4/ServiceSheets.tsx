@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { SERVICES } from '@/components/v4/services-data'
-import { SERVICE_PHOTO_ALT } from '@/lib/service-photo-alt'
+import { SERVICE_GRAPHICS } from '@/lib/service-graphics'
 import { gsap } from '@/lib/motion-v4'
 import { responsive } from '@/lib/img'
 
@@ -17,7 +17,7 @@ import { responsive } from '@/lib/img'
  * THE ROWS are the six services off services-data.tsx: the index, the
  * name in the light display voice (the reference sets a serif; the house
  * has one family), the three includes where the reference has its tags,
- * the paragraph, and the service's plate cropped to a landscape window.
+ * the paragraph, and the service's graphic in a landscape window.
  * Each row is one link to its service page.
  *
  * THE FAN. Every row after the first starts TUCKED under the row above
@@ -36,20 +36,11 @@ import { responsive } from '@/lib/img'
  * so nothing reads back its own transform. Writes are transform and one
  * custom property per moving row; settled rows are skipped.
  *
- * FALLBACKS. No JS, reduced motion, or a phone: the rows lie flat in
- * flow. Every word is server-rendered.
+ * On mobile, each sheet becomes the owner's selected image-led card.
+ * Includes use an accessible disclosure, with all text rendered once.
+ * Without JavaScript the includes stay readable. Reduced motion leaves
+ * the desktop sheets flat. Every word is server-rendered.
  */
-
-/** the owner's six service photographs (2026-10-02 — the same set as
- *  the services hub's carousel) */
-const PHOTOS: Record<string, string> = {
-  '3d-websites': '/services/3d-websites/3d-websites-service-image.webp',
-  'web-design': '/services/web-design/web-design-service-image.webp',
-  'web-development': '/services/web-dev/web-dev-service-image.webp',
-  'one-page-websites': '/services/one-page-art/one-page-design-service-image.webp',
-  'website-redesign': '/services/redesign-art/website-redesign-service-image.webp',
-  seo: '/services/seo-art/seo-service-image.webp',
-}
 
 /** the tip of a fully tucked sheet, in degrees, about its top-left */
 const TILT = 4.2
@@ -69,67 +60,69 @@ const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
 
 export default function ServiceSheets() {
   const rootRef = useRef<HTMLElement | null>(null)
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     const root = rootRef.current
     if (!root) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    if (!window.matchMedia('(min-width: 57.5rem)').matches) return
+    const media = gsap.matchMedia()
+    media.add('(min-width: 57.5rem) and (prefers-reduced-motion: no-preference)', () => {
+      const list = root.querySelector<HTMLElement>('.svs-list')
+      if (!list) return
+      const rows = Array.from(list.querySelectorAll<HTMLElement>('.svs-row'))
+      if (rows.length < 2) return
 
-    const list = root.querySelector<HTMLElement>('.svs-list')
-    if (!list) return
-    const rows = Array.from(list.querySelectorAll<HTMLElement>('.svs-row'))
-    if (rows.length < 2) return
+      list.classList.add('is-live')
 
-    list.classList.add('is-live')
+      /* LAYOUT values, not rects: the rows are transformed every frame */
+      let tops: number[] = []
+      let hs: number[] = []
+      const measure = () => {
+        tops = rows.map((r) => r.offsetTop)
+        hs = rows.map((r) => r.offsetHeight)
+      }
+      measure()
+      const ro = new ResizeObserver(measure)
+      ro.observe(list)
 
-    /* LAYOUT values, not rects: the rows are transformed every frame */
-    let tops: number[] = []
-    let hs: number[] = []
-    const measure = () => {
-      tops = rows.map((r) => r.offsetTop)
-      hs = rows.map((r) => r.offsetHeight)
-    }
-    measure()
-    const ro = new ResizeObserver(measure)
-    ro.observe(list)
+      const last = new Array(rows.length).fill(-1)
+      const tick = () => {
+        const lt = list.getBoundingClientRect().top // the list never moves
+        const vh = window.innerHeight
+        if (lt > vh * 1.5 || lt + list.offsetHeight < -vh * 0.5) return
+        const span = vh * (START - END)
+        for (let i = 1; i < rows.length; i++) {
+          const p = clamp01((vh * START - (lt + tops[i])) / span)
+          if (p === last[i] && (p === 0 || p === 1)) continue
+          last[i] = p
+          /* a soft settle, close to linear: the fan has to read as a fan the
+             whole way up, not snap flat in the first third */
+          const e = 1 - Math.pow(1 - p, 1.6)
+          const k = 1 - e
+          const el = rows[i]
+          if (p >= 1) {
+            el.style.transform = ''
+            el.style.removeProperty('--svs-k')
+            continue
+          }
+          el.style.transform = `translate3d(0, ${(-TUCK * hs[i] * k).toFixed(2)}px, 0) rotate(${(TILT * k).toFixed(3)}deg)`
+          el.style.setProperty('--svs-k', k.toFixed(3))
+        }
+      }
+      tick()
+      gsap.ticker.add(tick)
 
-    const last = new Array(rows.length).fill(-1)
-    const tick = () => {
-      const lt = list.getBoundingClientRect().top // the list never moves
-      const vh = window.innerHeight
-      if (lt > vh * 1.5 || lt + list.offsetHeight < -vh * 0.5) return
-      const span = vh * (START - END)
-      for (let i = 1; i < rows.length; i++) {
-        const p = clamp01((vh * START - (lt + tops[i])) / span)
-        if (p === last[i] && (p === 0 || p === 1)) continue
-        last[i] = p
-        /* a soft settle, close to linear: the fan has to read as a fan the
-           whole way up, not snap flat in the first third */
-        const e = 1 - Math.pow(1 - p, 1.6)
-        const k = 1 - e
-        const el = rows[i]
-        if (p >= 1) {
+      return () => {
+        gsap.ticker.remove(tick)
+        ro.disconnect()
+        list.classList.remove('is-live')
+        rows.forEach((el) => {
           el.style.transform = ''
           el.style.removeProperty('--svs-k')
-          continue
-        }
-        el.style.transform = `translate3d(0, ${(-TUCK * hs[i] * k).toFixed(2)}px, 0) rotate(${(TILT * k).toFixed(3)}deg)`
-        el.style.setProperty('--svs-k', k.toFixed(3))
+        })
       }
-    }
-    tick()
-    gsap.ticker.add(tick)
-
-    return () => {
-      gsap.ticker.remove(tick)
-      ro.disconnect()
-      list.classList.remove('is-live')
-      rows.forEach((el) => {
-        el.style.transform = ''
-        el.style.removeProperty('--svs-k')
-      })
-    }
+    })
+    return () => media.revert()
   }, [])
 
   return (
@@ -137,6 +130,9 @@ export default function ServiceSheets() {
        title and just keep the big what we do title") — the rows are the
        sign's list; no numbering either */
     <section className="svs" ref={rootRef} aria-label="Services">
+      <noscript>
+        <style>{`.svs-includes-toggle{display:none!important}.svs-tags{display:flex!important}`}</style>
+      </noscript>
       <ul className="svs-list">
         {SERVICES.map((s, i) => (
           <li
@@ -144,18 +140,36 @@ export default function ServiceSheets() {
             className="svs-row"
             style={{ zIndex: SERVICES.length - i } as React.CSSProperties}
           >
-            <a className="k-page svs-link" href={`/services/${s.slug}`}>
-              <h3 className="svs-name">{s.name}</h3>
-              <ul className="svs-tags t-small">
-                {s.includes.map((line) => (
-                  <li key={line}>{line}</li>
-                ))}
-              </ul>
+            <div className="k-page svs-link">
+              <h3 className="svs-name">
+                <a className="svs-title-link" href={`/services/${s.slug}`}>
+                  <span className="svs-title-text">{s.name}</span>
+                  <span className="svs-card-arrow" aria-hidden="true">→</span>
+                </a>
+              </h3>
+              <div className={`svs-includes${expanded[s.slug] ? ' is-open' : ''}`}>
+                <button
+                  type="button"
+                  className="svs-includes-toggle"
+                  aria-expanded={Boolean(expanded[s.slug])}
+                  aria-controls={`svs-includes-${s.slug}`}
+                  aria-label={`What's included in ${s.name}`}
+                  onClick={() => setExpanded((previous) => ({ ...previous, [s.slug]: !previous[s.slug] }))}
+                >
+                  What&apos;s included
+                  <span aria-hidden="true">+</span>
+                </button>
+                <ul className="svs-tags t-small" id={`svs-includes-${s.slug}`}>
+                  {s.includes.map((line) => (
+                    <li key={line}>{line}</li>
+                  ))}
+                </ul>
+              </div>
               <p className="svs-para t-body">{s.para}</p>
-              <span className="svs-pic">
-                <img {...responsive(PHOTOS[s.slug])} alt={SERVICE_PHOTO_ALT[s.slug] ?? ''} loading="lazy" decoding="async" />
-              </span>
-            </a>
+              <a className="svs-pic" href={`/services/${s.slug}`} tabIndex={-1} aria-label={`Explore ${s.name}`}>
+                <img {...responsive(SERVICE_GRAPHICS[s.slug].src, '(max-width: 57.499rem) min(480px, calc(100vw - 40px)), 224px')} alt={SERVICE_GRAPHICS[s.slug].alt} width={1672} height={941} loading="lazy" decoding="async" />
+              </a>
+            </div>
           </li>
         ))}
       </ul>

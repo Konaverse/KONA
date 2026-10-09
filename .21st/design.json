@@ -1,0 +1,150 @@
+{
+  "version": 1,
+  "project": {
+    "name": "kona-socials",
+    "productType": "Agency website and portfolio",
+    "stack": [
+      "nextjs",
+      "react",
+      "shadcn",
+      "tailwind-v4"
+    ]
+  },
+  "sources": {
+    "tokens": [
+      "src/styles/tokens.css"
+    ],
+    "components": [
+      "src/components/v4",
+      "src/components/ui"
+    ],
+    "assets": [
+      "public/brand"
+    ],
+    "instructions": []
+  },
+  "design": {
+    "colorMode": "Monochrome with light and dark polarities",
+    "colors": {
+      "--surface": {
+        "value": "var(--n-1)",
+        "source": "src/styles/tokens.css"
+      },
+      "--surface-raised": {
+        "value": "var(--n-0)",
+        "source": "src/styles/tokens.css"
+      },
+      "--surface-inset": {
+        "value": "var(--n-2)",
+        "source": "src/styles/tokens.css"
+      },
+      "--text": {
+        "value": "var(--ink)",
+        "source": "src/styles/tokens.css"
+      },
+      "--text-muted": {
+        "value": "var(--n-7)",
+        "source": "src/styles/tokens.css"
+      },
+      "--focus-ring": {
+        "value": "var(--ink)",
+        "source": "src/styles/tokens.css"
+      }
+    },
+    "typography": {
+      "--font-sans": {
+        "value": "var(--font-manrope, \"Manrope\"), system-ui, sans-serif",
+        "source": "src/styles/tokens.css"
+      }
+    },
+    "spacing": {},
+    "radius": {
+      "--r-md": {
+        "value": "0.625rem",
+        "source": "src/styles/tokens.css"
+      },
+      "--r-lg": {
+        "value": "1.5rem",
+        "source": "src/styles/tokens.css"
+      }
+    },
+    "shadows": {},
+    "motion": {},
+    "density": "Editorial"
+  },
+  "components": {
+    "installed": [
+      "button",
+      "CustomCursor",
+      "skiper-ui",
+      "team-member-card"
+    ],
+    "preferredPrimitives": [
+      "Existing v4 components"
+    ],
+    "patterns": []
+  },
+  "constraints": {
+    "must": [
+      "Use the v4 monochrome role tokens in src/styles/tokens.css and Manrope; globals.css also contains retired v3 tokens.",
+      "Keep work and services hubs in a single-screen layout."
+    ],
+    "avoid": [
+      "Do not reintroduce the rejected SEO overview panels, blog introduction or card excerpts."
+    ]
+  },
+  "decisions": [
+    {
+      "date": "2026-10-09",
+      "decision": "Preserve the original work, services and blog layouts. The user rejected and requested removal of the SEO overview panels, blog introduction and card excerpts.",
+      "source": "User correction in this session"
+    },
+    {
+      "date": "2026-10-09",
+      "decision": "Use the selected image-led cards for the mobile homepage services section, preserving the desktop sheets and the separate services hub. Keep each image, title, description and expandable includes in a single responsive markup tree.",
+      "source": "User chose Cards for sure from the three mobile concepts"
+    },
+    {
+      "date": "2026-10-09",
+      "decision": "User rejected open gallery, filmstrip and image-stage mobile project concepts. Explore three independently authored scroll treatments using the parked Giats component only to understand pacing; retain SELECTED WORK and avoid reproducing its implementation or design.",
+      "source": "User correction and request for three creative working previews"
+    },
+    {
+      "date": "2026-10-09",
+      "decision": "User selected the open mobile homepage project gallery after exploring alternatives. Align every entry to the same width and left edge in one vertical column, with the name above an uncropped screenshot and the service below. Enrich once-only entrances with a curtain reveal, settling image zoom and staggered text; retain SELECTED WORK, desktop hover list, case-study links and full reduced-motion/no-JS visibility.",
+      "source": "User: let us just do the gallery; all projects unified in the same vertical stack position, with richer entrance motion"
+    },
+    {
+      "date": "2026-10-09",
+      "decision": "Replace the six service photographs on the homepage and services hub with the owner-supplied graphics in their respective service folders. Share sources and descriptions, preserve full color and original aspect ratio, and serve optimized WebP images with responsive 800px variants.",
+      "source": "User requested the graphics images for both homepage and services hub"
+    }
+  ],
+  "evidence": [
+    {
+      "fact": "components.installed",
+      "source": "src/components/ui"
+    },
+    {
+      "fact": "project.stack:nextjs",
+      "source": "package.json"
+    },
+    {
+      "fact": "project.stack:react",
+      "source": "package.json"
+    },
+    {
+      "fact": "project.stack:shadcn",
+      "source": "components.json"
+    },
+    {
+      "fact": "project.stack:tailwind-v4",
+      "source": "package.json"
+    },
+    {
+      "fact": "design.tokens and polarity overrides",
+      "source": "src/styles/tokens.css"
+    }
+  ],
+  "generatedAt": "2026-10-09T10:53:17.903Z"
+}

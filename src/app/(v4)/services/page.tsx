@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import ServiceCarousel, { type CarouselService } from '@/components/v4/ServiceCarousel'
 import { SERVICE_PAGES } from '@/lib/service-pages'
-import { SERVICE_PHOTO_ALT } from '@/lib/service-photo-alt'
+import { SERVICE_GRAPHICS } from '@/lib/service-graphics'
 import { OG_DEFAULTS, SITE_URL } from '@/lib/site'
 import './hub.css'
 
@@ -89,17 +89,6 @@ export const metadata: Metadata = {
   },
 }
 
-/** each card's picture: the owner's photograph of the service at work
- *  (2026-10-01; they replace the films + object stand-ins of 09-30) */
-const PHOTO: Record<string, string> = {
-  'web-design': '/services/web-design/web-design-service-image.webp',
-  'web-development': '/services/web-dev/web-dev-service-image.webp',
-  '3d-websites': '/services/3d-websites/3d-websites-service-image.webp',
-  'one-page-websites': '/services/one-page-art/one-page-design-service-image.webp',
-  'website-redesign': '/services/redesign-art/website-redesign-service-image.webp',
-  seo: '/services/seo-art/seo-service-image.webp',
-}
-
 export default function ServicesHubPage() {
   const pages = SERVICE_PAGES
 
@@ -130,8 +119,8 @@ export default function ServicesHubPage() {
     slug: p.slug,
     name: p.name,
     blurb: p.blurb,
-    image: PHOTO[p.slug] ?? p.visual,
-    alt: PHOTO[p.slug] ? SERVICE_PHOTO_ALT[p.slug] : undefined,
+    image: SERVICE_GRAPHICS[p.slug].src,
+    alt: SERVICE_GRAPHICS[p.slug].alt,
   }))
 
   return (
