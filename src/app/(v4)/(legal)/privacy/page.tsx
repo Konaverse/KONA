@@ -150,7 +150,7 @@ export default function PrivacyPage() {
           </li>
           <li>
             <strong>Ahrefs Web Analytics</strong>: aggregate, cookieless traffic measurement.{' '}
-            <LegalExt href="https://ahrefs.com/privacy">Ahrefs privacy policy</LegalExt>
+            <LegalExt href="https://ahrefs.com/legal/privacy-policy">Ahrefs privacy policy</LegalExt>
           </li>
           <li>
             <strong>Microsoft Clarity</strong>: heatmaps and session recordings to improve the

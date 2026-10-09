@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react'
 import Button from '@/components/v4/Button'
 import { WORK_PROJECTS, type WorkProject } from '@/lib/work-projects'
-import { gsap } from '@/lib/motion-v4'
+import { EASE, gsap } from '@/lib/motion-v4'
 import { CustomEase } from 'gsap/CustomEase'
 import './worklist.css'
 
@@ -33,8 +33,9 @@ import './worklist.css'
  * that button goes).
  *
  * Progress and the preview's chase run on one gsap.ticker (house rule).
- * Touch gets the plain list; reduced motion gets the list with the
- * marquee still. Every word is server-rendered.
+ * The homepage's mobile gallery uses the same links and image markup,
+ * with aligned screenshots and once-only entrances. Reduced motion
+ * and no JavaScript retain the complete gallery. Every word is rendered.
  */
 
 /* ← replace every value below with your own content */
@@ -65,11 +66,14 @@ export default function WorkList({
   projects = WORK_PROJECTS,
   studies,
   bare = false,
+  mobileGallery = false,
 }: {
   projects?: WorkProject[]
   studies: string[]
   /** the rows alone: no marquee head, no kicker, no foot (the work hub) */
   bare?: boolean
+  /** Aligned image gallery below the homepage marquee on mobile. */
+  mobileGallery?: boolean
 }) {
   const ref = useRef<HTMLElement | null>(null)
   const has = new Set(studies)
@@ -81,98 +85,157 @@ export default function WorkList({
     const track = sec.querySelector<HTMLElement>('.wl-marq-track')
     const copy = sec.querySelector<HTMLElement>('.wl-marq-t')
     const rows = Array.from(sec.querySelectorAll<HTMLElement>('.wl-row'))
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const hover = window.matchMedia('(hover: hover)').matches
+    const media = gsap.matchMedia()
+    media.add({
+      always: 'all',
+      reduce: '(prefers-reduced-motion: reduce)',
+      hover: '(hover: hover)',
+      mobile: '(max-width: 57.499rem)',
+    }, (context) => {
+      const { reduce, hover, mobile } = context.conditions!
+      const gallery = mobileGallery && mobile
 
-    /* ---- the marquee: drift + scrub, wrapped on one copy's width ---- */
-    let drift = 0
-    let lastT = performance.now()
-    let W = copy?.offsetWidth ?? 0
-    const onResize = () => {
-      W = copy?.offsetWidth ?? 0
-    }
-    window.addEventListener('resize', onResize)
-
-    /* ---- the preview chase: one per row, only the hovered one moves ---- */
-    const chase = rows.map(() => ({ x: 0, tx: 0, on: false }))
-    const prevs = rows.map((r) => r.querySelector<HTMLElement>('.wl-prev'))
-    /* the preview is centred on its own box by the driver — see the CSS */
-    gsap.set(prevs.filter(Boolean), { xPercent: -50, yPercent: -50, scale: 0 })
-
-    const tick = () => {
-      const now = performance.now()
-      const dt = Math.min(0.05, (now - lastT) / 1000)
-      lastT = now
-      const vh = window.innerHeight
-      const mr = marq && track ? marq.getBoundingClientRect() : null
-      if (mr && mr.bottom > 0 && mr.top < vh && W > 0) {
-        if (!reduce) drift += DRIFT * dt
-        const p = clamp01((vh - mr.top) / (vh + mr.height))
-        const scrub = reduce ? 0 : (0.5 - p) * 2 * SCRUB_VW * window.innerWidth
-        const x = drift + scrub
-        const wrapped = -W + ((x % W) + W) % W
-        gsap.set(track, { x: wrapped, force3D: true })
+      /* ---- the marquee: drift + scrub, wrapped on one copy's width ---- */
+      let drift = 0
+      let lastT = performance.now()
+      let W = copy?.offsetWidth ?? 0
+      const onResize = () => {
+        W = copy?.offsetWidth ?? 0
       }
-      chase.forEach((c, i) => {
-        const el = prevs[i]
-        if (!el || !c.on) return
-        c.x += (c.tx - c.x) * CHASE
-        gsap.set(el, { x: c.x, force3D: true })
-      })
-    }
+      window.addEventListener('resize', onResize)
 
-    const offs: (() => void)[] = []
-    if (hover && !reduce) {
-      rows.forEach((row, i) => {
-        const prev = prevs[i]
-        if (!prev) return
-        const onEnter = (e: PointerEvent) => {
-          const r = row.getBoundingClientRect()
-          chase[i].on = true
-          chase[i].tx = e.clientX - r.left
-          chase[i].x = chase[i].tx
-          gsap.set(prev, { x: chase[i].x })
-          gsap.killTweensOf(prev, 'scale')
-          gsap.to(prev, { scale: 1, duration: 0.6, ease: EASE_IN, overwrite: 'auto' })
+      /* ---- the preview chase: one per row, only the hovered one moves ---- */
+      const chase = rows.map(() => ({ x: 0, tx: 0, on: false }))
+      const prevs = gallery ? [] : rows.map((r) => r.querySelector<HTMLElement>('.wl-prev'))
+      /* the preview is centred on its own box by the driver — see the CSS */
+      gsap.set(prevs.filter(Boolean), { xPercent: -50, yPercent: -50, scale: 0 })
+
+      const tick = () => {
+        const now = performance.now()
+        const dt = Math.min(0.05, (now - lastT) / 1000)
+        lastT = now
+        const vh = window.innerHeight
+        const mr = marq && track ? marq.getBoundingClientRect() : null
+        if (mr && mr.bottom > 0 && mr.top < vh && W > 0) {
+          if (!reduce) drift += DRIFT * dt
+          const p = clamp01((vh - mr.top) / (vh + mr.height))
+          const scrub = reduce ? 0 : (0.5 - p) * 2 * SCRUB_VW * window.innerWidth
+          const x = drift + scrub
+          const wrapped = -W + ((x % W) + W) % W
+          gsap.set(track, { x: wrapped, force3D: true })
         }
-        const onMove = (e: PointerEvent) => {
-          const r = row.getBoundingClientRect()
-          chase[i].tx = e.clientX - r.left
-        }
-        const onLeave = () => {
-          gsap.to(prev, {
-            scale: 0,
-            duration: 0.45,
-            ease: EASE_IN,
-            overwrite: 'auto',
-            onComplete: () => {
-              chase[i].on = false
-            },
-          })
-        }
-        row.addEventListener('pointerenter', onEnter)
-        row.addEventListener('pointermove', onMove, { passive: true })
-        row.addEventListener('pointerleave', onLeave)
-        offs.push(() => {
-          row.removeEventListener('pointerenter', onEnter)
-          row.removeEventListener('pointermove', onMove)
-          row.removeEventListener('pointerleave', onLeave)
+        chase.forEach((c, i) => {
+          const el = prevs[i]
+          if (!el || !c.on) return
+          c.x += (c.tx - c.x) * CHASE
+          gsap.set(el, { x: c.x, force3D: true })
         })
-      })
-    }
+      }
 
-    const raf = requestAnimationFrame(() => gsap.ticker.add(tick))
-    return () => {
-      cancelAnimationFrame(raf)
-      gsap.ticker.remove(tick)
-      window.removeEventListener('resize', onResize)
-      offs.forEach((f) => f())
-      gsap.set([track, ...prevs].filter(Boolean), { clearProps: 'transform' })
-    }
-  }, [])
+      const offs: (() => void)[] = []
+      if (hover && !reduce && !gallery) {
+        rows.forEach((row, i) => {
+          const prev = prevs[i]
+          if (!prev) return
+          const onEnter = (e: PointerEvent) => {
+            const r = row.getBoundingClientRect()
+            chase[i].on = true
+            chase[i].tx = e.clientX - r.left
+            chase[i].x = chase[i].tx
+            gsap.set(prev, { x: chase[i].x })
+            gsap.killTweensOf(prev, 'scale')
+            gsap.to(prev, { scale: 1, duration: 0.6, ease: EASE_IN, overwrite: 'auto' })
+          }
+          const onMove = (e: PointerEvent) => {
+            const r = row.getBoundingClientRect()
+            chase[i].tx = e.clientX - r.left
+          }
+          const onLeave = () => {
+            gsap.to(prev, {
+              scale: 0,
+              duration: 0.45,
+              ease: EASE_IN,
+              overwrite: 'auto',
+              onComplete: () => {
+                chase[i].on = false
+              },
+            })
+          }
+          row.addEventListener('pointerenter', onEnter)
+          row.addEventListener('pointermove', onMove, { passive: true })
+          row.addEventListener('pointerleave', onLeave)
+          offs.push(() => {
+            row.removeEventListener('pointerenter', onEnter)
+            row.removeEventListener('pointermove', onMove)
+            row.removeEventListener('pointerleave', onLeave)
+          })
+        })
+      }
+
+      const raf = requestAnimationFrame(() => gsap.ticker.add(tick))
+      return () => {
+        cancelAnimationFrame(raf)
+        gsap.ticker.remove(tick)
+        window.removeEventListener('resize', onResize)
+        offs.forEach((f) => f())
+        gsap.killTweensOf(prevs.filter(Boolean))
+      }
+    })
+    return () => media.revert()
+  }, [mobileGallery, projects])
+
+  useEffect(() => {
+    const sec = ref.current
+    if (!sec || !mobileGallery || !('IntersectionObserver' in window)) return
+    const media = gsap.matchMedia()
+    media.add('(max-width: 57.499rem) and (prefers-reduced-motion: no-preference)', () => {
+      const rows = Array.from(sec.querySelectorAll<HTMLElement>('.wl-row'))
+      const entrances = new Map<Element, gsap.core.Timeline>()
+      for (const row of rows) {
+        const curtain = row.querySelector('.wl-gallery-curtain')
+        const image = row.querySelector('.wl-prev img')
+        const name = row.querySelector('.wl-name')
+        const service = row.querySelector('.wl-service')
+        const arrow = row.querySelector('.wl-gallery-arrow')
+        if (!curtain || !image || !name || !service || !arrow) continue
+        gsap.set(curtain, { scaleY: 1 })
+        gsap.set(image, { scale: 1.08, yPercent: 4 })
+        gsap.set(name, { y: 20, autoAlpha: 0 })
+        gsap.set(service, { y: 12, autoAlpha: 0 })
+        gsap.set(arrow, { x: -8, autoAlpha: 0 })
+        entrances.set(row, gsap.timeline({ paused: true })
+          .to(curtain, { scaleY: 0, duration: 0.95, ease: EASE.settle }, 0)
+          .to(image, { scale: 1, yPercent: 0, duration: 1.2, ease: EASE.glass }, 0)
+          .to(name, { y: 0, autoAlpha: 1, duration: 0.8, ease: EASE.settle }, 0.08)
+          .to(arrow, { x: 0, autoAlpha: 1, duration: 0.65, ease: EASE.settle }, 0.18)
+          .to(service, { y: 0, autoAlpha: 1, duration: 0.65, ease: EASE.settle }, 0.28))
+      }
+      const observer = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue
+          entrances.get(entry.target)?.play()
+          observer.unobserve(entry.target)
+        }
+      }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' })
+      rows.forEach(row => observer.observe(row))
+      // Keyboard navigation must reveal the destination immediately.
+      const onFocus = (event: FocusEvent) => {
+        const row = event.target instanceof Element ? event.target.closest('.wl-row') : null
+        if (!row) return
+        entrances.get(row)?.progress(1)
+        observer.unobserve(row)
+      }
+      sec.addEventListener('focusin', onFocus)
+      return () => {
+        observer.disconnect()
+        sec.removeEventListener('focusin', onFocus)
+      }
+    })
+    return () => media.revert()
+  }, [mobileGallery, projects])
 
   return (
-    <section ref={ref} className={`wl${bare ? ' wl-bare' : ''}`} id="work" aria-labelledby="wl-h">
+    <section ref={ref} className={`wl${bare ? ' wl-bare' : ''}${mobileGallery ? ' wl-home-gallery' : ''}`} id="work" aria-labelledby="wl-h">
       {/* the marquee head — decorative repeats; the real heading is below */}
       {!bare && (
       <div className="wl-marq" aria-hidden="true">
@@ -194,9 +257,10 @@ export default function WorkList({
         <ul className="wl-list">
           {projects.map((p, i) => (
             <li key={p.slug} className="wl-row" style={{ '--i': i } as React.CSSProperties}>
-              <a className="wl-link" href={hrefOf(p, has)}>
+              <a className="wl-link" href={hrefOf(p, has)} aria-label={mobileGallery ? `${p.name}, ${p.service}` : undefined}>
                 <i className="wl-ov" aria-hidden="true" />
                 <span className="wl-name">{p.name}</span>
+                {mobileGallery && <span className="wl-gallery-arrow" aria-hidden="true">↗</span>}
                 <span className="wl-right" aria-hidden="true">
                   <span className="wl-tag">{p.service}</span>
                   <span className="wl-cta">
@@ -207,9 +271,13 @@ export default function WorkList({
                     </svg>
                   </span>
                 </span>
-                <span className="sr-only">{p.service}</span>
-                <span className="wl-prev" aria-hidden="true">
-                  <img src={p.image} alt={`The ${p.name} website`} loading="lazy" draggable={false} />
+                <span className="wl-service sr-only">{p.service}</span>
+                <span className="wl-prev" aria-hidden={mobileGallery ? undefined : true}>
+                  <picture>
+                    {mobileGallery && <source media="(max-width: 57.499rem)" srcSet={`/work/covers/${p.slug}-960.webp`} type="image/webp" />}
+                    <img src={p.image} alt={`The ${p.name} website`} width={960} height={528} loading="lazy" draggable={false} />
+                  </picture>
+                  {mobileGallery && <span className="wl-gallery-curtain" aria-hidden="true" />}
                 </span>
               </a>
             </li>

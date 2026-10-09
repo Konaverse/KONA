@@ -178,10 +178,12 @@ export default async function HomePage() {
       {/* §5 — THE LIST (WorkList, 2026-09-14): igniteagency.com's selected
           work rebuilt from measurement — a marquee head, hairline rows
           that flood with ink on hover, a preview chasing the cursor. All
-          four projects, linking to their case studies. The section carries
+          four projects, linking to their case studies. Mobile uses an aligned
+          image gallery with once-only entrances. The section carries
           `#work`. The stack (WorkStack), the rows (WorkRows) and the deck
           (WorkDeck) stay in the tree unimported. */}
       <WorkList
+        mobileGallery
         studies={CASE_STUDIES.map((c) => c.slug)}
         projects={HOME_WORK.map((slug) => WORK_PROJECTS.find((p) => p.slug === slug)!).filter(Boolean)}
       />

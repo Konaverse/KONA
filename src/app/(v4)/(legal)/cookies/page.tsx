@@ -109,7 +109,7 @@ export default function CookiesPage() {
           <strong>Ahrefs Web Analytics</strong> also measures traffic, and sets no cookies at all.
           It counts page views without a persistent identifier, so it runs regardless of your
           choice.{' '}
-          <LegalExt href="https://ahrefs.com/privacy">Ahrefs privacy policy</LegalExt>
+          <LegalExt href="https://ahrefs.com/legal/privacy-policy">Ahrefs privacy policy</LegalExt>
         </p>
 
         <h3>C. The booking calendar on the contact page</h3>

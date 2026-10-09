@@ -9,6 +9,7 @@
  *   /work/<slug>/NN.webp                    1900w  →  NN-960.webp
  *   /about-hero/NN.webp                     1600w  →  NN-800.webp
  *   /services/<dir>/<name>-service-image.webp ~1586w → …-800.webp
+ *   /services/<dir>/<name>-graphic.webp      1672w → …-800.webp
  *   /home/bosra-2000.webp                   2000w  →  bosra-1200.webp
  *
  * `srcSetOf(src)` returns the srcset for a source in one of those sets and
@@ -25,6 +26,8 @@ export function srcSetOf(src: string): string | undefined {
   if (m) return `${m[1]}-800.webp 800w, ${src} 1600w`
   m = src.match(/^(\/services\/[^/]+\/[^/]+-service-image)\.webp$/)
   if (m) return `${m[1]}-800.webp 800w, ${src} 1586w`
+  m = src.match(/^(\/services\/[^/]+\/[^/]+-graphic)\.webp$/)
+  if (m) return `${m[1]}-800.webp 800w, ${src} 1672w`
   if (src === '/home/bosra-2000.webp') return '/home/bosra-1200.webp 1200w, /home/bosra-2000.webp 2000w'
   return undefined
 }
