@@ -116,7 +116,6 @@ export default async function HomePage() {
               GL arms, and never on desktop. */}
           <div className="hm-claim-bg" aria-hidden="true">
             <video
-              poster="/home/portrait-glass-mono.webp"
               src="/home/hero-loop.mp4"
               preload="none"
               muted

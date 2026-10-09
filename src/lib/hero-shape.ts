@@ -8,6 +8,8 @@
  */
 export const SHAPE_W = 815
 export const SHAPE_H = 375
+/** Authored video placement, shared by the DOM mask and the folding texture. */
+export const HERO_VIDEO_RECT = { x: -213, y: -6, w: 1208, h: 680 }
 export const SHAPE_PATH =
   'M 548 0 H 787 A 28 28 0 0 1 815 28 V 162 A 28 28 0 0 1 787 190 H 573 ' +
   'A 28 28 0 0 0 545 218 V 347 A 28 28 0 0 1 517 375 H 28 A 28 28 0 0 1 0 347 ' +
