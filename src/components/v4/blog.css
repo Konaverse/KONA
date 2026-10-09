@@ -476,3 +476,8 @@ ol.bl-list li::before {
   .bl-more { padding-bottom: 5rem; }
   .bl-more-h { margin-bottom: 2rem; font-size: 2.2rem; }
 }
+
+/* Images inserted through the Sanity article editor. */
+.bl-inline-image { margin: 2rem 0; }
+.bl-inline-image img { display: block; width: 100%; height: auto; }
+.bl-inline-image figcaption { margin-top: .75rem; font-size: .875rem; opacity: .7; }

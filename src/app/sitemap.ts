@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
 
-import { BLOG_POSTS } from '@/lib/blog-posts'
+import { getSitemapPosts } from '@/sanity/posts'
 import { CASE_STUDIES } from '@/lib/case-studies'
 import { SERVICE_PAGES } from '@/lib/service-pages'
 import { SITE_URL as BASE_URL } from '@/lib/site'
@@ -37,7 +37,8 @@ const entry = (path: string, fallback: Date = LAUNCH) => ({
   lastModified: UPDATED[path] ?? fallback,
 })
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const posts = await getSitemapPosts()
   return [
     entry(''),
     entry('/services'),
@@ -47,8 +48,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     entry('/about'),
     /* the blog: the index moves with its newest piece, each piece with
        its own `updated` */
-    entry('/blog', new Date(BLOG_POSTS.map((p) => p.updated).sort().pop() ?? '2026-10-03')),
-    ...BLOG_POSTS.map((p) => entry(`/blog/${p.slug}`, new Date(p.updated))),
+    entry('/blog', new Date(posts.map((p) => p.updated).sort().pop() ?? '2026-10-03')),
+    ...posts.map((p) => entry(`/blog/${p.slug}`, new Date(p.updated))),
     entry('/contact'),
     entry('/privacy', LEGAL_UPDATED),
     entry('/terms', LEGAL_UPDATED),

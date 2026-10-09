@@ -56,3 +56,6 @@ next-env.d.ts
 
 # reference captures and measurements of other sites — scratch, never shipped
 extract/
+
+# Track the credential-free Sanity example.
+!.env.example

@@ -1,3 +1,4 @@
+import { SanityLive } from '@/sanity/live'
 import type { Metadata, Viewport } from 'next'
 import { Anton, Cormorant_Garamond, DM_Sans, Geist_Mono, Inter, Manrope } from 'next/font/google'
 import Script from 'next/script'
@@ -232,6 +233,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             genuinely global — fonts, metadata, structured data, analytics,
             consent — stays here. */}
         {children}
+        <SanityLive />
         <GoogleAnalytics GA_MEASUREMENT_ID="G-2PEZX44FP9" />
         <MicrosoftClarity />
         {/* Ahrefs Web Analytics — cookieless, so it sits outside the consent gate */}

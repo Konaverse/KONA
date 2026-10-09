@@ -11,7 +11,7 @@ import { CASE_STUDIES } from '@/lib/case-studies'
 import { WORK_PROJECTS } from '@/lib/work-projects'
 import Invitation from '@/components/v4/Invitation'
 import { BlogRow } from '@/components/v4/BlogCards'
-import { postsByDate } from '@/lib/blog-posts'
+import { getPosts } from '@/sanity/posts'
 import { OG_DEFAULTS, SITE_URL } from '@/lib/site'
 import './home.css'
 
@@ -75,7 +75,8 @@ const CLAIM_LINE =
  *  something else"); the rest of the roster lives on /work. */
 const HOME_WORK = ['los-santos-barbers', 'lumiere-eclat', 'tdk', 'velricon']
 
-export default function HomePage() {
+export default async function HomePage() {
+  const posts = await getPosts()
   /* Hero A/B (2026-08-18): variant B, the user's staircase wireframe, is
      live here; variant A (the 3D object, HeroStage) is parked at
      /hero-object for comparison — swap the import to bring it back. */
@@ -200,7 +201,7 @@ export default function HomePage() {
           in the homepage below the projects for the blogs. A nice
           horizontally cards aligned section"): the pieces in one row,
           newest first, each a link to its article. */}
-      <BlogRow posts={postsByDate()} />
+      <BlogRow posts={posts} />
 
       {/* §9 — the invitation: the line, the button, the address */}
       <Invitation />

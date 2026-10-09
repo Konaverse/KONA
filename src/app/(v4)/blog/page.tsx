@@ -3,7 +3,8 @@ import JsonLd from '@/components/JsonLd'
 import { BlogGrid } from '@/components/v4/BlogCards'
 import Invitation from '@/components/v4/Invitation'
 import Reveal from '@/components/v4/Reveal'
-import { AUTHORS, postsByDate } from '@/lib/blog-posts'
+import { AUTHORS } from '@/lib/blog-posts'
+import { getPosts } from '@/sanity/posts'
 import { OG_DEFAULTS, SITE_URL } from '@/lib/site'
 
 /**
@@ -30,8 +31,8 @@ export const metadata: Metadata = {
   openGraph: { ...OG_DEFAULTS, title: `${TITLE} | Konaverse`, description: DESCRIPTION, url: URL, type: 'website' },
 }
 
-export default function BlogIndex() {
-  const posts = postsByDate()
+export default async function BlogIndex() {
+  const posts = await getPosts()
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
