@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
+import Image from 'next/image'
 import { Fragment, type ReactNode } from 'react'
 import { notFound } from 'next/navigation'
 import JsonLd from '@/components/JsonLd'
@@ -7,7 +9,11 @@ import { BlogGrid } from '@/components/v4/BlogCards'
 import BlogToc from '@/components/v4/BlogToc'
 import Invitation from '@/components/v4/Invitation'
 import Reveal from '@/components/v4/Reveal'
-import { AUTHORS, BLOG_POSTS, getPost, longDate, postsByDate, readMinutes, wordCount, type Block } from '@/lib/blog-posts'
+import { AUTHORS, longDate, readMinutes, wordCount, type Block } from '@/lib/blog-posts'
+import { PortableText, type PortableTextComponents } from 'next-sanity'
+import { articleBlocks, getPost, getPosts } from '@/sanity/posts'
+import { client } from '@/sanity/client'
+import { POST_SLUGS_QUERY } from '@/sanity/queries'
 import { getCaseStudy } from '@/lib/case-studies'
 import { OG_DEFAULTS, SITE_URL } from '@/lib/site'
 
@@ -30,13 +36,13 @@ import { OG_DEFAULTS, SITE_URL } from '@/lib/site'
  * the server HTML.
  */
 
-export function generateStaticParams() {
-  return BLOG_POSTS.map((p) => ({ slug: p.slug }))
+export async function generateStaticParams() {
+  return client.withConfig({ useCdn: false }).fetch(POST_SLUGS_QUERY, {}, { perspective: 'published', stega: false })
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
-  const post = getPost(slug)
+  const post = await getPost(slug)
   if (!post) return {}
   const url = `${SITE_URL}/blog/${post.slug}`
   return {
@@ -53,7 +59,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       publishedTime: post.published,
       modifiedTime: post.updated,
       authors: [AUTHORS[post.author].name],
-      images: [{ url: `${SITE_URL}${post.cover.src}`, width: post.cover.width, height: post.cover.height, alt: post.cover.alt }],
+      images: [{ url: `${new URL(post.cover.src, SITE_URL).href}`, width: post.cover.width, height: post.cover.height, alt: post.cover.alt }],
     },
   }
 }
@@ -62,9 +68,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 function rich(text: string): ReactNode[] {
   return text.split(/(\[[^\]]+\]\([^)]+\)|\*\*[^*]+\*\*)/g).map((part, i) => {
     const link = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
-    if (link) return <a key={i} href={link[2]}>{link[1]}</a>
+    if (link) return <a key={i} href={link[2]}>{rich(link[1])}</a>
     const strong = part.match(/^\*\*([^*]+)\*\*$/)
-    if (strong) return <strong key={i}>{strong[1]}</strong>
+    if (strong) return <strong key={i}>{rich(strong[1])}</strong>
     return <Fragment key={i}>{part}</Fragment>
   })
 }
@@ -130,6 +136,13 @@ function BlockView({ block }: { block: Block }) {
           ))}
         </ul>
       )
+    case 'image':
+      return (
+        <figure className="bl-inline-image">
+          <Image src={block.src} alt={block.alt} width={block.width} height={block.height} loading="lazy" decoding="async" />
+          {block.caption ? <figcaption>{block.caption}</figcaption> : null}
+        </figure>
+      )
     case 'note':
       return (
         <aside className="bl-note k-dark">
@@ -140,16 +153,42 @@ function BlockView({ block }: { block: Block }) {
   }
 }
 
+
+type NativeBodyBlock = NonNullable<Parameters<typeof articleBlocks>[0]>[number]
+
+function CustomBodyBlock({ value }: { value: NativeBodyBlock }) {
+  const block = articleBlocks([value])[0]
+  return block ? <BlockView block={block} /> : null
+}
+
+const portableComponents: PortableTextComponents = {
+  block: {
+    normal: ({ children }) => <p>{children}</p>,
+    h2: ({ children, value }) => <h2 className="bl-h2" id={value._key}>{children}</h2>,
+    h3: ({ children }) => <h3 className="bl-h3">{children}</h3>,
+  },
+  list: {
+    bullet: ({ children }) => <ul className="bl-list">{children}</ul>,
+    number: ({ children }) => <ol className="bl-list">{children}</ol>,
+  },
+  types: {
+    articleTable: CustomBodyBlock,
+    articleStats: CustomBodyBlock,
+    articleNote: CustomBodyBlock,
+    articleImage: CustomBodyBlock,
+  },
+}
+
 export default async function BlogArticle({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const post = getPost(slug)
+  const post = await getPost(slug)
   if (!post) notFound()
 
   const url = `${SITE_URL}/blog/${post.slug}`
   const author = AUTHORS[post.author]
   const contents = post.blocks.flatMap((b) => (b.kind === 'h2' ? [{ id: b.id, text: b.text }] : []))
   const studies = post.studies.map((s) => getCaseStudy(s)).filter((s): s is NonNullable<typeof s> => !!s)
-  const others = postsByDate().filter((p) => p.slug !== post.slug)
+  const others = (await getPosts()).filter((p) => p.slug !== post.slug)
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -176,7 +215,7 @@ export default async function BlogArticle({ params }: { params: Promise<{ slug: 
         articleSection: post.topic,
         image: {
           '@type': 'ImageObject',
-          url: `${SITE_URL}${post.cover.src}`,
+          url: `${new URL(post.cover.src, SITE_URL).href}`,
           width: post.cover.width,
           height: post.cover.height,
         },
@@ -197,7 +236,7 @@ export default async function BlogArticle({ params }: { params: Promise<{ slug: 
           <nav aria-label="Breadcrumb">
             <ol className="bl-crumbs">
               <li>
-                <a href="/blog">Blog</a>
+                <Link href="/blog">Blog</Link>
               </li>
               <li aria-current="page">{post.topic}</li>
             </ol>
@@ -256,7 +295,7 @@ export default async function BlogArticle({ params }: { params: Promise<{ slug: 
           <div className="bl-body">
             {/* THE ANSWER: first, whole, liftable */}
             <p className="bl-answer">{post.answer}</p>
-            {post.blocks.map((b, i) => (
+            {post.body ? <PortableText value={post.body} components={portableComponents} /> : post.blocks.map((b, i) => (
               <BlockView key={i} block={b} />
             ))}
 

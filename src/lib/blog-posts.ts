@@ -1,3 +1,4 @@
+import type { POSTS_QUERY_RESULT } from '@/sanity/sanity.types'
 import { AUTHOR_BIO, NABIL_BIO } from '@/lib/site'
 
 /**
@@ -73,6 +74,7 @@ export type Block =
   | { kind: 'stats'; items: { value: string; label: string }[] }
   /** a set-off note: the caveat, the rule, the thing to remember */
   | { kind: 'note'; title: string; text: string }
+  | { kind: 'image'; src: string; alt: string; width: number; height: number; caption?: string }
 
 export interface BlogPost {
   slug: string
@@ -94,6 +96,8 @@ export interface BlogPost {
    *  lifted on its own */
   answer: string
   blocks: Block[]
+  /** Native editor content preserves formatting and nested lists. */
+  body?: NonNullable<POSTS_QUERY_RESULT[number]['body']>
   /** the ONE service page this piece feeds */
   service: { slug: string; label: string; line: string }
   /** the case studies it cites, for the related row and the schema */
@@ -436,6 +440,7 @@ export function wordCount(post: BlogPost): number {
     else if (b.kind === 'table') parts.push(b.caption, ...b.head, ...b.rows.flat())
     else if (b.kind === 'stats') parts.push(...b.items.map((i) => `${i.value} ${i.label}`))
     else if (b.kind === 'note') parts.push(b.title, b.text)
+    else if (b.kind === 'image' && b.caption) parts.push(b.caption)
   }
   return parts.join(' ').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').split(/\s+/).filter(Boolean).length
 }
