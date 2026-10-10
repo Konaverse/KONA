@@ -1,0 +1,298 @@
+[
+  {
+    "mode": "desktop",
+    "idle": {
+      "events": [
+        {
+          "event": "calendly.page_height",
+          "time": 4825.5
+        },
+        {
+          "event": "calendly.page_height",
+          "time": 5945.4000000059605
+        },
+        {
+          "event": "calendly.event_type_viewed",
+          "time": 7109.800000011921
+        },
+        {
+          "event": "calendly.event_type_viewed",
+          "time": 7111.20000000298
+        },
+        {
+          "event": "calendly.page_height",
+          "time": 7111.4000000059605
+        }
+      ],
+      "ready": "true",
+      "mode": "parked",
+      "frames": [
+        {
+          "src": "https://calendly.com/kona-verse/30min?embed_domain=kona-verse.com&embed_type=Inline&hide_event_type_details=1&hide_gdpr_banner=1",
+          "width": 340,
+          "height": 503
+        }
+      ]
+    },
+    "open": {
+      "events": [
+        {
+          "event": "calendly.page_height",
+          "time": 4825.5
+        },
+        {
+          "event": "calendly.page_height",
+          "time": 5945.4000000059605
+        },
+        {
+          "event": "calendly.event_type_viewed",
+          "time": 7109.800000011921
+        },
+        {
+          "event": "calendly.event_type_viewed",
+          "time": 7111.20000000298
+        },
+        {
+          "event": "calendly.page_height",
+          "time": 7111.4000000059605
+        }
+      ],
+      "start": 19.30000001192093,
+      "click": 8196.800000011921,
+      "readyAtClick": true,
+      "openedAt": 8209.40000000596,
+      "frames": 1,
+      "ready": "true",
+      "noteHidden": true,
+      "note": "Loading the calendar…"
+    },
+    "calendar": {
+      "text": "POWERED BY\nCalendly\n30 Minute Meeting\nSelect a Day\nOctober 2026\nOctober is now displayed\nMon\tTue\tWed\tThu\tFri\tSat\tSun\n\t\t\t\n1\n\t\n2\n\t\n3\n\t\n4\n\n\n5\n\t\n6\n\t\n7\n\t\n8\n\t\n9\n\t\n10\n\t\n11\n\n\n12\n\t\n13\n\t\n14\n\t\n15\n\t\n16\n\t\n17\n\t\n18\n\n\n19\n\t\n20\n\t\n21\n\t\n22\n\t\n23\n\t\n24\n\t\n25\n\n\n26\n\t\n27\n\t\n28\n\t\n29\n\t\n30\n\t\n31\n\t\n\nTime zone\n\nEastern European Time\n(18:38)",
+      "buttons": 38
+    },
+    "contact": {
+      "events": [
+        {
+          "event": "calendly.page_height",
+          "time": 4825.5
+        },
+        {
+          "event": "calendly.page_height",
+          "time": 5945.4000000059605
+        },
+        {
+          "event": "calendly.event_type_viewed",
+          "time": 7109.800000011921
+        },
+        {
+          "event": "calendly.event_type_viewed",
+          "time": 7111.20000000298
+        },
+        {
+          "event": "calendly.page_height",
+          "time": 7111.4000000059605
+        },
+        {
+          "event": "calendly.page_height",
+          "time": 11785.800000011921
+        }
+      ],
+      "start": 19.30000001192093,
+      "click": 8196.800000011921,
+      "readyAtClick": true,
+      "openedAt": 8209.40000000596,
+      "contact": 11033.20000000298,
+      "mode": "inline",
+      "sameFrame": true,
+      "sameWindow": true,
+      "frames": [
+        {
+          "src": "https://calendly.com/kona-verse/30min?embed_domain=kona-verse.com&embed_type=Inline&hide_event_type_details=1&hide_gdpr_banner=1",
+          "rect": {
+            "x": 813.703125,
+            "y": 96.109375,
+            "width": 540.6875,
+            "height": 440,
+            "top": 96.109375,
+            "right": 1354.390625,
+            "bottom": 536.109375,
+            "left": 813.703125
+          }
+        }
+      ],
+      "slot": {
+        "x": 813.703125,
+        "y": 96.109375,
+        "width": 540.6875,
+        "height": 440,
+        "top": 96.109375,
+        "right": 1354.390625,
+        "bottom": 536.109375,
+        "left": 813.703125
+      }
+    },
+    "checks": {
+      "scrollAlignment": 0,
+      "selectedDay": true,
+      "selectionText": "POWERED BY\nCalendly\nMonday\nOctober 12, 2026\n\nTime zone\n\nEastern European Time\n(18:38)\nSelect a Time\nDuration: 30 min\n09:00\n09:30\n10:00\n10:30\n11:00\n11:30\n12:00\n12:30\n13:00\n13:30\n14:00\n14:30\n15:00\n15:30\n16:00\n16:30",
+      "menuAlignment": {
+        "delta": 0.01531982421875,
+        "inert": true
+      },
+      "returnReady": true,
+      "idleSlotReads": 0,
+      "reducedMotion": true
+    },
+    "requests": [
+      {
+        "url": "https://calendly.com/kona-verse/30min?embed_domain=kona-verse.com&embed_type=Inline&hide_event_type_details=1&hide_gdpr_banner=1",
+        "time": 1791646687526
+      }
+    ],
+    "contactRequests": 0,
+    "failures": [],
+    "errors": []
+  },
+  {
+    "mode": "mobile",
+    "idle": {
+      "events": [
+        {
+          "event": "calendly.page_height",
+          "time": 4550.899999991059
+        },
+        {
+          "event": "calendly.event_type_viewed",
+          "time": 5697.79999999702
+        },
+        {
+          "event": "calendly.event_type_viewed",
+          "time": 5698.5999999940395
+        },
+        {
+          "event": "calendly.page_height",
+          "time": 5698.899999991059
+        }
+      ],
+      "ready": "true",
+      "mode": "parked",
+      "frames": [
+        {
+          "src": "https://calendly.com/kona-verse/30min?embed_domain=kona-verse.com&embed_type=Inline&hide_event_type_details=1&hide_gdpr_banner=1",
+          "width": 340,
+          "height": 499
+        }
+      ]
+    },
+    "open": {
+      "events": [
+        {
+          "event": "calendly.page_height",
+          "time": 4550.899999991059
+        },
+        {
+          "event": "calendly.event_type_viewed",
+          "time": 5697.79999999702
+        },
+        {
+          "event": "calendly.event_type_viewed",
+          "time": 5698.5999999940395
+        },
+        {
+          "event": "calendly.page_height",
+          "time": 5698.899999991059
+        }
+      ],
+      "start": 28.099999994039536,
+      "click": 7769.79999999702,
+      "readyAtClick": true,
+      "openedAt": 7781.5999999940395,
+      "frames": 1,
+      "ready": "true",
+      "noteHidden": true,
+      "note": "Loading the calendar…"
+    },
+    "calendar": {
+      "text": "POWERED BY\nCalendly\n30 Minute Meeting\nSelect a Day\nOctober 2026\nOctober is now displayed\nMon\tTue\tWed\tThu\tFri\tSat\tSun\n\t\t\t\n1\n\t\n2\n\t\n3\n\t\n4\n\n\n5\n\t\n6\n\t\n7\n\t\n8\n\t\n9\n\t\n10\n\t\n11\n\n\n12\n\t\n13\n\t\n14\n\t\n15\n\t\n16\n\t\n17\n\t\n18\n\n\n19\n\t\n20\n\t\n21\n\t\n22\n\t\n23\n\t\n24\n\t\n25\n\n\n26\n\t\n27\n\t\n28\n\t\n29\n\t\n30\n\t\n31\n\t\n\nTime zone\n\nEastern European Time\n(18:38)",
+      "buttons": 38
+    },
+    "contact": {
+      "events": [
+        {
+          "event": "calendly.page_height",
+          "time": 4550.899999991059
+        },
+        {
+          "event": "calendly.event_type_viewed",
+          "time": 5697.79999999702
+        },
+        {
+          "event": "calendly.event_type_viewed",
+          "time": 5698.5999999940395
+        },
+        {
+          "event": "calendly.page_height",
+          "time": 5698.899999991059
+        },
+        {
+          "event": "calendly.page_height",
+          "time": 10450.199999988079
+        }
+      ],
+      "start": 28.099999994039536,
+      "click": 7769.79999999702,
+      "readyAtClick": true,
+      "openedAt": 7781.5999999940395,
+      "contact": 9774.09999999404,
+      "mode": "inline",
+      "sameFrame": true,
+      "sameWindow": true,
+      "frames": [
+        {
+          "src": "https://calendly.com/kona-verse/30min?embed_domain=kona-verse.com&embed_type=Inline&hide_event_type_details=1&hide_gdpr_banner=1",
+          "rect": {
+            "x": 20,
+            "y": 657.34375,
+            "width": 350,
+            "height": 464,
+            "top": 657.34375,
+            "right": 370,
+            "bottom": 1121.34375,
+            "left": 20
+          }
+        }
+      ],
+      "slot": {
+        "x": 20,
+        "y": 657.34375,
+        "width": 350,
+        "height": 464,
+        "top": 657.34375,
+        "right": 370,
+        "bottom": 1121.34375,
+        "left": 20
+      }
+    },
+    "checks": {
+      "scrollAlignment": 0,
+      "selectedDay": true,
+      "selectionText": "POWERED BY\nCalendly\nMonday\nOctober 12, 2026\n\nTime zone\n\nEastern European Time\n(18:38)\nSelect a Time\nDuration: 30 min\n09:00\n09:30\n10:00\n10:30\n11:00\n11:30\n12:00\n12:30\n13:00\n13:30\n14:00\n14:30\n15:00\n15:30\n16:00\n16:30",
+      "menuAlignment": {
+        "delta": 0.008758544921875,
+        "inert": true
+      },
+      "returnReady": true,
+      "idleSlotReads": 0,
+      "reducedMotion": true
+    },
+    "requests": [
+      {
+        "url": "https://calendly.com/kona-verse/30min?embed_domain=kona-verse.com&embed_type=Inline&hide_event_type_details=1&hide_gdpr_banner=1",
+        "time": 1791646711016
+      }
+    ],
+    "contactRequests": 0,
+    "failures": [],
+    "errors": []
+  }
+]

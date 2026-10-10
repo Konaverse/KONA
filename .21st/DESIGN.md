@@ -14,7 +14,7 @@ The user requested sequential local performance passes while preserving the exis
 
 The individual service templates retain their layout and scroll choreography. Their 132 breathing rays share one raster surface with the original SVG fallback; preserve the rounded ray geometry, individual durations, negative delays, ease-in-out breathing and 90-second rotation. Scroll drivers wake for input and finish their existing glide, with all active section positions read before transforms are written. Distant invitation resources and text splitting wait until nearby. Desktop and mobile Web Design geometry and settled transforms must match the saved baseline.
 
-The reviewed passes were authorized for a local commit on 10 October 2026. The current completion state, validation and next lever are recorded in docs/performance-handoff.md. No push or deployment is authorized. Remaining first-load stalls need attribution in the current build before a further scheduling change.
+The reviewed passes and subsequent first-load pass were authorized for local commits on 10 October 2026. The first-load pass reduces the cursor catalog and prepares the original shaders asynchronously; its rendering and motion regressions passed. The user put further performance work on hold and will start a chat for another purpose. Do not resume it unless requested. No push or deployment is authorized. See docs/performance-handoff.md and docs/design/first-load/README.md for the committed scope, measurements and remaining cold-load costs. Physical-device/Safari review remains outstanding.
 
 ## Calendly booking
 

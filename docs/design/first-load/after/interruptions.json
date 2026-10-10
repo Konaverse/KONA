@@ -1,0 +1,23 @@
+[
+  {
+    "scenario": "no-parallel",
+    "checks": 0,
+    "shaderDeletes": 0,
+    "programDeletes": 0,
+    "errors": []
+  },
+  {
+    "scenario": "late-compile",
+    "checks": 222,
+    "shaderDeletes": 2,
+    "programDeletes": 1,
+    "errors": []
+  },
+  {
+    "scenario": "leave-during-compile",
+    "checks": 17,
+    "shaderDeletes": 2,
+    "programDeletes": 1,
+    "errors": []
+  }
+]

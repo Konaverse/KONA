@@ -1,14 +1,18 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useRef } from 'react'
 import { createPortal, useFrame, useThree } from '@react-three/fiber'
-import { useFBO } from '@react-three/drei'
+import { useFBO } from '@react-three/drei/core/Fbo'
+import { EffectComposerContext } from '@react-three/postprocessing'
 import {
   Camera,
   Color,
   HalfFloatType,
   LinearFilter,
+  Mesh,
   NearestFilter,
+  OrthographicCamera,
+  PlaneGeometry,
   RedFormat,
   RGFormat,
   RGBAFormat,
@@ -17,6 +21,7 @@ import {
   Texture,
   Vector2,
   Vector3,
+  type WebGLRenderer,
 } from 'three'
 import FluidEffect, { MONO_PALETTE, type FluidPalette } from './FluidEffect'
 import {
@@ -67,6 +72,32 @@ const OPTS = {
 const mobileOpts = { radius: 0.15, densityDissipation: 0.945, dyeRes: 128, simRes: 24 }
 const desktopOpts = { radius: 0.19, densityDissipation: 0.95, dyeRes: 512, simRes: 64 }
 
+/** Like compileAsync, but cancellation stops polling before disposed materials
+ * are accessed on a route interruption or resize. Use only public renderer API. */
+async function compileProgram(renderer: WebGLRenderer, scene: Scene, camera: Camera, signal: AbortSignal) {
+  renderer.compile(scene, camera)
+  const context = renderer.getContext()
+  const parallel = context.getExtension('KHR_parallel_shader_compile')
+  const programs = renderer.info.programs?.slice() ?? []
+  if (parallel) {
+    while (!signal.aborted && !context.isContextLost() && programs.some(item => !context.getProgramParameter(item.program, parallel.COMPLETION_STATUS_KHR))) {
+      await new Promise<void>(resolve => window.setTimeout(resolve, 10))
+    }
+  } else {
+    // Older renderers retain their original synchronous path, with a task
+    // boundary to give the driver a chance to finish before the first draw.
+    await new Promise<void>(resolve => window.setTimeout(resolve, 10))
+  }
+  for (const program of programs) {
+    if (signal.aborted || context.isContextLost()) return false
+    // Three's diagnostics and location queries are first-use work as well.
+    // Retain them, but finish them here, one program per task, before input.
+    program.getUniforms()
+    await new Promise<void>(resolve => window.setTimeout(resolve, 0))
+  }
+  return !signal.aborted && !context.isContextLost()
+}
+
 function useDoubleFBO(w: number, h: number, options: Record<string, unknown>) {
   const read = useFBO(w, h, options)
   const write = useFBO(w, h, options)
@@ -94,6 +125,7 @@ export default function Fluid({
   fade = 0.08,
   decay,
   paused = false,
+  onReady,
 }: {
   palette?: FluidPalette
   intensity?: number
@@ -103,10 +135,13 @@ export default function Fluid({
    *  0.982 is 0.64s, 0.95 is 0.23s. Raise it to make the trail last longer. */
   decay?: number
   paused?: boolean
+  onReady: () => void
 }) {
   const size = useThree((s) => s.size)
   const gl = useThree((s) => s.gl)
   const invalidate = useThree((s) => s.invalidate)
+  const { composer } = useContext(EffectComposerContext)
+  const ready = useRef(false)
 
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 812
   const O = { ...OPTS, ...(isMobile ? mobileOpts : desktopOpts) }
@@ -219,7 +254,7 @@ export default function Fluid({
   useEffect(() => {
     if (paused) return
     const onMove = (e: PointerEvent) => {
-      if (e.pointerType === 'touch' || document.hidden) return
+      if (e.pointerType === 'touch' || document.hidden || !ready.current) return
       const { clientX: x, clientY: y } = e
       const dx = x - lastPointer.current.x
       const dy = y - lastPointer.current.y
@@ -249,6 +284,56 @@ export default function Fluid({
   )
   useEffect(() => () => effect.dispose(), [effect])
 
+  useEffect(() => {
+    let disposed = false
+    const compilation = new AbortController()
+    ready.current = false
+    const warm = async () => {
+      const mesh = meshRef.current
+      if (!mesh) return
+      const scene = new Scene()
+      const preview = new Mesh(mesh.geometry, materials.advection)
+      scene.add(preview)
+      // Retain every solver shader and its exact target configuration. Submit
+      // one program per task, then poll GPU completion before
+      // diagnostics/uniform queries can block a frame or the first stroke.
+      for (const material of Object.values(materials)) {
+        if (disposed) return
+        const previous = gl.getRenderTarget()
+        gl.setRenderTarget(density.read)
+        preview.material = material
+        const compiling = compileProgram(gl, scene, bufferCamera.current, compilation.signal)
+        gl.setRenderTarget(previous)
+        if (!await compiling) return
+        await new Promise<void>(resolve => window.setTimeout(resolve, 0))
+      }
+      // The composer builds this material in its layout effect. Compile its
+      // final screen pass as well; drawing black at rest must not pay a shader
+      // wait in React Three Fiber's first animation frame.
+      const geometry = new PlaneGeometry(2, 2)
+      const screen: Mesh = new Mesh(geometry, materials.advection)
+      scene.clear()
+      scene.add(screen)
+      try {
+        for (const pass of composer.passes) {
+          if (disposed) return
+          const material = pass.fullscreenMaterial
+          if (!material) continue
+          screen.material = material
+          if (!await compileProgram(gl, scene, new OrthographicCamera(), compilation.signal)) return
+        }
+        if (disposed) return
+        ready.current = true
+        onReady()
+        invalidate()
+      } finally {
+        geometry.dispose()
+      }
+    }
+    void warm()
+    return () => { disposed = true; compilation.abort(); ready.current = false }
+  }, [composer, density, gl, invalidate, materials, onReady])
+
   /* ------------------------------------------------------------------- loop */
   const use = useCallback((name: keyof typeof materials) => {
     if (!meshRef.current) return
@@ -258,7 +343,6 @@ export default function Fluid({
   const set = useCallback((name: keyof typeof materials, k: string, v: unknown) => {
     const u = materials[name].uniforms[k]
     // Three.js uniforms are imperative GPU state, not React render state.
-    // eslint-disable-next-line react-hooks/immutability
     if (u) u.value = v
   }, [materials])
 
@@ -276,7 +360,7 @@ export default function Fluid({
   }, [gl])
 
   useFrame(() => {
-    if (!meshRef.current || paused) return
+    if (!meshRef.current || paused || !ready.current) return
     if (dyeBound.current === 0 && splats.current.length === 0) {
       effect.setFluidTexture(density.read.texture)
       return

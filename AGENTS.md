@@ -35,6 +35,9 @@ with cold and warm contexts separated. Headless Chrome uses software WebGL here;
 its timings cannot establish smoothness on a physical device. Run checks that
 cover the changed behavior, preserving reduced-motion and no-JavaScript content.
 
-The next proposed lever is attribution of the remaining cold-load stalls in the
-current build, including the Calendly preload. See the handoff before choosing
-an implementation.
+The user authorized a local commit of the first-load pass and put further
+performance work on hold on 10 October 2026. See
+`docs/design/first-load/README.md` and the handoff for the committed scope,
+validation and remaining cold-load costs. Nothing has been pushed or deployed.
+Do not resume performance work unless requested; the next chat is for another
+purpose. Physical-device/Safari review remains outstanding.

@@ -3,7 +3,7 @@ const fs = require('node:fs')
 const path = require('node:path')
 const puppeteer = require('puppeteer-core')
 const base = process.argv[3] || 'http://127.0.0.1:3007'
-const out = path.resolve('docs/design/homepage-session')
+const out = path.resolve('docs/design/homepage-session', process.argv[4] || '.')
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 async function preparePage(context, mobile = false, blocked = false) {

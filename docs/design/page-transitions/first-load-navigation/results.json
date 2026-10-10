@@ -1,0 +1,20 @@
+[
+  {
+    "mode": "desktop",
+    "rapidLinks": true,
+    "historyInterruption": true,
+    "hashLanding": 0.078125,
+    "menuSeparate": true,
+    "reducedMotion": true,
+    "errors": []
+  },
+  {
+    "mode": "mobile",
+    "rapidLinks": true,
+    "historyInterruption": true,
+    "hashLanding": -0.296875,
+    "menuSeparate": true,
+    "reducedMotion": true,
+    "errors": []
+  }
+]

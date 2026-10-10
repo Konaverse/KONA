@@ -143,17 +143,27 @@ export default function HeroPortrait() {
     }
     window.addEventListener('k-peel-armed', begin, { once: true })
     let fallback: ReturnType<typeof setTimeout> | undefined
+    const fallbackBegin = () => {
+      if (!begun) markHeroFallback(root)
+      begin()
+    }
+    // The old synchronous shader check held this timer on the main thread.
+    // Allow an already-submitted shader to finish without revealing the DOM
+    // underneath its cover, within the headline's existing fallback window.
+    const compiling = () => {
+      clearTimeout(fallback)
+      fallback = setTimeout(fallbackBegin, 2600)
+    }
+    window.addEventListener('k-peel-compiling', compiling, { once: true })
     const cancelFallbacks = afterPageTransition(() => {
       copyFallback = setTimeout(beginCopy, 7000)
-      fallback = setTimeout(() => {
-        if (!begun) markHeroFallback(root)
-        begin()
-      }, 1200)
+      fallback = setTimeout(fallbackBegin, 1200)
     })
 
     return () => {
       cancelFallbacks?.()
       window.removeEventListener('k-peel-armed', begin)
+      window.removeEventListener('k-peel-compiling', compiling)
       window.removeEventListener('k-hero-sew', beginCopy)
       clearTimeout(fallback)
       clearTimeout(copyFallback)

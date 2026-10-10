@@ -343,12 +343,13 @@ type PeelGL = {
   dispose: () => void
 }
 
-function createGL(
+async function createGL(
   canvas: HTMLCanvasElement,
   video: HTMLVideoElement,
   /* the mobile crop (see header): a rounded rect at r0, cover-fit at cover */
   rect: { r0: number; cover: [number, number] } | null,
-): PeelGL | null {
+  signal: AbortSignal,
+): Promise<PeelGL | null> {
   const gl = canvas.getContext('webgl', {
     alpha: true,
     antialias: false,
@@ -362,10 +363,6 @@ function createGL(
     if (!s) return null
     gl.shaderSource(s, src)
     gl.compileShader(s)
-    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
-      console.warn('[hp] shader:', gl.getShaderInfoLog(s))
-      return null
-    }
     return s
   }
   const vs = mk(gl.VERTEX_SHADER, VERT)
@@ -376,7 +373,24 @@ function createGL(
   gl.attachShader(prog, vs)
   gl.attachShader(prog, fs)
   gl.linkProgram(prog)
-  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null
+  const releaseProgram = () => {
+    gl.deleteProgram(prog)
+    gl.deleteShader(vs)
+    gl.deleteShader(fs)
+  }
+  // Status/log queries force the browser to wait for the compiler. Poll the
+  // nonblocking completion flag first, leaving the page free to paint/input.
+  const parallel = gl.getExtension('KHR_parallel_shader_compile')
+  if (parallel) {
+    window.dispatchEvent(new Event('k-peel-compiling'))
+    while (!signal.aborted && !gl.isContextLost() && !gl.getProgramParameter(prog, parallel.COMPLETION_STATUS_KHR)) {
+      await new Promise<void>(resolve => window.setTimeout(resolve, 10))
+    }
+  }
+  if (signal.aborted || gl.isContextLost() || !gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+    releaseProgram()
+    return null
+  }
   gl.useProgram(prog)
 
   const verts = new Float32Array((SEG_X + 1) * (SEG_Y + 1) * 2)
@@ -582,6 +596,12 @@ export default function HeroPeel() {
     const bgVid = mobile ? land.querySelector<HTMLVideoElement>('.hm-claim-bg video') : null
 
     let gl: PeelGL | null = null
+    const compilation = new AbortController()
+    const fallback = new MutationObserver(() => {
+      if (main.dataset.heroFallback === 'true') compilation.abort()
+    })
+    fallback.observe(main, { attributes: true, attributeFilter: ['data-hero-fallback'] })
+    let arming = false
     let dead = false
     let videoFrame = 0
     let listening = false
@@ -646,10 +666,18 @@ export default function HeroPeel() {
     /* the texture source is the DOM's OWN looping video element — one
        decode, one clock, so the sheet and the staircase can never show
        different frames. GL arms once the first frame is decodable. */
-    const arm = () => {
-      if (dead || gl || main.dataset.heroFallback === 'true') return
+    const arm = async () => {
+      if (dead || gl || arming || main.dataset.heroFallback === 'true') return
+      arming = true
       try {
-        gl = createGL(canvas, vid, rectShape)
+        const prepared = await createGL(canvas, vid, rectShape, compilation.signal)
+        // Navigation or fallback may have won while the GPU was compiling.
+        // A completed late shader must not add the cover or scroll runway.
+        if (dead || main.dataset.heroFallback === 'true') {
+          prepared?.dispose()
+          return
+        }
+        gl = prepared
       } catch {
         // A failed video texture leaves the server-rendered hero in charge.
         gl = null
@@ -832,8 +860,8 @@ export default function HeroPeel() {
     const prepareArm = () => {
       // A hash landing needs its scroll runway before the landing is measured.
       // At the top, the settled DOM video is already the complete hero.
-      if (window.location.hash) arm()
-      else cancelArm = afterPageTransition(arm)
+      if (window.location.hash) void arm()
+      else cancelArm = afterPageTransition(() => { void arm() })
     }
     const rafId = requestAnimationFrame(() => {
       if (vid.readyState >= 2) prepareArm()
@@ -855,6 +883,8 @@ export default function HeroPeel() {
 
     return () => {
       dead = true
+      compilation.abort()
+      fallback.disconnect()
       if (videoFrame) vid.cancelVideoFrameCallback?.(videoFrame)
       unpause()
       unprepare?.()

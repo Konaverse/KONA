@@ -1,0 +1,377 @@
+[
+  {
+    "mode": "home-cpu4",
+    "rendererLongTaskCount": 38,
+    "rendererLongTaskMs": 6712.865,
+    "maxRendererTaskMs": 938.543,
+    "heroShaderWaitMs": 49.79999999701977,
+    "cursorShaderWaitMs": 28.799999997019768,
+    "firstStrokeShaderWaitMs": 69.69999998807907,
+    "readyMs": 7696,
+    "heroReadyMs": 8690.70000000298,
+    "scriptBytes": 572356,
+    "phases": {
+      "EvaluateScript": {
+        "totalMs": 1458.556,
+        "maxMs": 408.279
+      },
+      "v8.compile": {
+        "totalMs": 33.247,
+        "maxMs": 8.883
+      },
+      "FunctionCall": {
+        "totalMs": 3510.07000000001,
+        "maxMs": 274.67
+      },
+      "Layout": {
+        "totalMs": 1630.5089999999998,
+        "maxMs": 585.6
+      },
+      "UpdateLayoutTree": {
+        "totalMs": 1388.8409999999992,
+        "maxMs": 349.164
+      },
+      "Paint": {
+        "totalMs": 439.83099999999996,
+        "maxMs": 14.513
+      }
+    }
+  },
+  {
+    "mode": "home-desktop-cold",
+    "rendererLongTaskCount": 3,
+    "rendererLongTaskMs": 239.253,
+    "maxRendererTaskMs": 87.903,
+    "heroShaderWaitMs": 22.400000005960464,
+    "cursorShaderWaitMs": 62.599999994039536,
+    "firstStrokeShaderWaitMs": 54.099999979138374,
+    "readyMs": 5609.70000000298,
+    "heroReadyMs": 3708.2999999970198,
+    "scriptBytes": 572356,
+    "phases": {
+      "EvaluateScript": {
+        "totalMs": 145.63,
+        "maxMs": 41.664
+      },
+      "v8.compile": {
+        "totalMs": 3.3579999999999997,
+        "maxMs": 0.889
+      },
+      "FunctionCall": {
+        "totalMs": 639.1219999999973,
+        "maxMs": 78.771
+      },
+      "Layout": {
+        "totalMs": 104.6090000000003,
+        "maxMs": 61.658
+      },
+      "UpdateLayoutTree": {
+        "totalMs": 191.39999999999955,
+        "maxMs": 24.522
+      },
+      "Paint": {
+        "totalMs": 103.56800000000032,
+        "maxMs": 1.891
+      }
+    }
+  },
+  {
+    "mode": "home-desktop-warm",
+    "rendererLongTaskCount": 1,
+    "rendererLongTaskMs": 63.502,
+    "maxRendererTaskMs": 63.502,
+    "heroShaderWaitMs": 5.0999999940395355,
+    "cursorShaderWaitMs": 25.100000008940697,
+    "firstStrokeShaderWaitMs": 52.79999999701977,
+    "readyMs": 3709.3999999910593,
+    "heroReadyMs": 2967.2000000029802,
+    "scriptBytes": 0,
+    "phases": {
+      "EvaluateScript": {
+        "totalMs": 112.14699999999999,
+        "maxMs": 30.215
+      },
+      "v8.compile": {
+        "totalMs": 0.6710000000000004,
+        "maxMs": 0.096
+      },
+      "FunctionCall": {
+        "totalMs": 608.0049999999986,
+        "maxMs": 28.138
+      },
+      "Layout": {
+        "totalMs": 72.24399999999999,
+        "maxMs": 12.142
+      },
+      "UpdateLayoutTree": {
+        "totalMs": 242.83599999999998,
+        "maxMs": 10.827
+      },
+      "Paint": {
+        "totalMs": 147.81000000000012,
+        "maxMs": 1.291
+      }
+    }
+  },
+  {
+    "mode": "home-mobile-cold",
+    "rendererLongTaskCount": 9,
+    "rendererLongTaskMs": 1153.7350000000001,
+    "maxRendererTaskMs": 273.37,
+    "heroShaderWaitMs": 74.8999999910593,
+    "cursorShaderWaitMs": 0,
+    "firstStrokeShaderWaitMs": 0,
+    "readyMs": 7192.399999991059,
+    "heroReadyMs": 3626.7999999970198,
+    "scriptBytes": 244937,
+    "phases": {
+      "EvaluateScript": {
+        "totalMs": 257.71999999999997,
+        "maxMs": 102.778
+      },
+      "v8.compile": {
+        "totalMs": 6.956,
+        "maxMs": 1.678
+      },
+      "FunctionCall": {
+        "totalMs": 919.8789999999988,
+        "maxMs": 128.58
+      },
+      "Layout": {
+        "totalMs": 182.46999999999997,
+        "maxMs": 171.2
+      },
+      "UpdateLayoutTree": {
+        "totalMs": 240.36500000000035,
+        "maxMs": 88.006
+      },
+      "Paint": {
+        "totalMs": 58.528000000000354,
+        "maxMs": 5.44
+      }
+    }
+  },
+  {
+    "mode": "home-mobile-warm",
+    "rendererLongTaskCount": 0,
+    "rendererLongTaskMs": 0,
+    "maxRendererTaskMs": 0,
+    "heroShaderWaitMs": 3.7999999970197678,
+    "cursorShaderWaitMs": 0,
+    "firstStrokeShaderWaitMs": 0,
+    "readyMs": 3936.2999999970198,
+    "heroReadyMs": 2498.2000000029802,
+    "scriptBytes": 0,
+    "phases": {
+      "EvaluateScript": {
+        "totalMs": 75.28299999999999,
+        "maxMs": 29.363
+      },
+      "v8.compile": {
+        "totalMs": 0.5400000000000003,
+        "maxMs": 0.063
+      },
+      "FunctionCall": {
+        "totalMs": 345.99899999999576,
+        "maxMs": 21.638
+      },
+      "Layout": {
+        "totalMs": 13.645999999999995,
+        "maxMs": 7.87
+      },
+      "UpdateLayoutTree": {
+        "totalMs": 117.26299999999969,
+        "maxMs": 8.555
+      },
+      "Paint": {
+        "totalMs": 33.22200000000021,
+        "maxMs": 1.995
+      }
+    }
+  },
+  {
+    "mode": "service-cpu4",
+    "rendererLongTaskCount": 28,
+    "rendererLongTaskMs": 6462.730999999999,
+    "maxRendererTaskMs": 1352.04,
+    "heroShaderWaitMs": 0,
+    "cursorShaderWaitMs": 33.5,
+    "firstStrokeShaderWaitMs": 60.00000001490116,
+    "readyMs": 12014.5,
+    "scriptBytes": 562325,
+    "phases": {
+      "EvaluateScript": {
+        "totalMs": 1626.52,
+        "maxMs": 610.88
+      },
+      "v8.compile": {
+        "totalMs": 42.794,
+        "maxMs": 11.956
+      },
+      "FunctionCall": {
+        "totalMs": 2823.0199999999977,
+        "maxMs": 288.021
+      },
+      "Layout": {
+        "totalMs": 1968.3629999999996,
+        "maxMs": 872.097
+      },
+      "UpdateLayoutTree": {
+        "totalMs": 1341.9440000000009,
+        "maxMs": 407.992
+      },
+      "Paint": {
+        "totalMs": 235.39099999999962,
+        "maxMs": 27.29
+      }
+    }
+  },
+  {
+    "mode": "service-desktop-cold",
+    "rendererLongTaskCount": 11,
+    "rendererLongTaskMs": 1178.0749999999998,
+    "maxRendererTaskMs": 268.102,
+    "heroShaderWaitMs": 0,
+    "cursorShaderWaitMs": 77,
+    "firstStrokeShaderWaitMs": 44.20000000298023,
+    "readyMs": 7093.20000000298,
+    "scriptBytes": 562325,
+    "phases": {
+      "EvaluateScript": {
+        "totalMs": 419.972,
+        "maxMs": 159.363
+      },
+      "v8.compile": {
+        "totalMs": 9.739,
+        "maxMs": 4.69
+      },
+      "FunctionCall": {
+        "totalMs": 965.4429999999953,
+        "maxMs": 106.805
+      },
+      "Layout": {
+        "totalMs": 206.74999999999994,
+        "maxMs": 189.587
+      },
+      "UpdateLayoutTree": {
+        "totalMs": 390.91300000000035,
+        "maxMs": 63.782
+      },
+      "Paint": {
+        "totalMs": 54.01899999999999,
+        "maxMs": 7.388
+      }
+    }
+  },
+  {
+    "mode": "service-desktop-warm",
+    "rendererLongTaskCount": 0,
+    "rendererLongTaskMs": 0,
+    "maxRendererTaskMs": 0,
+    "heroShaderWaitMs": 0,
+    "cursorShaderWaitMs": 18.900000005960464,
+    "firstStrokeShaderWaitMs": 62.099999994039536,
+    "readyMs": 3543,
+    "scriptBytes": 0,
+    "phases": {
+      "EvaluateScript": {
+        "totalMs": 95.86800000000002,
+        "maxMs": 33.134
+      },
+      "v8.compile": {
+        "totalMs": 0.5120000000000002,
+        "maxMs": 0.035
+      },
+      "FunctionCall": {
+        "totalMs": 460.51099999999667,
+        "maxMs": 21.207
+      },
+      "Layout": {
+        "totalMs": 15.493999999999998,
+        "maxMs": 10.443
+      },
+      "UpdateLayoutTree": {
+        "totalMs": 290.3379999999995,
+        "maxMs": 17.731
+      },
+      "Paint": {
+        "totalMs": 32.645999999999994,
+        "maxMs": 2.454
+      }
+    }
+  },
+  {
+    "mode": "service-mobile-cold",
+    "rendererLongTaskCount": 8,
+    "rendererLongTaskMs": 1687.3129999999996,
+    "maxRendererTaskMs": 713.563,
+    "heroShaderWaitMs": 0,
+    "cursorShaderWaitMs": 0,
+    "firstStrokeShaderWaitMs": 0,
+    "readyMs": 6967.70000000298,
+    "scriptBytes": 234906,
+    "phases": {
+      "EvaluateScript": {
+        "totalMs": 296.981,
+        "maxMs": 93.339
+      },
+      "v8.compile": {
+        "totalMs": 6.511,
+        "maxMs": 2.201
+      },
+      "FunctionCall": {
+        "totalMs": 923.3109999999937,
+        "maxMs": 149.98
+      },
+      "Layout": {
+        "totalMs": 310.61999999999995,
+        "maxMs": 283.507
+      },
+      "UpdateLayoutTree": {
+        "totalMs": 399.3119999999994,
+        "maxMs": 92.489
+      },
+      "Paint": {
+        "totalMs": 53.53000000000002,
+        "maxMs": 9.563
+      }
+    }
+  },
+  {
+    "mode": "service-mobile-warm",
+    "rendererLongTaskCount": 0,
+    "rendererLongTaskMs": 0,
+    "maxRendererTaskMs": 0,
+    "heroShaderWaitMs": 0,
+    "cursorShaderWaitMs": 0,
+    "firstStrokeShaderWaitMs": 0,
+    "readyMs": 5393.9000000059605,
+    "scriptBytes": 0,
+    "phases": {
+      "EvaluateScript": {
+        "totalMs": 72.653,
+        "maxMs": 32.893
+      },
+      "v8.compile": {
+        "totalMs": 0.44900000000000023,
+        "maxMs": 0.035
+      },
+      "FunctionCall": {
+        "totalMs": 385.49099999999703,
+        "maxMs": 22.566
+      },
+      "Layout": {
+        "totalMs": 15.141000000000002,
+        "maxMs": 9.108
+      },
+      "UpdateLayoutTree": {
+        "totalMs": 237.39800000000002,
+        "maxMs": 13.378
+      },
+      "Paint": {
+        "totalMs": 29.471000000000007,
+        "maxMs": 2.47
+      }
+    }
+  }
+]

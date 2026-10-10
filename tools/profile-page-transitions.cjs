@@ -6,7 +6,7 @@ const puppeteer = require('puppeteer-core')
 const sharp = require('sharp')
 const label = process.argv[2] || 'before'
 const base = process.argv[3] || 'http://127.0.0.1:3007'
-const out = path.resolve('docs/design/page-transitions', label)
+const out = path.resolve('docs/design/page-transitions', process.argv[4] || label)
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 async function prepare(browser, mobile = false, cpu = 1) {
@@ -16,7 +16,10 @@ async function prepare(browser, mobile = false, cpu = 1) {
     ? { width: 390, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true }
     : { width: 1440, height: 900, deviceScaleFactor: 1 })
   const errors = []
-  page.on('pageerror', error => errors.push(error.message))
+  page.on('pageerror', error => {
+    errors.push(error.message)
+    fs.appendFileSync(path.join(out, 'runtime-errors.log'), error.stack + '\n')
+  })
   const cdp = await page.createCDPSession()
   await cdp.send('Emulation.setCPUThrottlingRate', { rate: cpu })
   await cdp.send('LayerTree.enable')
@@ -336,7 +339,7 @@ async function navigationChecks() {
       await page.waitForFunction(() => location.pathname === '/')
       assert.equal(await page.$('.k-pt__ghost'), null)
       assert.equal(await page.evaluate(() => window.__pageMotion.runs.length), beforeMenu, 'reduced motion cuts immediately')
-      assert.equal(errors.length, 0, mode + ': no runtime errors')
+      assert.equal(errors.length, 0, mode + ': no runtime errors: ' + errors.join('\n'))
       results.push({ mode, rapidLinks: true, historyInterruption: true, hashLanding: landing, menuSeparate: true, reducedMotion: true, errors })
       await context.close()
     }

@@ -9,6 +9,20 @@ a local commit and a memory update before opening a fresh chat. These changes
 form the local commit `Improve motion performance and preload shared booking calendar`.
 Nothing has been pushed or deployed. Find the commit by this subject in `git log`.
 
+The subsequent first-load pass is now implemented locally on top of `d1e258f`.
+Its production checks passed. The user then authorized the local commit
+`Reduce first-load cursor payload and shader waits` and a memory update, and put
+further performance work on hold. Nothing has been pushed or deployed. Find the
+new commit by this subject in `git log`; it contains the application changes,
+tools, report, controlled JSON records and regression results, without raw
+profiling captures or unrelated files. Physical-device/Safari review remains
+outstanding and should not be recorded as completed.
+See [the first-load report](design/first-load/README.md).
+
+The user will start another chat for another purpose. Do not automatically resume
+performance work; follow the new request. The remaining levers below are saved
+for an explicitly requested future performance pass.
+
 The user wants smooth motion while retaining the site's current appearance.
 Proceed one pass at a time and review locally. Push the reviewed work together
 only when explicitly authorized. Do not redesign sections, change animation
@@ -164,9 +178,58 @@ remaining cold-load investigation must include this intentional preload and
 preserve the ready, reusable booking experience. See
 [the Calendly report](design/calendly/README.md).
 
+## First-load pass (local commit)
+
+Production traces attributed specific startup waits to the hero's synchronous
+shader checks and Three's first-use shader diagnostics. React Three Fiber's
+standard Canvas also registered the full Three catalog in the delayed cursor
+bundle. These costs contributed to stalls; they did not explain every cold-load
+task. Calendly and its child-frame work were measured separately from the page
+renderer and its site-entry preload remains intact.
+
+`HeroPeel.tsx` submits the original shaders and polls parallel-compiler completion
+before link checks. Navigation/fallback cancels pending work and prevents late
+cover or runway installation. `HeroPortrait.tsx` allows a submitted compiler its
+2,600 ms fallback duration; unavailable WebGL and late video retain their original
+fallback. No animation curves, shader source, video/mesh quality or fold behavior
+changed.
+
+`FluidCanvas.tsx` uses the same React Three Fiber renderer with an explicit
+three-element catalog and viewport resize events. `fluid/Fluid.tsx` imports the
+specific buffer hook and prepares the original solver/composer programs before
+accepting input, one program per task, with cancellable parallel polling and
+the existing diagnostics retained. Solver, resolution, blending and authored
+motion remain. Demand rendering, composed pauses and zero idle draws still pass.
+
+The cursor chunk fell 1,066,572→849,494 uncompressed bytes (20.4%); measured desktop
+Next-script transfer fell about 10%. All six desktop cases eliminated recorded
+first-stroke shader queries exceeding 1 ms. The deterministic cursor comparison
+matched every RGBA channel exactly and retained all 11 compiled shader-source
+hashes. Forced compiler delays, navigation cancellation and cursor resize passed.
+No-parallel-extension fallback passed. All ten isolated cold/warm/CPU×4 runs had
+no runtime errors and booking ready before interaction.
+
+Whole-page cold-load totals were mixed. Do not report a uniform startup speedup
+or a physical-device smoothness improvement from these samples. Script
+evaluation, hydration/layout, context/extension initialization, analytics and
+third-party work remain. The report separates these limits from the smaller
+payload and removed compiler waits.
+
 ## Verification and local evidence
 
-The final production build and TypeScript passed all 43 routes. A transient
+The first-load pass's production build and TypeScript passed all 43 routes;
+targeted ESLint passed its four application files with no warnings or errors.
+Production-browser checks covered shared effects and overlapping pauses,
+homepage entrance/fold/sections/fallbacks, first-session/history/refresh behavior,
+ordinary navigation/menu/hash/reduced motion and persistent Calendly selection.
+No-JavaScript content passed. Calendly retained one ready iframe and zero idle
+slot reads. No booking was submitted. Two unchanged navigation reruns passed
+after an initial runtime error whose detail was not captured; persistent stack
+logging was added, and the original cause remains unknown. See the first-load
+report for exact records and reproduction commands.
+
+For the previously reviewed commit, the production build and TypeScript passed
+all 43 routes. A transient
 Turbopack Google-font resolver error disappeared on an unchanged retry; no font
 change was made. Targeted ESLint had no errors; pre-existing plain-image warnings
 remain in earlier components. The final Calendly files had no lint warnings.
@@ -175,7 +238,10 @@ covered rapid links, history interruptions, hashes, menu navigation and reduced
 motion with no runtime errors. Documentation-only handoff changes do not alter
 the tested application.
 
-Reports and JSON records are committed. Generated PNG captures (about 224 MB)
+The reviewed reports and JSON records, including the first-load report, tools,
+controlled JSON records and regression results, are included in local commits. Raw gzip
+traces, CPU profiles, pixel buffers and PNGs are local evidence; do not include
+them in a future performance commit. The earlier generated PNG captures (about 224 MB)
 and exploratory Calendly debug captures remain local and can be reproduced with
 the tools. JSON records can mention these local screenshot paths; they are not
 required application assets. Phase README status/next-pass statements describe
@@ -219,35 +285,27 @@ new output label. A `before` label records whichever build the server runs, not
 an automatic historical checkout. Avoid overwriting historical evidence when
 capturing a new baseline.
 
-## Next lever: remaining first-load stalls
+## Saved next lever — performance work on hold
 
-This investigation is proposed and has not been implemented. Reproduce and
-attribute the remaining cold first-load main-thread stalls in the current
-accepted production build before changing more scheduling. Separate script
-download/parse/evaluation, React hydration, shader compilation/GPU creation,
-layout and paint, including Calendly's site-entry preload. Capture isolated cold
-and warm contexts on desktop/mobile and an isolated CPU×4 run.
+The user requested holding off on further performance work. Resume only when
+explicitly requested, with any additional visual/device review then needed.
+The controlled baseline is `first-load/before`, taken from `d1e258f` with Calendly
+already preloading. `first-load/after` is the locally committed first-load pass. The exploratory
+`first-load/baseline` used a shared browser shader cache and a different trace
+boundary; it also overlapped late CPU checks, so exclude it from timing claims.
+Earlier phase numbers predate the current booking preload and cannot establish
+the remaining first-load costs. Use fresh evidence labels for further runs.
 
-The service template's isolated CPU×4 final run improved initialization
-3.54→1.56 seconds and cold long-task totals 3,735→1,894 ms, but still recorded
-626 ms of later long tasks and a frame gap around 417 ms. Homepage profiling
-also retained an initial JS/hydration stall. These observations establish
-remaining work; they do not establish its cause. An overlapping service stress
-run was excluded from timing comparisons; use `service-template/final-cpu`.
+If continuing startup work, attribute the remaining script evaluation,
+hydration/layout and context/extension setup in the current production build.
+Site analytics and Calendly contribute external work; preserve the intentional
+booking preload and its ready, reused iframe. Repeat isolated cold/warm desktop,
+mobile and CPU×4 cases sequentially; main-page trace tasks and descendant-frame
+Long Tasks API entries must not be conflated. Do not change authored motion,
+quality or readiness to chase a score.
 
-A hypothesis to trace is the delayed FluidCursor → FluidCanvas → React Three
-Fiber/Three/postprocessing import, context setup and shader compilation. Its
-demand rendering is already fixed; late setup cost is a different question.
-Do not claim it is the culprit until a trace attributes the stalls. Calendly,
-other startup JS and hydration may also contribute.
-
-Use the trace to split or defer nonessential startup work until it is needed,
-while keeping the first-session hero entrance, cursor shader/quality, all
-authored motion, and Calendly's readiness and persistence. Validate actual
-interaction after initialization as well as idle samples. Chrome software-GL
-timings are diagnostic, not proof of 60 FPS. Safari and physical devices still
-need review.
-
-After that shared startup pass, continue page by page through About (`/about`),
+Chrome software-WebGL timings are diagnostic, not proof of 60 FPS. Safari and
+physical desktop/mobile review remain necessary. After the shared startup work,
+continue page by page through About (`/about`),
 Work (`/work`) and case studies (`/work/[slug]`), then the remaining routes.
 Preserve the completed behavior and run the relevant regressions at each step.
