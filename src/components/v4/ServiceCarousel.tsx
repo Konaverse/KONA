@@ -23,8 +23,8 @@ import { responsive } from '@/lib/img'
  * page's h1, small; the active service's name, large; its line; the two
  * arrows. Below, THE RING: six landscape cards standing on one baseline,
  * the centre one whole, one a side behind it, the far ones cut by the
- * screen's edges. Each card uses the owner's service graphic (2026-10-09),
- * shared with the homepage and shown in its original colors and proportions.
+ * screen's edges. Each card uses the owner's original service photograph,
+ * shared with the homepage.
  *
  * THE LOOP. One number, `target`, in cards; `pos` glides after it. A
  * card's PLACE is its index less `pos`, wrapped into −N/2 … N/2, and the
@@ -46,7 +46,7 @@ export type CarouselService = {
   name: string
   blurb: string
   image: string
-  /** Description of the service artwork. */
+  /** Description of the service photograph. */
   alt?: string
 }
 

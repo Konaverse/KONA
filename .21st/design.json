@@ -115,9 +115,9 @@
       "source": "User: let us just do the gallery; all projects unified in the same vertical stack position, with richer entrance motion"
     },
     {
-      "date": "2026-10-09",
-      "decision": "Replace the six service photographs on the homepage and services hub with the owner-supplied graphics in their respective service folders. Share sources and descriptions, preserve full color and original aspect ratio, and serve optimized WebP images with responsive 800px variants.",
-      "source": "User requested the graphics images for both homepage and services hub"
+      "date": "2026-10-10",
+      "decision": "Restore the six realistic service photographs on the homepage and services hub. Share their originals through src/lib/service-photos.ts and preserve the existing frames, colors, mobile cards and carousel interactions.",
+      "source": "User requested changing the service graphics back to the realistic photographs"
     }
   ],
   "evidence": [

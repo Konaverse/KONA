@@ -4,6 +4,22 @@ The v4 source of truth is src/styles/tokens.css. The global stylesheet also cont
 
 Use Manrope, the monochrome neutral ramp, and semantic surface, text, focus, shadow and radius tokens. Light and dark surfaces are polarities of the same system. Existing components live in src/components/v4.
 
+## Homepage entrance
+
+On 10 October 2026 the user requested that the homepage hero entrance run only on the first homepage visit in each browsing session. Return visits through navigation, history, or refresh show the settled hero immediately. A fresh session enables the entrance again. Preserve the ongoing desktop headline walk, looping video, and scroll fold.
+
+## Performance work
+
+The user requested sequential local performance passes while preserving the existing visuals and motion. Ordinary page links retain the authored rise, tilt, scale, dim, seam and one-second curve. Their outgoing page is a frozen, bounded copy; incoming decorative and scroll work waits for landing. The navigation menu retains its separate choreography. Do not push these changes until the passes have been reviewed together.
+
+The individual service templates retain their layout and scroll choreography. Their 132 breathing rays share one raster surface with the original SVG fallback; preserve the rounded ray geometry, individual durations, negative delays, ease-in-out breathing and 90-second rotation. Scroll drivers wake for input and finish their existing glide, with all active section positions read before transforms are written. Distant invitation resources and text splitting wait until nearby. Desktop and mobile Web Design geometry and settled transforms must match the saved baseline.
+
+The reviewed passes were authorized for a local commit on 10 October 2026. The current completion state, validation and next lever are recorded in docs/performance-handoff.md. No push or deployment is authorized. Remaining first-load stalls need attribution in the current build before a further scheduling change.
+
+## Calendly booking
+
+The user requested Calendly already loaded before opening Contact or a booking modal. One persistent iframe preloads on site entry and serves both views without changing its src, reparenting or restarting it. Preserve the original Contact card geometry, anchored modal dimensions and entrance/exit motion. The frame follows page/menu transforms and sleeps at rest. Selected dates remain across route returns and closes. A fresh session still needs the initial external download; subsequent SPA openings reuse the ready frame. Startup profiling must include this intentional preload and retain booking readiness.
+
 ## Hub content decision
 
 On 9 October 2026 the user rejected the added overview panels, blog introduction and article excerpts and requested their removal. Preserve the original work, services and blog layouts, including the single-screen work gallery and services carousel. Do not reintroduce these additions.
@@ -18,4 +34,4 @@ The user selected the open gallery on 9 October 2026 after exploring alternative
 
 ## Services artwork
 
-The user replaced the six service photographs with the graphics from their respective service folders on 9 October 2026. Share the same graphics between the homepage and services hub through src/lib/service-graphics.ts. Preserve their original colors and 1672:941 proportions, and use optimized WebP files with 800px responsive siblings. The mobile cards and hub carousel keep their existing interactions.
+The user subsequently requested restoring the six realistic service photographs. Share those originals between the homepage and services hub through src/lib/service-photos.ts. Preserve their colors, existing frames, mobile card interactions and hub carousel behavior.

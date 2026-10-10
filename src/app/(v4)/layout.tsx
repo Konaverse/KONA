@@ -29,6 +29,11 @@ import '@/styles/tokens.css'
 export default function V4Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="k-root">
+      <link rel="preconnect" href="https://calendly.com" />
+      <link rel="preconnect" href="https://assets.calendly.com" crossOrigin="anonymous" />
+      {/* A fast frame can become ready before React hydrates on a slow device.
+          Remember its event without mutating the server-rendered markup. */}
+      <script dangerouslySetInnerHTML={{ __html: `window.addEventListener('message',function(e){if(e.origin==='https://calendly.com'&&e.source&&e.data&&e.data.event==='calendly.event_type_viewed'){(window.__konaverseCalendlyReady||(window.__konaverseCalendlyReady=new WeakSet())).add(e.source)}})` }} />
       {/* Progressive enhancement, not decoration — see the note above. The
           aperture menu already takes this stance (it renders OPEN without JS);
           the reveal has to as well. */}
@@ -44,9 +49,6 @@ export default function V4Layout({ children }: { children: React.ReactNode }) {
       {/* THE UNDERLAY (2026-09-30; the aperture is parked): the panel is
           fixed under the page, and opening slides the page (.k-shift) */}
       <UnderlayMenu />
-      {/* the booking panel: every Calendly link on the page opens it
-          anchored to the clicked button instead of leaving (2026-08-26) */}
-      <CalendlyPopover />
       <FluidCursor />
       {/* THE PARTING: any picture marked `data-lift` leaves the way the
           service hero's artboard does — rising and tipping on its way off
@@ -67,6 +69,9 @@ export default function V4Layout({ children }: { children: React.ReactNode }) {
         </PageTransition>
         </div>
       </SmoothScroll>
+      {/* One persistent, preloaded booking frame. It also fills the contact
+          card, without moving the iframe or restarting Calendly on navigation. */}
+      <CalendlyPopover />
     </div>
   )
 }

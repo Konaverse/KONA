@@ -3,6 +3,8 @@
 import { useEffect, useRef } from 'react'
 import { gsap, EASE, DUR, rem } from '@/lib/motion-v4'
 import { HERO_VIDEO_RECT, SHAPE_H, SHAPE_W } from '@/lib/hero-shape'
+import { afterPageTransition, observeSharedEffectPause } from '@/lib/shared-effects'
+import { prepareHomepageEffect, shouldPlayHeroEntrance } from '@/lib/homepage-effects'
 
 /**
  * THE HERO PEEL (2026-08-19) — our own move, built on the Lusion mechanic.
@@ -338,6 +340,7 @@ type PeelGL = {
     morph: number,
   ) => void
   clear: () => void
+  dispose: () => void
 }
 
 function createGL(
@@ -420,6 +423,16 @@ function createGL(
   const ibuf = gl.createBuffer()
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibuf)
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, idx, gl.STATIC_DRAW)
+  // At show 0 and 1 the vertex shader is an affine rectangle: every
+  // intermediate vertex is redundant. Keep the same UVs and diagonal,
+  // and reserve the dense, ordered mesh for the actual folding flight.
+  const quad = gl.createBuffer()
+  const bottomLeft = SEG_Y * (SEG_X + 1)
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, quad)
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array([
+    0, bottomLeft, SEG_X, SEG_X, bottomLeft, bottomLeft + SEG_X,
+  ]), gl.STATIC_DRAW)
+  let usingQuad = true
 
   /* the texture is the LIVE hero video (2026-08-24): this upload is only
      the first frame — draw() re-uploads the element's current frame every
@@ -470,19 +483,22 @@ function createGL(
   /* UPLOAD ONLY NEW FRAMES. The loop is 25fps and the ticker 60+: most
      draws used to re-upload a frame the GPU already had — on a phone the
      single most expensive thing in this tick. requestVideoFrameCallback
-     flags a fresh frame where it exists; elsewhere the clock does. */
-  let fresh = true
-  let lastT = -1
+     flags a fresh frame where it exists; elsewhere decoded-frame counts
+     do, with a playback-clock fallback for older browsers. */
+  const frameCallbacks = typeof video.requestVideoFrameCallback === 'function'
+  let fresh = false // createGL already uploaded the first frame
+  const decodedFrame = () => video.getVideoPlaybackQuality?.().totalVideoFrames ?? video.currentTime
+  let lastFrame = decodedFrame()
   return {
     dirty() {
       fresh = true
     },
     draw(from, to, show, alpha, dy, texA, texB, morph) {
       resize()
-      if (video.readyState >= 2 && (fresh || video.currentTime !== lastT)) {
+      if (video.readyState >= 2 && (fresh || (!frameCallbacks && decodedFrame() !== lastFrame))) {
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, video)
         fresh = false
-        lastT = video.currentTime
+        lastFrame = decodedFrame()
       }
       gl.uniform1f(uMorph, morph)
       gl.uniform4f(uFrom, from.left, from.top, Math.max(1, from.width), Math.max(1, from.height))
@@ -495,10 +511,24 @@ function createGL(
       gl.uniform2f(uTexA, texA[0], texA[1])
       gl.uniform2f(uTexB, texB[0], texB[1])
       gl.clear(gl.COLOR_BUFFER_BIT)
-      gl.drawElements(gl.TRIANGLES, idx.length, gl.UNSIGNED_SHORT, 0)
+      const flat = show === 0 || show === 1
+      if (flat !== usingQuad) {
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, flat ? quad : ibuf)
+        usingQuad = flat
+      }
+      gl.drawElements(gl.TRIANGLES, flat ? 6 : idx.length, gl.UNSIGNED_SHORT, 0)
     },
     clear() {
       gl.clear(gl.COLOR_BUFFER_BIT)
+    },
+    dispose() {
+      gl.deleteTexture(tex)
+      gl.deleteBuffer(vbuf)
+      gl.deleteBuffer(ibuf)
+      gl.deleteBuffer(quad)
+      gl.deleteProgram(prog)
+      gl.deleteShader(vs)
+      gl.deleteShader(fs)
     },
   }
 }
@@ -522,6 +552,7 @@ export default function HeroPeel() {
     const claim = document.querySelector<HTMLElement>('.hm-claim')
     const land = document.querySelector<HTMLElement>('.hm-claim-land')
     if (!main || !heropin || !claim || !land) return
+    const playEntrance = shouldPlayHeroEntrance(main)
     /* THE SOURCE is whichever picture this width displays: the staircase on
        desktop, the rounded crop on mobile — exactly one of them is ever
        displayed (home.css). Its rect, its opacity and its video frame are
@@ -552,6 +583,18 @@ export default function HeroPeel() {
 
     let gl: PeelGL | null = null
     let dead = false
+    let videoFrame = 0
+    let listening = false
+    let paused = false
+    const stop = () => {
+      gsap.ticker.remove(tick)
+      listening = false
+    }
+    const wake = () => {
+      if (dead || paused || !gl || listening) return
+      listening = true
+      gsap.ticker.add(tick)
+    }
 
     /* THE OPENING (2026-08-24, user; full-page rev the same day): the
        sheet is born as THE WHOLE PAGE — a full-viewport, cover-fit frame
@@ -563,11 +606,11 @@ export default function HeroPeel() {
        landing can never drift apart in shape language. The short delay
        lets the full-bleed frame (fading in with the DOM entrance's
        mirrored alpha) read first: arrive, then open. */
-    const intro = { m: 1 }
+    const intro = { m: playEntrance ? 1 : 0 }
     let introTween: gsap.core.Tween | null = null
-    let introStarted = false
+    let introStarted = !playEntrance
     let introHurried = false
-    let opened = false
+    let opened = !playEntrance
     let openDelay: ReturnType<typeof setTimeout> | null = null
 
     /* THE OPENING LEADS (2026-08-26, user: "the video will be there, it
@@ -604,8 +647,13 @@ export default function HeroPeel() {
        decode, one clock, so the sheet and the staircase can never show
        different frames. GL arms once the first frame is decodable. */
     const arm = () => {
-      if (dead || gl) return
-      gl = createGL(canvas, vid, rectShape)
+      if (dead || gl || main.dataset.heroFallback === 'true') return
+      try {
+        gl = createGL(canvas, vid, rectShape)
+      } catch {
+        // A failed video texture leaves the server-rendered hero in charge.
+        gl = null
+      }
       /* fresh-frame flag straight from the decoder where the API exists */
       const rvfc = (vid as HTMLVideoElement & {
         requestVideoFrameCallback?: (cb: () => void) => number
@@ -614,20 +662,15 @@ export default function HeroPeel() {
         const onFrame = () => {
           if (dead || !gl) return
           gl.dirty()
-          rvfc.call(vid, onFrame)
+          videoFrame = rvfc.call(vid, onFrame)
         }
-        rvfc.call(vid, onFrame)
-      }
-      /* the DOM sheet for the landing: fetch it now so it is decodable by
-         the time the sheet lands (same URL as the hero loop — cached) */
-      if (gl && bgVid) {
-        bgVid.preload = 'auto'
-        bgVid.load()
+        videoFrame = rvfc.call(vid, onFrame)
       }
       /* the runway engages only when GL actually runs — and stays for
          the page's life (see the CSS note: toggling it would shift
          everything below mid-page) */
       if (gl) {
+        main.dataset.peelArmed = 'true'
         heropin.classList.add('is-run')
         /* the page's cue: the full-page cover can draw from this moment,
            so the hero's held entrances (HeroPortrait, HeroTitle) may
@@ -635,11 +678,10 @@ export default function HeroPeel() {
            behind a cover whose video is still loading */
         window.dispatchEvent(new Event('k-peel-armed'))
         /* arrive, then open: the full-bleed frame reads first */
-        openDelay = setTimeout(startIntro, OPEN_HOLD * 1000)
+        if (playEntrance) openDelay = setTimeout(startIntro, OPEN_HOLD * 1000)
+        wake()
       }
     }
-    if (vid.readyState >= 2) arm()
-    else vid.addEventListener('loadeddata', arm, { once: true })
 
     let show = 0
     let landed = false // hm-landed: the DOM sheet in the pad owns the pixels
@@ -682,6 +724,7 @@ export default function HeroPeel() {
       if (rTo.bottom < -80) {
         setLanded(false)
         setLive(false)
+        stop()
         return
       }
 
@@ -720,6 +763,7 @@ export default function HeroPeel() {
          opening still holds the full container */
       if (show < 0.01 && target < 0.01 && intro.m < 0.001) {
         setLive(false)
+        stop()
         return
       }
       setLive(true)
@@ -764,6 +808,7 @@ export default function HeroPeel() {
         setLanded(isLanded)
         if (isLanded) {
           gl.clear()
+          if (show === target) stop()
           return
         }
       }
@@ -783,16 +828,48 @@ export default function HeroPeel() {
     /* one frame late ON PURPOSE — after Lenis's ticker callback, so the
        rects are current-frame (the MediaPeel lesson: adding here directly
        makes the sheet trail the scroll by one frame) */
-    const rafId = requestAnimationFrame(() => gsap.ticker.add(tick))
+    let cancelArm: void | (() => void)
+    const prepareArm = () => {
+      // A hash landing needs its scroll runway before the landing is measured.
+      // At the top, the settled DOM video is already the complete hero.
+      if (window.location.hash) arm()
+      else cancelArm = afterPageTransition(arm)
+    }
+    const rafId = requestAnimationFrame(() => {
+      if (vid.readyState >= 2) prepareArm()
+      else vid.addEventListener('loadeddata', prepareArm, { once: true })
+    })
+    window.addEventListener('scroll', wake, { passive: true })
+    window.addEventListener('resize', wake)
+    window.addEventListener('k:page-snapshot', tick)
+    const unpause = observeSharedEffectPause(value => {
+      paused = value
+      if (value) stop()
+      else wake()
+    })
+    // The second mobile decoder is only needed as the claim approaches.
+    const unprepare = bgVid ? prepareHomepageEffect(claim, () => {
+      bgVid.preload = 'auto'
+      bgVid.load()
+    }) : undefined
 
     return () => {
       dead = true
-      vid.removeEventListener('loadeddata', arm)
+      if (videoFrame) vid.cancelVideoFrameCallback?.(videoFrame)
+      unpause()
+      unprepare?.()
+      window.removeEventListener('scroll', wake)
+      window.removeEventListener('resize', wake)
+      window.removeEventListener('k:page-snapshot', tick)
+      vid.removeEventListener('loadeddata', prepareArm)
+      cancelArm?.()
       if (openDelay) clearTimeout(openDelay)
       introTween?.kill()
       gsap.killTweensOf(intro)
       cancelAnimationFrame(rafId)
       gsap.ticker.remove(tick)
+      gl?.dispose()
+      delete main.dataset.peelArmed
       main.classList.remove('hm-glhero')
       main.classList.remove('hm-landed')
       bgVid?.pause()

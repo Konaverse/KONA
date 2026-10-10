@@ -1,0 +1,63 @@
+{
+  "base": "http://127.0.0.1:3005",
+  "label": "before",
+  "samples": {
+    "idleBeforeMovement": {
+      "fluidDraws": 671,
+      "reads": {
+        "dark-surfaces": 244,
+        "other": 0
+      }
+    },
+    "moving": {
+      "fluidDraws": 1027,
+      "reads": {
+        "dark-surfaces": 356,
+        "other": 0
+      }
+    },
+    "idleAfterTrail": {
+      "fluidDraws": 660,
+      "reads": {
+        "dark-surfaces": 240,
+        "other": 0
+      }
+    },
+    "menuPaused": {
+      "fluidDraws": 0,
+      "reads": {
+        "dark-surfaces": 216,
+        "other": 0
+      }
+    },
+    "resumeWithoutMovement": {
+      "fluidDraws": 671,
+      "reads": {
+        "dark-surfaces": 244,
+        "other": 0
+      }
+    },
+    "movingAgain": {
+      "fluidDraws": 666,
+      "reads": {
+        "dark-surfaces": 224,
+        "other": 0
+      }
+    },
+    "transitionPaused": {
+      "fluidDraws": 677,
+      "reads": {
+        "dark-surfaces": 228,
+        "other": 0
+      }
+    },
+    "transitionResumeWithoutMovement": {
+      "fluidDraws": 671,
+      "reads": {
+        "dark-surfaces": 244,
+        "other": 0
+      }
+    }
+  },
+  "errors": []
+}

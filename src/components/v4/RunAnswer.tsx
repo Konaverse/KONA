@@ -1,6 +1,7 @@
 'use client'
 
 import { Fragment, useEffect, useRef } from 'react'
+import { runScrollTicker } from '@/lib/page-motion'
 import { gsap } from '@/lib/motion-v4'
 import { responsive } from '@/lib/img'
 
@@ -138,6 +139,7 @@ export default function RunAnswer({
       want: 'wait' as 'wait' | 'in',
       rolled: false,
       calls: [] as gsap.core.Tween[],
+      top: 0,
     }))
 
     root.classList.add('is-live')
@@ -172,14 +174,25 @@ export default function RunAnswer({
 
     let p = -1
     let readTo = 0
-    const tick = (_t?: number, deltaTime?: number) => {
-      const vh = window.innerHeight
+    let sayTop = 0
+    let sayHeight = 0
+    const measure = () => {
+      const r0 = root.getBoundingClientRect()
       const r = say.getBoundingClientRect()
+      sayTop = r.top - r0.top
+      sayHeight = r.height
+      cards.forEach(it => { it.top = it.card.parentElement!.getBoundingClientRect().top - r0.top })
+    }
+    const tick = (rootRect: DOMRect, deltaTime: number) => {
+      const vh = window.innerHeight
+      const r = { top: rootRect.top + sayTop, height: sayHeight, bottom: rootRect.top + sayTop + sayHeight }
+      let gliding = false
       if (r.top < vh * 1.2 && r.bottom > -vh * 0.2) {
         /* the read: over the statement's own crossing */
         const want = clamp01((vh * 0.85 - r.top) / Math.max(1, r.height + vh * 0.35))
         const f = 1 - Math.exp(-((deltaTime ?? 16.7) / 1000) / GLIDE)
         p = p < 0 || Math.abs(want - p) < 0.0004 ? want : p + (want - p) * f
+        gliding = p !== want
         const head = Math.round(clamp01((p - READ_FROM) / (READ_TO - READ_FROM)) * N)
         if (head !== readTo) {
           const lo = Math.min(head, readTo)
@@ -191,18 +204,18 @@ export default function RunAnswer({
       /* the cards: in, left to right, as they come on screen; they stay
          landed off the top; parked again below the fold */
       cards.forEach((it) => {
-        const b = it.card.parentElement!.getBoundingClientRect()
-        if (b.top > vh) {
+        const top = rootRect.top + it.top
+        if (top > vh) {
           if (it.want !== 'wait') reset(it)
-        } else if (b.top < vh * LAND_LINE && it.want !== 'in') go(it)
+        } else if (top < vh * LAND_LINE && it.want !== 'in') go(it)
       })
       if (cards.every((it) => it.want === 'wait')) last = -Infinity
+      return gliding
     }
-    tick()
-    gsap.ticker.add(tick)
+    const stopTicker = runScrollTicker(root, tick, measure)
 
     return () => {
-      gsap.ticker.remove(tick)
+      stopTicker()
       cards.forEach(reset)
       words.forEach((w) => w.classList.remove('is-read'))
       root.classList.remove('is-live')
@@ -249,7 +262,7 @@ export default function RunAnswer({
             <li key={f.label} className="ra-slot">
               <div className="ra-fact">
                 <span className="ra-img">
-                  <img {...responsive(f.plate)} alt="" loading="lazy" decoding="async" draggable={false} />
+                  <img {...responsive(f.plate, '(max-width: 57.5rem) 100vw, 30vw')} alt="" loading="lazy" decoding="async" draggable={false} />
                 </span>
                 <span className="ra-cap">
                   <span className="ra-label">{f.label}</span>

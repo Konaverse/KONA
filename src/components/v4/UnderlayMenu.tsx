@@ -501,8 +501,8 @@ export default function UnderlayMenu() {
    * footer's top edge crosses the bar's foot); scrolling back off the
    * footer brings it back. Pages without a footer (FooterGate) keep it
    * throughout. The open menu pins it visible. It used to live in the
-   * hero only and hide past it. gsap.ticker + one rect, no scroll
-   * listener.
+   * hero only and hide past it. Measure once per changed scroll/size or
+   * navigation state, instead of polling the footer on every idle frame.
    */
   useEffect(() => {
     const bar = barRef.current
@@ -522,9 +522,28 @@ export default function UnderlayMenu() {
         bar.classList.add('is-hidden')
       }
     }
-    gsap.ticker.add(update)
+    let frame = 0
+    const schedule = () => {
+      if (reduce || frame) return
+      frame = requestAnimationFrame(() => {
+        frame = 0
+        update()
+      })
+    }
+    schedule()
+    const ro = new ResizeObserver(schedule)
+    ro.observe(document.body)
+    window.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('resize', schedule)
+    window.addEventListener('k:freeze', schedule)
+    window.addEventListener('k:transition', schedule)
     return () => {
-      gsap.ticker.remove(update)
+      cancelAnimationFrame(frame)
+      ro.disconnect()
+      window.removeEventListener('scroll', schedule)
+      window.removeEventListener('resize', schedule)
+      window.removeEventListener('k:freeze', schedule)
+      window.removeEventListener('k:transition', schedule)
       bar.classList.remove('is-hidden')
     }
   }, [pathname])
@@ -552,6 +571,8 @@ export default function UnderlayMenu() {
 
       {/* ---- the bar: above the page and the panel; nothing here moves ---- */}
       <div ref={barRef} className={`k-nav-bar${open ? ' is-open' : ''}`}>
+        {/* Plain anchor: PageTransition owns this link's client navigation. */}
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
         <a href="/" className="k-nav-brand">
           <img className="k-nav-mark" src="/brand/mark-192.webp" alt="Konaverse" width="552" height="512" />
         </a>

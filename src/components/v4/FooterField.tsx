@@ -2,6 +2,9 @@
 
 import { useEffect, useRef } from 'react'
 import { gsap, rem } from '@/lib/motion-v4'
+import { afterPageTransition, observeSharedEffectPause } from '@/lib/shared-effects'
+import { prepareHomepageEffect } from '@/lib/homepage-effects'
+import { prepareNearEffect } from '@/lib/page-motion'
 
 /**
  * THE FOOTER'S GROUND — THE FIELD (2026-09-18, user: "the background
@@ -114,147 +117,180 @@ export default function FooterField({
     const canvas = ref.current
     const host = canvas?.parentElement
     if (!canvas || !host) return
-    const gl = canvas.getContext('webgl', { antialias: false, alpha: false, depth: false, stencil: false, powerPreference: 'low-power' })
-    if (!gl) return
-    const sh = (type: number, src: string) => {
-      const s = gl.createShader(type)!
-      gl.shaderSource(s, src)
-      gl.compileShader(s)
-      return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null
-    }
-    const vs = sh(gl.VERTEX_SHADER, VERT)
-    const fs = sh(gl.FRAGMENT_SHADER, FRAG)
-    if (!vs || !fs) return
-    const prog = gl.createProgram()!
-    gl.attachShader(prog, vs)
-    gl.attachShader(prog, fs)
-    gl.linkProgram(prog)
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return
-    gl.useProgram(prog)
-    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer())
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW)
-    const aPos = gl.getAttribLocation(prog, 'aPos')
-    gl.enableVertexAttribArray(aPos)
-    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0)
-    const U = (n: string) => gl.getUniformLocation(prog, n)
-    const uRes = U('uRes')
-    const uT = U('uT')
-    const uCell = U('uCell')
-    const uPx = U('uPx')
-    const uHand = U('uHand')
-    const uHandOn = U('uHandOn')
-    const uRip = U('uRip')
-    const uPower = U('uPower')
-    gl.uniform1f(U('uPaper'), tone === 'paper' ? 1 : 0)
-    gl.uniform1f(U('uQuiet'), quiet ? 1 : 0)
-
-    let dpr = 1
-    const resize = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, 1.5)
-      const w = Math.max(2, Math.round(host.offsetWidth * dpr))
-      const h = Math.max(2, Math.round(host.offsetHeight * dpr))
-      if (canvas.width !== w || canvas.height !== h) {
-        canvas.width = w
-        canvas.height = h
-        gl.viewport(0, 0, w, h)
+    if (quiet && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    return prepareHomepageEffect(host, () => prepareNearEffect(host, () => afterPageTransition(() => {
+      const gl = canvas.getContext('webgl', { antialias: false, alpha: false, depth: false, stencil: false, powerPreference: 'low-power' })
+      if (!gl) return
+      const sh = (type: number, src: string) => {
+        const s = gl.createShader(type)!
+        gl.shaderSource(s, src)
+        gl.compileShader(s)
+        return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null
       }
-      gl.uniform2f(uRes, w, h)
-      gl.uniform1f(uCell, CELL * 16 * rem() * dpr)
-      gl.uniform1f(uPx, rem() * dpr)
-    }
-    resize()
-    const ro = new ResizeObserver(resize)
-    ro.observe(host)
-    if (!quiet) canvas.classList.add('is-live')
+      const vs = sh(gl.VERTEX_SHADER, VERT)
+      const fs = sh(gl.FRAGMENT_SHADER, FRAG)
+      if (!vs || !fs) return
+      const prog = gl.createProgram()!
+      gl.attachShader(prog, vs)
+      gl.attachShader(prog, fs)
+      gl.linkProgram(prog)
+      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return
+      gl.useProgram(prog)
+      gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer())
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW)
+      const aPos = gl.getAttribLocation(prog, 'aPos')
+      gl.enableVertexAttribArray(aPos)
+      gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0)
+      const U = (n: string) => gl.getUniformLocation(prog, n)
+      const uRes = U('uRes')
+      const uT = U('uT')
+      const uCell = U('uCell')
+      const uPx = U('uPx')
+      const uHand = U('uHand')
+      const uHandOn = U('uHandOn')
+      const uRip = U('uRip')
+      const uPower = U('uPower')
+      gl.uniform1f(U('uPaper'), tone === 'paper' ? 1 : 0)
+      gl.uniform1f(U('uQuiet'), quiet ? 1 : 0)
 
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    /* quiet and still: there is nothing to show */
-    if (reduce && quiet) return () => ro.disconnect()
-    if (reduce) {
-      gl.uniform1f(uT, STILL_T)
-      gl.uniform2f(uHand, -9999, -9999)
-      gl.uniform1f(uHandOn, 0)
-      gl.uniform3f(uRip, -9999, -9999, 9)
-      gl.uniform1f(uPower, 1)
-      const still = () => gl.drawArrays(gl.TRIANGLES, 0, 3)
-      still()
-      const ro2 = new ResizeObserver(still)
-      ro2.observe(host)
-      return () => {
-        ro.disconnect()
-        ro2.disconnect()
-      }
-    }
-
-    /* the hand: its last known place on the page; presence per frame */
-    let px = -1
-    let py = -1
-    const onMove = (ev: PointerEvent) => {
-      px = ev.clientX
-      py = ev.clientY
-    }
-    const onGone = () => (px = -1)
-    window.addEventListener('pointermove', onMove, { passive: true })
-    document.documentElement.addEventListener('pointerleave', onGone)
-    const rip = { x: -9999, y: -9999, age: 9 }
-    const onDown = (ev: PointerEvent) => {
-      const r = host.getBoundingClientRect()
-      rip.x = (ev.clientX - r.left) * dpr
-      rip.y = (ev.clientY - r.top) * dpr
-      rip.age = 0
-    }
-    /* the press is heard on the footer itself: the field lies under its content */
-    const footer = host.parentElement ?? host
-    footer.addEventListener('pointerdown', onDown)
-
-    let hx = 0
-    let hy = 0
-    let on = 0
-    const tick = (_t?: number, deltaTime?: number) => {
-      const r = host.getBoundingClientRect()
-      const vh = window.innerHeight
-      if (r.top > vh || r.bottom < 0) return
-      const dt = Math.min(0.05, (deltaTime ?? 16.7) / 1000)
-      const inside = px >= 0 && py >= r.top && py <= r.bottom
-      if (inside) {
-        const tx = (px - r.left) * dpr
-        const ty = (py - r.top) * dpr
-        if (on < 0.02) {
-          hx = tx
-          hy = ty
+      let dpr = 1
+      const resize = () => {
+        dpr = Math.min(window.devicePixelRatio || 1, 1.5)
+        const w = Math.max(2, Math.round(host.offsetWidth * dpr))
+        const h = Math.max(2, Math.round(host.offsetHeight * dpr))
+        if (canvas.width !== w || canvas.height !== h) {
+          canvas.width = w
+          canvas.height = h
+          gl.viewport(0, 0, w, h)
         }
-        const f = 1 - Math.exp(-dt / FOLLOW)
-        hx += (tx - hx) * f
-        hy += (ty - hy) * f
+        gl.uniform2f(uRes, w, h)
+        gl.uniform1f(uCell, CELL * 16 * rem() * dpr)
+        gl.uniform1f(uPx, rem() * dpr)
       }
-      on += ((inside ? 1 : 0) - on) * (1 - Math.exp(-dt / FADE))
-      if (rip.age < 2) rip.age += dt * 0.85
-      /* quiet: the canvas is on the page only while a ring is out */
-      if (quiet) {
-        const ringing = rip.age < 1.5
-        canvas.classList.toggle('is-live', ringing)
-        if (!ringing) return
-      }
-      /* the seam's travel: how much of the footer is out from under the page */
-      const power = Math.max(0, Math.min(1, (vh - r.top) / Math.min(r.height, vh)))
-      gl.uniform1f(uT, gsap.ticker.time)
-      gl.uniform2f(uHand, hx, hy)
-      gl.uniform1f(uHandOn, on)
-      gl.uniform3f(uRip, rip.x, rip.y, rip.age)
-      gl.uniform1f(uPower, power)
-      gl.drawArrays(gl.TRIANGLES, 0, 3)
-    }
-    gsap.ticker.add(tick)
+      resize()
+      const ro = new ResizeObserver(resize)
+      ro.observe(host)
+      if (!quiet) canvas.classList.add('is-live')
 
-    return () => {
-      gsap.ticker.remove(tick)
-      ro.disconnect()
-      window.removeEventListener('pointermove', onMove)
-      document.documentElement.removeEventListener('pointerleave', onGone)
-      footer.removeEventListener('pointerdown', onDown)
-      canvas.classList.remove('is-live')
-      gl.getExtension('WEBGL_lose_context')?.loseContext()
-    }
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      if (reduce) {
+        gl.uniform1f(uT, STILL_T)
+        gl.uniform2f(uHand, -9999, -9999)
+        gl.uniform1f(uHandOn, 0)
+        gl.uniform3f(uRip, -9999, -9999, 9)
+        gl.uniform1f(uPower, 1)
+        const still = () => gl.drawArrays(gl.TRIANGLES, 0, 3)
+        still()
+        const ro2 = new ResizeObserver(still)
+        ro2.observe(host)
+        return () => {
+          ro.disconnect()
+          ro2.disconnect()
+        }
+      }
+
+      /* the hand: its last known place on the page; presence per frame */
+      let px = -1
+      let py = -1
+      const onMove = (ev: PointerEvent) => {
+        px = ev.clientX
+        py = ev.clientY
+      }
+      const onGone = () => (px = -1)
+      window.addEventListener('pointermove', onMove, { passive: true })
+      document.documentElement.addEventListener('pointerleave', onGone)
+      const rip = { x: -9999, y: -9999, age: 9 }
+      let visible = false
+      let paused = false
+      let listening = false
+      const stop = () => {
+        gsap.ticker.remove(tick)
+        listening = false
+      }
+      const wake = () => {
+        if (!visible || paused || listening || (quiet && rip.age >= 1.5)) return
+        listening = true
+        gsap.ticker.add(tick)
+      }
+      const onDown = (ev: PointerEvent) => {
+        if (paused) return
+        const r = host.getBoundingClientRect()
+        rip.x = (ev.clientX - r.left) * dpr
+        rip.y = (ev.clientY - r.top) * dpr
+        rip.age = 0
+        wake()
+      }
+      /* the press is heard on the footer itself: the field lies under its content */
+      const footer = host.parentElement ?? host
+      footer.addEventListener('pointerdown', onDown)
+
+      let hx = 0
+      let hy = 0
+      let on = 0
+      const tick = (_t?: number, deltaTime?: number) => {
+        const r = host.getBoundingClientRect()
+        const vh = window.innerHeight
+        if (r.top > vh || r.bottom < 0) return
+        const dt = Math.min(0.05, (deltaTime ?? 16.7) / 1000)
+        const inside = px >= 0 && py >= r.top && py <= r.bottom
+        if (inside) {
+          const tx = (px - r.left) * dpr
+          const ty = (py - r.top) * dpr
+          if (on < 0.02) {
+            hx = tx
+            hy = ty
+          }
+          const f = 1 - Math.exp(-dt / FOLLOW)
+          hx += (tx - hx) * f
+          hy += (ty - hy) * f
+        }
+        on += ((inside ? 1 : 0) - on) * (1 - Math.exp(-dt / FADE))
+        if (rip.age < 2) rip.age += dt * 0.85
+        /* quiet: the canvas is on the page only while a ring is out */
+        if (quiet) {
+          const ringing = rip.age < 1.5
+          canvas.classList.toggle('is-live', ringing)
+          if (!ringing) {
+            stop()
+            return
+          }
+        }
+        /* the seam's travel: how much of the footer is out from under the page */
+        const power = Math.max(0, Math.min(1, (vh - r.top) / Math.min(r.height, vh)))
+        gl.uniform1f(uT, gsap.ticker.time)
+        gl.uniform2f(uHand, hx, hy)
+        gl.uniform1f(uHandOn, on)
+        gl.uniform3f(uRip, rip.x, rip.y, rip.age)
+        gl.uniform1f(uPower, power)
+        gl.drawArrays(gl.TRIANGLES, 0, 3)
+      }
+      const io = new IntersectionObserver(([entry]) => {
+        visible = entry.isIntersecting
+        if (visible) wake()
+        else stop()
+      })
+      io.observe(host)
+      const unpause = observeSharedEffectPause((value) => {
+        paused = value
+        if (paused) stop()
+        else wake()
+      })
+      const snapshot = () => tick(undefined, 0)
+      window.addEventListener('k:page-snapshot', snapshot)
+
+      return () => {
+        window.removeEventListener('k:page-snapshot', snapshot)
+        unpause()
+        stop()
+        io.disconnect()
+        ro.disconnect()
+        window.removeEventListener('pointermove', onMove)
+        document.documentElement.removeEventListener('pointerleave', onGone)
+        footer.removeEventListener('pointerdown', onDown)
+        canvas.classList.remove('is-live')
+        gl.getExtension('WEBGL_lose_context')?.loseContext()
+      }
+    })))
   }, [tone, quiet])
 
   return (

@@ -6,6 +6,7 @@ import BlockReveal from '@/components/v4/BlockReveal'
 import Button from '@/components/v4/Button'
 import Reveal from '@/components/v4/Reveal'
 import { gsap, rem } from '@/lib/motion-v4'
+import { observeSharedEffectPause } from '@/lib/shared-effects'
 import { CALENDLY_URL, CONTACT_EMAIL, ROUTES } from '@/lib/site'
 
 /**
@@ -145,6 +146,19 @@ export default function SiteFooter() {
     /* no hand to follow (touch): the light moves on its own — two pools
        drifting across the dots on slow, unrelated loops */
     const fine = window.matchMedia('(hover: hover)').matches
+    let visible = false
+    let paused = false
+    let listening = false
+    let lastY = NaN
+    const stop = () => {
+      gsap.ticker.remove(frame)
+      listening = false
+    }
+    const wake = () => {
+      if (!visible || paused || listening) return
+      listening = true
+      gsap.ticker.add(frame)
+    }
     if (!fine) dots?.classList.add('is-auto')
     const tick = () => {
       const r = root.getBoundingClientRect()
@@ -153,7 +167,11 @@ export default function SiteFooter() {
       /* the seam's remaining travel: r.top climbs to (vh − height) at
          page end, so this is how far it still has to go — 0 at the end */
       const rest = r.top - (vh - r.height)
-      gsap.set(inner, { y: -DRAG * Math.max(0, rest) })
+      const offsetY = -DRAG * Math.max(0, rest)
+      if (Math.abs(offsetY - lastY) > 0.01 || Number.isNaN(lastY)) {
+        lastY = offsetY
+        gsap.set(inner, { y: offsetY })
+      }
 
       if (!dots) return
       if (!fine) {
@@ -180,8 +198,6 @@ export default function SiteFooter() {
       dots.style.setProperty('--ft-x', `${x.toFixed(1)}px`)
       dots.style.setProperty('--ft-y', `${y.toFixed(1)}px`)
     }
-    tick()
-    gsap.ticker.add(tick)
 
     /* THE ADDRESS takes weight from the hand */
     const letters = Array.from(root.querySelectorAll<HTMLElement>('.ft-mail-l'))
@@ -189,38 +205,70 @@ export default function SiteFooter() {
     const onMove = (ev: PointerEvent) => {
       px = ev.clientX
       py = ev.clientY
+      wake()
     }
-    const onGone = () => (px = -1)
+    const onGone = () => {
+      px = -1
+      wake()
+    }
     if (fine) {
       window.addEventListener('pointermove', onMove, { passive: true })
       document.documentElement.addEventListener('pointerleave', onGone)
     }
     const weigh = (_t?: number, deltaTime?: number) => {
-      if (!letters.length) return
+      if (!letters.length) return false
       const r = root.getBoundingClientRect()
-      if (r.top > window.innerHeight || r.bottom < 0) return
+      if (r.top > window.innerHeight || r.bottom < 0) return false
       const dt = Math.min(0.05, (deltaTime ?? 16.7) / 1000)
       const f = 1 - Math.exp(-dt / WGHT_GLIDE)
       const reach = REACH * 16 * rem()
       const near = px >= 0 && py >= r.top && py <= r.bottom
+      /* Read every glyph before changing any weight. Interleaving these
+         reads and writes forced the next glyph to re-layout the address. */
+      const bounds = near ? letters.map((letter) => letter.getBoundingClientRect()) : []
+      let settling = false
       letters.forEach((l, i) => {
         let to = WGHT[0]
         if (near) {
-          const b = l.getBoundingClientRect()
+          const b = bounds[i]
           const d = Math.hypot(px - (b.left + b.width / 2), py - (b.top + b.height / 2))
           const k = Math.max(0, 1 - d / reach)
           to = WGHT[0] + (WGHT[1] - WGHT[0]) * k * k * (3 - 2 * k)
         }
         if (Math.abs(to - weights[i]) < 0.5) return
+        settling = true
         weights[i] += (to - weights[i]) * f
         l.style.fontVariationSettings = `"wght" ${weights[i].toFixed(0)}`
       })
+      return settling
     }
-    if (fine) gsap.ticker.add(weigh)
+    const frame = (time: number, deltaTime: number) => {
+      tick()
+      const settling = fine && weigh(time, deltaTime)
+      /* Touch keeps its two moving light pools while visible. Desktop wakes
+         on input and rests again once the address has reached its weight. */
+      if (fine && !settling) stop()
+    }
+    const io = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting
+      if (visible) wake()
+      else stop()
+    }, { rootMargin: '100px 0px' })
+    io.observe(root)
+    window.addEventListener('scroll', wake, { passive: true })
+    window.addEventListener('resize', wake)
+    const unpause = observeSharedEffectPause((value) => {
+      paused = value
+      if (paused) stop()
+      else wake()
+    })
 
     return () => {
-      gsap.ticker.remove(tick)
-      gsap.ticker.remove(weigh)
+      unpause()
+      stop()
+      io.disconnect()
+      window.removeEventListener('scroll', wake)
+      window.removeEventListener('resize', wake)
       window.removeEventListener('pointermove', onMove)
       document.documentElement.removeEventListener('pointerleave', onGone)
       letters.forEach((l) => (l.style.fontVariationSettings = ''))

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { gsap, EASE, DUR } from '@/lib/motion-v4'
 import { getLenis } from './SmoothScroll'
+import { createPageSnapshot } from '@/lib/page-snapshot'
 
 /**
  * The page transition. Checklist §5.
@@ -114,10 +115,15 @@ export default function PageTransition({ children }: { children: React.ReactNode
   const scrollYRef = useRef(0)
   const seenPathRef = useRef(pathname)
   const failsafeRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const timelineRef = useRef<gsap.core.Timeline | null>(null)
   const prefetched = useRef<Set<string>>(new Set())
 
   /** Back to rest: drop the ghost, un-transform and un-layer the view. */
   const cleanup = useCallback(() => {
+    if (failsafeRef.current) clearTimeout(failsafeRef.current)
+    failsafeRef.current = null
+    timelineRef.current?.kill()
+    timelineRef.current = null
     pendingRef.current = null
     if (ghostRef.current) {
       ghostRef.current.remove()
@@ -129,6 +135,7 @@ export default function PageTransition({ children }: { children: React.ReactNode
       view.classList.remove('is-moving')
     }
     document.documentElement.classList.remove('k-pt-active')
+    window.dispatchEvent(new CustomEvent('k:transition', { detail: false }))
     getLenis()?.start()
   }, [])
 
@@ -142,6 +149,7 @@ export default function PageTransition({ children }: { children: React.ReactNode
         return
       }
       pendingRef.current = dest
+      window.dispatchEvent(new CustomEvent('k:transition', { detail: true }))
 
       const vh = window.innerHeight
       const scrollY = window.scrollY || document.documentElement.scrollTop || 0
@@ -156,7 +164,10 @@ export default function PageTransition({ children }: { children: React.ReactNode
       const inner = document.createElement('div')
       inner.className = 'k-pt__ghost-inner'
       inner.style.top = `${-scrollY}px`
-      const clone = view.cloneNode(true) as HTMLElement
+      // Refresh any live GPU sheet synchronously so its still is captured
+      // before the browser discards the canvas's presented framebuffer.
+      window.dispatchEvent(new Event('k:page-snapshot'))
+      const clone = createPageSnapshot(view, vh)
       /* Below the fold the clone's reveals never fired (the IO belongs to the
        * live elements), so as the page lifts and its lower content slides into
        * the window, that content would be blank. The ghost is a still: show
@@ -257,6 +268,10 @@ export default function PageTransition({ children }: { children: React.ReactNode
 
       const url = resolve(e.target)
       if (!url) return
+      if (pendingRef.current && isV4Route(url.pathname)) {
+        e.preventDefault()
+        return
+      }
       if (url.pathname === window.location.pathname) return
 
       if (!isV4Route(url.pathname)) {
@@ -283,6 +298,7 @@ export default function PageTransition({ children }: { children: React.ReactNode
     /* Prefetch on intent, so the commit is effectively free and the 130ms lead
      * below stays a designed number rather than a measure of network latency. */
     const onIntent = (e: Event) => {
+      if (pendingRef.current) return
       const url = resolve(e.target)
       if (!url || !isV4Route(url.pathname)) return
       if (prefetched.current.has(url.pathname)) return
@@ -312,6 +328,12 @@ export default function PageTransition({ children }: { children: React.ReactNode
 
     const dest = pendingRef.current
     if (!dest) return // a navigation we did not drive (back button, etc.)
+    // History can interrupt a click before or during the slide. Never run
+    // the pending link's entrance over a different route.
+    if (pathname !== new URL(dest, window.location.href).pathname) {
+      cleanup()
+      return
+    }
 
     const view = viewRef.current
     if (!view) {
@@ -322,98 +344,136 @@ export default function PageTransition({ children }: { children: React.ReactNode
     /* §5.3 — Lenis owns scrolling, so without this the incoming route arrives
      * at the OUTGOING route's offset. Safe to do bluntly here: the view is
      * parked below the fold and the ghost covers the viewport. */
-    const lenis = getLenis()
     const hash = dest.includes('#') ? dest.slice(dest.indexOf('#')) : ''
-    const anchor = hash.length > 1 ? document.querySelector<HTMLElement>(hash) : null
-    if (lenis) lenis.scrollTo(anchor ?? 0, { immediate: true, force: true })
-    else if (anchor) anchor.scrollIntoView()
-    else window.scrollTo(0, 0)
-
-    const vh = window.innerHeight
-    const vw = window.innerWidth
-
-    let done = false
-    const finish = () => {
-      if (done) return
-      done = true
-      cleanup()
-    }
-
-    /* One timeline, starting NOW, at commit. Everything in it — both sheets
-     * and the dim — sits at position 0 on the SAME curve over the SAME second:
-     * one locked system, not two animations that happen to overlap. (The
-     * measured 130ms lead was tried and dropped; see the constants block.)
-     *
-     * The rotation pivots on the VIEWPORT's centre, not the element's. The page
-     * is taller than the viewport, so spinning it about its own middle would
-     * swing the visible top wildly; scroll is 0 here, so vh/2 down the element
-     * is the centre of what you can actually see — it turns like a card. */
-    const tl = gsap.timeline({ onComplete: finish })
-    const ghost = ghostRef.current
-    if (ghost) {
-      /* The INNER moves, never the window. The ghost is a fixed viewport-sized
-       * clip; sliding the window itself up exposed a strip of bare background
-       * under its bottom edge for the whole ride. Sliding the full-height clone
-       * inside the window means the outgoing page's below-the-fold content
-       * rises into view instead — the page keeps going, like a real sheet.
-       * The pivot is the centre of what was on screen at click time, expressed
-       * in the clone's own coordinates (hence the scroll offset). */
-      const inner = ghost.querySelector('.k-pt__ghost-inner')
-      if (inner) {
-        tl.to(
-          inner,
-          {
-            y: -vh * OUT_RISE,
-            x: -vw * OUT_DRIFT,
-            rotate: -TILT,
-            scale: OUT_SCALE,
-            transformOrigin: `50% ${scrollYRef.current + vh / 2}px`,
-            duration: DUR.page,
-            ease: EASE.arc,
-          },
-          0,
-        )
+    const anchor = hash.length > 1 ? view.querySelector<HTMLElement>(hash) : null
+    let disposeMove = () => {}
+    const enter = () => {
+      const lenis = getLenis()
+      // Lenis measures the anchor's rect. The parked sheet's transform must
+      // leave that measurement; the ghost covers this synchronous rebase.
+      gsap.set(view, { y: 0, rotate: 0, scale: 1 })
+      if (lenis) {
+        // The new route can be longer than the outgoing one. Refresh Lenis's
+        // cached limit before an anchor scroll, ahead of ResizeObserver.
+        if (anchor) lenis.resize()
+        lenis.scrollTo(anchor ?? 0, { immediate: true, force: true })
       }
-      /* Same curve as the motion, so the darkening IS the movement: fully
-       * visible while the sheets are still gathering speed, darkest exactly
-       * as the page is buried. */
-      const dim = ghost.querySelector('.k-pt__dim')
-      if (dim) tl.to(dim, { opacity: OUT_DIM, duration: DUR.page, ease: EASE.arc }, 0)
-    }
-    tl.fromTo(
-      view,
-      {
-        y: vh,
-        rotate: TILT,
-        scale: IN_SCALE,
-        transformOrigin: `50% ${vh / 2}px`,
-        willChange: 'transform',
-      },
-      { y: 0, rotate: 0, scale: 1, duration: DUR.page, ease: EASE.arc },
-      0,
-    )
-    /* The seam shadow (the ::before on .is-moving) fades in over the slow
-     * first stretch instead of popping onto the bottom edge at click —
-     * GSAP tweens the CSS variable the pseudo-element's opacity reads. */
-    tl.fromTo(
-      view,
-      { '--k-pt-seam': 0 },
-      { '--k-pt-seam': 1, duration: DUR.page * 0.35, ease: 'none' },
-      0,
-    )
+      else if (anchor) anchor.scrollIntoView()
+      else window.scrollTo(0, 0)
 
-    /* GSAP runs on rAF, and rAF stops in a backgrounded tab, so onComplete
-     * alone would leave the page stuck under the ghost. Degrade to "no
-     * animation, correct final state". Divided by the global timeScale
-     * because the timeout runs on wall-clock time and the timeline may not
-     * (the slow-motion recording harness sets timeScale 0.25 — the backstop
-     * was cutting those recordings off mid-move). */
-    const speed = gsap.globalTimeline.timeScale() || 1
-    const backstop = setTimeout(finish, (DUR.page / speed) * 1000 + 400)
+      const vh = window.innerHeight
+      const vw = window.innerWidth
+
+      let done = false
+      const finish = () => {
+        if (done) return
+        done = true
+        cleanup()
+      }
+
+      /* One timeline, starting NOW, at commit. Everything in it — both sheets
+       * and the dim — sits at position 0 on the SAME curve over the SAME second:
+       * one locked system, not two animations that happen to overlap. (The
+       * measured 130ms lead was tried and dropped; see the constants block.)
+       *
+       * The rotation pivots on the VIEWPORT's centre, not the element's. The page
+       * is taller than the viewport, so spinning it about its own middle would
+       * swing the visible top wildly; scroll plus vh/2 down the element
+       * is the centre of what you can actually see — it turns like a card. */
+      const tl = gsap.timeline({ onComplete: finish })
+      timelineRef.current = tl
+      const ghost = ghostRef.current
+      if (ghost) {
+        /* The INNER moves, never the window. The ghost is a fixed viewport-sized
+         * clip; sliding the window itself up exposed a strip of bare background
+         * under its bottom edge for the whole ride. Sliding the full-height clone
+         * inside the window means the outgoing page's below-the-fold content
+         * rises into view instead — the page keeps going, like a real sheet.
+         * The pivot is the centre of what was on screen at click time, expressed
+         * in the clone's own coordinates (hence the scroll offset). */
+        const inner = ghost.querySelector('.k-pt__ghost-inner')
+        if (inner) {
+          tl.to(
+            inner,
+            {
+              y: -vh * OUT_RISE,
+              x: -vw * OUT_DRIFT,
+              rotate: -TILT,
+              scale: OUT_SCALE,
+              transformOrigin: `50% ${scrollYRef.current + vh / 2}px`,
+              duration: DUR.page,
+              ease: EASE.arc,
+            },
+            0,
+          )
+        }
+        /* Same curve as the motion, so the darkening IS the movement: fully
+         * visible while the sheets are still gathering speed, darkest exactly
+         * as the page is buried. */
+        const dim = ghost.querySelector('.k-pt__dim')
+        if (dim) tl.to(dim, { opacity: OUT_DIM, duration: DUR.page, ease: EASE.arc }, 0)
+      }
+      tl.fromTo(
+        view,
+        {
+          y: vh,
+          rotate: TILT,
+          scale: IN_SCALE,
+          transformOrigin: `50% ${window.scrollY + vh / 2}px`,
+          willChange: 'transform',
+        },
+        { y: 0, rotate: 0, scale: 1, duration: DUR.page, ease: EASE.arc },
+        0,
+      )
+      /* The seam shadow (the ::before on .is-moving) fades in over the slow
+       * first stretch instead of popping onto the bottom edge at click —
+       * GSAP tweens the CSS variable the pseudo-element's opacity reads. */
+      tl.fromTo(
+        view,
+        { '--k-pt-seam': 0 },
+        { '--k-pt-seam': 1, duration: DUR.page * 0.35, ease: 'none' },
+        0,
+      )
+
+      /* GSAP runs on rAF, and rAF stops in a backgrounded tab, so onComplete
+       * alone would leave the page stuck under the ghost. Degrade to "no
+       * animation, correct final state". Divided by the global timeScale
+       * because the timeout runs on wall-clock time and the timeline may not
+       * (the slow-motion recording harness sets timeScale 0.25 — the backstop
+       * was cutting those recordings off mid-move). */
+      const speed = gsap.globalTimeline.timeScale() || 1
+      const backstop = setTimeout(finish, (DUR.page / speed) * 1000 + 400)
+
+      disposeMove = () => {
+        tl.kill()
+        clearTimeout(backstop)
+      }
+    }
+
+    // A homepage hash must include the fold runway in its landing offset.
+    // Allow the incoming driver to establish it before either sheet moves.
+    const home = view.querySelector<HTMLElement>('main.hm')
+    let waitTimer: ReturnType<typeof setTimeout> | undefined
+    const ready = () => {
+      if (home?.dataset.peelArmed !== 'true') return
+      window.removeEventListener('k-peel-armed', ready)
+      clearTimeout(waitTimer)
+      enter()
+    }
+    if (anchor && home && home.dataset.peelArmed !== 'true' && home.dataset.heroFallback !== 'true') {
+      window.addEventListener('k-peel-armed', ready)
+      waitTimer = setTimeout(() => {
+        window.removeEventListener('k-peel-armed', ready)
+        // Keep the no-video/no-GL layout stable after this fallback landing.
+        home.dataset.heroFallback = 'true'
+        enter()
+      }, 1200)
+    } else enter()
 
     return () => {
-      tl.kill()
-      clearTimeout(backstop)
+      window.removeEventListener('k-peel-armed', ready)
+      clearTimeout(waitTimer)
+      disposeMove()
     }
   }, [pathname, cleanup])
 

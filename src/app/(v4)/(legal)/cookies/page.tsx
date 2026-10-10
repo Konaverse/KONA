@@ -26,10 +26,9 @@ export const metadata: Metadata = {
  * Mode v2 and sets _ga / _ga_* only after "Accept", Ahrefs is cookieless.
  * The "change your choice" control is the withdrawal the GDPR asks for.
  *
- * 2026-10-04: the contact page's calendar is Calendly's page in a frame,
- * in the page from the first paint (owner, 2026-10-03). Its cookies are
- * Calendly's, set on load and outside our banner, and the policy now
- * says so (section 3C and the note in section 5).
+ * The calendar preloads on site entry and persists between the contact
+ * card and booking popovers. Calendly's own cookies are set on frame
+ * load, outside our banner (section 3C and the note in section 5).
  */
 const UPDATED = 'October 2026'
 
@@ -69,8 +68,8 @@ export default function CookiesPage() {
           improve it. Analytics cookies are set only if you accept them.
         </p>
         <p>
-          One page also carries a third party&rsquo;s tool: the booking calendar on our contact
-          page is provided by Calendly, which sets its own cookies. They are described in section
+          Our booking calendar is a third party&rsquo;s tool, provided by Calendly. It preloads
+          when you enter the site and sets its own cookies. They are described in section
           3C.
         </p>
       </LegalSection>
@@ -112,10 +111,12 @@ export default function CookiesPage() {
           <LegalExt href="https://ahrefs.com/legal/privacy-policy">Ahrefs privacy policy</LegalExt>
         </p>
 
-        <h3>C. The booking calendar on the contact page</h3>
+        <h3>C. The booking calendar</h3>
         <p>
           The calendar on our <a href="/contact">contact page</a> is <strong>Calendly</strong>
-          &rsquo;s booking page, shown inside a frame. It loads with the page, and Calendly sets
+          &rsquo;s booking page, shown inside a frame. The same calendar also opens from our
+          booking buttons. It starts loading when you enter the site so it can be ready before
+          you open it, and Calendly sets
           its own cookies in that frame to run the calendar, to keep it secure and to measure its
           use. These cookies are set by Calendly, not by us: we cannot read them, and the choice
           you make in our banner does not switch them on or off.{' '}
@@ -143,8 +144,8 @@ export default function CookiesPage() {
           works fully without analytics cookies.
         </p>
         <p>
-          To avoid Calendly&rsquo;s cookies, block third-party cookies in your browser, or skip
-          the calendar: the form and the email address on the contact page reach us without it.
+          To avoid Calendly&rsquo;s cookies, block third-party cookies in your browser. The form
+          and email address on the contact page let you reach us without using the calendar.
         </p>
       </LegalSection>
 

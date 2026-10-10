@@ -1,7 +1,9 @@
 'use client'
 
 import { useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import { gsap } from '@/lib/motion-v4'
+import { observeSharedEffectPause } from '@/lib/shared-effects'
 
 /**
  * THE GRAIN'S DEPTH — one fixed layer, two grounds.
@@ -28,11 +30,9 @@ import { gsap } from '@/lib/motion-v4'
  *    only place the numbers live — the light one off `.k-root`, the dark one
  *    off a throwaway `.k-dark` probe measured once at mount.
  *
- * Cost: a handful of getBoundingClientRect reads on one ticker, and one custom
- * property write only when the value actually moves. The element list is
- * re-queried on a slow cadence rather than every frame, because `.k-dark` is
- * added at runtime in at least one place (HeroPeel marks the claim's card when
- * the GL sheet lands on it).
+ * Measure on scroll, resize, route or polarity changes; sleep when coverage
+ * settles. Observe dark surfaces so transform-driven entrances wake the
+ * calculation too. The grain's values and coverage formula stay unchanged.
  *
  * Reduced motion: this still runs. Grain depth is not motion — it is the page
  * matching its own texture to its own ground — and freezing it would leave the
@@ -40,6 +40,7 @@ import { gsap } from '@/lib/motion-v4'
  * No JS: the CSS default stands, which is the light value. Correct by default.
  */
 export default function GrainField() {
+  const pathname = usePathname()
   useEffect(() => {
     const root = document.querySelector<HTMLElement>('.k-root')
     if (!root) return
@@ -66,21 +67,39 @@ export default function GrainField() {
     if (DARK === LIGHT) return
 
     let els: HTMLElement[] = []
-    const refresh = () => {
-      els = Array.from(document.querySelectorAll<HTMLElement>('.k-dark'))
+    let paused = false
+    let listening = false
+    let previousCover = -1
+    let stable = 0
+    const stop = () => {
+      gsap.ticker.remove(tick)
+      listening = false
     }
-    refresh()
+    const wake = () => {
+      stable = 0
+      if (paused || listening) return
+      listening = true
+      gsap.ticker.add(tick)
+    }
+    const io = new IntersectionObserver(wake, { threshold: Array.from({ length: 101 }, (_, i) => i / 100) })
+    const refresh = () => {
+      io.disconnect()
+      /* Exclude outgoing navigation clones: only the live page owns grain. */
+      els = Array.from(root.querySelectorAll<HTMLElement>('.k-pt__view .k-dark'))
+      els.forEach((el) => io.observe(el))
+      wake()
+    }
 
-    let frame = 0
     let last = -1
 
     const tick = () => {
-      if (frame++ % 20 === 0) refresh()
+      if (paused) return
       if (!els.length) {
         if (last !== LIGHT) {
           last = LIGHT
           grain.style.setProperty('--grain-opacity', String(LIGHT))
         }
+        stop()
         return
       }
 
@@ -102,17 +121,47 @@ export default function GrainField() {
       const next = LIGHT + (DARK - LIGHT) * cover
       /* only write when it moves enough to see — a custom property write
          invalidates paint on the grain layer */
-      if (Math.abs(next - last) < 0.002) return
-      last = next
-      grain.style.setProperty('--grain-opacity', next.toFixed(3))
+      if (Math.abs(next - last) >= 0.002) {
+        last = next
+        grain.style.setProperty('--grain-opacity', next.toFixed(3))
+      }
+      stable = Math.abs(cover - previousCover) < 0.00001 ? stable + 1 : 0
+      previousCover = cover
+      if (stable >= 2) stop()
     }
 
-    gsap.ticker.add(tick)
+    refresh()
+    const mutations = new MutationObserver((records) => {
+      const changed = records.some((record) => {
+        if (record.type === 'attributes') {
+          const el = record.target as HTMLElement
+          const wasDark = (record.oldValue ?? '').split(/\s+/).includes('k-dark')
+          return wasDark !== el.classList.contains('k-dark')
+        }
+        return [...record.addedNodes, ...record.removedNodes].some((node) =>
+          node instanceof Element && (node.matches('.k-dark') || node.querySelector('.k-dark')),
+        )
+      })
+      if (changed) refresh()
+    })
+    mutations.observe(root, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'], attributeOldValue: true })
+    window.addEventListener('scroll', wake, { passive: true })
+    window.addEventListener('resize', refresh)
+    const unpause = observeSharedEffectPause((value) => {
+      paused = value
+      if (paused) stop()
+      else refresh()
+    })
     return () => {
-      gsap.ticker.remove(tick)
+      unpause()
+      stop()
+      io.disconnect()
+      mutations.disconnect()
+      window.removeEventListener('scroll', wake)
+      window.removeEventListener('resize', refresh)
       grain.style.removeProperty('--grain-opacity')
     }
-  }, [])
+  }, [pathname])
 
   return null
 }

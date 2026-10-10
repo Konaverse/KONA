@@ -493,6 +493,13 @@
   stroke-dasharray: var(--hi) 2;
   animation: ro-ray 4s ease-in-out infinite alternate;
 }
+.ro-rays--canvas { visibility: hidden; }
+/* Static SVG during hydration keeps 132 paint animations off the first load. */
+.ro-rays--svg, .ro-rays--svg line { animation: none; }
+[data-rays-fallback] > .ro-rays--svg { animation: ro-turn 90s linear infinite; }
+[data-rays-fallback] > .ro-rays--svg line { animation-name: ro-ray; }
+[data-rays-live] > .ro-rays--svg { display: none; }
+[data-rays-live] > .ro-rays--canvas { visibility: visible; }
 @keyframes ro-turn { to { transform: rotate(360deg); } }
 @keyframes ro-ray {
   from { stroke-dasharray: var(--lo) 2; }

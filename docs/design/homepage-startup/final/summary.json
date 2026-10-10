@@ -1,0 +1,302 @@
+[
+  {
+    "mode": "desktop-cold",
+    "events": [
+      {
+        "name": "k-peel-armed",
+        "time": 1171.5999999940395
+      },
+      {
+        "name": "k-hero-open",
+        "time": 2118.2999999970198
+      },
+      {
+        "name": "k-hero-sew",
+        "time": 2119.5999999940395
+      },
+      {
+        "name": "k-hero-ready",
+        "time": 3796.6999999955297
+      }
+    ],
+    "contexts": [
+      {
+        "type": "webgl",
+        "time": 1089.7999999970198,
+        "duration": 25.600000001490116,
+        "className": "hp-canvas",
+        "parent": "hm"
+      },
+      {
+        "type": "webgl2",
+        "time": 4206.79999999702,
+        "duration": 7.200000002980232,
+        "className": "",
+        "parent": ""
+      }
+    ],
+    "reads": {
+      "1": {
+        "hm-claim": 48,
+        "hm-heropin": 47
+      },
+      "2": {
+        "hm-claim": 43,
+        "hm-heropin": 43
+      },
+      "3": {
+        "hm-claim": 3,
+        "hm-heropin": 3
+      }
+    },
+    "videoUploads": 39,
+    "repeatedVideoFrameUploads": 3,
+    "repeatedCallbackFrameUploads": 0,
+    "longTaskCount": 9,
+    "longTaskTotalMs": 841,
+    "entranceFramesOver33ms": 3,
+    "entranceFramesOver50ms": 3,
+    "maxFrameMs": 200,
+    "lowerWipes": 0,
+    "videos": [
+      {
+        "className": "hw-vid",
+        "src": "/home/hero-loop.mp4",
+        "readyState": 4,
+        "paused": false,
+        "time": 0.187847
+      },
+      {
+        "className": "hw-mimg hw-ent",
+        "src": null,
+        "readyState": 0,
+        "paused": false,
+        "time": 0
+      },
+      {
+        "className": "",
+        "src": "/home/hero-loop.mp4",
+        "readyState": 0,
+        "paused": true,
+        "time": 0
+      }
+    ],
+    "copyOpacity": "1",
+    "errors": []
+  },
+  {
+    "mode": "desktop-warm",
+    "events": [
+      {
+        "name": "k-peel-armed",
+        "time": 325.69999999552965
+      },
+      {
+        "name": "k-hero-open",
+        "time": 1269.2999999970198
+      },
+      {
+        "name": "k-hero-sew",
+        "time": 1269.8999999985099
+      },
+      {
+        "name": "k-hero-ready",
+        "time": 2940.89999999851
+      }
+    ],
+    "contexts": [
+      {
+        "type": "webgl",
+        "time": 304.1000000014901,
+        "duration": 5.399999998509884,
+        "className": "hp-canvas",
+        "parent": "hm"
+      },
+      {
+        "type": "webgl2",
+        "time": 3325.39999999851,
+        "duration": 10.399999998509884,
+        "className": "",
+        "parent": ""
+      }
+    ],
+    "reads": {
+      "0": {
+        "hm-claim": 42,
+        "hm-heropin": 41
+      },
+      "1": {
+        "hm-claim": 60,
+        "hm-heropin": 60
+      },
+      "2": {
+        "hm-claim": 12,
+        "hm-heropin": 12
+      }
+    },
+    "videoUploads": 47,
+    "repeatedVideoFrameUploads": 3,
+    "repeatedCallbackFrameUploads": 0,
+    "longTaskCount": 1,
+    "longTaskTotalMs": 102,
+    "entranceFramesOver33ms": 0,
+    "entranceFramesOver50ms": 0,
+    "maxFrameMs": 17.199999999999818,
+    "lowerWipes": 0,
+    "videos": [
+      {
+        "className": "hw-vid",
+        "src": "/home/hero-loop.mp4",
+        "readyState": 4,
+        "paused": false,
+        "time": 1.172369
+      },
+      {
+        "className": "hw-mimg hw-ent",
+        "src": null,
+        "readyState": 0,
+        "paused": false,
+        "time": 0
+      },
+      {
+        "className": "",
+        "src": "/home/hero-loop.mp4",
+        "readyState": 0,
+        "paused": true,
+        "time": 0
+      }
+    ],
+    "copyOpacity": "1",
+    "errors": []
+  },
+  {
+    "mode": "desktop-slow",
+    "events": [
+      {
+        "name": "k-hero-sew",
+        "time": 9356.60000000149
+      },
+      {
+        "name": "k-hero-ready",
+        "time": 11099.20000000298
+      }
+    ],
+    "contexts": [],
+    "reads": {},
+    "videoUploads": 0,
+    "repeatedVideoFrameUploads": 0,
+    "repeatedCallbackFrameUploads": 0,
+    "longTaskCount": 41,
+    "longTaskTotalMs": 10194,
+    "entranceFramesOver33ms": 3,
+    "entranceFramesOver50ms": 3,
+    "maxFrameMs": 883.3999999999996,
+    "lowerWipes": 0,
+    "videos": [
+      {
+        "className": "hw-vid",
+        "src": "/home/hero-loop.mp4",
+        "readyState": 4,
+        "paused": false,
+        "time": 0.252338
+      },
+      {
+        "className": "hw-mimg hw-ent",
+        "src": null,
+        "readyState": 0,
+        "paused": false,
+        "time": 0
+      },
+      {
+        "className": "",
+        "src": "/home/hero-loop.mp4",
+        "readyState": 0,
+        "paused": true,
+        "time": 0
+      }
+    ],
+    "copyOpacity": "1",
+    "errors": []
+  },
+  {
+    "mode": "mobile-cold",
+    "events": [
+      {
+        "name": "k-peel-armed",
+        "time": 856
+      },
+      {
+        "name": "k-hero-open",
+        "time": 1802.5
+      },
+      {
+        "name": "k-hero-sew",
+        "time": 1810.1000000014901
+      },
+      {
+        "name": "k-hero-ready",
+        "time": 3049.10000000149
+      }
+    ],
+    "contexts": [
+      {
+        "type": "webgl",
+        "time": 828.5,
+        "duration": 7.700000002980232,
+        "className": "hp-canvas",
+        "parent": "hm"
+      }
+    ],
+    "reads": {
+      "0": {
+        "hm-claim": 11,
+        "hm-heropin": 10
+      },
+      "1": {
+        "hm-claim": 60,
+        "hm-heropin": 60
+      },
+      "2": {
+        "hm-claim": 43,
+        "hm-heropin": 43
+      },
+      "3": {
+        "hm-claim": 1
+      }
+    },
+    "videoUploads": 47,
+    "repeatedVideoFrameUploads": 2,
+    "repeatedCallbackFrameUploads": 0,
+    "longTaskCount": 3,
+    "longTaskTotalMs": 500,
+    "entranceFramesOver33ms": 1,
+    "entranceFramesOver50ms": 0,
+    "maxFrameMs": 33.5,
+    "lowerWipes": 0,
+    "videos": [
+      {
+        "className": "hw-vid",
+        "src": null,
+        "readyState": 0,
+        "paused": false,
+        "time": 0
+      },
+      {
+        "className": "hw-mimg hw-ent",
+        "src": "/home/hero-loop.mp4",
+        "readyState": 4,
+        "paused": false,
+        "time": 0.69011
+      },
+      {
+        "className": "",
+        "src": "/home/hero-loop.mp4",
+        "readyState": 4,
+        "paused": true,
+        "time": 0
+      }
+    ],
+    "copyOpacity": "1",
+    "errors": []
+  }
+]

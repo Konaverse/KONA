@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import { gsap, rem } from '@/lib/motion-v4'
+import { observeHomepageActivity } from '@/lib/homepage-effects'
 
 /**
  * §2 — the claim's entrance, and nothing else. The statement lives INSIDE
@@ -22,7 +23,7 @@ import { gsap, rem } from '@/lib/motion-v4'
  * WebGL / texture failure) keeps the plain screen with the statement
  * fully visible (SSR, SEO D5).
  *
- * House pattern: gsap.ticker + rect math, no scroll listeners.
+ * Scroll events wake one GSAP measurement after Lenis; rest costs no frames.
  */
 export default function ClaimEntrance() {
   useEffect(() => {
@@ -37,8 +38,20 @@ export default function ClaimEntrance() {
 
     let engaged = false
     let lastPe = -1
+    let active = false
+    let listening = false
+    const stop = () => {
+      gsap.ticker.remove(tick)
+      listening = false
+    }
+    const wake = () => {
+      if (!active || listening) return
+      listening = true
+      gsap.ticker.add(tick)
+    }
 
     const tick = () => {
+      stop() // Progress is a pure scroll measurement, with no settling loop.
       if (!engaged) {
         if (!heropin.classList.contains('is-run')) return
         engaged = true
@@ -84,8 +97,21 @@ export default function ClaimEntrance() {
       }
     }
 
-    gsap.ticker.add(tick)
-    return () => gsap.ticker.remove(tick)
+    const unobserve = observeHomepageActivity(sec, value => {
+      active = value
+      if (value) wake()
+      else stop()
+    })
+    window.addEventListener('scroll', wake, { passive: true })
+    window.addEventListener('resize', wake)
+    window.addEventListener('k-peel-armed', wake)
+    return () => {
+      unobserve()
+      stop()
+      window.removeEventListener('scroll', wake)
+      window.removeEventListener('resize', wake)
+      window.removeEventListener('k-peel-armed', wake)
+    }
   }, [])
 
   return null

@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { gsap } from '@/lib/motion-v4'
 import { runLight } from '@/lib/run-store'
+import { runScrollTicker } from '@/lib/page-motion'
 
 /**
  * THE RUN — THE LIGHT and THE RUN BAR (service pages, 2026-09-17; the
@@ -66,9 +66,6 @@ export default function RunLight({ chapters }: { chapters: readonly RunChapter[]
       tops = secs.map((s) => (s ? s.offsetTop : 0))
       ends = secs.map((s, i) => (s ? s.offsetTop + s.offsetHeight : tops[i]))
     }
-    measure()
-    const ro = new ResizeObserver(measure)
-    ro.observe(article)
 
     let lx = runLight.x
     let ly = runLight.y
@@ -80,8 +77,7 @@ export default function RunLight({ chapters }: { chapters: readonly RunChapter[]
     let lastP = -1
     const born = performance.now()
 
-    const tick = (_t?: number, deltaTime?: number) => {
-      const r = article.getBoundingClientRect()
+    const tick = (r: DOMRect, deltaTime: number) => {
       const vh = window.innerHeight
       const vw = window.innerWidth
       const scroll = -r.top
@@ -123,13 +119,13 @@ export default function RunLight({ chapters }: { chapters: readonly RunChapter[]
         lastP = p
         bar.style.setProperty('--rn-p', p.toFixed(4))
       }
+      return (!reduce && (Math.abs(runLight.x - lx) > 0.0004 || Math.abs(runLight.y - ly) > 0.0004))
+        || performance.now() - born <= BAR_AFTER * 1000
     }
-    tick()
-    gsap.ticker.add(tick)
+    const stopTicker = runScrollTicker(article, tick, measure, ['k:run-light'])
 
     return () => {
-      gsap.ticker.remove(tick)
-      ro.disconnect()
+      stopTicker()
       light.style.removeProperty('--rl-x')
       light.style.removeProperty('--rl-y')
       bar.classList.remove('is-dark', 'is-shown')

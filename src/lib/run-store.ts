@@ -9,6 +9,8 @@
 export const runLight = { x: 0.72, y: 0.4 }
 
 export const aimLight = (x: number, y: number) => {
+  if (runLight.x === x && runLight.y === y) return
   runLight.x = x
   runLight.y = y
+  window.dispatchEvent(new Event('k:run-light'))
 }

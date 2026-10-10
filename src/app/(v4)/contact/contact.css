@@ -156,9 +156,8 @@
   height: 100%;
   border: 0;
 }
-/* the frame is in the server HTML (2026-10-03, owner: "rendered from the
-   start… without delay"); under it, until it paints, a plain link to the
-   booking page */
+/* The shared layout aligns its persistent frame with this slot. Keep
+   the direct link and no-JS iframe as fallbacks. */
 .ct-cal-wrap { position: relative; }
 .ct-cal-out {
   position: absolute;

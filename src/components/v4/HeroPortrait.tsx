@@ -1,11 +1,13 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { afterPageTransition } from '@/lib/shared-effects'
 import Button from '@/components/v4/Button'
 import HeroTitle from '@/components/v4/HeroTitle'
 import { gsap, EASE, DUR } from '@/lib/motion-v4'
 import { CALENDLY_URL } from '@/lib/site'
 import { HERO_VIDEO_RECT, SHAPE_H, SHAPE_PATH, SHAPE_W } from '@/lib/hero-shape'
+import { markHeroFallback, shouldPlayHeroEntrance } from '@/lib/homepage-effects'
 
 // Mask an HTML wrapper rather than a video inside SVG foreignObject: Safari's
 // composited video layer can escape the foreignObject's ancestor clipPath.
@@ -77,9 +79,10 @@ export default function HeroPortrait() {
     const root = rootRef.current
     if (!root) return
     const qa = (sel: string) => Array.from(root.querySelectorAll<HTMLElement>(sel))
+    const playEntrance = shouldPlayHeroEntrance(root)
 
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      gsap.set(qa('.hw-ent'), { opacity: 1, y: 0, yPercent: 0, filter: 'none' })
+    if (!playEntrance || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      gsap.set(qa('.hw-ent'), { opacity: 1, y: 0, yPercent: 0, scale: 1, filter: 'none' })
       return
     }
 
@@ -130,7 +133,7 @@ export default function HeroPortrait() {
       copy.play()
     }
     window.addEventListener('k-hero-sew', beginCopy, { once: true })
-    const copyFallback = setTimeout(beginCopy, 7000)
+    let copyFallback: ReturnType<typeof setTimeout> | undefined
 
     let begun = false
     const begin = () => {
@@ -139,9 +142,17 @@ export default function HeroPortrait() {
       tl.play()
     }
     window.addEventListener('k-peel-armed', begin, { once: true })
-    const fallback = setTimeout(begin, 1200)
+    let fallback: ReturnType<typeof setTimeout> | undefined
+    const cancelFallbacks = afterPageTransition(() => {
+      copyFallback = setTimeout(beginCopy, 7000)
+      fallback = setTimeout(() => {
+        if (!begun) markHeroFallback(root)
+        begin()
+      }, 1200)
+    })
 
     return () => {
+      cancelFallbacks?.()
       window.removeEventListener('k-peel-armed', begin)
       window.removeEventListener('k-hero-sew', beginCopy)
       clearTimeout(fallback)

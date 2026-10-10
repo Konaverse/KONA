@@ -1,0 +1,30 @@
+[
+  {
+    "fallback": "no-webgl",
+    "errors": []
+  },
+  {
+    "fallback": "blocked-video",
+    "errors": []
+  },
+  {
+    "fallback": "late-video",
+    "errors": []
+  },
+  {
+    "fallback": "no-frame-callback",
+    "errors": []
+  },
+  {
+    "fallback": "reduced-motion",
+    "errors": []
+  },
+  {
+    "fallback": "no-js",
+    "errors": []
+  },
+  {
+    "fallback": "early-scroll",
+    "errors": []
+  }
+]

@@ -1,0 +1,86 @@
+[
+  {
+    "name": "desktop",
+    "time": 0,
+    "meanChannelDifference": 0.05210108024691358,
+    "maxChannelDifference": 10,
+    "shareOver10": 0
+  },
+  {
+    "name": "desktop",
+    "time": 1700,
+    "meanChannelDifference": 0.04290920781893004,
+    "maxChannelDifference": 8,
+    "shareOver10": 0
+  },
+  {
+    "name": "desktop",
+    "time": 12000,
+    "meanChannelDifference": 0.032459619341563786,
+    "maxChannelDifference": 8,
+    "shareOver10": 0
+  },
+  {
+    "name": "desktop",
+    "time": 45678,
+    "meanChannelDifference": 0.03458744855967078,
+    "maxChannelDifference": 9,
+    "shareOver10": 0
+  },
+  {
+    "name": "mobile",
+    "time": 0,
+    "meanChannelDifference": 0.0014916757807753069,
+    "maxChannelDifference": 8,
+    "shareOver10": 0
+  },
+  {
+    "name": "mobile",
+    "time": 1700,
+    "meanChannelDifference": 0.006571272329566168,
+    "maxChannelDifference": 12,
+    "shareOver10": 0.000004050714951188885
+  },
+  {
+    "name": "mobile",
+    "time": 12000,
+    "meanChannelDifference": 0.0037094422165512213,
+    "maxChannelDifference": 11,
+    "shareOver10": 0.0000010126787377972212
+  },
+  {
+    "name": "mobile",
+    "time": 45678,
+    "meanChannelDifference": 0.005878600072912869,
+    "maxChannelDifference": 5,
+    "shareOver10": 0
+  },
+  {
+    "name": "retina",
+    "time": 0,
+    "meanChannelDifference": 0.09874427836513144,
+    "maxChannelDifference": 48,
+    "shareOver10": 0.0020767509215376513
+  },
+  {
+    "name": "retina",
+    "time": 1700,
+    "meanChannelDifference": 0.10566543119860655,
+    "maxChannelDifference": 41,
+    "shareOver10": 0.0018175051646615627
+  },
+  {
+    "name": "retina",
+    "time": 12000,
+    "meanChannelDifference": 0.09305555555555556,
+    "maxChannelDifference": 45,
+    "shareOver10": 0.0016906671527524607
+  },
+  {
+    "name": "retina",
+    "time": 45678,
+    "meanChannelDifference": 0.08394499129096286,
+    "maxChannelDifference": 43,
+    "shareOver10": 0.0013754708956130756
+  }
+]

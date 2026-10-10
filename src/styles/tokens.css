@@ -1847,6 +1847,21 @@ html.lenis, html.lenis body { height: auto; }
   pointer-events: none;
 }
 
+/* The ghost is a still. Its animation properties were sampled from the
+   live page; it needs neither restarted clocks nor per-element layer hints. */
+.k-pt__ghost *, .k-pt__ghost *::before, .k-pt__ghost *::after {
+  animation: none !important;
+  transition: none !important;
+  will-change: auto !important;
+}
+
+/* CSS decorations wait alongside JS scroll drivers while the sheet arrives. */
+.k-pt-active .k-shift > .k-pt__view *,
+.k-pt-active .k-shift > .k-pt__view *::before,
+.k-pt-active .k-shift > .k-pt__view *::after {
+  animation-play-state: paused !important;
+}
+
 /* The incoming page, lifted over the ghost for the duration of
    the move. Applied by PageTransition and removed on completion,
    because a permanent stacking context on the page wrapper would
@@ -2365,6 +2380,49 @@ html.lenis, html.lenis body { height: auto; }
   will-change: transform, opacity;
 }
 .cal-pop[hidden] { display: none; }
+/* Calendly must render in a real viewport to finish initializing. Preload
+   behind the opaque site, without focus/hit testing, then park when ready. */
+.cal[data-mode="parked"] .cal-pop {
+  left: 0;
+  top: 0;
+  width: 340px;
+  height: 560px;
+  z-index: -1;
+  pointer-events: none;
+  will-change: auto;
+}
+.cal[data-mode="parked"][data-ready="true"] .cal-pop {
+  left: -10000px;
+  visibility: hidden;
+}
+.cal-pop.is-inline {
+  z-index: 2;
+  border-radius: var(--r-md);
+  background: var(--surface-raised);
+  /* The contact card itself supplies its original shadow. */
+  box-shadow: none;
+  backdrop-filter: none;
+  will-change: auto;
+}
+.cal-pop.is-inline::after { display: none; }
+.cal-pop.is-inline .cal-head { display: none; }
+.cal-pop.is-inline .cal-note:not([hidden]) {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-content: center;
+  background: var(--surface-raised);
+}
+.cal-inline-dim { display: none; }
+.cal-pop.is-inline .cal-inline-dim {
+  display: block;
+  position: absolute;
+  inset: 0;
+  background: #000;
+  pointer-events: none;
+  opacity: 0;
+}
 .cal-head {
   display: flex;
   justify-content: space-between;
@@ -2408,6 +2466,7 @@ html.lenis, html.lenis body { height: auto; }
   display: block;
   width: 100%;
   height: 100%;
+  border: 0;
 }
 
 /* ============================================================

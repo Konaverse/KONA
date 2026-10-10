@@ -112,8 +112,8 @@ export default async function HomePage() {
               instead of being redrawn from JS a frame behind it, which on a
               phone read as the background trembling under the claim.
               Hidden on desktop (Lenis drives the scroll there, so GL and
-              DOM never disagree). preload none: HeroPeel loads it when the
-              GL arms, and never on desktop. */}
+              DOM never disagree). preload none: HeroPeel loads it as the
+              claim approaches the viewport, and never on desktop. */}
           <div className="hm-claim-bg" aria-hidden="true">
             <video
               src="/home/hero-loop.mp4"

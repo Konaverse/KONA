@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import ServiceCarousel, { type CarouselService } from '@/components/v4/ServiceCarousel'
 import { SERVICE_PAGES } from '@/lib/service-pages'
-import { SERVICE_GRAPHICS } from '@/lib/service-graphics'
+import { SERVICE_PHOTOS } from '@/lib/service-photos'
 import { OG_DEFAULTS, SITE_URL } from '@/lib/site'
 import './hub.css'
 
@@ -119,8 +119,8 @@ export default function ServicesHubPage() {
     slug: p.slug,
     name: p.name,
     blurb: p.blurb,
-    image: SERVICE_GRAPHICS[p.slug].src,
-    alt: SERVICE_GRAPHICS[p.slug].alt,
+    image: SERVICE_PHOTOS[p.slug].src,
+    alt: SERVICE_PHOTOS[p.slug].alt,
   }))
 
   return (

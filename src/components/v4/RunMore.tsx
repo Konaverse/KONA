@@ -1,7 +1,7 @@
 'use client'
 
 import { Fragment, useEffect, useRef, type CSSProperties } from 'react'
-import { gsap } from '@/lib/motion-v4'
+import { runScrollTicker } from '@/lib/page-motion'
 import ArrowLink from '@/components/v4/ArrowLink'
 import { captureAlt } from '@/lib/work-projects'
 import { responsive } from '@/lib/img'
@@ -64,20 +64,17 @@ function useRun(ref: React.RefObject<HTMLElement | null>) {
       last: NaN,
     }))
     const measure = () => {
+      // Clear every drift first, then read all geometry in one layout pass.
+      drifts.forEach(d => { d.el.style.transform = '' })
       const r0 = root.getBoundingClientRect()
       drifts.forEach((d) => {
-        d.el.style.transform = ''
         const r = d.el.getBoundingClientRect()
         d.top = r.top - r0.top
         d.h = r.height
         d.last = NaN
       })
     }
-    measure()
-    const ro = new ResizeObserver(measure)
-    ro.observe(root)
-    const tick = () => {
-      const r = root.getBoundingClientRect()
+    const tick = (r: DOMRect) => {
       const vh = window.innerHeight
       if (r.bottom < -vh * 0.2 || r.top > vh * 1.2) return
       for (const d of drifts) {
@@ -88,12 +85,11 @@ function useRun(ref: React.RefObject<HTMLElement | null>) {
         d.el.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`
       }
     }
-    tick()
-    gsap.ticker.add(tick)
+    // Sections with entrances alone need no scroll driver or geometry reads.
+    const stopTicker = drifts.length ? runScrollTicker(root, tick, measure) : () => {}
     return () => {
       io.disconnect()
-      ro.disconnect()
-      gsap.ticker.remove(tick)
+      stopTicker()
       root.classList.remove('is-live')
       drifts.forEach((d) => (d.el.style.transform = ''))
       root.querySelectorAll('.is-in').forEach((el) => el.classList.remove('is-in'))

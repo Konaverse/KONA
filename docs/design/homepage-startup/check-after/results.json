@@ -1,0 +1,266 @@
+[
+  {
+    "mode": "desktop",
+    "hero": {
+      "events": [
+        {
+          "name": "k-peel-armed",
+          "time": 1834.6999999955297
+        },
+        {
+          "name": "k-hero-open",
+          "time": 2778.39999999851
+        },
+        {
+          "name": "k-hero-sew",
+          "time": 2779.5999999940395
+        },
+        {
+          "name": "k-hero-ready",
+          "time": 4459.29999999702
+        }
+      ],
+      "items": [
+        {
+          "className": "hw-it hw-w hw-grey",
+          "x": 125.96875,
+          "y": 183.578125,
+          "w": 100.421875,
+          "h": 70.90625
+        },
+        {
+          "className": "hw-it hw-w hw-grey",
+          "x": 239.75,
+          "y": 183.578125,
+          "w": 72.203125,
+          "h": 70.90625
+        },
+        {
+          "className": "hw-it hw-pill",
+          "x": 325.3125,
+          "y": 194.625,
+          "w": 524.203125,
+          "h": 48.8125
+        },
+        {
+          "className": "hw-it hw-w hw-grey",
+          "x": 125.96875,
+          "y": 254.484375,
+          "w": 166.8125,
+          "h": 70.90625
+        },
+        {
+          "className": "hw-it hw-w hw-key",
+          "x": 306.140625,
+          "y": 254.484375,
+          "w": 88.03125,
+          "h": 70.90625
+        },
+        {
+          "className": "hw-it hw-w hw-grey",
+          "x": 407.53125,
+          "y": 254.484375,
+          "w": 61.15625,
+          "h": 70.90625
+        },
+        {
+          "className": "hw-it hw-pill",
+          "x": 482.046875,
+          "y": 265.53125,
+          "w": 220.984375,
+          "h": 48.8125
+        },
+        {
+          "className": "hw-it hw-w hw-grey",
+          "x": 716.390625,
+          "y": 254.484375,
+          "w": 114.453125,
+          "h": 70.90625
+        },
+        {
+          "className": "hw-it hw-w hw-ink",
+          "x": 125.96875,
+          "y": 325.390625,
+          "w": 77.765625,
+          "h": 70.90625
+        },
+        {
+          "className": "hw-it hw-w hw-ink",
+          "x": 217.09375,
+          "y": 325.390625,
+          "w": 122.515625,
+          "h": 70.90625
+        },
+        {
+          "className": "hw-it hw-w hw-ink",
+          "x": 352.96875,
+          "y": 325.390625,
+          "w": 72.265625,
+          "h": 70.90625
+        },
+        {
+          "className": "hw-it hw-pill",
+          "x": 438.59375,
+          "y": 336.4375,
+          "w": 370.015625,
+          "h": 48.8125
+        }
+      ]
+    },
+    "services": [
+      "none",
+      "matrix(0.999745, 0.0226001, -0.0226001, 0.999745, 0, -28.06)",
+      "matrix(0.998845, 0.0480479, -0.0480479, 0.998845, 0, -59.68)",
+      "matrix(0.997314, 0.0732382, -0.0732382, 0.997314, 0, -91)",
+      "matrix(0.997314, 0.0732382, -0.0732382, 0.997314, 0, -91)",
+      "matrix(0.997314, 0.0732382, -0.0732382, 0.997314, 0, -91.5)"
+    ],
+    "errors": []
+  },
+  {
+    "mode": "mobile",
+    "hero": {
+      "events": [
+        {
+          "name": "k-peel-armed",
+          "time": 1300.2999999970198
+        },
+        {
+          "name": "k-hero-open",
+          "time": 2260.10000000149
+        },
+        {
+          "name": "k-hero-sew",
+          "time": 2267.39999999851
+        },
+        {
+          "name": "k-hero-ready",
+          "time": 3513
+        }
+      ],
+      "items": [
+        {
+          "className": "hw-it hw-w hw-grey",
+          "x": 20,
+          "y": 101.265625,
+          "w": 70.359375,
+          "h": 49.671875
+        },
+        {
+          "className": "hw-it hw-w hw-grey",
+          "x": 99.71875,
+          "y": 101.265625,
+          "w": 50.59375,
+          "h": 49.671875
+        },
+        {
+          "className": "hw-it hw-pill",
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        },
+        {
+          "className": "hw-it hw-w hw-grey",
+          "x": 20,
+          "y": 150.9375,
+          "w": 116.859375,
+          "h": 49.671875
+        },
+        {
+          "className": "hw-it hw-w hw-key",
+          "x": 146.21875,
+          "y": 150.9375,
+          "w": 61.671875,
+          "h": 49.671875
+        },
+        {
+          "className": "hw-it hw-w hw-grey",
+          "x": 217.25,
+          "y": 150.9375,
+          "w": 42.84375,
+          "h": 49.671875
+        },
+        {
+          "className": "hw-it hw-pill",
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        },
+        {
+          "className": "hw-it hw-w hw-grey",
+          "x": 20,
+          "y": 200.609375,
+          "w": 80.1875,
+          "h": 49.671875
+        },
+        {
+          "className": "hw-it hw-w hw-ink",
+          "x": 109.546875,
+          "y": 200.609375,
+          "w": 54.46875,
+          "h": 49.671875
+        },
+        {
+          "className": "hw-it hw-w hw-ink",
+          "x": 173.375,
+          "y": 200.609375,
+          "w": 85.828125,
+          "h": 49.671875
+        },
+        {
+          "className": "hw-it hw-w hw-ink",
+          "x": 268.5625,
+          "y": 200.609375,
+          "w": 50.625,
+          "h": 49.671875
+        },
+        {
+          "className": "hw-it hw-pill",
+          "x": 0,
+          "y": 0,
+          "w": 0,
+          "h": 0
+        }
+      ]
+    },
+    "services": [
+      "none",
+      "none",
+      "none",
+      "none",
+      "none",
+      "none"
+    ],
+    "errors": []
+  },
+  {
+    "fallback": "no-webgl",
+    "errors": []
+  },
+  {
+    "fallback": "blocked-video",
+    "errors": []
+  },
+  {
+    "fallback": "late-video",
+    "errors": []
+  },
+  {
+    "fallback": "no-frame-callback",
+    "errors": []
+  },
+  {
+    "fallback": "reduced-motion",
+    "errors": []
+  },
+  {
+    "fallback": "no-js",
+    "errors": []
+  },
+  {
+    "fallback": "early-scroll",
+    "errors": []
+  }
+]

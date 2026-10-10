@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, type ReactNode } from 'react'
+import ServiceRays from '@/components/v4/ServiceRays'
 
 /**
  * THE SERVICE HERO — THE SUNBURST (2026-09-30; replaces THE BRIEF,
@@ -26,34 +27,15 @@ import { useEffect, useRef, type ReactNode } from 'react'
  * STILL but for the rays (the user, after the first cut: "the circle
  * with the lines rotating and the lines animated, getting bigger and
  * smaller"): the ring turns slowly, and each ray breathes on its own
- * clock — both CSS. Nothing enters. The only JS: the word is
+ * clock. ServiceRays draws their original dash lengths together; CSS
+ * turns the picture. Nothing enters. The word is
  * measured once the fonts are in (and on resize) so it spans the frame
- * exactly (phones turn it up the long axis). The CSS carries an estimate from
+ * exactly. The CSS carries an estimate from
  * the letter count, so no JS reads almost the same picture.
  */
 
 /** the word may not stand taller than this share of the hero */
 const MAX_H = 0.8
-
-/** the rays: [angle, breath] — deterministic, so server = client. Each
- *  runs from the core (34) toward the rim (100) and BREATHES: its drawn
- *  share of that run swings between a and b on its own clock (run.css
- *  `ro-ray`, the dash of a pathLength-1 line). */
-const RAYS = Array.from({ length: 132 }, (_, i) => {
-  const a = (i / 132) * Math.PI * 2
-  const rnd = (k: number) => {
-    const n = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453
-    return n - Math.floor(n)
-  }
-  const reach = 0.42 + rnd(0) * 0.58
-  return {
-    a,
-    lo: reach * (0.35 + rnd(1) * 0.25),
-    hi: reach,
-    dur: 2.6 + rnd(2) * 3.4,
-    delay: -rnd(3) * 6,
-  }
-})
 
 export default function RunHero({
   word,
@@ -80,8 +62,11 @@ export default function RunHero({
     /* THE FIT: scale the word so its ink spans the frame */
     const fit = () => {
       big.style.fontSize = ''
-      const cur = parseFloat(getComputedStyle(big).fontSize)
-      const w = big.getBoundingClientRect().width
+      const bigStyle = getComputedStyle(big)
+      const cur = parseFloat(bigStyle.fontSize)
+      // Local box dimensions exclude the incoming sheet's rotation/scale.
+      const w = parseFloat(bigStyle.width) + (bigStyle.boxSizing === 'border-box'
+        ? 0 : parseFloat(bigStyle.paddingLeft) + parseFloat(bigStyle.paddingRight))
       if (!w || !cur) return
       /* how far past the frame it runs (run.css --ro-span); phones turn
          the word (--ro-turn), so it spans the height and is capped by
@@ -118,26 +103,7 @@ export default function RunHero({
       data-nav-hero="0.5"
       style={{ '--ro-n': back.length } as React.CSSProperties}
     >
-      <svg className="ro-rays" viewBox="-100 -100 200 200" aria-hidden="true">
-        {RAYS.map(({ a, lo, hi, dur, delay }, i) => (
-          <line
-            key={i}
-            x1={(Math.cos(a) * 34).toFixed(2)}
-            y1={(Math.sin(a) * 34).toFixed(2)}
-            x2={(Math.cos(a) * 100).toFixed(2)}
-            y2={(Math.sin(a) * 100).toFixed(2)}
-            pathLength={1}
-            style={
-              {
-                '--lo': lo.toFixed(3),
-                '--hi': hi.toFixed(3),
-                animationDuration: `${dur.toFixed(2)}s`,
-                animationDelay: `${delay.toFixed(2)}s`,
-              } as React.CSSProperties
-            }
-          />
-        ))}
-      </svg>
+      <ServiceRays />
 
       <span className="ro-back" aria-hidden="true">
         {back}
@@ -152,6 +118,7 @@ export default function RunHero({
 
       <div className="ro-foot">
         <nav aria-label="Breadcrumb">
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- PageTransition owns ordinary anchor navigation. */}
           <a href="/services">Services</a>
           <i aria-hidden="true">/</i>
           <span aria-current="page">{name}</span>

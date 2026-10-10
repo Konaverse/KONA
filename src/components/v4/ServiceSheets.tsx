@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { SERVICES } from '@/components/v4/services-data'
-import { SERVICE_GRAPHICS } from '@/lib/service-graphics'
+import { SERVICE_PHOTOS } from '@/lib/service-photos'
 import { gsap } from '@/lib/motion-v4'
 import { responsive } from '@/lib/img'
+import { observeHomepageActivity, prepareHomepageEffect } from '@/lib/homepage-effects'
 
 /**
  * §4b — THE SERVICES, AS SHEETS (2026-09-19, user: a reference frame —
@@ -17,7 +18,7 @@ import { responsive } from '@/lib/img'
  * THE ROWS are the six services off services-data.tsx: the index, the
  * name in the light display voice (the reference sets a serif; the house
  * has one family), the three includes where the reference has its tags,
- * the paragraph, and the service's graphic in a landscape window.
+ * the paragraph, and the service's photograph in a landscape window.
  * Each row is one link to its service page.
  *
  * THE FAN. Every row after the first starts TUCKED under the row above
@@ -65,64 +66,72 @@ export default function ServiceSheets() {
   useEffect(() => {
     const root = rootRef.current
     if (!root) return
-    const media = gsap.matchMedia()
-    media.add('(min-width: 57.5rem) and (prefers-reduced-motion: no-preference)', () => {
-      const list = root.querySelector<HTMLElement>('.svs-list')
-      if (!list) return
-      const rows = Array.from(list.querySelectorAll<HTMLElement>('.svs-row'))
-      if (rows.length < 2) return
+    return prepareHomepageEffect(root, () => {
+      const media = gsap.matchMedia()
+      media.add('(min-width: 57.5rem) and (prefers-reduced-motion: no-preference)', () => {
+        const list = root.querySelector<HTMLElement>('.svs-list')
+        if (!list) return
+        const rows = Array.from(list.querySelectorAll<HTMLElement>('.svs-row'))
+        if (rows.length < 2) return
 
-      list.classList.add('is-live')
+        list.classList.add('is-live')
 
-      /* LAYOUT values, not rects: the rows are transformed every frame */
-      let tops: number[] = []
-      let hs: number[] = []
-      const measure = () => {
-        tops = rows.map((r) => r.offsetTop)
-        hs = rows.map((r) => r.offsetHeight)
-      }
-      measure()
-      const ro = new ResizeObserver(measure)
-      ro.observe(list)
+        /* LAYOUT values, not rects: the rows are transformed every frame */
+        let tops: number[] = []
+        let hs: number[] = []
+        const measure = () => {
+          tops = rows.map((r) => r.offsetTop)
+          hs = rows.map((r) => r.offsetHeight)
+        }
+        measure()
+        const ro = new ResizeObserver(measure)
+        ro.observe(list)
 
-      const last = new Array(rows.length).fill(-1)
-      const tick = () => {
-        const lt = list.getBoundingClientRect().top // the list never moves
-        const vh = window.innerHeight
-        if (lt > vh * 1.5 || lt + list.offsetHeight < -vh * 0.5) return
-        const span = vh * (START - END)
-        for (let i = 1; i < rows.length; i++) {
-          const p = clamp01((vh * START - (lt + tops[i])) / span)
-          if (p === last[i] && (p === 0 || p === 1)) continue
-          last[i] = p
-          /* a soft settle, close to linear: the fan has to read as a fan the
-             whole way up, not snap flat in the first third */
-          const e = 1 - Math.pow(1 - p, 1.6)
-          const k = 1 - e
-          const el = rows[i]
-          if (p >= 1) {
+        const last = new Array(rows.length).fill(-1)
+        const tick = () => {
+          const lt = list.getBoundingClientRect().top // the list never moves
+          const vh = window.innerHeight
+          if (lt > vh * 1.5 || lt + list.offsetHeight < -vh * 0.5) return
+          const span = vh * (START - END)
+          for (let i = 1; i < rows.length; i++) {
+            const p = clamp01((vh * START - (lt + tops[i])) / span)
+            if (p === last[i] && (p === 0 || p === 1)) continue
+            last[i] = p
+            /* a soft settle, close to linear: the fan has to read as a fan the
+               whole way up, not snap flat in the first third */
+            const e = 1 - Math.pow(1 - p, 1.6)
+            const k = 1 - e
+            const el = rows[i]
+            if (p >= 1) {
+              el.style.transform = ''
+              el.style.removeProperty('--svs-k')
+              continue
+            }
+            el.style.transform = `translate3d(0, ${(-TUCK * hs[i] * k).toFixed(2)}px, 0) rotate(${(TILT * k).toFixed(3)}deg)`
+            el.style.setProperty('--svs-k', k.toFixed(3))
+          }
+        }
+        const unobserve = observeHomepageActivity(root, active => {
+          gsap.ticker.remove(tick)
+          if (active) {
+            tick()
+            gsap.ticker.add(tick)
+          }
+        })
+
+        return () => {
+          unobserve()
+          gsap.ticker.remove(tick)
+          ro.disconnect()
+          list.classList.remove('is-live')
+          rows.forEach((el) => {
             el.style.transform = ''
             el.style.removeProperty('--svs-k')
-            continue
-          }
-          el.style.transform = `translate3d(0, ${(-TUCK * hs[i] * k).toFixed(2)}px, 0) rotate(${(TILT * k).toFixed(3)}deg)`
-          el.style.setProperty('--svs-k', k.toFixed(3))
+          })
         }
-      }
-      tick()
-      gsap.ticker.add(tick)
-
-      return () => {
-        gsap.ticker.remove(tick)
-        ro.disconnect()
-        list.classList.remove('is-live')
-        rows.forEach((el) => {
-          el.style.transform = ''
-          el.style.removeProperty('--svs-k')
-        })
-      }
+      })
+      return () => media.revert()
     })
-    return () => media.revert()
   }, [])
 
   return (
@@ -167,7 +176,7 @@ export default function ServiceSheets() {
               </div>
               <p className="svs-para t-body">{s.para}</p>
               <a className="svs-pic" href={`/services/${s.slug}`} tabIndex={-1} aria-label={`Explore ${s.name}`}>
-                <img {...responsive(SERVICE_GRAPHICS[s.slug].src, '(max-width: 57.499rem) min(480px, calc(100vw - 40px)), 224px')} alt={SERVICE_GRAPHICS[s.slug].alt} width={1672} height={941} loading="lazy" decoding="async" />
+                <img {...responsive(SERVICE_PHOTOS[s.slug].src, '(max-width: 57.499rem) min(480px, calc(100vw - 40px)), 224px')} alt={SERVICE_PHOTOS[s.slug].alt} width={SERVICE_PHOTOS[s.slug].width} height={SERVICE_PHOTOS[s.slug].height} loading="lazy" decoding="async" />
               </a>
             </div>
           </li>

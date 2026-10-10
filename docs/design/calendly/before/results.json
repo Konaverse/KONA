@@ -1,0 +1,276 @@
+[
+  {
+    "mode": "desktop",
+    "idle": {
+      "events": [],
+      "frames": []
+    },
+    "open": {
+      "events": [
+        {
+          "event": "calendly.page_height",
+          "time": 10234.70000000298
+        },
+        {
+          "event": "calendly.page_height",
+          "time": 10987.20000000298
+        },
+        {
+          "event": "calendly.event_type_viewed",
+          "time": 11471.80000000447
+        },
+        {
+          "event": "calendly.event_type_viewed",
+          "time": 11471.80000000447
+        },
+        {
+          "event": "calendly.page_height",
+          "time": 11471.80000000447
+        }
+      ],
+      "start": 31.400000005960464,
+      "click": 6558.70000000298,
+      "frames": 1,
+      "note": "Loading the calendar…"
+    },
+    "calendar": {
+      "text": "POWERED BY\nCalendly\n30 Minute Meeting\nSelect a Day\nOctober 2026\nOctober is now displayed\nMon\tTue\tWed\tThu\tFri\tSat\tSun\n\t\t\t\n1\n\t\n2\n\t\n3\n\t\n4\n\n\n5\n\t\n6\n\t\n7\n\t\n8\n\t\n9\n\t\n10\n\t\n11\n\n\n12\n\t\n13\n\t\n14\n\t\n15\n\t\n16\n\t\n17\n\t\n18\n\n\n19\n\t\n20\n\t\n21\n\t\n22\n\t\n23\n\t\n24\n\t\n25\n\n\n26\n\t\n27\n\t\n28\n\t\n29\n\t\n30\n\t\n31\n\t\n\nTime zone\n\nEastern European Time\n(03:44)",
+      "buttons": 38
+    },
+    "contact": {
+      "events": [
+        {
+          "event": "calendly.page_height",
+          "time": 10234.70000000298
+        },
+        {
+          "event": "calendly.page_height",
+          "time": 10987.20000000298
+        },
+        {
+          "event": "calendly.event_type_viewed",
+          "time": 11471.80000000447
+        },
+        {
+          "event": "calendly.event_type_viewed",
+          "time": 11471.80000000447
+        },
+        {
+          "event": "calendly.page_height",
+          "time": 11471.80000000447
+        },
+        {
+          "event": "calendly.page_height",
+          "time": 16315.20000000298
+        },
+        {
+          "event": "calendly.page_height",
+          "time": 16983.90000000596
+        },
+        {
+          "event": "calendly.event_type_viewed",
+          "time": 17432.40000000596
+        },
+        {
+          "event": "calendly.event_type_viewed",
+          "time": 17432.40000000596
+        },
+        {
+          "event": "calendly.page_height",
+          "time": 17432.40000000596
+        }
+      ],
+      "start": 31.400000005960464,
+      "click": 6558.70000000298,
+      "contact": 14327,
+      "frames": [
+        {
+          "src": "https://calendly.com/kona-verse/30min?embed_domain=127.0.0.1%3A3007&embed_type=Inline&hide_event_type_details=1&hide_gdpr_banner=1",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "src": "https://calendly.com/kona-verse/30min?embed_domain=kona-verse.com&embed_type=Inline&hide_event_type_details=1&hide_gdpr_banner=1",
+          "rect": {
+            "x": 813.703125,
+            "y": 96.109375,
+            "width": 540.6875,
+            "height": 440,
+            "top": 96.109375,
+            "right": 1354.390625,
+            "bottom": 536.109375,
+            "left": 813.703125
+          }
+        }
+      ],
+      "slot": {
+        "x": 813.703125,
+        "y": 96.109375,
+        "width": 540.6875,
+        "height": 440,
+        "top": 96.109375,
+        "right": 1354.390625,
+        "bottom": 536.109375,
+        "left": 813.703125
+      }
+    },
+    "requests": [
+      {
+        "url": "https://calendly.com/kona-verse/30min?embed_domain=127.0.0.1%3A3007&embed_type=Inline&hide_event_type_details=1&hide_gdpr_banner=1",
+        "time": 1791593057055
+      },
+      {
+        "url": "https://calendly.com/kona-verse/30min?embed_domain=kona-verse.com&embed_type=Inline&hide_event_type_details=1&hide_gdpr_banner=1",
+        "time": 1791593064803
+      }
+    ],
+    "contactRequests": 1,
+    "failures": [],
+    "errors": []
+  },
+  {
+    "mode": "mobile",
+    "idle": {
+      "events": [],
+      "frames": []
+    },
+    "open": {
+      "events": [
+        {
+          "event": "calendly.page_height",
+          "time": 10474.79999999702
+        },
+        {
+          "event": "calendly.page_height",
+          "time": 11285.59999999404
+        },
+        {
+          "event": "calendly.event_type_viewed",
+          "time": 11869.59999999404
+        },
+        {
+          "event": "calendly.event_type_viewed",
+          "time": 11869.69999999553
+        },
+        {
+          "event": "calendly.page_height",
+          "time": 11869.69999999553
+        }
+      ],
+      "start": 12.5,
+      "click": 6546.0999999940395,
+      "frames": 1,
+      "note": "Loading the calendar…"
+    },
+    "calendar": {
+      "text": "POWERED BY\nCalendly\n30 Minute Meeting\nSelect a Day\nOctober 2026\nOctober is now displayed\nMon\tTue\tWed\tThu\tFri\tSat\tSun\n\t\t\t\n1\n\t\n2\n\t\n3\n\t\n4\n\n\n5\n\t\n6\n\t\n7\n\t\n8\n\t\n9\n\t\n10\n\t\n11\n\n\n12\n\t\n13\n\t\n14\n\t\n15\n\t\n16\n\t\n17\n\t\n18\n\n\n19\n\t\n20\n\t\n21\n\t\n22\n\t\n23\n\t\n24\n\t\n25\n\n\n26\n\t\n27\n\t\n28\n\t\n29\n\t\n30\n\t\n31\n\t\n\nTime zone\n\nEastern European Time\n(03:44)",
+      "buttons": 38
+    },
+    "contact": {
+      "events": [
+        {
+          "event": "calendly.page_height",
+          "time": 10474.79999999702
+        },
+        {
+          "event": "calendly.page_height",
+          "time": 11285.59999999404
+        },
+        {
+          "event": "calendly.event_type_viewed",
+          "time": 11869.59999999404
+        },
+        {
+          "event": "calendly.event_type_viewed",
+          "time": 11869.69999999553
+        },
+        {
+          "event": "calendly.page_height",
+          "time": 11869.69999999553
+        },
+        {
+          "event": "calendly.page_height",
+          "time": 16539.59999999404
+        },
+        {
+          "event": "calendly.page_height",
+          "time": 17261.09999999404
+        },
+        {
+          "event": "calendly.event_type_viewed",
+          "time": 17721.69999999553
+        },
+        {
+          "event": "calendly.event_type_viewed",
+          "time": 17721.79999999702
+        },
+        {
+          "event": "calendly.page_height",
+          "time": 17721.79999999702
+        }
+      ],
+      "start": 12.5,
+      "click": 6546.0999999940395,
+      "contact": 14187.69999999553,
+      "frames": [
+        {
+          "src": "https://calendly.com/kona-verse/30min?embed_domain=127.0.0.1%3A3007&embed_type=Inline&hide_event_type_details=1&hide_gdpr_banner=1",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        {
+          "src": "https://calendly.com/kona-verse/30min?embed_domain=kona-verse.com&embed_type=Inline&hide_event_type_details=1&hide_gdpr_banner=1",
+          "rect": {
+            "x": 20,
+            "y": 657.34375,
+            "width": 350,
+            "height": 464,
+            "top": 657.34375,
+            "right": 370,
+            "bottom": 1121.34375,
+            "left": 20
+          }
+        }
+      ],
+      "slot": {
+        "x": 20,
+        "y": 657.34375,
+        "width": 350,
+        "height": 464,
+        "top": 657.34375,
+        "right": 370,
+        "bottom": 1121.34375,
+        "left": 20
+      }
+    },
+    "requests": [
+      {
+        "url": "https://calendly.com/kona-verse/30min?embed_domain=127.0.0.1%3A3007&embed_type=Inline&hide_event_type_details=1&hide_gdpr_banner=1",
+        "time": 1791593079959
+      },
+      {
+        "url": "https://calendly.com/kona-verse/30min?embed_domain=kona-verse.com&embed_type=Inline&hide_event_type_details=1&hide_gdpr_banner=1",
+        "time": 1791593087542
+      }
+    ],
+    "contactRequests": 1,
+    "failures": [],
+    "errors": []
+  }
+]

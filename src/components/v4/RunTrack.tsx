@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { gsap } from '@/lib/motion-v4'
+import { runScrollTicker } from '@/lib/page-motion'
 
 /**
  * THE RUN · 4 — HOW IT GOES: THE TRACK (service pages, 2026-09-30;
@@ -70,15 +70,11 @@ export default function RunTrack({ steps }: { steps: readonly RunStep[] }) {
       first = rows[0].offsetTop + rows[0].offsetHeight / 2
       line = track.parentElement!.clientHeight / 2
     }
-    measure()
-    const ro = new ResizeObserver(measure)
-    ro.observe(root)
 
     let p = -1
     let shown = -1
     let lastY = Infinity
-    const tick = (_t?: number, deltaTime?: number) => {
-      const r = root.getBoundingClientRect()
+    const tick = (r: DOMRect, deltaTime: number) => {
       const vh = window.innerHeight
       if (r.bottom < -vh * 0.2 || r.top > vh * 1.2) return
       const run = clamp01((-r.top / Math.max(1, r.height - vh) - RUN_FROM) / (RUN_TO - RUN_FROM))
@@ -103,13 +99,12 @@ export default function RunTrack({ steps }: { steps: readonly RunStep[] }) {
         num.classList.add(up ? 'is-up' : 'is-down')
         rows.forEach((row, i) => row.classList.toggle('is-on', i === near))
       }
+      return p !== want
     }
-    tick()
-    gsap.ticker.add(tick)
+    const stopTicker = runScrollTicker(root, tick, measure)
 
     return () => {
-      gsap.ticker.remove(tick)
-      ro.disconnect()
+      stopTicker()
       root.classList.remove('is-live')
       track.style.transform = ''
       rows.forEach((row) => {

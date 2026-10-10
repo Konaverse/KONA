@@ -3139,7 +3139,7 @@
 .svs-pic {
   display: block;
   position: relative;
-  aspect-ratio: 1672 / 941;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   background: var(--n-11);
 }

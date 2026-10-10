@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
+import { observeSharedEffectPause } from '@/lib/shared-effects'
 /* TYPE ONLY: FluidEffect.ts imports three and postprocessing, so a value
    import here would pull them back into every page */
 import type { FluidPalette } from './fluid/FluidEffect'
@@ -80,10 +81,8 @@ export default function FluidCursor({
   blend?: 'difference' | 'exclusion'
 }) {
   const [on, setOn] = useState(false)
-  /* THE MENU'S FREEZE (UnderlayMenu, 2026-09-30): while the page is frozen
-     under the menu the trail has nothing to do, and traced, this loop was
-     the largest cost left in the menu's open. It stops (frameloop 'never')
-     and the canvas fades, so no trail is left standing over the panel. */
+  /* Keep the canvas mounted, but stop both rendering and pointer input while
+     navigation owns the screen or the tab is hidden. */
   const [paused, setPaused] = useState(false)
 
   useEffect(() => {
@@ -93,19 +92,35 @@ export default function FluidCursor({
        shader compile never compete with the first paint (performance pass,
        2026-10-03) */
     const ric = (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback
-    if (ric) {
-      const id = ric(() => setOn(true), { timeout: 2500 })
-      return () => (window as Window & { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback?.(id)
+    let idle = 0
+    let timer = 0
+    let scheduled = false
+    const schedule = () => {
+      if (scheduled) return
+      scheduled = true
+      if (ric) idle = ric(() => setOn(true), { timeout: 2500 })
+      else timer = window.setTimeout(() => setOn(true), 1200)
     }
-    const t = window.setTimeout(() => setOn(true), 1200)
-    return () => window.clearTimeout(t)
+    // The opening owns the GPU until its headline and copy have settled.
+    const hero = document.querySelector<HTMLElement>('.k-pt__view main.hm')
+    const ready = () => {
+      if (!hero?.isConnected || hero.dataset.heroReady === 'true') schedule()
+    }
+    const observer = hero ? new MutationObserver(ready) : null
+    if (hero) {
+      window.addEventListener('k-hero-ready', ready)
+      observer?.observe(hero.closest('.k-pt__view')!, { childList: true, subtree: true })
+      ready()
+    } else schedule()
+    return () => {
+      window.removeEventListener('k-hero-ready', ready)
+      observer?.disconnect()
+      if (idle) (window as Window & { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback?.(idle)
+      window.clearTimeout(timer)
+    }
   }, [])
 
-  useEffect(() => {
-    const onFreeze = (e: Event) => setPaused(Boolean((e as CustomEvent<boolean>).detail))
-    window.addEventListener('k:freeze', onFreeze)
-    return () => window.removeEventListener('k:freeze', onFreeze)
-  }, [])
+  useEffect(() => observeSharedEffectPause(setPaused), [])
 
   if (!on) return null
 

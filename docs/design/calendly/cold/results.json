@@ -1,0 +1,65 @@
+[
+  {
+    "mode": "desktop",
+    "ready": true,
+    "earlyEventRemembered": true,
+    "frame": {
+      "x": 813.703125,
+      "y": 96.109375,
+      "width": 540.6875,
+      "height": 440,
+      "top": 96.109375,
+      "right": 1354.390625,
+      "bottom": 536.109375,
+      "left": 813.703125
+    },
+    "slot": {
+      "x": 813.703125,
+      "y": 96.109375,
+      "width": 540.6875,
+      "height": 440,
+      "top": 96.109375,
+      "right": 1354.390625,
+      "bottom": 536.109375,
+      "left": 813.703125
+    },
+    "errors": []
+  },
+  {
+    "mode": "mobile",
+    "ready": true,
+    "earlyEventRemembered": true,
+    "frame": {
+      "x": 20,
+      "y": 657.34375,
+      "width": 350,
+      "height": 464,
+      "top": 657.34375,
+      "right": 370,
+      "bottom": 1121.34375,
+      "left": 20
+    },
+    "slot": {
+      "x": 20,
+      "y": 657.34375,
+      "width": 350,
+      "height": 464,
+      "top": 657.34375,
+      "right": 370,
+      "bottom": 1121.34375,
+      "left": 20
+    },
+    "errors": []
+  },
+  {
+    "mode": "blocked",
+    "fallback": "The calendar is taking longer to load.\nOpen the calendar in a new tab ↗",
+    "href": "https://calendly.com/kona-verse/30min",
+    "errors": []
+  },
+  {
+    "mode": "no-js",
+    "directFrameAndLinkRendered": true,
+    "errors": []
+  }
+]

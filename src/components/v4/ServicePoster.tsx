@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { gsap } from '@/lib/motion-v4'
+import { runScrollTicker } from '@/lib/page-motion'
 
 /**
  * THE POSTER (service pages, 2026-09-19, user: "I would like more
@@ -119,8 +119,7 @@ export default function ServicePoster({
     root.classList.add('is-live')
 
     let cur = -1
-    const tick = (_t?: number, deltaTime?: number) => {
-      const r = root.getBoundingClientRect()
+    const tick = (r: DOMRect, deltaTime: number) => {
       const vh = window.innerHeight
       const seen = r.top < vh && r.bottom > 0
       /* 0 as the top edge enters at the bottom, 1 as the bottom edge
@@ -129,7 +128,7 @@ export default function ServicePoster({
       if (cur < 0 || !seen) cur = to
       else {
         const dt = Math.min(0.05, (deltaTime ?? 16.7) / 1000)
-        cur += (to - cur) * (1 - Math.exp(-dt / GLIDE))
+        cur = Math.abs(to - cur) < 0.00001 ? to : cur + (to - cur) * (1 - Math.exp(-dt / GLIDE))
       }
       if (!seen) return
       const c = cur * 2 - 1 // −1 … 0 … 1, the poster composed at 0
@@ -140,11 +139,11 @@ export default function ServicePoster({
       })
       obj.style.transform =
         `translate3d(0, ${(-c * RISE * 100).toFixed(2)}%, 0) rotate(${(c * TURN).toFixed(3)}deg) scale(${(1 + (1 - Math.abs(c)) * SWELL).toFixed(4)})`
+      return cur !== to
     }
-    tick()
-    gsap.ticker.add(tick)
+    const stopTicker = runScrollTicker(root, tick)
     return () => {
-      gsap.ticker.remove(tick)
+      stopTicker()
       root.classList.remove('is-live')
       rows.forEach((el) => (el.style.transform = ''))
       obj.style.transform = ''

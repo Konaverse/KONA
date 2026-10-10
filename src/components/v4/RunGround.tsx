@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, type ReactNode } from 'react'
 import { aimLight } from '@/lib/run-store'
+import { observeSharedEffectPause } from '@/lib/shared-effects'
 
 /**
  * THE PAPER GROUND (service pages, 2026-09-30). ONE ground under the
@@ -30,20 +31,29 @@ export default function RunGround({ children }: { children: ReactNode }) {
        under a still pointer while the page moves */
     let cx = -1
     let cy = -1
+    let paused = false
+    let frame = 0
     const place = () => {
-      if (cx < 0) return
+      if (cx < 0 || paused) return
       const vh = window.innerHeight
-      layers.forEach((el) => {
-        const r = el.getBoundingClientRect()
+      // All masks use the latest pointer, with reads ahead of writes.
+      const rects = layers.map(el => ({ el, r: el.getBoundingClientRect() }))
+      rects.forEach(({ el, r }) => {
         if (r.bottom < 0 || r.top > vh) return
         el.style.setProperty('--ro-x', `${(cx - r.left).toFixed(1)}px`)
         el.style.setProperty('--ro-y', `${(cy - r.top).toFixed(1)}px`)
       })
     }
+    const schedule = () => {
+      if (frame || paused) return
+      frame = requestAnimationFrame(() => { frame = 0; place() })
+    }
+    const unpause = observeSharedEffectPause(value => { paused = value; if (!value) schedule() })
     const onMove = (ev: PointerEvent) => {
+      if (paused) return
       cx = ev.clientX
       cy = ev.clientY
-      place()
+      schedule()
       if (!lit) {
         lit = true
         layers.forEach((el) => el.classList.add('is-hand'))
@@ -61,11 +71,13 @@ export default function RunGround({ children }: { children: ReactNode }) {
     }
     host.addEventListener('pointermove', onMove, { passive: true })
     host.addEventListener('pointerleave', onLeave)
-    window.addEventListener('scroll', place, { passive: true })
+    window.addEventListener('scroll', schedule, { passive: true })
     return () => {
+      unpause()
+      cancelAnimationFrame(frame)
       host.removeEventListener('pointermove', onMove)
       host.removeEventListener('pointerleave', onLeave)
-      window.removeEventListener('scroll', place)
+      window.removeEventListener('scroll', schedule)
       layers.forEach((el) => {
         el.classList.remove('is-hand')
         el.style.removeProperty('--ro-x')

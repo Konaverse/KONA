@@ -1,0 +1,122 @@
+[
+  {
+    "mode": "desktop",
+    "section": "hero",
+    "height": 13923,
+    "scroll": 0,
+    "elements": 19,
+    "maxRectangleDifference": 0,
+    "fontsMatch": true,
+    "transformsMatch": true
+  },
+  {
+    "mode": "desktop",
+    "section": "answer",
+    "height": 13923,
+    "scroll": 810,
+    "elements": 19,
+    "maxRectangleDifference": 0,
+    "fontsMatch": true,
+    "transformsMatch": true
+  },
+  {
+    "mode": "desktop",
+    "section": "fit",
+    "height": 13923,
+    "scroll": 1951,
+    "elements": 19,
+    "maxRectangleDifference": 0,
+    "fontsMatch": true,
+    "transformsMatch": true
+  },
+  {
+    "mode": "desktop",
+    "section": "poster",
+    "height": 13923,
+    "scroll": 5224,
+    "elements": 19,
+    "maxRectangleDifference": 0,
+    "fontsMatch": true,
+    "transformsMatch": true
+  },
+  {
+    "mode": "desktop",
+    "section": "plan",
+    "height": 13923,
+    "scroll": 10582,
+    "elements": 19,
+    "maxRectangleDifference": 0,
+    "fontsMatch": true,
+    "transformsMatch": true
+  },
+  {
+    "mode": "desktop",
+    "section": "contact",
+    "height": 13923,
+    "scroll": 13094,
+    "elements": 19,
+    "maxRectangleDifference": 0,
+    "fontsMatch": true,
+    "transformsMatch": true
+  },
+  {
+    "mode": "mobile",
+    "section": "hero",
+    "height": 14258,
+    "scroll": 0,
+    "elements": 19,
+    "maxRectangleDifference": 0,
+    "fontsMatch": true,
+    "transformsMatch": true
+  },
+  {
+    "mode": "mobile",
+    "section": "answer",
+    "height": 14258,
+    "scroll": 760,
+    "elements": 19,
+    "maxRectangleDifference": 0,
+    "fontsMatch": true,
+    "transformsMatch": true
+  },
+  {
+    "mode": "mobile",
+    "section": "fit",
+    "height": 14258,
+    "scroll": 2176,
+    "elements": 19,
+    "maxRectangleDifference": 0,
+    "fontsMatch": true,
+    "transformsMatch": true
+  },
+  {
+    "mode": "mobile",
+    "section": "poster",
+    "height": 14258,
+    "scroll": 6208,
+    "elements": 19,
+    "maxRectangleDifference": 0,
+    "fontsMatch": true,
+    "transformsMatch": true
+  },
+  {
+    "mode": "mobile",
+    "section": "plan",
+    "height": 14258,
+    "scroll": 12650,
+    "elements": 19,
+    "maxRectangleDifference": 0,
+    "fontsMatch": true,
+    "transformsMatch": true
+  },
+  {
+    "mode": "mobile",
+    "section": "contact",
+    "height": 14258,
+    "scroll": 13311,
+    "elements": 19,
+    "maxRectangleDifference": 0,
+    "fontsMatch": true,
+    "transformsMatch": true
+  }
+]

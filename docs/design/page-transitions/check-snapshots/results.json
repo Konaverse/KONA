@@ -1,0 +1,222 @@
+[
+  {
+    "mode": "desktop",
+    "scenario": "hero",
+    "originalHeight": 8426.453125,
+    "cloneHeight": 8426.390625,
+    "differences": [
+      {
+        "className": "hw-shape hw-ent",
+        "difference": 0
+      },
+      {
+        "className": "hw-headline",
+        "difference": 0.28125
+      },
+      {
+        "className": "hp-canvas",
+        "difference": 0
+      }
+    ],
+    "changedChannels": 0.0735735596707819,
+    "meanChannelDifference": 4.445555812757202
+  },
+  {
+    "mode": "desktop",
+    "scenario": "fold",
+    "originalHeight": 8426.453125,
+    "cloneHeight": 8426.390625,
+    "differences": [
+      {
+        "className": "hp-canvas",
+        "difference": 0
+      },
+      {
+        "className": "hm-claim-land k-dark",
+        "difference": 0
+      }
+    ],
+    "changedChannels": 0,
+    "meanChannelDifference": 0.022540123456790122
+  },
+  {
+    "mode": "desktop",
+    "scenario": "services",
+    "originalHeight": 8426.453125,
+    "cloneHeight": 8426.421875,
+    "differences": [
+      {
+        "className": "hp-canvas",
+        "difference": 0
+      },
+      {
+        "className": "svs-row",
+        "difference": 0
+      },
+      {
+        "className": "svs-row",
+        "difference": 0
+      },
+      {
+        "className": "svs-row",
+        "difference": 0
+      },
+      {
+        "className": "svs-row",
+        "difference": 0
+      },
+      {
+        "className": "svs-row",
+        "difference": 0
+      }
+    ],
+    "changedChannels": 0.012729166666666666,
+    "meanChannelDifference": 0.17560725308641975
+  },
+  {
+    "mode": "desktop",
+    "scenario": "service-hero",
+    "originalHeight": 14823.484375,
+    "cloneHeight": 14823.421875,
+    "differences": [
+      {
+        "className": "ro-rays",
+        "difference": 0.000244140625
+      },
+      {
+        "className": "ro-mid",
+        "difference": 0
+      },
+      {
+        "className": "rn is-shown",
+        "difference": 0.8074951171875
+      }
+    ],
+    "changedChannels": 0.022954475308641975,
+    "meanChannelDifference": 0.3614547325102881
+  },
+  {
+    "mode": "desktop",
+    "scenario": "service-poster",
+    "originalHeight": 14823.484375,
+    "cloneHeight": 14823.4375,
+    "differences": [
+      {
+        "className": "pst-stage",
+        "difference": 0.015625
+      },
+      {
+        "className": "pst-obj pst-obj--none",
+        "difference": 0.1307373046875
+      },
+      {
+        "className": "rn is-shown",
+        "difference": 0.0078125
+      }
+    ],
+    "changedChannels": 0.035460133744855966,
+    "meanChannelDifference": 0.8075645576131687
+  },
+  {
+    "mode": "mobile",
+    "scenario": "hero",
+    "originalHeight": 9789.328125,
+    "cloneHeight": 9789.296875,
+    "differences": [
+      {
+        "className": "hw-headline",
+        "difference": 0
+      },
+      {
+        "className": "hp-canvas",
+        "difference": 0
+      }
+    ],
+    "changedChannels": 0.04216465143597845,
+    "meanChannelDifference": 1.1994242921375622
+  },
+  {
+    "mode": "mobile",
+    "scenario": "fold",
+    "originalHeight": 9789.328125,
+    "cloneHeight": 9789.296875,
+    "differences": [
+      {
+        "className": "hp-canvas",
+        "difference": 0
+      },
+      {
+        "className": "hm-claim-land k-dark",
+        "difference": 0
+      }
+    ],
+    "changedChannels": 0.008853343865192206,
+    "meanChannelDifference": 0.30036684287276705
+  },
+  {
+    "mode": "mobile",
+    "scenario": "services",
+    "originalHeight": 9789.328125,
+    "cloneHeight": 9789.296875,
+    "differences": [
+      {
+        "className": "hp-canvas",
+        "difference": 0
+      },
+      {
+        "className": "svs-row",
+        "difference": 0.015625
+      },
+      {
+        "className": "svs-row",
+        "difference": 0.015625
+      }
+    ],
+    "changedChannels": 0.01008729290719812,
+    "meanChannelDifference": 0.39943289990683356
+  },
+  {
+    "mode": "mobile",
+    "scenario": "service-hero",
+    "originalHeight": 15102.15625,
+    "cloneHeight": 15102.078125,
+    "differences": [
+      {
+        "className": "ro-rays",
+        "difference": 0.0000152587890625
+      },
+      {
+        "className": "ro-mid",
+        "difference": 0
+      },
+      {
+        "className": "rn is-shown",
+        "difference": 0
+      }
+    ],
+    "changedChannels": 0.02550760521732086,
+    "meanChannelDifference": 0.3247569571029287
+  },
+  {
+    "mode": "mobile",
+    "scenario": "service-poster",
+    "originalHeight": 15102.15625,
+    "cloneHeight": 15102.09375,
+    "differences": [
+      {
+        "className": "pst-stage",
+        "difference": 0.015625
+      },
+      {
+        "className": "pst-obj pst-obj--none",
+        "difference": 0.143768310546875
+      },
+      {
+        "className": "rn is-shown",
+        "difference": 0
+      }
+    ],
+    "changedChannels": 0.02318097581723174,
+    "meanChannelDifference": 0.7758273585287804
+  }
+]

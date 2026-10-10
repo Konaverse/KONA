@@ -1,0 +1,56 @@
+[
+  {
+    "mode": "mobile",
+    "scenario": "hero",
+    "originalHeight": 9789.328125,
+    "cloneHeight": 9789.296875,
+    "differences": [
+      {
+        "className": "hw-headline",
+        "difference": 0
+      },
+      {
+        "className": "hw-mimg hw-ent",
+        "difference": 0
+      },
+      {
+        "className": "hp-canvas",
+        "difference": 0
+      }
+    ],
+    "media": [
+      {
+        "width": "350px",
+        "height": "262.5px",
+        "borderRadius": "24px",
+        "objectFit": "cover",
+        "maxWidth": "100%",
+        "boxSizing": "border-box",
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "rect": {
+          "x": 20,
+          "y": 1126.28125,
+          "width": 350,
+          "height": 262.5
+        }
+      },
+      {
+        "width": "350px",
+        "height": "262.5px",
+        "borderRadius": "24px",
+        "objectFit": "cover",
+        "maxWidth": "none",
+        "boxSizing": "border-box",
+        "transform": "matrix(1, 0, 0, 1, 0, 0)",
+        "rect": {
+          "x": 20,
+          "y": 282.28125,
+          "width": 350,
+          "height": 262.5
+        }
+      }
+    ],
+    "changedChannels": 0.04216465143597845,
+    "meanChannelDifference": 1.199441507676105
+  }
+]

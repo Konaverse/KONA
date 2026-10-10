@@ -40,7 +40,7 @@ export default function FluidCanvas({
       // difference: the core is a hard inversion now, and a hard edge upscaled
       // ten times is a visibly blocky one. Still under native, so still cheap.
       dpr={[0.5, 1]}
-      frameloop={paused ? 'never' : 'always'}
+      frameloop={paused ? 'never' : 'demand'}
       gl={{ antialias: false, stencil: false, depth: false }}
       style={{
         position: 'fixed',
@@ -58,7 +58,7 @@ export default function FluidCanvas({
       aria-hidden="true"
     >
       <EffectComposer>
-        <Fluid palette={palette} intensity={intensity} fade={fade} decay={decay} />
+        <Fluid palette={palette} intensity={intensity} fade={fade} decay={decay} paused={paused} />
       </EffectComposer>
     </Canvas>
   )

@@ -1,7 +1,9 @@
 'use client'
 
 import { Fragment, useEffect, useRef } from 'react'
+import { afterPageTransition, observeSharedEffectPause } from '@/lib/shared-effects'
 import { gsap, EASE, DUR, rem } from '@/lib/motion-v4'
+import { markHeroFallback, markHeroReady, shouldPlayHeroEntrance } from '@/lib/homepage-effects'
 
 /**
  * THE HERO TITLE — "the breathing headline" (2026-08-19, user reference set:
@@ -195,6 +197,7 @@ export default function HeroTitle() {
     if (!root) return
     const flow = root.querySelector<HTMLElement>('.hw-flow')
     if (!flow) return
+    const playEntrance = shouldPlayHeroEntrance(root)
 
     const items = Array.from(flow.querySelectorAll<HTMLElement>('.hw-it'))
     const words = items.filter((el) => el.classList.contains('hw-w'))
@@ -223,6 +226,7 @@ export default function HeroTitle() {
       flow.classList.remove('is-pre')
       setWidths(scaled(HOME.w))
       gsap.set(items, { opacity: 1, y: 0, filter: 'none' })
+      markHeroReady(root)
       return
     }
 
@@ -231,17 +235,29 @@ export default function HeroTitle() {
        lines; what is left of the entrance is the reveal — each line rising
        through its own box on the opening gate — and there is no walk. */
     if (phone) {
+      if (!playEntrance) {
+        flow.classList.remove('is-pre')
+        gsap.set(words, { opacity: 1, clearProps: 'clipPath,transform,filter' })
+        markHeroReady(root)
+        return
+      }
       let done = false
+      let entrance: gsap.core.Timeline | null = null
       const rise = () => {
         if (done) return
         done = true
         const tops: number[] = []
         flow.classList.remove('is-pre')
-        words.forEach((el) => {
+        // Read every line before the first transform write.
+        const rows = words.map((el) => {
           const top = el.getBoundingClientRect().top
           let row = tops.findIndex((t) => Math.abs(t - top) < 8)
           if (row < 0) row = tops.push(top) - 1
-          gsap.fromTo(
+          return row
+        })
+        entrance = gsap.timeline({ onComplete: () => markHeroReady(root) })
+        words.forEach((el, i) => {
+          entrance!.fromTo(
             el,
             { yPercent: 100, clipPath: 'inset(0px 0px 100% 0px)' },
             {
@@ -249,25 +265,32 @@ export default function HeroTitle() {
               clipPath: 'inset(0px 0px 0% 0px)',
               duration: ENTER.reveal,
               ease: EASE.glass,
-              delay: row * ENTER.lineStep,
               clearProps: 'clipPath,transform',
             },
+            rows[i] * ENTER.lineStep,
           )
         })
         window.dispatchEvent(new Event('k-hero-sew'))
       }
       window.addEventListener('k-hero-open', rise, { once: true })
-      let wait = setTimeout(rise, 2600)
+      const fallbackRise = () => {
+        if (!done) markHeroFallback(root)
+        rise()
+      }
+      let wait: ReturnType<typeof setTimeout> | undefined
+      const cancelFallback = afterPageTransition(() => { wait = setTimeout(fallbackRise, 2600) })
       const armed = () => {
         clearTimeout(wait)
-        wait = setTimeout(rise, 4500)
+        wait = setTimeout(fallbackRise, 4500)
       }
       window.addEventListener('k-peel-armed', armed, { once: true })
       return () => {
         done = true
+        cancelFallback?.()
         window.removeEventListener('k-hero-open', rise)
         window.removeEventListener('k-peel-armed', armed)
         clearTimeout(wait)
+        entrance?.kill()
         gsap.killTweensOf(words)
       }
     }
@@ -488,6 +511,7 @@ export default function HeroTitle() {
       tl.eventCallback('onComplete', () => {
         land?.()
         gsap.set(words, { clearProps: 'clipPath' })
+        markHeroReady(root)
       })
       return tl
     }
@@ -510,10 +534,16 @@ export default function HeroTitle() {
 
     let timer: ReturnType<typeof setTimeout> | null = null
     let onScreen = true
+    let paused = false
+    const unpause = observeSharedEffectPause(value => {
+      paused = value
+      if (value) running?.pause()
+      else running?.resume()
+    })
     const tick = () => {
       if (!live) return
       timer = setTimeout(tick, HOLD_MIN + Math.random() * (HOLD_MAX - HOLD_MIN))
-      if (!onScreen) return
+      if (!onScreen || paused) return
       comp = pick()
       morph(() => applyComp(comp))
     }
@@ -530,13 +560,30 @@ export default function HeroTitle() {
       enter()
       timer = setTimeout(tick, ENTER_TOTAL * 1000 + HOLD_MIN)
     }
-    window.addEventListener('k-hero-open', begin, { once: true })
-    let fallback = setTimeout(begin, 2600)
+    const fallbackBegin = () => {
+      if (!begun) markHeroFallback(root)
+      begin()
+    }
+    let fallback: ReturnType<typeof setTimeout> | undefined
+    let cancelFallback: void | (() => void)
     const onArmed = () => {
       clearTimeout(fallback)
-      fallback = setTimeout(begin, 4500)
+      fallback = setTimeout(fallbackBegin, 4500)
     }
-    window.addEventListener('k-peel-armed', onArmed, { once: true })
+    if (playEntrance) {
+      window.addEventListener('k-hero-open', begin, { once: true })
+      window.addEventListener('k-peel-armed', onArmed, { once: true })
+      cancelFallback = afterPageTransition(() => { fallback = setTimeout(fallbackBegin, 2600) })
+    } else {
+      // Start at the entrance's landed composition, then keep the normal walk.
+      begun = true
+      comp = ENTRY
+      flow.classList.remove('is-pre')
+      applyComp(ENTRY)
+      gsap.set(items, { clearProps: 'transform,opacity,filter,clipPath' })
+      markHeroReady(root)
+      timer = setTimeout(tick, HOLD_MIN)
+    }
 
     // a headline that re-lays-out every few seconds forever is not free — it
     // holds still while it is off screen
@@ -550,6 +597,8 @@ export default function HeroTitle() {
 
     return () => {
       live = false
+      unpause()
+      cancelFallback?.()
       window.removeEventListener('k-hero-open', begin)
       window.removeEventListener('k-peel-armed', onArmed)
       clearTimeout(fallback)

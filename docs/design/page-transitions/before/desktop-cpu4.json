@@ -1,0 +1,852 @@
+{
+  "runs": [
+    {
+      "start": 27097.39999999851,
+      "reads": {
+        "shared": 1,
+        "home": 3,
+        "service": 29
+      },
+      "contexts": [
+        {
+          "className": "",
+          "time": 35716.29999999702,
+          "during": true
+        }
+      ],
+      "tasks": [
+        {
+          "start": 26822.69999999553,
+          "duration": 1325
+        },
+        {
+          "start": 28221.5,
+          "duration": 81
+        },
+        {
+          "start": 28302.5,
+          "duration": 115
+        },
+        {
+          "start": 28445.5,
+          "duration": 79
+        },
+        {
+          "start": 28572.59999999404,
+          "duration": 103
+        },
+        {
+          "start": 28679.5,
+          "duration": 80
+        },
+        {
+          "start": 28807.89999999851,
+          "duration": 129
+        },
+        {
+          "start": 29005,
+          "duration": 86
+        },
+        {
+          "start": 29152.39999999851,
+          "duration": 140
+        },
+        {
+          "start": 29310.19999999553,
+          "duration": 129
+        },
+        {
+          "start": 29455.79999999702,
+          "duration": 50
+        },
+        {
+          "start": 29556.39999999851,
+          "duration": 83
+        },
+        {
+          "start": 29764.79999999702,
+          "duration": 56
+        },
+        {
+          "start": 29957.79999999702,
+          "duration": 168
+        },
+        {
+          "start": 30542.5,
+          "duration": 63
+        },
+        {
+          "start": 30657.5,
+          "duration": 57
+        },
+        {
+          "start": 31571.29999999702,
+          "duration": 591
+        },
+        {
+          "start": 32162.79999999702,
+          "duration": 196
+        },
+        {
+          "start": 32359.5,
+          "duration": 2535
+        }
+      ],
+      "frames": [
+        {
+          "time": 26822.5,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 28155.9,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 28405.8,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 28672.5,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 28922.5,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 29122.5,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 29289,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 29439.2,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 29639.3,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 29739.2,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 29872.5,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 29889.1,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 29922.5,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 30122.5,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 30239.1,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 30272.5,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 30355.7,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 30372.5,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 30439.1,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 30472.5,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 30505.8,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 30589.1,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 30705.9,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 30772.5,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 30789.1,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 30822.4,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 30855.8,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 30872.4,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 30889.1,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 30922.4,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 30972.6,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 31005.8,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 31039.2,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 31055.8,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 31072.5,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 31105.9,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 31139.3,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 31155.8,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 31189.2,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 31222.4,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 31239.1,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 31272.5,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 31305.9,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 31322.5,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 31339.1,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 31355.8,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 31389.2,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 31439.3,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 31455.9,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 31472.5,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 31489,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 31505.9,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 31522.4,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 31539.1,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 31555.9,
+          "path": "/",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 32155.9,
+          "path": "/services/web-design",
+          "view": "matrix(1, 0, 0, 1, 0, 4560)",
+          "ghost": "none"
+        },
+        {
+          "time": 34889.1,
+          "path": "/services/web-design",
+          "view": "matrix(1.05922, 0.0406911, -0.0406911, 1.05922, 0, 900)",
+          "ghost": "none"
+        }
+      ],
+      "from": "/",
+      "cloneMs": 95,
+      "clonedNodes": 676,
+      "ghost": {
+        "nodes": 679,
+        "videos": 3,
+        "canvases": 2,
+        "animations": 6,
+        "height": 8426
+      },
+      "end": 37085.39999999851,
+      "to": "/services/web-design"
+    },
+    {
+      "start": 46548.79999999702,
+      "reads": {
+        "service": 192,
+        "shared": 1
+      },
+      "contexts": [],
+      "tasks": [
+        {
+          "start": 46495.79999999702,
+          "duration": 1579
+        },
+        {
+          "start": 48075.19999999553,
+          "duration": 170
+        },
+        {
+          "start": 48308.29999999702,
+          "duration": 123
+        },
+        {
+          "start": 48431.69999999553,
+          "duration": 160
+        },
+        {
+          "start": 48654.09999999404,
+          "duration": 325
+        },
+        {
+          "start": 48995.79999999702,
+          "duration": 135
+        },
+        {
+          "start": 49181.39999999851,
+          "duration": 282
+        },
+        {
+          "start": 49477.79999999702,
+          "duration": 323
+        },
+        {
+          "start": 49874.39999999851,
+          "duration": 50
+        },
+        {
+          "start": 49938.89999999851,
+          "duration": 151
+        },
+        {
+          "start": 50101,
+          "duration": 216
+        },
+        {
+          "start": 50341.5,
+          "duration": 75
+        },
+        {
+          "start": 50433.39999999851,
+          "duration": 378
+        },
+        {
+          "start": 50840.19999999553,
+          "duration": 66
+        },
+        {
+          "start": 50939.59999999404,
+          "duration": 253
+        },
+        {
+          "start": 51243.79999999702,
+          "duration": 595
+        },
+        {
+          "start": 51889.5,
+          "duration": 90
+        }
+      ],
+      "frames": [
+        {
+          "time": 46488.8,
+          "path": "/services/web-design",
+          "view": "matrix(1, 0, 0, 1, 0, 900)",
+          "ghost": "none"
+        },
+        {
+          "time": 48238.8,
+          "path": "/services/web-design",
+          "view": "matrix(1, 0, 0, 1, 0, 900)",
+          "ghost": "none"
+        },
+        {
+          "time": 48588.7,
+          "path": "/services/web-design",
+          "view": "matrix(1, 0, 0, 1, 0, 900)",
+          "ghost": "none"
+        },
+        {
+          "time": 48988.6,
+          "path": "/services/web-design",
+          "view": "matrix(1, 0, 0, 1, 0, 900)",
+          "ghost": "none"
+        },
+        {
+          "time": 49138.9,
+          "path": "/services/web-design",
+          "view": "matrix(1, 0, 0, 1, 0, 900)",
+          "ghost": "none"
+        },
+        {
+          "time": 49438.8,
+          "path": "/services/web-design",
+          "view": "matrix(1, 0, 0, 1, 0, 900)",
+          "ghost": "none"
+        },
+        {
+          "time": 49788.7,
+          "path": "/services/web-design",
+          "view": "matrix(1, 0, 0, 1, 0, 900)",
+          "ghost": "none"
+        },
+        {
+          "time": 49855.6,
+          "path": "/services/web-design",
+          "view": "matrix(1, 0, 0, 1, 0, 900)",
+          "ghost": "none"
+        },
+        {
+          "time": 50072.1,
+          "path": "/services/web-design",
+          "view": "matrix(1, 0, 0, 1, 0, 900)",
+          "ghost": "none"
+        },
+        {
+          "time": 50305.4,
+          "path": "/services/web-design",
+          "view": "matrix(1, 0, 0, 1, 0, 900)",
+          "ghost": "none"
+        },
+        {
+          "time": 50405.3,
+          "path": "/services/web-design",
+          "view": "matrix(1, 0, 0, 1, 0, 900)",
+          "ghost": "none"
+        },
+        {
+          "time": 50638.7,
+          "path": "/services/web-design",
+          "view": "matrix(1, 0, 0, 1, 0, 900)",
+          "ghost": "none"
+        },
+        {
+          "time": 50888.6,
+          "path": "/services/web-design",
+          "view": "matrix(1, 0, 0, 1, 0, 900)",
+          "ghost": "none"
+        },
+        {
+          "time": 51188.8,
+          "path": "/services/web-design",
+          "view": "matrix(1, 0, 0, 1, 0, 900)",
+          "ghost": "none"
+        },
+        {
+          "time": 51205.4,
+          "path": "/services/web-design",
+          "view": "matrix(1, 0, 0, 1, 0, 900)",
+          "ghost": "none"
+        },
+        {
+          "time": 51772.1,
+          "path": "/services/web-design",
+          "view": "matrix(1, 0, 0, 1, 0, 900)",
+          "ghost": "none"
+        }
+      ],
+      "from": "/services/web-design",
+      "cloneMs": 114.89999999850988,
+      "clonedNodes": 1081,
+      "ghost": {
+        "nodes": 1084,
+        "videos": 0,
+        "canvases": 1,
+        "animations": 137,
+        "height": 14823
+      },
+      "end": 52158.19999999553,
+      "to": "/services/web-design"
+    }
+  ],
+  "current": {
+    "start": 46548.79999999702,
+    "reads": {
+      "service": 192,
+      "shared": 1
+    },
+    "contexts": [],
+    "tasks": [
+      {
+        "start": 46495.79999999702,
+        "duration": 1579
+      },
+      {
+        "start": 48075.19999999553,
+        "duration": 170
+      },
+      {
+        "start": 48308.29999999702,
+        "duration": 123
+      },
+      {
+        "start": 48431.69999999553,
+        "duration": 160
+      },
+      {
+        "start": 48654.09999999404,
+        "duration": 325
+      },
+      {
+        "start": 48995.79999999702,
+        "duration": 135
+      },
+      {
+        "start": 49181.39999999851,
+        "duration": 282
+      },
+      {
+        "start": 49477.79999999702,
+        "duration": 323
+      },
+      {
+        "start": 49874.39999999851,
+        "duration": 50
+      },
+      {
+        "start": 49938.89999999851,
+        "duration": 151
+      },
+      {
+        "start": 50101,
+        "duration": 216
+      },
+      {
+        "start": 50341.5,
+        "duration": 75
+      },
+      {
+        "start": 50433.39999999851,
+        "duration": 378
+      },
+      {
+        "start": 50840.19999999553,
+        "duration": 66
+      },
+      {
+        "start": 50939.59999999404,
+        "duration": 253
+      },
+      {
+        "start": 51243.79999999702,
+        "duration": 595
+      },
+      {
+        "start": 51889.5,
+        "duration": 90
+      }
+    ],
+    "frames": [
+      {
+        "time": 46488.8,
+        "path": "/services/web-design",
+        "view": "matrix(1, 0, 0, 1, 0, 900)",
+        "ghost": "none"
+      },
+      {
+        "time": 48238.8,
+        "path": "/services/web-design",
+        "view": "matrix(1, 0, 0, 1, 0, 900)",
+        "ghost": "none"
+      },
+      {
+        "time": 48588.7,
+        "path": "/services/web-design",
+        "view": "matrix(1, 0, 0, 1, 0, 900)",
+        "ghost": "none"
+      },
+      {
+        "time": 48988.6,
+        "path": "/services/web-design",
+        "view": "matrix(1, 0, 0, 1, 0, 900)",
+        "ghost": "none"
+      },
+      {
+        "time": 49138.9,
+        "path": "/services/web-design",
+        "view": "matrix(1, 0, 0, 1, 0, 900)",
+        "ghost": "none"
+      },
+      {
+        "time": 49438.8,
+        "path": "/services/web-design",
+        "view": "matrix(1, 0, 0, 1, 0, 900)",
+        "ghost": "none"
+      },
+      {
+        "time": 49788.7,
+        "path": "/services/web-design",
+        "view": "matrix(1, 0, 0, 1, 0, 900)",
+        "ghost": "none"
+      },
+      {
+        "time": 49855.6,
+        "path": "/services/web-design",
+        "view": "matrix(1, 0, 0, 1, 0, 900)",
+        "ghost": "none"
+      },
+      {
+        "time": 50072.1,
+        "path": "/services/web-design",
+        "view": "matrix(1, 0, 0, 1, 0, 900)",
+        "ghost": "none"
+      },
+      {
+        "time": 50305.4,
+        "path": "/services/web-design",
+        "view": "matrix(1, 0, 0, 1, 0, 900)",
+        "ghost": "none"
+      },
+      {
+        "time": 50405.3,
+        "path": "/services/web-design",
+        "view": "matrix(1, 0, 0, 1, 0, 900)",
+        "ghost": "none"
+      },
+      {
+        "time": 50638.7,
+        "path": "/services/web-design",
+        "view": "matrix(1, 0, 0, 1, 0, 900)",
+        "ghost": "none"
+      },
+      {
+        "time": 50888.6,
+        "path": "/services/web-design",
+        "view": "matrix(1, 0, 0, 1, 0, 900)",
+        "ghost": "none"
+      },
+      {
+        "time": 51188.8,
+        "path": "/services/web-design",
+        "view": "matrix(1, 0, 0, 1, 0, 900)",
+        "ghost": "none"
+      },
+      {
+        "time": 51205.4,
+        "path": "/services/web-design",
+        "view": "matrix(1, 0, 0, 1, 0, 900)",
+        "ghost": "none"
+      },
+      {
+        "time": 51772.1,
+        "path": "/services/web-design",
+        "view": "matrix(1, 0, 0, 1, 0, 900)",
+        "ghost": "none"
+      }
+    ],
+    "from": "/services/web-design",
+    "cloneMs": 114.89999999850988,
+    "clonedNodes": 1081,
+    "ghost": {
+      "nodes": 1084,
+      "videos": 0,
+      "canvases": 1,
+      "animations": 137,
+      "height": 14823
+    },
+    "end": 52158.19999999553,
+    "to": "/services/web-design"
+  },
+  "contexts": [
+    {
+      "className": "hp-canvas",
+      "time": 14477.79999999702,
+      "during": false
+    },
+    {
+      "className": "",
+      "time": 18530.89999999851,
+      "during": false
+    },
+    {
+      "className": "",
+      "time": 35716.29999999702,
+      "during": true
+    },
+    {
+      "className": "hp-canvas",
+      "time": 58069.59999999404,
+      "during": false
+    }
+  ],
+  "document": "7839c792-954e-48d2-a349-8dc522a8976a"
+}

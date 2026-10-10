@@ -1,0 +1,136 @@
+[
+  {
+    "mode": "desktop-cpu4",
+    "layers": {
+      "service": 0,
+      "home": 0
+    },
+    "runs": [
+      {
+        "start": 29806.89999999851,
+        "reads": {
+          "home": 13,
+          "shared": 5,
+          "service": 37
+        },
+        "contexts": [],
+        "tasks": [
+          {
+            "start": 29695.89999999851,
+            "duration": 1111
+          },
+          {
+            "start": 30807.39999999851,
+            "duration": 133
+          },
+          {
+            "start": 31043.5,
+            "duration": 222
+          },
+          {
+            "start": 31299.70000000298,
+            "duration": 127
+          },
+          {
+            "start": 31770.60000000149,
+            "duration": 54
+          },
+          {
+            "start": 31935.80000000447,
+            "duration": 66
+          },
+          {
+            "start": 32064.60000000149,
+            "duration": 209
+          },
+          {
+            "start": 32280.20000000298,
+            "duration": 271
+          },
+          {
+            "start": 32551.60000000149,
+            "duration": 2856
+          }
+        ],
+        "from": "/",
+        "cloneMs": 0.8999999985098839,
+        "clonedNodes": 0,
+        "ghost": {
+          "nodes": 305,
+          "videos": 0,
+          "canvases": 1,
+          "animations": 0,
+          "height": 8426
+        },
+        "end": 37461,
+        "to": "/services/web-design",
+        "frameCount": 22,
+        "elapsedMs": 7654,
+        "maxFrameMs": 3133,
+        "framesOver34ms": 11,
+        "longTaskMs": 5049
+      },
+      {
+        "start": 49555.70000000298,
+        "reads": {
+          "service": 35,
+          "shared": 5,
+          "home": 15
+        },
+        "contexts": [],
+        "tasks": [
+          {
+            "start": 49468,
+            "duration": 2367
+          },
+          {
+            "start": 51845.60000000149,
+            "duration": 187
+          },
+          {
+            "start": 52088.70000000298,
+            "duration": 63
+          },
+          {
+            "start": 52195.80000000447,
+            "duration": 116
+          },
+          {
+            "start": 53161,
+            "duration": 56
+          },
+          {
+            "start": 53218.39999999851,
+            "duration": 352
+          },
+          {
+            "start": 53603.80000000447,
+            "duration": 145
+          },
+          {
+            "start": 53749,
+            "duration": 359
+          }
+        ],
+        "from": "/services/web-design",
+        "cloneMs": 0.10000000149011612,
+        "clonedNodes": 0,
+        "ghost": {
+          "nodes": 519,
+          "videos": 0,
+          "canvases": 0,
+          "animations": 0,
+          "height": 14823
+        },
+        "end": 54719,
+        "to": "/",
+        "frameCount": 42,
+        "elapsedMs": 5163,
+        "maxFrameMs": 2500,
+        "framesOver34ms": 10,
+        "longTaskMs": 3645
+      }
+    ],
+    "errors": []
+  }
+]

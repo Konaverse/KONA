@@ -1,0 +1,98 @@
+{
+  "base": "http://127.0.0.1:3007",
+  "label": "after",
+  "samples": {
+    "idleBeforeMovement": {
+      "fluidDraws": 0,
+      "reads": {
+        "dark-surfaces": 0,
+        "other": 0
+      }
+    },
+    "moving": {
+      "fluidDraws": 873,
+      "reads": {
+        "dark-surfaces": 0,
+        "other": 0
+      }
+    },
+    "idleAfterTrail": {
+      "fluidDraws": 0,
+      "reads": {
+        "dark-surfaces": 0,
+        "other": 0
+      }
+    },
+    "menuPaused": {
+      "fluidDraws": 0,
+      "reads": {
+        "dark-surfaces": 0,
+        "other": 0
+      }
+    },
+    "resumeWithoutMovement": {
+      "fluidDraws": 0,
+      "reads": {
+        "dark-surfaces": 0,
+        "other": 0
+      }
+    },
+    "movingAgain": {
+      "fluidDraws": 642,
+      "reads": {
+        "dark-surfaces": 0,
+        "other": 0
+      }
+    },
+    "transitionPaused": {
+      "fluidDraws": 0,
+      "reads": {
+        "dark-surfaces": 0,
+        "other": 0
+      }
+    },
+    "transitionResumeWithoutMovement": {
+      "fluidDraws": 0,
+      "reads": {
+        "dark-surfaces": 0,
+        "other": 0
+      }
+    },
+    "overlappingPause": {
+      "fluidDraws": 0,
+      "reads": {
+        "dark-surfaces": 0,
+        "other": 0
+      }
+    },
+    "hiddenTab": {
+      "fluidDraws": 0,
+      "reads": {
+        "dark-surfaces": 0,
+        "other": 0
+      }
+    },
+    "visibleAgainWithoutMovement": {
+      "fluidDraws": 0,
+      "reads": {
+        "dark-surfaces": 0,
+        "other": 0
+      }
+    },
+    "actualMenuOpen": {
+      "fluidDraws": 0,
+      "reads": {
+        "dark-surfaces": 0,
+        "other": 0
+      }
+    },
+    "footerIdle": {
+      "fluidDraws": 0,
+      "reads": {
+        "dark-surfaces": 0,
+        "other": 0
+      }
+    }
+  },
+  "errors": []
+}

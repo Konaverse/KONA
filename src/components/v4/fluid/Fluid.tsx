@@ -5,6 +5,7 @@ import { createPortal, useFrame, useThree } from '@react-three/fiber'
 import { useFBO } from '@react-three/drei'
 import {
   Camera,
+  Color,
   HalfFloatType,
   LinearFilter,
   NearestFilter,
@@ -69,20 +70,22 @@ const desktopOpts = { radius: 0.19, densityDissipation: 0.95, dyeRes: 512, simRe
 function useDoubleFBO(w: number, h: number, options: Record<string, unknown>) {
   const read = useFBO(w, h, options)
   const write = useFBO(w, h, options)
-  const fbo = useRef({
-    read,
-    write,
-    swap() {
-      const t = fbo.read
-      fbo.read = fbo.write
-      fbo.write = t
-    },
-    dispose() {
-      read.dispose()
-      write.dispose()
-    },
-  }).current
-  return fbo
+  return useMemo(() => {
+    const fbo = {
+      read,
+      write,
+      swap() {
+        const t = fbo.read
+        fbo.read = fbo.write
+        fbo.write = t
+      },
+      dispose() {
+        read.dispose()
+        write.dispose()
+      },
+    }
+    return fbo
+  }, [read, write])
 }
 
 export default function Fluid({
@@ -90,6 +93,7 @@ export default function Fluid({
   intensity = 55,
   fade = 0.08,
   decay,
+  paused = false,
 }: {
   palette?: FluidPalette
   intensity?: number
@@ -98,9 +102,11 @@ export default function Fluid({
    *  are large: at 60fps the half-life is ln(0.5)/ln(decay)/60 seconds —
    *  0.982 is 0.64s, 0.95 is 0.23s. Raise it to make the trail last longer. */
   decay?: number
+  paused?: boolean
 }) {
   const size = useThree((s) => s.size)
   const gl = useThree((s) => s.gl)
+  const invalidate = useThree((s) => s.invalidate)
 
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 812
   const O = { ...OPTS, ...(isMobile ? mobileOpts : desktopOpts) }
@@ -112,6 +118,11 @@ export default function Fluid({
   const splats = useRef<Splat[]>([])
   const lastPointer = useRef(new Vector2())
   const hasMoved = useRef(false)
+  /* A conservative upper bound on the dye's RGB magnitude. Each splat adds
+     at most its color's length; linear advection cannot increase the maximum,
+     and dissipation decreases it. Sleep only below the shader's fade floor,
+     with extra margin for half-float rounding. No GPU readback is needed. */
+  const dyeBound = useRef(0)
 
   /* ------------------------------------------------------------------ FBOs */
   const density = useDoubleFBO(O.dyeRes, O.dyeRes, {
@@ -129,6 +140,27 @@ export default function Fluid({
   const curl = useFBO(O.simRes, O.simRes, {
     type: HalfFloatType, format: RedFormat, minFilter: NearestFilter, depthBuffer: false,
   })
+
+  const clearSimulation = useCallback(() => {
+    const target = gl.getRenderTarget()
+    const color = gl.getClearColor(new Color()).clone()
+    const alpha = gl.getClearAlpha()
+    gl.setClearColor(0, 0)
+    for (const buffer of [density.read, density.write, velocity.read, velocity.write, pressure.read, pressure.write, divergence, curl]) {
+      gl.setRenderTarget(buffer)
+      gl.clear()
+    }
+    gl.setRenderTarget(target)
+    gl.setClearColor(color, alpha)
+    splats.current.length = 0
+    dyeBound.current = 0
+  }, [gl, density, velocity, pressure, divergence, curl])
+
+  useEffect(() => {
+    clearSimulation()
+    hasMoved.current = false
+    if (!paused) invalidate()
+  }, [paused, clearSimulation, invalidate])
 
   /* -------------------------------------------------------------- materials */
   const materials = useMemo(() => {
@@ -173,7 +205,6 @@ export default function Fluid({
         uCurlValue: { value: O.curl }, dt: { value: 0.016 },
       }),
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [O.curl, O.pressure, O.radius, size.width, size.height])
 
   useEffect(() => {
@@ -186,7 +217,9 @@ export default function Fluid({
 
   /* ----------------------------------------------------------- pointer input */
   useEffect(() => {
+    if (paused) return
     const onMove = (e: PointerEvent) => {
+      if (e.pointerType === 'touch' || document.hidden) return
       const { clientX: x, clientY: y } = e
       const dx = x - lastPointer.current.x
       const dy = y - lastPointer.current.y
@@ -196,16 +229,18 @@ export default function Fluid({
         return
       }
       lastPointer.current.set(x, y)
+      if (dx === 0 && dy === 0) return
       splats.current.push({
         mouseX: x / size.width,
         mouseY: 1.0 - y / size.height,
         velocityX: dx * O.force,
         velocityY: -dy * O.force,
       })
+      invalidate()
     }
     window.addEventListener('pointermove', onMove, { passive: true })
     return () => window.removeEventListener('pointermove', onMove)
-  }, [size, O.force])
+  }, [size, O.force, paused, invalidate])
 
   /* ----------------------------------------------------------------- effect */
   const effect = useMemo(
@@ -218,11 +253,12 @@ export default function Fluid({
   const use = useCallback((name: keyof typeof materials) => {
     if (!meshRef.current) return
     meshRef.current.material = materials[name]
-    meshRef.current.material.needsUpdate = true
   }, [materials])
 
   const set = useCallback((name: keyof typeof materials, k: string, v: unknown) => {
     const u = materials[name].uniforms[k]
+    // Three.js uniforms are imperative GPU state, not React render state.
+    // eslint-disable-next-line react-hooks/immutability
     if (u) u.value = v
   }, [materials])
 
@@ -240,10 +276,15 @@ export default function Fluid({
   }, [gl])
 
   useFrame(() => {
-    if (!meshRef.current) return
+    if (!meshRef.current || paused) return
+    if (dyeBound.current === 0 && splats.current.length === 0) {
+      effect.setFluidTexture(density.read.texture)
+      return
+    }
 
     while (splats.current.length > 0) {
       const s = splats.current.pop()!
+      dyeBound.current += Math.hypot(s.velocityX, s.velocityY, 10)
       use('splat')
       set('splat', 'uTarget', velocity.read.texture)
       set('splat', 'uPointer', new Vector2(s.mouseX, s.mouseY))
@@ -287,6 +328,11 @@ export default function Fluid({
     set('advection', 'uSource', density.read.texture)
     set('advection', 'uDissipation', O.densityDissipation)
     draw(density)
+
+    dyeBound.current *= O.densityDissipation
+    const invisible = dyeBound.current * Math.abs(intensity) * 0.0001 < fade * 0.5
+    if (invisible) clearSimulation()
+    else invalidate()
 
     gl.setRenderTarget(null)
     gl.clear()

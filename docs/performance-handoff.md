@@ -1,0 +1,253 @@
+# Performance handoff — 10 October 2026
+
+## Current state and user preferences
+
+The user reviewed the service-photo restoration, shared-effects pass, homepage
+startup pass, once-per-session homepage entrance, ordinary page-link transitions,
+individual service template and persistent Calendly preload. They then requested
+a local commit and a memory update before opening a fresh chat. These changes
+form the local commit `Improve motion performance and preload shared booking calendar`.
+Nothing has been pushed or deployed. Find the commit by this subject in `git log`.
+
+The user wants smooth motion while retaining the site's current appearance.
+Proceed one pass at a time and review locally. Push the reviewed work together
+only when explicitly authorized. Do not redesign sections, change animation
+curves or reduce effect quality just to improve a score.
+
+The active site is Next.js App Router v4: `src/app/(v4)`,
+`src/components/v4`, `src/styles/tokens.css`. The latest successful production
+build used Next.js 16.1.6 and generated 43 routes. `.21st/DESIGN.md` and
+`.21st/design.json` record the design decisions. The older v3 palette and retired
+service components are not the source of truth.
+
+## Completed work
+
+### Realistic service photographs
+
+Restored all six original, already tracked WebP service photographs on the
+homepage and services hub, shared through `src/lib/service-photos.ts`. Removed
+the graphics registry. Crops, frames, color, mobile card disclosures and carousel
+behavior stay as reviewed. Untracked PNG graphics are reference assets, not
+dependencies of this implementation.
+
+### Shared effects
+
+`src/lib/shared-effects.ts` composes menu freeze (`k:freeze`), ordinary transition
+(`k:transition`) and document visibility, including overlapping pauses. The fluid
+cursor draws on pointer input and until the visible trail decays, then sleeps;
+it discards input while paused. It remains absent on touch and with reduced
+motion. Grain, plate lift, footer and CTA drivers rest when settled or offscreen,
+with geometry collected before writes. Navbar footer detection responds to
+events instead of continuously polling. Live-page queries exclude transition
+ghosts. Shaders, solver, resolution, blend mode and authored motion remain.
+
+On `/privacy`, one-second samples fell from 671 fluid draws before input and 660
+after settling to zero; shared dark-surface reads fell from 240 to zero. Resting
+before/after captures were pixel-identical. See
+[the shared-effects report](design/shared-effects/README.md).
+
+### Homepage startup
+
+The peel uploads decoded video frames rather than every playback-clock change.
+Flat states use two triangles; the original 140×90 mesh and shader remain during
+the fold. Tickers sleep at settled states and resources clean up on unmount.
+Homepage section text, sheets, work/gallery and invitation resources prepare
+near the viewport, after the hero settles unless the user scrolls or focuses
+there. The cursor's dynamic WebGL setup waits for hero readiness and idle time.
+A late video cannot introduce a fullscreen cover or extra runway after fallback
+content has appeared.
+
+Tracked resting section reads fell from 300 per second to zero. Video uploads
+fell approximately 79→39 cold desktop, 107→47 warm desktop and 112→47 cold mobile;
+duplicate callback-frame uploads were zero. Offscreen invitation WebGL contexts
+at startup fell from one to zero. Hero geometry matched; flat/dense mesh comparison
+had at most 1/255 channel difference. Original visible motion remains. See
+[the homepage report](design/homepage-startup/README.md).
+
+### Homepage entrance once per session
+
+`src/lib/homepage-effects.ts` shares one entrance decision per mounted homepage
+between the three hero drivers. `sessionStorage` key
+`konaverse_home_entrance_seen` remembers the first homepage visit per tab session;
+a WeakMap prevents conflicting decisions and an in-memory fallback handles
+blocked storage. Starting on another route does not consume the entrance.
+Leaving during the entrance does consume it. Navigation, history and refresh
+return to the settled hero; a fresh session plays again. The ongoing headline
+walk, video loop and scroll fold remain. See
+[the session report](design/homepage-session/README.md).
+
+### Ordinary page-link transitions
+
+`src/lib/page-snapshot.ts` freezes the outgoing visible band with a viewport of
+extra content above and below. Distant sections keep their exact boxes without
+their children. Videos become still canvases, CSS animation state is sampled,
+and the outgoing sheet has no running animation, video decoder or extra
+`will-change`. Fixed hero/service decoration and rounded video crops retain
+their captured geometry. Expensive incoming effects wait for landing.
+
+The authored one-second `EASE.arc`, 2.2° tilt, 31% rise, 5% drift, scales, dim and
+seam are preserved. The menu retains its separate choreography. Rapid clicks,
+history interruption, cleanup and hash landings were corrected, including Lenis
+scroll-limit refresh and homepage fold-runway readiness.
+
+Outgoing element counts fell 52–81% in tested routes. CSS animations, video
+elements and WebGL setup during the slide all fell to zero. Ten desktop/mobile
+snapshot checks matched within 0.016 CSS px; retained sheet height differed by
+less than 0.08 px. See [the transition report](design/page-transitions/README.md).
+
+### Individual service template
+
+The active route is `src/app/(v4)/services/[slug]/page.tsx`. Its active components
+include RunGround, RunHero, RunAnswer, RunMore, ServicePoster, RunTrack, RunLight
+and Invitation. RunBrief, RunFit, RunPlan, RunHandover, ServiceStage and
+ServiceProcess are parked; do not optimize those as if they were active.
+
+`ServiceRays.tsx` and `src/lib/service-rays.ts` draw the same 132 rounded
+hairlines on one full-DPR 2D canvas. Individual lengths, negative delays,
+2.6–6 second durations, CSS ease-in-out alternate breathing and 90-second rotation
+are retained. SSR/no-JS/reduced-motion have a static SVG; unavailable 2D rendering
+has an animated SVG fallback. Rays sleep offscreen and during navigation.
+
+`src/lib/page-motion.ts` batches active section reads before writes, wakes on
+input/resize/visibility/navigation and runs until each original glide settles.
+Answer/More measurements and pointer masks are batched. Distant invitation
+WebGL and text splitting wait until near. Responsive fact-image selection uses
+existing 800px siblings at desktop DPR 1. Hero font/layout matches the baseline;
+an intermediate double-counted padding issue was corrected before review.
+
+Hero resting section reads fell 804→0 desktop and 737→0 mobile; approximately
+1.1-second main-thread task duration fell 240→79 ms and 246→77 ms. Active CSS
+animations fell 137→5 and 136→4. All 12 desktop/mobile geometry comparisons
+matched exactly. All 18 six-template desktop/mobile/reduced-motion cases,
+no-JS content and interaction cases passed. Twelve ray parity comparisons
+including Retina passed, with explicit SVG/canvas antialiasing tolerance;
+the largest mean channel difference was 0.106/255. See
+[the service report](design/service-template/README.md).
+
+### Persistent Calendly preload
+
+The v4 layout server-renders one eager iframe and preconnects Calendly origins.
+`CalendlyPopover.tsx` retains it across all SPA routes, with parked, inline and
+popover modes. It first renders at its real size behind the opaque site until
+ready, then parks offscreen. Fully hidden/offscreen preloading did not finish
+initialization in the browser check. The warm-up was verified not to alter the
+visible page. Do not replace this with a hidden frame or URL prefetch without
+verifying Calendly actually becomes ready.
+
+Contact provides its original slot; `src/lib/calendly.ts` places the same fixed
+frame using fractional box dimensions and composed ancestor transforms. It
+follows scrolling, menu scaling and the outgoing ghost without reparenting,
+changing `src` or creating another frame. Modal dimensions and original GSAP
+entrance/exit remain. Positioning sleeps at rest; motion following only runs
+while a transition/menu is moving. The shared component sits after `.k-shift`
+in the layout to preserve its stacking with the Contact sheet and menu dim.
+
+Readiness validates the Calendly origin and sender window. A tiny server-HTML
+listener stores early ready events in `window.__konaverseCalendlyReady` before
+React hydration. External fallback links bypass the booking interceptor.
+Blocked/slow loads offer a direct booking link; no-JS Contact retains iframe
+markup and an external link. Cookie-policy copy now describes site-entry
+preloading. Calendly itself still requires JavaScript.
+
+Desktop/mobile checks found the frame ready before modal clicks, one Calendly
+document navigation per tab through opens, Contact visits, menu motion and
+route returns, and the same iframe node/contentWindow throughout. Selecting a
+date showed available times and persisted across returns. Contact alignment
+was exact at rest/scroll; settled menu alignment differed by less than 0.016 px.
+Idle slot geometry reads were zero. Cold direct-entry, blocked loading, no-JS
+markup, and repeated modal opens from Contact passed. No booking was submitted.
+
+This moves Calendly's initial download and startup to site entry. A fresh direct
+Contact load, full reload or a click before preload completes can still wait.
+It does not make external network/availability responses instantaneous. The
+remaining cold-load investigation must include this intentional preload and
+preserve the ready, reusable booking experience. See
+[the Calendly report](design/calendly/README.md).
+
+## Verification and local evidence
+
+The final production build and TypeScript passed all 43 routes. A transient
+Turbopack Google-font resolver error disappeared on an unchanged retry; no font
+change was made. Targeted ESLint had no errors; pre-existing plain-image warnings
+remain in earlier components. The final Calendly files had no lint warnings.
+21st component reviews passed. Final desktop/mobile navigation regressions
+covered rapid links, history interruptions, hashes, menu navigation and reduced
+motion with no runtime errors. Documentation-only handoff changes do not alter
+the tested application.
+
+Reports and JSON records are committed. Generated PNG captures (about 224 MB)
+and exploratory Calendly debug captures remain local and can be reproduced with
+the tools. JSON records can mention these local screenshot paths; they are not
+required application assets. Phase README status/next-pass statements describe
+their original measurement point; this handoff records the current completion
+state. Earlier numeric baselines predate the Calendly preload and should not be
+treated as the current cold-start baseline.
+
+Unrelated artwork, ZIPs, blog drafts/planner, public reference assets, SEO exports
+and `.claude/settings.local.json` remain untouched and uncommitted. A dirty tree
+from those files is expected; do not stage everything or clean it wholesale.
+
+At handoff, the final production preview was at `http://127.0.0.1:3008`; its
+process may not survive into a new chat. To recreate it:
+
+```powershell
+node node_modules/next/dist/bin/next build
+node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 3008
+```
+
+Run only relevant browser checks, one browser process at a time. The tools use
+`puppeteer-core` and locally installed Chrome; browser launches may need the
+environment's execution approval. Example commands against the production server:
+
+```powershell
+node tools/profile-shared-effects.cjs check http://127.0.0.1:3008
+node tools/profile-shared-effects.cjs homepage-final http://127.0.0.1:3008
+node tools/profile-shared-effects.cjs homepage-check-final http://127.0.0.1:3008
+node tools/profile-shared-effects.cjs homepage-check-fallbacks http://127.0.0.1:3008
+node tools/profile-shared-effects.cjs homepage-session http://127.0.0.1:3008
+node tools/profile-page-transitions.cjs check-navigation http://127.0.0.1:3008
+node tools/profile-page-transitions.cjs check-service-regression http://127.0.0.1:3008
+node tools/profile-service-template.cjs check http://127.0.0.1:3008
+node tools/check-service-rays.cjs http://127.0.0.1:3008
+node tools/check-calendly.cjs final http://127.0.0.1:3008
+node tools/check-calendly.cjs cold http://127.0.0.1:3008
+node tools/check-calendly.cjs reopen http://127.0.0.1:3008
+```
+
+Some labels have special assertion modes; consult the tool before choosing a
+new output label. A `before` label records whichever build the server runs, not
+an automatic historical checkout. Avoid overwriting historical evidence when
+capturing a new baseline.
+
+## Next lever: remaining first-load stalls
+
+This investigation is proposed and has not been implemented. Reproduce and
+attribute the remaining cold first-load main-thread stalls in the current
+accepted production build before changing more scheduling. Separate script
+download/parse/evaluation, React hydration, shader compilation/GPU creation,
+layout and paint, including Calendly's site-entry preload. Capture isolated cold
+and warm contexts on desktop/mobile and an isolated CPU×4 run.
+
+The service template's isolated CPU×4 final run improved initialization
+3.54→1.56 seconds and cold long-task totals 3,735→1,894 ms, but still recorded
+626 ms of later long tasks and a frame gap around 417 ms. Homepage profiling
+also retained an initial JS/hydration stall. These observations establish
+remaining work; they do not establish its cause. An overlapping service stress
+run was excluded from timing comparisons; use `service-template/final-cpu`.
+
+A hypothesis to trace is the delayed FluidCursor → FluidCanvas → React Three
+Fiber/Three/postprocessing import, context setup and shader compilation. Its
+demand rendering is already fixed; late setup cost is a different question.
+Do not claim it is the culprit until a trace attributes the stalls. Calendly,
+other startup JS and hydration may also contribute.
+
+Use the trace to split or defer nonessential startup work until it is needed,
+while keeping the first-session hero entrance, cursor shader/quality, all
+authored motion, and Calendly's readiness and persistence. Validate actual
+interaction after initialization as well as idle samples. Chrome software-GL
+timings are diagnostic, not proof of 60 FPS. Safari and physical devices still
+need review.
+
+After that shared startup pass, continue page by page through About (`/about`),
+Work (`/work`) and case studies (`/work/[slug]`), then the remaining routes.
+Preserve the completed behavior and run the relevant regressions at each step.
