@@ -5,13 +5,28 @@ the performance work. It records the reviewed changes, validation, known limits
 and next pass as of 10 October 2026. Phase reports in `docs/design/` are historical;
 the handoff takes precedence for their completion and repository status.
 
+## Blog writing
+
+Before drafting or revising articles, read [docs/blog-writing-handoff.md](docs/blog-writing-handoff.md)
+and [docs/editorial/konstantinos-voice-and-search.md](docs/editorial/konstantinos-voice-and-search.md).
+They record the owner's voice, research standards, draft status and next topic.
+Use [docs/content-planner-three-months.md](docs/content-planner-three-months.md)
+for the current Tuesday/Thursday sequence; it supersedes the older blog plan's
+cadence and topic order. Local drafts exist through Article 12; Article 13,
+scrollytelling, is next when the owner resumes writing. Konstantinos Kyprianou
+is the author of subsequent articles. Draft carefully one article at a time
+unless the owner requests a batch. Drafting does not authorize CMS publication,
+Git commits, pushes or deployment. Keep factual claims sourced and hypothetical
+examples explicit; do not invent personal experience, client results or SEO/GEO
+outcomes. After each completed article, update the planner and writing handoff.
+
 ## Working preferences
 
 - Preserve the existing appearance and authored motion while improving runtime
   work. The user wants one performance pass at a time, reviewed locally.
-- The reviewed performance passes were authorized for a local commit. Do not
-  push or deploy until the user explicitly authorizes it; the user wants to push
-  the reviewed work together later.
+- On 11 October 2026, the user authorized committing the remaining site and
+  editorial updates and pushing `main`, including both reviewed performance
+  commits. This does not authorize CMS publication or a manual deployment.
 - Work on the active v4 site in `src/app/(v4)` and `src/components/v4`. Its token
   source is `src/styles/tokens.css`; consult `.21st/DESIGN.md` and
   `.21st/design.json` for design and content decisions.
@@ -38,6 +53,8 @@ cover the changed behavior, preserving reduced-motion and no-JavaScript content.
 The user authorized a local commit of the first-load pass and put further
 performance work on hold on 10 October 2026. See
 `docs/design/first-load/README.md` and the handoff for the committed scope,
-validation and remaining cold-load costs. Nothing has been pushed or deployed.
-Do not resume performance work unless requested; the next chat is for another
-purpose. Physical-device/Safari review remains outstanding.
+validation and remaining cold-load costs. The 11 October push authorization
+supersedes the earlier local-only delivery restriction; check Git's remote
+tracking state for delivery status. Hosting deployment has not been verified.
+Do not resume performance work unless requested. Physical-device/Safari review
+remains outstanding.

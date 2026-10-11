@@ -1,5 +1,11 @@
 # Performance handoff — 10 October 2026
 
+Delivery update, 11 October 2026: the owner authorized pushing `main`, including
+both reviewed performance commits, the sharing image, homepage blog carousel
+and editorial records. Earlier local-only statements below describe the
+10 October handoff. Check the remote tracking state for Git delivery; hosting
+deployment has not been verified. Performance work remains on hold.
+
 ## Current state and user preferences
 
 The user reviewed the service-photo restoration, shared-effects pass, homepage
@@ -7,13 +13,14 @@ startup pass, once-per-session homepage entrance, ordinary page-link transitions
 individual service template and persistent Calendly preload. They then requested
 a local commit and a memory update before opening a fresh chat. These changes
 form the local commit `Improve motion performance and preload shared booking calendar`.
-Nothing has been pushed or deployed. Find the commit by this subject in `git log`.
+As of 10 October, nothing had been pushed or deployed. Find the commit by this
+subject in `git log`.
 
 The subsequent first-load pass is now implemented locally on top of `d1e258f`.
 Its production checks passed. The user then authorized the local commit
 `Reduce first-load cursor payload and shader waits` and a memory update, and put
-further performance work on hold. Nothing has been pushed or deployed. Find the
-new commit by this subject in `git log`; it contains the application changes,
+further performance work on hold. Nothing had been pushed or deployed at that
+handoff. Find the new commit by this subject in `git log`; it contains the application changes,
 tools, report, controlled JSON records and regression results, without raw
 profiling captures or unrelated files. Physical-device/Safari review remains
 outstanding and should not be recorded as completed.
@@ -249,9 +256,11 @@ their original measurement point; this handoff records the current completion
 state. Earlier numeric baselines predate the Calendly preload and should not be
 treated as the current cold-start baseline.
 
-Unrelated artwork, ZIPs, blog drafts/planner, public reference assets, SEO exports
-and `.claude/settings.local.json` remain untouched and uncommitted. A dirty tree
-from those files is expected; do not stage everything or clean it wholesale.
+At the 10 October handoff, artwork, ZIPs, blog drafts/planner, public reference
+assets, SEO exports and `.claude/settings.local.json` were left uncommitted.
+The 11 October delivery includes the relevant blog drafts and editorial records
+in a separate commit. Unrelated assets, captures, exports and local settings
+remain outside that scope; do not stage everything or clean the tree wholesale.
 
 At handoff, the final production preview was at `http://127.0.0.1:3008`; its
 process may not survive into a new chat. To recreate it:
