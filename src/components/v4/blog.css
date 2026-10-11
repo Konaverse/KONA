@@ -151,9 +151,43 @@
 }
 .bl-row-p { margin: 0; font-size: 1.02rem; line-height: 1.6; color: var(--text-muted); }
 
+.bl-carousel { min-width: 0; }
+.bl-carousel-nav {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  padding-right: var(--page-pad);
+  margin-bottom: 1.25rem;
+  visibility: hidden;
+}
+.bl-carousel-nav[hidden] { display: none; }
+.bl-carousel[data-ready] .bl-carousel-nav { visibility: visible; }
+.bl-carousel-arrow {
+  display: grid;
+  place-items: center;
+  width: 3.1rem;
+  height: 3.1rem;
+  padding: 0;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: background var(--d-base) var(--e-glass), color var(--d-base) var(--e-glass), border-color var(--d-base) var(--e-glass);
+}
+.bl-carousel-arrow svg { width: 1.15rem; height: 1.15rem; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.bl-carousel-arrow:disabled { opacity: 0.3; cursor: default; }
+.bl-carousel-arrow:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
+@media (hover: hover) {
+  .bl-carousel-arrow:not(:disabled):hover { background: var(--text); border-color: var(--text); color: var(--surface); }
+}
+.bl-carousel-status { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
 /* the cards in ONE ROW: two fill it, more scroll sideways */
 .bl-track {
   --bl-gap: 0.75rem;
+  --bl-card-width: calc((100% - var(--bl-gap)) / 2);
+  position: relative;
   display: flex;
   gap: var(--bl-gap);
   padding-right: var(--page-pad);
@@ -163,12 +197,15 @@
   scrollbar-width: none;
 }
 .bl-track::-webkit-scrollbar { display: none; }
+.bl-track:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: -2px; }
 .bl-track .bl-card {
-  flex: 0 0 calc((100% - var(--bl-gap)) / 2);
+  flex: 0 0 var(--bl-card-width);
   scroll-snap-align: start;
 }
 /* three or more: part of the next card shows, so the row reads as a row */
-.bl-track:not([data-count='1']):not([data-count='2']) .bl-card { flex-basis: 44%; }
+.bl-track:not([data-count='1']):not([data-count='2']) { --bl-card-width: 44%; }
+/* Leave enough travel for the last card to align at the same left edge. */
+.bl-track:not([data-count='1'])::after { content: ''; flex: 0 0 calc(100% - var(--bl-card-width) - var(--bl-gap)); }
 
 /* ---------- THE INDEX ---------- */
 .bl-hub { background: var(--surface); color: var(--text); }
@@ -435,10 +472,11 @@ ol.bl-list li::before {
   .bl-row-in { grid-template-columns: minmax(0, 1fr); row-gap: 2.2rem; padding-left: 0; }
   .bl-row-head { gap: 1.4rem; padding: 0 var(--page-pad); }
   .bl-row-h { font-size: clamp(2.6rem, 12vw, 3.6rem); }
-  .bl-track { padding-left: var(--page-pad); scroll-padding-inline: var(--page-pad); }
-  .bl-track .bl-card,
-  .bl-track:not([data-count='1']):not([data-count='2']) .bl-card { flex-basis: 80%; }
-  .bl-track[data-count='1'] .bl-card { flex-basis: 100%; }
+  /* Move the crop edge to the page inset; prior cards cannot show in the gutter. */
+  .bl-carousel { margin-left: var(--page-pad); }
+  .bl-track,
+  .bl-track:not([data-count='1']):not([data-count='2']) { --bl-card-width: 80%; }
+  .bl-track[data-count='1'] { --bl-card-width: 100%; }
 
   .bl-hub-head { padding-top: 7.5rem; padding-bottom: 3rem; }
   .bl-hub-h1 { font-size: clamp(3.4rem, 17vw, 5rem); }

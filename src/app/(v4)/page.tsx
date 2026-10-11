@@ -12,7 +12,7 @@ import { WORK_PROJECTS } from '@/lib/work-projects'
 import Invitation from '@/components/v4/Invitation'
 import { BlogRow } from '@/components/v4/BlogCards'
 import { getPosts } from '@/sanity/posts'
-import { OG_DEFAULTS, SITE_URL } from '@/lib/site'
+import { OG_DEFAULTS, OG_IMAGE, SITE_URL } from '@/lib/site'
 import './home.css'
 
 /**
@@ -22,7 +22,7 @@ import './home.css'
  * said about the new site was the old site's line. Title is `absolute`:
  * the root template appends " | Konaverse", and the brand is already the
  * first word. Description is the hero's paragraph, cut to a result's
- * width. The OG image is the v4 hero (public/og-image.jpg, 1200x630).
+ * width. The shared OG image is public/og-image1.png (1200x630).
  */
 const HOME_TITLE = 'Konaverse: Build the website that will make you stand out'
 const HOME_OG =
@@ -39,13 +39,12 @@ export const metadata: Metadata = {
     description: HOME_OG,
     url: SITE_URL,
     type: 'website',
-    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: HOME_TITLE }],
   },
   twitter: {
     card: 'summary_large_image',
     title: HOME_TITLE,
     description: HOME_OG,
-    images: ['/og-image.jpg'],
+    images: [OG_IMAGE],
   },
 }
 

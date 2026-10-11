@@ -1,4 +1,5 @@
 import ArrowLink from '@/components/v4/ArrowLink'
+import BlogCarousel from '@/components/v4/BlogCarousel'
 import Reveal from '@/components/v4/Reveal'
 import { longDate, readMinutes, type BlogPost } from '@/lib/blog-posts'
 import './blog.css'
@@ -16,9 +17,11 @@ import './blog.css'
  *   BlogRow    the homepage's section under the work (owner: "a nice
  *              horizontally cards aligned section"): the head in the first
  *              column, the cards in ONE ROW beside it. Two fill the row;
- *              from the third on it scrolls sideways and snaps.
+ *              from the third on it scrolls sideways and snaps. Circular
+ *              arrows above the cards advance one leading edge at a time.
  *
- * Server components: every word is in the HTML. The entrance is the house
+ * Cards render on the server; BlogCarousel adds navigation. Every word
+ * is in the HTML. The entrance is the house
  * reveal, NOT masked: a mask crops the descenders of a large light
  * heading (the "g" of "blog" was cut). Hover (a pointer that can hover
  * only) closes in on the picture and steps the arrow.
@@ -82,12 +85,11 @@ export function BlogRow({ posts }: { posts: BlogPost[] }) {
             <ArrowLink href="/blog">All articles</ArrowLink>
           </Reveal>
         </div>
-        {/* the row scrolls sideways on its own; the page's scroll is not its business */}
-        <div className="bl-track" data-count={posts.length}>
+        <BlogCarousel count={posts.length}>
           {posts.map((p, i) => (
             <BlogCard key={p.slug} post={p} index={i} />
           ))}
-        </div>
+        </BlogCarousel>
       </div>
     </section>
   )

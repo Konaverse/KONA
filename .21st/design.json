@@ -118,6 +118,11 @@
       "date": "2026-10-10",
       "decision": "Restore the six realistic service photographs on the homepage and services hub. Share their originals through src/lib/service-photos.ts and preserve the existing frames, colors, mobile cards and carousel interactions.",
       "source": "User requested changing the service graphics back to the realistic photographs"
+    },
+    {
+      "date": "2026-10-11",
+      "decision": "Add circular previous/next controls above the homepage blog cards at the top right, matching the existing services arrows. Advance one card and align its leading edge exactly, fully clipping previous cards. Allow the final card to reach the same edge. Preserve server-rendered cards, native swiping, keyboard access, responsive alignment and reduced motion.",
+      "source": "User requested homepage blog navigation and precise active-card alignment"
     }
   ],
   "evidence": [

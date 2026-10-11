@@ -57,6 +57,14 @@ export const CONTACT_EMAIL = 'info@kona-verse.com'
 export const CONTACT_PHONE = '+357 96 273855'
 export const CONTACT_PHONE_HREF = 'tel:+35796273855'
 
+/** The default image shared by Open Graph, Twitter and organization schema. */
+export const OG_IMAGE = {
+  url: '/og-image1.png',
+  width: 1200,
+  height: 630,
+  alt: 'Konaverse: Build the website that will make you stand out',
+}
+
 /**
  * The Open Graph fields every page must carry. Next merges metadata
  * SHALLOWLY: a page that sets its own `openGraph` replaces the root's
@@ -67,12 +75,5 @@ export const CONTACT_PHONE_HREF = 'tel:+35796273855'
 export const OG_DEFAULTS = {
   siteName: SITE_NAME,
   locale: 'en_US',
-  images: [
-    {
-      url: '/og-image.jpg',
-      width: 1200,
-      height: 630,
-      alt: 'Konaverse: Build the website that will make you stand out',
-    },
-  ],
+  images: [OG_IMAGE],
 }

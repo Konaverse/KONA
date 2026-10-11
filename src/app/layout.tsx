@@ -9,7 +9,7 @@ import JsonLd from '@/components/JsonLd'
 import CookieConsent from '@/components/layout/CookieConsent'
 import GoogleAnalytics from '@/components/layout/GoogleAnalytics'
 import MicrosoftClarity from '@/components/layout/MicrosoftClarity'
-import { AUTHOR_BIO, NABIL_BIO, CONTACT_EMAIL, CONTACT_PHONE, SITE_NAME, SITE_URL } from '@/lib/site'
+import { AUTHOR_BIO, NABIL_BIO, CONTACT_EMAIL, CONTACT_PHONE, OG_DEFAULTS, OG_IMAGE, SITE_NAME, SITE_URL } from '@/lib/site'
 import { SERVICE_PAGES } from '@/lib/service-pages'
 import './globals.css'
 
@@ -100,21 +100,12 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
+    ...OG_DEFAULTS,
     type: 'website',
-    siteName: SITE_NAME,
-    locale: 'en_US',
-    images: [
-      {
-        url: '/og-image.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Konaverse: Build the website that will make you stand out',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
-    images: ['/og-image.jpg'],
+    images: [OG_IMAGE],
   },
 }
 
@@ -147,7 +138,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               name: SITE_NAME,
               url: SITE_URL,
               logo: { '@type': 'ImageObject', url: `${SITE_URL}/icon.png`, width: 512, height: 512 },
-              image: `${SITE_URL}/og-image.jpg`,
+              image: `${SITE_URL}${OG_IMAGE.url}`,
               description:
                 'A web studio in Cyprus that designs and builds websites end to end: web design, web development, 3D and immersive websites, one-page websites, redesigns and SEO.',
               email: CONTACT_EMAIL,

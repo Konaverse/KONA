@@ -1,0 +1,96 @@
+[
+  {
+    "case": "desktop-next",
+    "index": 1,
+    "alignment": -0.203125,
+    "previousRight": -11.453125,
+    "overflow": "auto",
+    "pageOverflow": 0,
+    "status": "Article 2 of 3",
+    "previousDisabled": false,
+    "nextDisabled": false,
+    "count": 3
+  },
+  {
+    "case": "rapid-clicks",
+    "index": 2,
+    "alignment": -0.40625,
+    "previousRight": -11.65625,
+    "overflow": "auto",
+    "pageOverflow": 0,
+    "status": "Article 3 of 3",
+    "previousDisabled": false,
+    "nextDisabled": true,
+    "count": 3
+  },
+  {
+    "case": "keyboard-last",
+    "index": 2,
+    "alignment": -0.40625,
+    "previousRight": -11.65625,
+    "overflow": "auto",
+    "pageOverflow": 0,
+    "status": "Article 3 of 3",
+    "previousDisabled": false,
+    "nextDisabled": true,
+    "count": 3
+  },
+  {
+    "case": "resize-keeps-last",
+    "index": 2,
+    "alignment": 0,
+    "previousRight": -12,
+    "overflow": "auto",
+    "pageOverflow": 0,
+    "status": "Article 3 of 3",
+    "previousDisabled": false,
+    "nextDisabled": true,
+    "count": 3
+  },
+  {
+    "case": "keyboard-next-mobile",
+    "index": 1,
+    "alignment": 0,
+    "previousRight": -12,
+    "overflow": "auto",
+    "pageOverflow": 0,
+    "status": "Article 2 of 3",
+    "previousDisabled": false,
+    "nextDisabled": false,
+    "count": 3
+  },
+  {
+    "case": "native-touch-swipe",
+    "index": 1,
+    "alignment": 0,
+    "previousRight": -12,
+    "overflow": "auto",
+    "pageOverflow": 0,
+    "status": "Article 2 of 3",
+    "previousDisabled": false,
+    "nextDisabled": false,
+    "count": 3
+  },
+  {
+    "case": "reduced-motion",
+    "index": 1,
+    "alignment": -0.203125,
+    "previousRight": -11.453125,
+    "overflow": "auto",
+    "pageOverflow": 0,
+    "status": "Article 2 of 3",
+    "previousDisabled": false,
+    "nextDisabled": false,
+    "count": 3
+  },
+  {
+    "case": "no-javascript",
+    "links": [
+      "/blog/nextjs-vs-webflow",
+      "/blog/redesign-website-without-losing-seo",
+      "/blog/website-cost-cyprus"
+    ],
+    "opacity": "1",
+    "controlsHidden": true
+  }
+]

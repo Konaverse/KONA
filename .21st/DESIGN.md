@@ -35,3 +35,7 @@ The user selected the open gallery on 9 October 2026 after exploring alternative
 ## Services artwork
 
 The user subsequently requested restoring the six realistic service photographs. Share those originals between the homepage and services hub through src/lib/service-photos.ts. Preserve their colors, existing frames, mobile card interactions and hub carousel behavior.
+
+## Homepage blog navigation
+
+On 11 October 2026 the user requested circular previous/next arrows at the top right above the homepage blog cards. Advance one card per click and align each active card to the same left edge, fully clipping the preceding card. Include enough trailing space to align the final card too. Keep the existing card imagery, titles, details and server-rendered links. Use the services carousel's arrow shapes and circular-control proportions with v4 role tokens. Preserve native touch/trackpad scrolling, keyboard navigation, disabled end controls and immediate movement with reduced motion. On mobile the clipping edge aligns with the page inset.
