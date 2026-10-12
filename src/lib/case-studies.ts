@@ -984,7 +984,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   /* ------------------------------------------------------------------
      TDK DESIGN & BUILD — the studio's site + its CMS (FIRST DRAFT,
      2026-10-01). Facts from the repo (TDK_Design_&_Build/tdkdb) and the
-     live tdkdb.vercel.app. No SEO chapter: the live site still ships the
+     live website (now tdkdb.com). No SEO chapter: the live site still ships the
      default title and an empty sitemap, so we claim none. No quote:
      every client quote came out 2026-10-02 (owner call).
      ------------------------------------------------------------------ */
@@ -1005,7 +1005,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       { label: 'Services', value: 'Web design, development, CMS' },
       { label: 'Location', value: 'Nicosia, Cyprus' },
     ],
-    live: 'https://tdkdb.vercel.app/en',
+    live: 'https://tdkdb.com',
     still: { src: '/work/tdk/01.webp', alt: 'The TDK Design & Build homepage: the building standing in front of the letters TDK' },
     sections: [
       {

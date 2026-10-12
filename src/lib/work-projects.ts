@@ -115,7 +115,7 @@ export const WORK_PROJECTS: WorkProject[] = [
     year: '2026',
     service: 'Web development',
     serviceSlug: 'web-development',
-    href: 'https://tdkdb.vercel.app/en',
+    href: 'https://tdkdb.com',
     image: '/work/covers/tdk.webp',
     frames: Array.from({ length: 8 }, (_, i) => `/work/tdk/${String(i + 1).padStart(2, '0')}.webp`),
     phones: Array.from({ length: 6 }, (_, i) => `/work/tdk/m-${String(i + 1).padStart(2, '0')}.webp`),
