@@ -86,3 +86,29 @@ npm run import-blog -- -- --execute
 
 The first command is a dry run. The second imports only missing original posts
 using the currently authenticated Sanity CLI account.
+
+## New articles from Markdown drafts
+
+A finished draft in `docs/blog-drafts/` goes into the CMS as an unpublished draft
+with the Studio script added on 14 October 2026:
+
+```powershell
+cd ../studio-konaverse
+npm run import-draft -- -- ../KONA/docs/blog-drafts/<file>.md
+npm run import-draft -- -- ../KONA/docs/blog-drafts/<file>.md --execute
+```
+
+The first command is a dry run that prints the title, author, service, block
+counts, opening answer and metadata lengths. The second creates `drafts.post-<slug>`
+and never publishes. A slug that already exists, published or draft, is left
+unchanged. The script reads the frontmatter keys `slug`, `meta_title`,
+`meta_description`, `excerpt`, `topic`, `author_key`, `service_slug` and the
+optional `publish_date`, `service_label`, `service_line`, `studies` and `answer`
+(default: the first paragraph after the byline). H2 keys are the heading slugs,
+so section anchors are stable. Pipe tables become table blocks captioned by a
+`Table: ...` line directly above them, or by the nearest H2. Italics and inline
+code are flattened because the schema has no decorator for them.
+
+In the Studio the editor adds the cover (required, so Publish stays blocked
+until it is there), checks the dates and the table captions, reads the preview
+and presses Publish. Publishing remains a person's decision.
