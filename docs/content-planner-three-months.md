@@ -8,6 +8,8 @@ This document records the supplied content plan once, with all goals, titles, ta
 
 Related planning history: [Blog plan 2026](blog-plan-2026.md) and [Q4 2026 SEO plan](seo-plan-q4-2026.md). This planner records the newly supplied topics and cadence separately from those earlier documents.
 
+Status, 13 October 2026: the [draft audit](editorial/drafts-audit-2026-10-13.md) decided Articles 1 to 12 and the [November 2026 to August 2027 plan](content-plan-2026-11-to-2027-08.md) supersedes Articles 13 to 24 below. Keep this file as planning history. Update, 14 October 2026: the ten-month plan's second November piece, "How much does a 3D website cost?", is drafted at `blog-drafts/how-much-does-a-3d-website-cost.md` and blocked on the owner's acceptance of `editorial/3d-pricing-structure-2026-10-14.md`.
+
 Writing status, 11 October 2026: local drafts exist for Articles 1–12; Article 13 is next when writing resumes. See the [writing handoff](blog-writing-handoff.md) for the draft index and continuation workflow, and the [voice and search standard](editorial/konstantinos-voice-and-search.md) for the writing and research rules. Draft status is separate from CMS/publication status. This planner's cadence and topic order take precedence over the earlier blog plan.
 
 ## Month 1: The Premium Positioning & High-End Tech Stack
@@ -106,6 +108,7 @@ Writing status, 11 October 2026: local drafts exist for Articles 1–12; Article
 
 #### Article 13 (Tuesday): What is Scrollytelling? The Immersive Art of Scroll-Driven Animations
 
+- **Draft:** [Full article draft](blog-drafts/what-is-scrollytelling.md), developed 13 October 2026 under the ten-month plan's real-substance rule. [Research](editorial/what-is-scrollytelling-research.md) records four site inspections (Snow Fall, Apple AirPods Pro 3, Oryzo by Lusion, Lumière Éclat), the stack, the published price and timeline, and the inspection limits; the "active participants" hook is not claimed.
 - **Targets:** "What are scroll-driven animations?", "What is it called when a website moves when you scroll?"
 - **The Hook:** Demystify dynamic web motion. Explain how scroll-driven design transforms passive readers into active participants.
 

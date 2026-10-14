@@ -4,6 +4,8 @@ Updated: 11 October 2026. This is the current writing status and continuation gu
 
 ## Owner's brief and current position
 
+Update, 13 October 2026: read the [draft audit](editorial/drafts-audit-2026-10-13.md) and the [ten-month plan](content-plan-2026-11-to-2027-08.md) first. The audit shelved Articles 4, 7, 8, 9 and 12, merged 9 into 10, folds 6 into the live cost article and rewrites 2, 5 and 11; the owner accepted this. The plan requires named real substance for every piece and retires the hypothetical-business pattern. Article 13, scrollytelling, remains next, now built on Lumière Éclat and inspected examples.
+
 Write useful, authoritative Konaverse articles in Konstantinos Kyprianou's voice. The owner wants deliberate research and careful editing, with a human founder perspective and sound SEO/GEO practice. Subsequent articles use `author: Konstantinos Kyprianou` and `author_key: konstantinos`.
 
 The current [three-month planner](content-planner-three-months.md) schedules 24 articles, two per week on Tuesday and Thursday. Its launch date is unspecified. This newer instruction takes precedence over the older [blog plan](blog-plan-2026.md)'s cadence and topic order. Preserve the supplied planner titles and hooks as planning history; the draft title and claims can be corrected when evidence requires it.
@@ -67,12 +69,18 @@ All entries below refer to local Markdown drafts, not a publication schedule or 
 | 10 | [Website speed and conversion rates](blog-drafts/website-speed-conversion-rates.md) | [Research](editorial/website-speed-conversion-rates-research.md) | Business evidence, measurement and interpretation |
 | 11 | [How to make a website look luxury](blog-drafts/how-to-make-a-website-look-luxury.md) | [Research](editorial/how-to-make-a-website-look-luxury-research.md) | Seven design choices and a practical brief |
 | 12 | [Luxury vs. premium positioning](blog-drafts/luxury-vs-premium-brand-positioning.md) | [Research](editorial/luxury-vs-premium-brand-positioning-research.md) | Positioning, evidence and four decision questions |
+| 13 | [What is scrollytelling?](blog-drafts/what-is-scrollytelling.md) | [Research](editorial/what-is-scrollytelling-research.md) | Definition, four techniques, four inspected sites, stack, price, four checks. First piece under the real-substance rule |
+| Plan Nov 2 | [How much does a 3D website cost?](blog-drafts/how-much-does-a-3d-website-cost.md) | [Research](editorial/how-much-does-a-3d-website-cost-research.md), [pricing proposal](editorial/3d-pricing-structure-2026-10-14.md) | Lumière's phase hours, what 6,000 euro buys, the driver table (estimates marked), the small and top tiers, yearly cost, market band re-read 14 October. BLOCKED until the owner accepts the pricing proposal |
 
 The [Articles 4–9 review](editorial/articles-4-to-9-review.md) records the completed batch's checks. Later research notes record each article's final review. Word counts and metadata lengths are descriptive editorial checks, not targets for subsequent drafts.
 
 The latest draft uses real Miele and Hermès statements, bounded 2026 US/China client research, two explicitly hypothetical furniture workshops and a positioning brief. It does not turn premium/luxury into a universal hierarchy or promise that a website attracts a wealth category. Use it and Article 11 as recent examples of the established voice, while keeping future subjects distinct.
 
 ## Next article and overlap
+
+Update, 14 October 2026: the 3D cost piece is drafted from the owner's phase durations for Lumière Éclat (concept 1 week, modelling 4 days, lighting and animation 1.5 weeks, build 2 weeks, testing 1 week; no client has paid for a 3D site; the 15,000 to 20,000 tier takes 3 to 4 months). The owner's second message the same day: frame the timeline as 8 to 12 weeks for a client with the reference build faster because there were no approvals, keep 6,000 as the floor, and price HOSTING BY THE YEAR from now on: 300 euro for a standard site, 400 for a 3D site, a CMS adds 300 to either; never monthly, no separate maintenance line. The source was changed the same day (`src/lib/service-pages.ts`, the service template, the contact FAQ, the local copy of the cost article in `src/lib/blog-posts.ts`), uncommitted; the live cost article in Sanity still says 40 and 90 a month and the owner must edit it in the Studio. The price drivers in the draft are a proposal derived from the phase durations, recorded in [the pricing structure proposal](editorial/3d-pricing-structure-2026-10-14.md); the draft cannot be published until the owner accepts or strikes each driver line. The next piece under the ten-month plan is "Next.js vs. React for SEO" (Article 3 with its view-source addition), then the December pieces. The Ahrefs and Semrush connectors are plan-limited (Ahrefs: "Insufficient plan" on Keywords Explorer; Semrush: no API units) and do not replace the browser lookups.
+
+Update, 13 October 2026: Article 13 is drafted. The next piece under the [ten-month plan](content-plan-2026-11-to-2027-08.md) is "How much a 3D website costs", which needs the owner's hours per tier (November dependency) before drafting. The section below is the pre-draft brief for Article 13, kept as history.
 
 **Article 13: What is Scrollytelling? The Immersive Art of Scroll-Driven Animations.** Planned queries: “What are scroll-driven animations?” and “What is it called when a website moves when you scroll?” No Article 13 draft or research note exists yet.
 
