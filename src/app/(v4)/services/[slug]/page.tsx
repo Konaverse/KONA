@@ -10,7 +10,7 @@ import RunTrack from '@/components/v4/RunTrack'
 import ServicePoster from '@/components/v4/ServicePoster'
 import { RunKind, RunFix, RunWork, RunGets, RunAddons, type RunWorkItem } from '@/components/v4/RunMore'
 import Invitation from '@/components/v4/Invitation'
-import { RUN_DECK, RUNNING, SERVICE_PAGES, formatEuro, getServicePage } from '@/lib/service-pages'
+import { RUN_DECK, SERVICE_PAGES, formatEuro, getServicePage, runningFor } from '@/lib/service-pages'
 import { CALENDLY_URL, OG_DEFAULTS, SITE_URL } from '@/lib/site'
 import { CASE_STUDIES } from '@/lib/case-studies'
 import { getPosts } from '@/sanity/posts'
@@ -299,7 +299,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
       {/* the priced extras and the running costs, stated up front */}
       <RunAddons
         addons={page.addons}
-        running={page.slug === 'seo' ? undefined : RUNNING}
+        running={page.slug === 'seo' ? undefined : runningFor(page.slug)}
         from={page.slug === 'seo' ? `${formatEuro(page.fromPrice)} a month` : formatEuro(page.fromPrice)}
       />
 

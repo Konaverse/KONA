@@ -86,7 +86,7 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: 'What happens after launch?',
-    a: 'The site is handed over and stays yours. Hosting and maintenance are €40 a month, or €90 a month for a site with a CMS: we keep it online, updated, backed up and monitored. If you want ongoing search work, SEO is available from €300 a month with a three-month minimum, and we are one email away for changes.',
+    a: 'The site is handed over and stays yours. Hosting is €300 a year, or €600 a year for a site with a CMS, and €400 or €700 for a 3D site: we keep it online, updated, backed up and monitored. If you want ongoing search work, SEO is available from €300 a month with a three-month minimum, and we are one email away for changes.',
   },
   {
     q: 'Can we talk before deciding anything?',

@@ -207,7 +207,7 @@ export const BLOG_POSTS: BlogPost[] = [
       { kind: 'h2', id: 'running-costs', text: 'What you pay after launch' },
       {
         kind: 'p',
-        text: 'A website has running costs after launch: the domain, the hosting, and the maintenance that keeps it secure and working. Our hosting and maintenance plan is €40 a month, or €90 a month for a site with a CMS. It covers keeping the site online, updated, backed up and monitored. The domain is yours and is billed to you by the registrar. Changes you ask for later are quoted when you ask. Ongoing search work is the monthly SEO service above.',
+        text: 'A website has running costs after launch: the domain and the hosting that keeps it online, secure and working. Our hosting is €300 a year, or €600 a year for a site with a CMS. It covers keeping the site online, updated, backed up and monitored. The domain is yours and is billed to you by the registrar. Changes you ask for later are quoted when you ask. Ongoing search work is the monthly SEO service above.',
       },
       { kind: 'h2', id: 'compare-quotes', text: 'How to compare two quotes' },
       {

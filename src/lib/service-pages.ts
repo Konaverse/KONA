@@ -20,8 +20,10 @@
  * and web development ON ITS OWN €1,800 (a standard site of five main
  * pages), TOGETHER €2,500 minimum; redesign (design and build) from
  * €2,500; 3D from €6,000; SEO audit €500, then from €300 a month with a
- * three-month minimum; hosting and maintenance €40 a month, €90 with a
- * CMS (HOSTING, below). Published add-on prices do not exist yet.
+ * three-month minimum; hosting is YEARLY (owner, 2026-10-14): €300 a year
+ * for a standard site, €400 for a 3D site, and a CMS adds €300 a year
+ * (HOSTING, below). Never state hosting monthly. Published add-on prices
+ * do not exist yet.
  * Timelines are still ours.
  * COPY RULE (owner, same day): written for search, and NO EM DASHES in
  * anything a visitor or a crawler reads (tools/dashes.js checks).
@@ -987,26 +989,34 @@ export const SERVICE_PAGES: ServicePage[] = [
   },
 ]
 
-/** HOSTING AND MAINTENANCE (owner, 2026-10-03: "we never mentioned that
- *  there's hosting, and we lose money on hosting and maintenance"). One
- *  plan, two prices, a month. The contact page's answer and the cost
- *  article state the same two numbers in their own sentences: change
- *  all three together. */
-export const HOSTING = { base: 40, cms: 90 } as const
+/** HOSTING (owner, 2026-10-03: "we never mentioned that there's hosting,
+ *  and we lose money on hosting and maintenance"; owner, 2026-10-14:
+ *  hosting is priced BY THE YEAR, never monthly, and maintenance is not a
+ *  separate monthly line). Standard site €300 a year, 3D site €400 a
+ *  year, a CMS adds €300 a year to either. The contact page's answer and
+ *  the cost article (local copy in blog-posts.ts; the live post is in
+ *  Sanity) state the same numbers in their own sentences: change them
+ *  together. */
+export const HOSTING = { base: 300, three: 400, cms: 300 } as const
 
-/** AFTER LAUNCH: the running costs, the same on every page that builds a
- *  site (the SEO page lists its own monthly work instead) */
-export const RUNNING: Addon[] = [
+/** AFTER LAUNCH: the running costs for a standard site; `runningFor`
+ *  swaps the 3D figures in on the 3D page (the SEO page lists its own
+ *  monthly work instead) */
+const hostingLines = (base: number): Addon[] => [
   {
-    name: 'Hosting and maintenance',
-    text: 'We keep the site online, updated, backed up and monitored.',
-    price: `€${HOSTING.base} a month`,
+    name: 'Hosting',
+    text: 'Keeps the site online, updated, backed up and monitored.',
+    price: `€${base} a year`,
   },
   {
-    name: 'Hosting and maintenance, with a CMS',
+    name: 'Hosting, with a CMS',
     text: 'The same, for a site with a content system or a database behind it.',
-    price: `€${HOSTING.cms} a month`,
+    price: `€${base + HOSTING.cms} a year`,
   },
+]
+
+export const RUNNING: Addon[] = [
+  ...hostingLines(HOSTING.base),
   {
     name: 'Domain',
     text: 'Registered in your name and billed to you by the registrar.',
@@ -1018,6 +1028,11 @@ export const RUNNING: Addon[] = [
     price: 'Quoted',
   },
 ]
+
+/** The running costs for a given service page: 3D sites host at €400 a
+ *  year, everything else at €300. */
+export const runningFor = (slug: string): Addon[] =>
+  slug === '3d-websites' ? [...hostingLines(HOSTING.three), ...RUNNING.slice(2)] : RUNNING
 
 export const getServicePage = (slug: string) => SERVICE_PAGES.find((s) => s.slug === slug)
 
