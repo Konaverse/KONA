@@ -24,15 +24,20 @@ import './home.css'
  * first word. Description is the hero's paragraph, cut to a result's
  * width. The shared OG image is public/og-image1.jpg (1200x630, 172 KB),
  * encoded from the PNG master og-image1.png.
+ *
+ * 2026-10-22 (strategy decision 2, owner: "yes on the title"): the title
+ * names the head term, because firm homepages hold most of the "web
+ * design cyprus" results; "Working Worldwide" keeps the door open abroad.
+ * The hero's line stays the h1.
  */
-const HOME_TITLE = 'Konaverse: Build the website that will make you stand out'
+const HOME_TITLE = 'Konaverse: Web Design Studio in Cyprus, Working Worldwide'
 const HOME_OG =
   'A web studio in Cyprus. Strategy, design, motion and engineering in one continuous process, for brands that have outgrown the template.'
 
 export const metadata: Metadata = {
   title: { absolute: HOME_TITLE },
   description:
-    'Konaverse is a web studio in Nicosia, Cyprus: strategy, design, motion and engineering in one process, for brands that have outgrown the template.',
+    'Konaverse is a web design studio in Nicosia, Cyprus: strategy, design, motion and engineering in one process, for brands that have outgrown the template.',
   alternates: { canonical: SITE_URL },
   openGraph: {
     ...OG_DEFAULTS,
