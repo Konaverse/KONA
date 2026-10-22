@@ -5,6 +5,7 @@ import Button from '@/components/v4/Button'
 import ArrowLink from '@/components/v4/ArrowLink'
 import { CASE_STUDIES, getCaseStudy, type CaseBlock } from '@/lib/case-studies'
 import { WORK_PROJECTS } from '@/lib/work-projects'
+import { AUTHORS } from '@/lib/blog-posts'
 import { CALENDLY_URL, CONTACT_EMAIL, OG_DEFAULTS, SITE_URL } from '@/lib/site'
 import './travel.css'
 import { responsive } from '@/lib/img'
@@ -187,7 +188,9 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
         description: study.description,
         url,
         image: `${SITE_URL}${study.still.src}`,
-        author: { '@id': `${SITE_URL}/#organization` },
+        /* the studies are Konstantinos's (owner, 2026-10-22), named on
+           the cover under the facts */
+        author: { '@id': `${SITE_URL}/${AUTHORS.konstantinos.id}` },
         publisher: { '@id': `${SITE_URL}/#organization` },
         isPartOf: { '@id': `${SITE_URL}/#website` },
         ...(study.live ? { about: { '@type': 'WebSite', name: study.name, url: study.live } } : {}),
@@ -305,6 +308,9 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
                 {f.value}
               </li>
             ))}
+            <li className="cx-by">
+              Written by <a href={`/about${AUTHORS.konstantinos.id}`}>{AUTHORS.konstantinos.name}</a>
+            </li>
           </ul>
           {study.live ? (
             <div className="cx-cover-act cx-r" style={{ '--d': '0.62s' } as React.CSSProperties}>

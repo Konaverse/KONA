@@ -34,8 +34,10 @@ export default function V4Layout({ children }: { children: React.ReactNode }) {
       {/* A fast frame can become ready before React hydrates on a slow device.
           Remember its event without mutating the server-rendered markup.
           The second listener counts a booked call as a lead in GA4 (SEO
-          audit D2): one listener for the inline card and the popover alike. */}
-      <script dangerouslySetInnerHTML={{ __html: `window.addEventListener('message',function(e){if(e.origin==='https://calendly.com'&&e.source&&e.data&&e.data.event==='calendly.event_type_viewed'){(window.__konaverseCalendlyReady||(window.__konaverseCalendlyReady=new WeakSet())).add(e.source)}});window.addEventListener('message',function(e){if(e.origin==='https://calendly.com'&&e.data&&e.data.event==='calendly.event_scheduled'&&typeof window.gtag==='function'){window.gtag('event','generate_lead',{method:'calendly'})}})` }} />
+          audit D2): one listener for the inline card and the popover alike.
+          The third sends phone_click when any tel: link is pressed (the
+          footer, /contact, the service pages' call line; 2026-10-22). */}
+      <script dangerouslySetInnerHTML={{ __html: `window.addEventListener('message',function(e){if(e.origin==='https://calendly.com'&&e.source&&e.data&&e.data.event==='calendly.event_type_viewed'){(window.__konaverseCalendlyReady||(window.__konaverseCalendlyReady=new WeakSet())).add(e.source)}});window.addEventListener('message',function(e){if(e.origin==='https://calendly.com'&&e.data&&e.data.event==='calendly.event_scheduled'&&typeof window.gtag==='function'){window.gtag('event','generate_lead',{method:'calendly'})}});document.addEventListener('click',function(e){var a=e.target&&e.target.closest&&e.target.closest('a[href^="tel:"]');if(a&&typeof window.gtag==='function'){window.gtag('event','phone_click',{link_url:a.getAttribute('href')})}},true)` }} />
       {/* Progressive enhancement, not decoration — see the note above. The
           aperture menu already takes this stance (it renders OPEN without JS);
           the reveal has to as well. */}

@@ -56,6 +56,9 @@ export const CONTACT_EMAIL = 'info@kona-verse.com'
  *  directory (owner, 2026-10-02). A second spelling is a second entity. */
 export const CONTACT_PHONE = '+357 96 273855'
 export const CONTACT_PHONE_HREF = 'tel:+35796273855'
+/** Who answers that number for a first call, named beside it on the
+ *  service pages (owner, 2026-10-22: "Konstantinos gets the call"). */
+export const FIRST_CALL_NAME = 'Konstantinos'
 
 /** The default image shared by Open Graph, Twitter and organization schema. */
 export const OG_IMAGE = {

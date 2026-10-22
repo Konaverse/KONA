@@ -310,8 +310,9 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
           the cta with the new one we built"). THE HANDOVER it replaces
           (RunHandover.tsx — the void, the light pooling under the
           receipt) is parked, unimported, with its rules in run.css; the
-          service's own `invite` line and the receipt go with it. */}
-      <Invitation />
+          service's own `invite` line and the receipt go with it. With
+          `call`, it names who answers the phone (2026-10-22). */}
+      <Invitation call />
 
       {/* 6 — the up-link and the sister service */}
       <nav className="rs-foot" aria-label="Related">

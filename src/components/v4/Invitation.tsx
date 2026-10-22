@@ -7,7 +7,7 @@ import Reveal from '@/components/v4/Reveal'
 import BlockReveal from '@/components/v4/BlockReveal'
 import FooterField from '@/components/v4/FooterField'
 import { gsap } from '@/lib/motion-v4'
-import { CALENDLY_URL } from '@/lib/site'
+import { CALENDLY_URL, CONTACT_PHONE, CONTACT_PHONE_HREF, FIRST_CALL_NAME } from '@/lib/site'
 import './invitation.css'
 
 /**
@@ -37,13 +37,17 @@ import './invitation.css'
  *     out from under the hand, and it is gone again.
  *
  * Phones and reduced motion: the same. Every word is server-rendered.
+ *
+ * THE CALL (2026-10-22, strategy decision 7): with `call`, a last line
+ * names who answers the phone and makes the number tap-to-call. The
+ * service pages pass it; the other pages end as before.
  */
 
 const LINE = 'Make yours the site they remember.'
 /** the starters: what people come with */
 const STARTERS = ['A new website', 'A redesign', 'To be found on Google', 'Something in 3D', 'One page that sells']
 
-export default function Invitation() {
+export default function Invitation({ call = false }: { call?: boolean }) {
   const rootRef = useRef<HTMLElement | null>(null)
   const router = useRouter()
 
@@ -123,6 +127,13 @@ export default function Invitation() {
             </button>
           ))}
         </Reveal>
+
+        {call && (
+          <Reveal as="p" className="inv-call" index={3}>
+            Prefer the phone? {FIRST_CALL_NAME} takes the first call:{' '}
+            <a href={CONTACT_PHONE_HREF}>{CONTACT_PHONE}</a>
+          </Reveal>
+        )}
       </div>
     </section>
   )
