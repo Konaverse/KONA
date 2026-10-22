@@ -2951,6 +2951,7 @@
   font-variation-settings: "wght" 500;
   letter-spacing: 0;
 }
+.sg-p::before { content: attr(data-p); }
 .sg-p {
   display: block;
   /* the parentheses sit high in the em; nudged to centre on the picture */

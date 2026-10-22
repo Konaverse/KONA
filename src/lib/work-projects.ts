@@ -36,6 +36,8 @@ export interface WorkProject {
   /** the service it belongs to, and the page that sells it */
   service: string
   serviceSlug: string
+  /** a studio concept, not client work: labelled wherever the card shows */
+  concept?: boolean
   /** the live site, when known */
   href?: string
   image: string
@@ -66,6 +68,7 @@ export const WORK_PROJECTS: WorkProject[] = [
     line: 'A scroll-driven story of light and steel.',
     year: '2026',
     service: '3D website',
+    concept: true,
     serviceSlug: '3d-websites',
     href: 'https://watchweb.vercel.app',
     image: '/work/lumiere.webp',
@@ -124,6 +127,7 @@ export const WORK_PROJECTS: WorkProject[] = [
     slug: 'city-arcade',
     name: 'City Arcade',
     line: 'A real-estate concept where the building rises out of its frame.',
+    concept: true,
     year: '2026',
     service: 'Web design',
     serviceSlug: 'web-design',

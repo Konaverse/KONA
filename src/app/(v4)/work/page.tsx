@@ -45,7 +45,7 @@ import './work.css'
  */
 const TITLE = 'Website Design Portfolio'
 const DESCRIPTION =
-  'Seven websites designed and built by Konaverse in Cyprus: a barbershop, a financial leadership firm, a cleaning company, a property developer, a design-and-build studio and two concepts. Every one from a blank file.'
+  'Seven websites designed and built by Konaverse in Cyprus: a barbershop, a finance firm, a cleaning company, a developer, a design studio and two concepts.'
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -87,11 +87,12 @@ export default function WorkPage() {
     return {
       slug,
       name: p?.name ?? name ?? slug,
-      meta: p ? `${p.service}, ${p.year}` : '',
+      meta: p ? `${p.service}${p.concept ? ', concept' : ''}, ${p.year}` : '',
+      line: p?.line,
       href: p ? (getCaseStudy(slug) ? `/work/${slug}` : p.href) : undefined,
       src: `/work/covers/${slug}.webp`,
       alt: p
-        ? `The ${p.name} website, designed and built by Konaverse`
+        ? `The ${p.name} ${p.concept ? 'concept website' : 'website'}, designed and built by Konaverse`
         : `The ${name ?? slug} website, by Konaverse`,
       small: `/work/covers/${slug}-960.webp`,
     }

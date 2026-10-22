@@ -95,9 +95,9 @@ export const SERVICES: Service[] = [
   {
     slug: '3d-websites',
     name: '3D Websites',
-    para: 'Real dimension for brands that need presence felt rather than described. Path-traced, pre-rendered, and engineered to read premium on every device.',
+    para: 'Real dimension for brands that need presence felt rather than described. Modelled, lit, and engineered to read premium on every device.',
     includes: [
-      'Path-traced renders, never live guesswork',
+      'Objects modelled and lit for the brand',
       'Scroll-driven object choreography',
       'Premium on every device, not just yours',
     ],

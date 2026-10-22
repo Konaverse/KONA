@@ -9,6 +9,15 @@ const securityHeaders = [
     key: "Permissions-Policy",
     value: "camera=(), microphone=(), geolocation=()",
   },
+  /* A structural policy (SEO audit D7, 2026-10-21): no plugins, no <base>
+   * rewrites, framing only by this site, forms post only here, http
+   * upgraded. It names no script, style or frame sources, so GA, Clarity,
+   * Ahrefs, Sanity and the preloaded Calendly frame load exactly as before. */
+  {
+    key: "Content-Security-Policy",
+    value:
+      "object-src 'none'; base-uri 'self'; frame-ancestors 'self'; form-action 'self'; upgrade-insecure-requests",
+  },
 ];
 
 /**

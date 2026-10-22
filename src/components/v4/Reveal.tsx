@@ -21,6 +21,7 @@ export default function Reveal({
   as: Tag = 'div',
   className = '',
   style,
+  hidden = false,
 }: {
   children: React.ReactNode
   masked?: boolean
@@ -28,6 +29,9 @@ export default function Reveal({
   as?: 'div' | 'span' | 'p' | 'h1' | 'h2' | 'h3'
   className?: string
   style?: React.CSSProperties
+  /** decoration that repeats a real heading: hidden from the
+   *  accessibility tree (WhatWeDo's display words) */
+  hidden?: boolean
 }) {
   const ref = useRef<HTMLElement | null>(null)
 
@@ -79,9 +83,10 @@ export default function Reveal({
       ref: setRef,
       className: `k-reveal ${className}`,
       style: { '--i': index, ...style } as React.CSSProperties,
+      ...(hidden && !masked ? { 'aria-hidden': true } : {}),
     },
     children,
   )
 
-  return masked ? <span className="k-mask">{inner}</span> : inner
+  return masked ? <span className="k-mask" aria-hidden={hidden || undefined}>{inner}</span> : inner
 }

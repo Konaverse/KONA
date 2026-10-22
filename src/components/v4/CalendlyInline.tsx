@@ -24,7 +24,7 @@ export default function CalendlyInline() {
           Open the calendar on Calendly
         </a>
         <noscript>
-          <iframe src={CALENDLY_FRAME_URL} title="Book a thirty-minute call with Konaverse" loading="eager" />
+          <iframe src={CALENDLY_FRAME_URL} title="Calendar on the contact page: pick a time for a call" loading="eager" />
         </noscript>
       </div>
     </div>

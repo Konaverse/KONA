@@ -101,6 +101,9 @@ import { gsap, EASE } from '@/lib/motion-v4'
 export type CascadeCard = {
   slug: string
   name: string
+  /** the one-line description, written into the link as hidden text so
+   *  the hub has words a crawler can read (SEO audit C3) */
+  line?: string
   /** service and year; empty when not known yet */
   meta: string
   /** the case study, else the live site; absent = a picture, not a link */
@@ -628,6 +631,7 @@ export default function WorkCascade({
                   ) : null
                 return c.href ? (
                   <a className="wc-card" href={c.href} data-name={c.name} data-meta={c.meta} draggable={false}>
+                    <span className="sr-only">{[c.name, c.meta, c.line].filter(Boolean).join('. ')}</span>
                     {img}
                     {over}
                   </a>

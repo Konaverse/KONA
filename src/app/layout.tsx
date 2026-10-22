@@ -140,10 +140,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               logo: { '@type': 'ImageObject', url: `${SITE_URL}/icon.png`, width: 512, height: 512 },
               image: `${SITE_URL}${OG_IMAGE.url}`,
               description:
-                'A web studio in Cyprus that designs and builds websites end to end: web design, web development, 3D and immersive websites, one-page websites, redesigns and SEO.',
+                'A web studio in Nicosia, Cyprus that designs and builds websites end to end: web design, web development, 3D and immersive websites, one-page websites, redesigns and SEO.',
               email: CONTACT_EMAIL,
               telephone: CONTACT_PHONE,
               address: { '@type': 'PostalAddress', addressCountry: 'CY' },
+              /* the owner's hours (2026-10-21), as on /contact; keep the
+                 Business Profile the same */
+              openingHoursSpecification: {
+                '@type': 'OpeningHoursSpecification',
+                dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+                opens: '09:00',
+                closes: '17:00',
+              },
               areaServed: [
                 { '@type': 'Country', name: 'Cyprus' },
                 'Europe',
@@ -167,7 +175,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 name: 'Services',
                 itemListElement: SERVICE_PAGES.map((s) => ({
                   '@type': 'Offer',
-                  itemOffered: { '@id': `${SITE_URL}/services/${s.slug}#service` },
+                  /* a stub with a name and url, so the @id resolves on the
+                     pages that do not carry the full Service node */
+                  itemOffered: { '@type': 'Service', '@id': `${SITE_URL}/services/${s.slug}#service`, name: s.name, url: `${SITE_URL}/services/${s.slug}` },
                 })),
               },
               founder: [
@@ -206,7 +216,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               '@type': 'Person',
               '@id': `${SITE_URL}/#andreas`,
               name: 'Andreas Kyriakou',
-              jobTitle: 'Co-Founder',
+              /* owner, 2026-10-21 */
+              jobTitle: 'Operations Manager & Design Lead',
+              image: `${SITE_URL}/people/andreas-portrait.webp`,
+              url: `${SITE_URL}/about`,
               worksFor: { '@id': `${SITE_URL}/#organization` },
             },
             {

@@ -250,7 +250,7 @@ export default function Button({
         <span className="k-btn__ico-in">{hotIcon}</span>
       </span>
       <span className="k-btn__roll">
-        <span className="k-btn__sizer"><span>{a}</span><span>{b}</span></span>
+        <span className="k-btn__sizer"><span data-l={a} /><span data-l={b} /></span>
         <span className="k-btn__line k-btn__line--a" aria-hidden="true">{split(a, 'a')}</span>
         <span className="k-btn__line k-btn__line--b" aria-hidden="true">{split(b, 'b')}</span>
         {!hidden && <span className="sr-only">{a}</span>}
@@ -294,12 +294,16 @@ export default function Button({
   )
 }
 
+/* THE LETTERS ARE PAINTED, NOT WRITTEN (2026-10-21, SEO audit C1). The
+   sizer's two labels and both letter lines carry their text in a data
+   attribute that CSS paints with ::before (tokens.css), so the button
+   LOOKS exactly as before while the HTML holds the label once \u2014 in the
+   sr-only span. Written out, the copies made a crawler read every button
+   as "Start a projectSay helloStart a projectSay hello\u2026". */
 function split(text: string, line: 'a' | 'b') {
   return [...text].map((ch, i) => (
-    <span key={`${line}-${i}`} style={{ '--i': i } as React.CSSProperties}>
-      {/* NBSP, not a plain space: each letter is its own inline-block, and a
-          span holding only a normal space collapses to zero width */}
-      {ch === ' ' ? '\u00A0' : ch}
-    </span>
+    /* NBSP, not a plain space: each letter is its own inline-block, and a
+       span holding only a normal space collapses to zero width */
+    <span key={`${line}-${i}`} data-ch={ch === ' ' ? '\u00A0' : ch} style={{ '--i': i } as React.CSSProperties} />
   ))
 }

@@ -63,6 +63,10 @@ const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
 const hrefOf = (p: WorkProject, studies: Set<string>) =>
   studies.has(p.slug) ? `/work/${p.slug}` : p.href ?? '/work'
 
+/** the row's tag: the service, and "Concept" for a studio piece, so a
+ *  concept never passes as client work (owner, 2026-10-21) */
+const serviceOf = (p: WorkProject) => (p.concept ? `${p.service} · Concept` : p.service)
+
 export default function WorkList({
   projects = WORK_PROJECTS,
   studies,
@@ -268,12 +272,12 @@ export default function WorkList({
         <ul className="wl-list">
           {projects.map((p, i) => (
             <li key={p.slug} className="wl-row" style={{ '--i': i } as React.CSSProperties}>
-              <a className="wl-link" href={hrefOf(p, has)} aria-label={mobileGallery ? `${p.name}, ${p.service}` : undefined}>
+              <a className="wl-link" href={hrefOf(p, has)} aria-label={mobileGallery ? `${p.name}, ${serviceOf(p)}` : undefined}>
                 <i className="wl-ov" aria-hidden="true" />
                 <span className="wl-name">{p.name}</span>
                 {mobileGallery && <span className="wl-gallery-arrow" aria-hidden="true">↗</span>}
                 <span className="wl-right" aria-hidden="true">
-                  <span className="wl-tag">{p.service}</span>
+                  <span className="wl-tag">{serviceOf(p)}</span>
                   <span className="wl-cta">
                     {CONTENT.rowCta}
                     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
@@ -282,7 +286,7 @@ export default function WorkList({
                     </svg>
                   </span>
                 </span>
-                <span className="wl-service sr-only">{p.service}</span>
+                <span className="wl-service sr-only">{serviceOf(p)}</span>
                 <span className="wl-prev" aria-hidden={mobileGallery ? undefined : true}>
                   <picture>
                     {mobileGallery && <source media="(max-width: 57.499rem)" srcSet={`/work/covers/${p.slug}-960.webp`} type="image/webp" />}

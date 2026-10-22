@@ -22,7 +22,8 @@ import './home.css'
  * said about the new site was the old site's line. Title is `absolute`:
  * the root template appends " | Konaverse", and the brand is already the
  * first word. Description is the hero's paragraph, cut to a result's
- * width. The shared OG image is public/og-image1.png (1200x630).
+ * width. The shared OG image is public/og-image1.jpg (1200x630, 172 KB),
+ * encoded from the PNG master og-image1.png.
  */
 const HOME_TITLE = 'Konaverse: Build the website that will make you stand out'
 const HOME_OG =
@@ -31,7 +32,7 @@ const HOME_OG =
 export const metadata: Metadata = {
   title: { absolute: HOME_TITLE },
   description:
-    'Konaverse is a web studio in Cyprus that designs and builds websites end to end: strategy, design, motion and engineering in one continuous process, for brands that have outgrown the template.',
+    'Konaverse is a web studio in Nicosia, Cyprus: strategy, design, motion and engineering in one process, for brands that have outgrown the template.',
   alternates: { canonical: SITE_URL },
   openGraph: {
     ...OG_DEFAULTS,

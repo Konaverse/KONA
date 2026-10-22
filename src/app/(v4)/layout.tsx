@@ -32,8 +32,10 @@ export default function V4Layout({ children }: { children: React.ReactNode }) {
       <link rel="preconnect" href="https://calendly.com" />
       <link rel="preconnect" href="https://assets.calendly.com" crossOrigin="anonymous" />
       {/* A fast frame can become ready before React hydrates on a slow device.
-          Remember its event without mutating the server-rendered markup. */}
-      <script dangerouslySetInnerHTML={{ __html: `window.addEventListener('message',function(e){if(e.origin==='https://calendly.com'&&e.source&&e.data&&e.data.event==='calendly.event_type_viewed'){(window.__konaverseCalendlyReady||(window.__konaverseCalendlyReady=new WeakSet())).add(e.source)}})` }} />
+          Remember its event without mutating the server-rendered markup.
+          The second listener counts a booked call as a lead in GA4 (SEO
+          audit D2): one listener for the inline card and the popover alike. */}
+      <script dangerouslySetInnerHTML={{ __html: `window.addEventListener('message',function(e){if(e.origin==='https://calendly.com'&&e.source&&e.data&&e.data.event==='calendly.event_type_viewed'){(window.__konaverseCalendlyReady||(window.__konaverseCalendlyReady=new WeakSet())).add(e.source)}});window.addEventListener('message',function(e){if(e.origin==='https://calendly.com'&&e.data&&e.data.event==='calendly.event_scheduled'&&typeof window.gtag==='function'){window.gtag('event','generate_lead',{method:'calendly'})}})` }} />
       {/* Progressive enhancement, not decoration — see the note above. The
           aperture menu already takes this stance (it renders OPEN without JS);
           the reveal has to as well. */}

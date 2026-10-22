@@ -59,7 +59,7 @@ export const CONTACT_PHONE_HREF = 'tel:+35796273855'
 
 /** The default image shared by Open Graph, Twitter and organization schema. */
 export const OG_IMAGE = {
-  url: '/og-image1.png',
+  url: '/og-image1.jpg',
   width: 1200,
   height: 630,
   alt: 'Konaverse: Build the website that will make you stand out',

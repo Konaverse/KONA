@@ -74,7 +74,7 @@ import './hub.css'
  */
 const TITLE = 'Web Design and Development Services'
 const DESCRIPTION =
-  'Konaverse designs and builds websites in Cyprus: web design, web development, 3D and immersive sites, one-page sites, redesigns and SEO. Six services, one studio.'
+  'Konaverse designs and builds websites in Cyprus: web design, web development, 3D sites, one-page sites, redesigns and SEO. Six services, one studio.'
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -102,8 +102,21 @@ export default function ServicesHubPage() {
           { '@type': 'ListItem', position: 2, name: 'Services', item: `${SITE_URL}/services` },
         ],
       },
+      /* the hub as a CollectionPage whose main entity is the list (SEO
+         audit D6, 2026-10-21) */
+      {
+        '@type': 'CollectionPage',
+        '@id': `${SITE_URL}/services#page`,
+        url: `${SITE_URL}/services`,
+        name: TITLE,
+        description: DESCRIPTION,
+        isPartOf: { '@id': `${SITE_URL}/#website` },
+        about: { '@id': `${SITE_URL}/#organization` },
+        mainEntity: { '@id': `${SITE_URL}/services#list` },
+      },
       {
         '@type': 'ItemList',
+        '@id': `${SITE_URL}/services#list`,
         name: 'Services',
         itemListElement: pages.map((p, i) => ({
           '@type': 'ListItem',

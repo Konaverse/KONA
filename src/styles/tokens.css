@@ -902,6 +902,10 @@ html:has(.k-root)::-webkit-scrollbar {
    one as rendered, not the one with more letters */
 .k-btn__sizer { display: grid; visibility: hidden; }
 .k-btn__sizer > span { grid-area: 1 / 1; white-space: nowrap; }
+/* the labels are painted from data attributes (Button.tsx: THE LETTERS
+   ARE PAINTED), so the HTML carries the label once, in the sr-only span */
+.k-btn__sizer > span::before { content: attr(data-l); }
+.k-btn__line span::before { content: attr(data-ch); }
 /* each line hugs ITS mark: the rest line sits against the arrow on the
    right, the hover line against the sparkle on the left, so the mark
    and its label read as one unit whichever label is the longer */
@@ -1494,12 +1498,37 @@ html:has(.k-root)::-webkit-scrollbar {
 }
 .k-cookie.is-in { opacity: 1; transform: none; }
 .k-cookie.is-leaving { opacity: 0; transform: translateY(0.75rem); }
+/* THE STRIP (2026-10-21, owner: "the mobile cookie banner can become a
+   slim strip"; SEO audit D3 measured the card at 43% of a phone screen,
+   over the hero CTA). On a phone the card becomes one edge-to-edge band
+   at the foot: the short line with its policy link, then the two
+   buttons. Desktop keeps the card. */
+.k-cookie__short { display: none; }
 @media (max-width: 640px) {
   .k-cookie {
-    left: var(--s-4);
-    right: var(--s-4);
-    bottom: var(--s-4);
+    left: 0;
+    right: 0;
+    bottom: 0;
     max-width: none;
+    padding: var(--s-4) var(--s-4) calc(var(--s-4) + env(safe-area-inset-bottom, 0px));
+    border-width: var(--hair) 0 0;
+    border-radius: var(--r-md) var(--r-md) 0 0;
+  }
+  /* scoped under .k-cookie: the policy link sets its own display below */
+  .k-cookie .k-cookie__title,
+  .k-cookie .k-cookie__body,
+  .k-cookie .k-cookie__policy { display: none; }
+  .k-cookie__short {
+    display: block;
+    margin: 0 0 var(--s-3);
+    font-size: var(--t-small);
+    color: var(--text-muted);
+    line-height: var(--lh-body);
+  }
+  .k-cookie__short a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.1875rem;
   }
 }
 .k-cookie__title {

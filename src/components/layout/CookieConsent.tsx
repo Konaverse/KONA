@@ -81,6 +81,11 @@ export default function CookieConsent() {
       aria-label="Cookie consent"
     >
       <p className="k-cookie__title">Cookies, plainly.</p>
+      {/* the phone strip says it in one line (tokens.css: THE STRIP) */}
+      <p className="k-cookie__short">
+        One cookie remembers this choice; analytics are yours to allow.{' '}
+        <a href="/cookies">Cookie policy</a>
+      </p>
       <p className="k-cookie__body">
         One is essential and remembers this choice. The rest are analytics
         (they tell us how the site is used so we can improve it) and they are

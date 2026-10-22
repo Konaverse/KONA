@@ -95,7 +95,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     name: 'Los Santos Barbershop',
     title: 'Los Santos Barbershop: a one-page website that books',
     description:
-      'How Konaverse designed and built lossantosbarbers.com: a one-page site for a Nicosia barbershop that turns a 4.9-star reputation into booked chairs: services with prices, reviews as text, and a booking button that is never more than a scroll away.',
+      'A one-page site for a Nicosia barbershop: services with prices, reviews as text, and a booking button that is never more than a scroll away.',
     intro: [
       'Los Santos is a barbershop in Nicosia run by Fahed, a master barber cutting since 2015. Classic cuts, beard sculpting, hot-towel shaves, and a 4.9 rating from the people who sit in his chair.',
       'The shop had a reputation and a full book of walk-ins. What it did not have was a place online that looked as sharp as the fades, said what a cut costs, and let a new client book without a phone call.',
@@ -285,7 +285,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     name: 'Lumière Éclat',
     title: 'Lumière Éclat: a 3D scroll-driven watch story',
     description:
-      'How Konaverse built Lumière Éclat: a scroll-driven 3D website for a fictional watchmaker, where one watch turns in light as the story scrolls, built as a working demonstration of what an immersive product site can do.',
+      'A studio concept: a scroll-driven 3D website for a fictional watchmaker, where one watch turns in the light as the story scrolls.',
     intro: [
       'Lumière is a watchmaker that does not exist. Éclat is its one watch. We built the site as a studio piece: a scroll-driven story of light and steel, with the watch itself rendered in three dimensions and turning under the reader’s scroll.',
       'It exists to answer the question every prospective client asks about 3D websites (what does it actually feel like?) with a site they can scroll rather than a sentence they have to believe.',
@@ -473,7 +473,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     name: 'Velricon',
     title: 'Velricon: a website for senior financial leadership',
     description:
-      'How Konaverse designed and built velricon.com: a corporate site for a Cyprus financial leadership firm (CFO services, bank financing, investor packages), written to be found for the searches business owners type and built to convert a careful reader into a conversation.',
+      'A corporate site for a Cyprus financial leadership firm, written for the searches business owners type and built to turn a careful reader into a conversation.',
     intro: [
       'Velricon provides senior financial leadership to businesses in Cyprus: the analysis, the reporting, the projections and the conversations with banks, investors and buyers, without the business hiring a full-time CFO.',
       'It is a firm whose product is judgement, and its website had to carry that: composed, precise, quick to understand, and unmistakably senior. Nothing on it could look like a template.',
@@ -665,7 +665,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     name: 'Chris N Clean',
     title: 'Chris N Clean: a cleaning company’s website',
     description:
-      'How Konaverse designed and built chrisnclean.com for a Nicosia cleaning company working since 1992: a hero that turns a neglected house spotless under the scroll, four services in two languages, and a quote form on every page.',
+      'The website for a Nicosia cleaning company working since 1992: a house cleaned under the scroll, four services in two languages, a quote form on every page.',
     intro: [
       'Chris N Clean is a cleaning company in Nicosia that works across all of Cyprus: windows, carpets, deep cleans and commercial contracts. Chris started on his own in 1992, and the company has grown from one man with a bucket into crews and vans across the island.',
       'Cleaning is a before-and-after business, and almost every cleaning site says so with two photographs side by side. We wanted the site to show it happening.',
@@ -816,7 +816,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     name: 'Heimat Group',
     title: 'HEIMAT Development Group: a developer’s website',
     description:
-      'How Konaverse designed and built heimat-group.com for HEIMAT Development Group in Nicosia: a pinned, layered hero where the house rises out of its own landscape, project pages with floor plans, and structured data for every building.',
+      'The website for HEIMAT Development Group in Nicosia: a layered hero where the house rises out of its landscape, and project pages with floor plans.',
     intro: [
       'HEIMAT Development Group builds homes in Nicosia. It is three companies, in development, engineering and construction, joined into one, with more than twenty-five years of experience between them and more than two hundred homes behind them.',
       'A new name with a long record is an odd thing to launch. The website had to introduce the group as one company, and make the record and the houses under construction feel like they belong to it.',
@@ -993,7 +993,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     name: 'TDK Design & Build',
     title: 'TDK Design & Build: a residential studio’s website',
     description:
-      'How Konaverse designed and built the website for TDK Design & Build, a family design-and-build studio in Nicosia: an editorial site with a pinned project reel, a building that stands in front of its own name, and a CMS the studio runs itself.',
+      'The website for TDK Design & Build, a family studio in Nicosia: an editorial site with a pinned project reel and a CMS the studio runs itself.',
     intro: [
       'TDK Design & Build is a family studio in Nicosia that draws residences and then builds them. The architect who designs a building is on the same team as the people who put it up and hand over the keys.',
       'That is the whole pitch, and it is rare in Cyprus, where design and construction are usually two contracts and two sets of excuses. The website had to say it in one look, and then sell the flats.',
@@ -1146,7 +1146,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     name: 'City Arcade',
     title: 'City Arcade: a real-estate website concept',
     description:
-      'How Konaverse built City Arcade: a one-page concept for a modern real-estate agency, where the building rises out of its own photograph and over the name, and the work slides across a pinned title.',
+      'A studio concept: a one-page site for a real-estate agency, where the building rises out of its own photograph and the work slides across a pinned title.',
     intro: [
       'City Arcade is a real-estate agency that does not exist. We built its website as a studio piece: one page that shows how a property brand can feel modern and trustworthy at once, without a single stock smile or a search bar wall.',
       'Property sites are the most copied category on the web. This one was made to answer what an agency could look like if it started from the buildings rather than the listings.',

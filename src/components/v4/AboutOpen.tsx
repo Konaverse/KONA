@@ -156,7 +156,7 @@ export default function AboutOpen({
     <section ref={ref} className="ab-op" aria-label={title}>
       <div className="ab-op-stage">
         <h2 className="ab-op-t">
-          {title}
+          {title}{' '}
           <span className="ab-op-sub">{sub}</span>
         </h2>
         {/* the box: a circle at rest, the viewport at the end of the

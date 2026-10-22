@@ -23,10 +23,25 @@ const LEGAL_UPDATED = new Date('2026-08-28')
  *  the homepage's blog row, the contact page's answers */
 const COPY_PASS = new Date('2026-10-03')
 
+/** hosting priced by the year (4163edf): every service page and /contact */
+const HOSTING_PASS = new Date('2026-10-14')
+
+/** the SEO audit fixes (docs/seo-audit-2026-10-21): the homepage sign and
+ *  featured row, /about facts, /contact reply, /work names, and the
+ *  claims on three service pages */
+const AUDIT_PASS = new Date('2026-10-21')
+
 /** per-page overrides once a page is edited after launch */
 const UPDATED: Record<string, Date> = {
-  '': COPY_PASS,
-  '/contact': COPY_PASS,
+  '': AUDIT_PASS,
+  '/about': AUDIT_PASS,
+  '/contact': AUDIT_PASS,
+  '/work': AUDIT_PASS,
+  /* TDK links moved to tdkdb.com (6452139) */
+  '/work/tdk': new Date('2026-10-12'),
+  '/services/web-development': AUDIT_PASS,
+  '/services/3d-websites': AUDIT_PASS,
+  '/services/website-redesign': AUDIT_PASS,
   /* Microsoft Clarity added to the policies */
   '/cookies': new Date('2026-10-07'),
   '/privacy': new Date('2026-10-07'),
@@ -42,7 +57,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     entry(''),
     entry('/services'),
-    ...SERVICE_PAGES.map((s) => entry(`/services/${s.slug}`, COPY_PASS)),
+    ...SERVICE_PAGES.map((s) => entry(`/services/${s.slug}`, HOSTING_PASS)),
     entry('/work'),
     ...CASE_STUDIES.map((c) => entry(`/work/${c.slug}`)),
     entry('/about'),

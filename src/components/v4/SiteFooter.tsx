@@ -7,7 +7,7 @@ import Button from '@/components/v4/Button'
 import Reveal from '@/components/v4/Reveal'
 import { gsap, rem } from '@/lib/motion-v4'
 import { observeSharedEffectPause } from '@/lib/shared-effects'
-import { CALENDLY_URL, CONTACT_EMAIL, ROUTES } from '@/lib/site'
+import { CALENDLY_URL, CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_HREF, ROUTES } from '@/lib/site'
 
 /**
  * THE FOOTER — rebuilt 2026-09-16 (user: "we need something better to
@@ -355,6 +355,9 @@ export default function SiteFooter() {
                 height="28"
               />
               &copy; {new Date().getFullYear()} Konaverse
+              {/* the phone on every page, one spelling everywhere (SEO plan
+                  v3 decision 2; audit 2026-10-21 C5) */}
+              <a className="ft-link" href={CONTACT_PHONE_HREF}>{CONTACT_PHONE}</a>
             </p>
 
             <ul className="ft-legal" aria-label="Legal">

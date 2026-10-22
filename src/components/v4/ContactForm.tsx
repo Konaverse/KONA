@@ -47,6 +47,9 @@ export default function ContactForm({ initial = 'idle', initialError }: { initia
       })
       const body = (await res.json().catch(() => ({}))) as { error?: string }
       if (!res.ok) throw new Error(body.error || 'The message could not be sent.')
+      /* the lead, counted (SEO audit D2): GA4's recommended event, so it can
+         be marked a key event; consent mode decides what it may store */
+      ;(window as { gtag?: (...args: unknown[]) => void }).gtag?.('event', 'generate_lead', { method: 'contact_form' })
       setState('sent')
       form.reset()
     } catch (err) {
@@ -83,7 +86,7 @@ export default function ContactForm({ initial = 'idle', initialError }: { initia
         </Button>
         <p className="ct-status t-small" role="status" aria-live="polite">
           {state === 'sent' ? (
-            <>Sent. We reply within one working day.</>
+            <>Sent. We reply within 24 hours.</>
           ) : state === 'error' ? (
             <>
               {error} Or write to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.

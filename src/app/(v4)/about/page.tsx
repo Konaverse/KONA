@@ -103,7 +103,7 @@ import './about.css'
  */
 const TITLE = 'About us'
 const DESCRIPTION =
-  'Konaverse is three people in Cyprus (Konstantinos Kyprianou, technical architect, Nabil Al Jbawi, creative director, and Andreas Kyriakou) designing and building websites with a character of their own.'
+  'Konaverse is three people in Nicosia, Cyprus: Konstantinos Kyprianou, Nabil Al Jbawi and Andreas Kyriakou, designing and building websites with character.'
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -145,14 +145,14 @@ const PEOPLE: readonly Person[] = [
       'Nabil is the creative director. He decides what a site looks like and how it moves: the layout, the type, the imagery, the motion. He starts from the brand, never from a template, and does not stop until the page has a character someone will remember.',
   },
   {
-    /* Co-founder (user, 2026-09-16); what he owns is not said yet, so
-       the role is the bare title and THE BIO IS A PLACEHOLDER (unseen
+    /* Co-founder (user, 2026-09-16); role confirmed 2026-10-21
+       (owner: operations manager and design lead). THE BIO IS NOT WRITTEN (unseen
        on the page — the cards show name and role only — but it feeds
        the schema's Person description). The portrait is the user's
        "1.png", cropped to the set's 5:6 (public/people/andreas-portrait.webp). */
     id: 'andreas',
     name: 'Andreas Kyriakou',
-    role: 'Co-Founder',
+    role: 'Operations Manager & Design Lead',
     portrait: '/people/andreas-portrait.webp',
     bg: '/people/andreas-bg.webp',
     cut: '/people/andreas-cut.webp',
@@ -174,7 +174,7 @@ const OPEN_BEATS: Beat[] = [
   },
   {
     line: 'for how fast they arrive,',
-    note: 'Hand-written code, rendered on the server. Sixty frames on every scroll.',
+    note: 'Hand-written code, rendered on the server. Motion built for sixty frames a second.',
   },
   {
     line: 'and for being unmistakably yours.',
@@ -204,9 +204,9 @@ const TOOLS: readonly Tool[] = [
 /** the timeline — four years; only the LAST digit changes, so every
  *  year here shares "202". FIRST DRAFT. */
 const YEARS = [
-  { year: '2021', label: 'The beginning', plate: '/home/bosra-1200.webp', text: 'Konaverse starts as two people and a laptop in Limassol, building sites for the businesses around us.' },
+  { year: '2021', label: 'The beginning', plate: '/home/bosra-1200.webp', text: 'Konaverse starts as two people and a laptop in Nicosia, building sites for the businesses around us.' },
   { year: '2022', label: 'The first 3D site', plate: '/work/cathedral.webp', text: 'The first immersive site ships. Blender enters the pipeline and never leaves it.' },
-  { year: '2025', label: 'The studio', plate: '/work/hall.webp', text: 'The practice becomes a studio: a process, a price list, and a team of two that stays two.' },
+  { year: '2025', label: 'The studio', plate: '/work/hall.webp', text: 'The practice becomes a studio: a process, a price list, and a team of three.' },
   { year: '2026', label: 'The redesign', plate: '/work/corridor.webp', text: 'The site you are reading, rebuilt in black and white from the first pixel.' },
 ]
 
@@ -245,8 +245,9 @@ export default function AboutPage() {
         '@id': `${SITE_URL}/#${p.id}`,
         name: p.name,
         jobTitle: p.role,
-        ...(p.bio ? { description: p.bio } : {}),
-        image: `${SITE_URL}${p.portrait}`,
+        /* no description or image here: the root layout holds them, and
+           a second, different description on the same @id splits the
+           entity (SEO audit D6, 2026-10-21) */
         url: `${SITE_URL}/about`,
         worksFor: { '@id': `${SITE_URL}/#organization` },
       })),

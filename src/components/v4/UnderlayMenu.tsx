@@ -67,8 +67,9 @@
  * (Barba.js was the brief's suggestion; it swaps server HTML into the
  * DOM behind React's back, so the new page would arrive unhydrated.)
  *
- * Without JS the panel renders as a static column over the page's
- * right edge — the menu degrades to a visible sitemap.
+ * Without JS the panel and its button are hidden. The panel is a
+ * full-screen white sheet, so showing it covered the whole page (SEO
+ * audit D4, 2026-10-21); the footer carries the same links.
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -565,8 +566,9 @@ export default function UnderlayMenu() {
 
   return (
     <div className="k-nav-root">
+      {/* no script, no menu: the button could not open it */}
       <noscript>
-        <style>{`.k-under{visibility:visible!important;z-index:60!important}.k-under [data-u-link],.k-under [data-u-foot]{opacity:1!important}`}</style>
+        <style>{'.k-menu-btn{display:none}'}</style>
       </noscript>
 
       {/* ---- the bar: above the page and the panel; nothing here moves ---- */}

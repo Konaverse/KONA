@@ -22,12 +22,12 @@ import { OG_DEFAULTS, SITE_URL } from '@/lib/site'
 const URL = `${SITE_URL}/blog`
 const TITLE = 'Blog: Web Design, Development and SEO in Cyprus'
 const DESCRIPTION =
-  'What websites cost, how redesigns keep their rankings and how we build: articles from Konaverse, a web studio in Cyprus, written from our own projects and numbers.'
+  'What websites cost, how redesigns keep their rankings and how we build: articles from Konaverse, a web studio in Cyprus, from our own projects.'
 
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
-  alternates: { canonical: URL },
+  alternates: { canonical: URL, types: { 'application/rss+xml': `${URL}/rss.xml` } },
   openGraph: { ...OG_DEFAULTS, title: `${TITLE} | Konaverse`, description: DESCRIPTION, url: URL, type: 'website' },
 }
 

@@ -193,7 +193,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     back: 'design',
     title: 'Web Design in Cyprus',
     description:
-      'Custom web design in Cyprus: a website designed around your brand, never assembled from a template. From €1,800 for the design of a five-page site, or €2,500 designed and built.',
+      'Custom web design in Cyprus: a website designed around your brand, never a template. From €1,800 for the design, or €2,500 designed and built.',
     areaServed: 'Cyprus',
     tagline: 'Tailored design according to your brand’s aesthetic',
     blurb:
@@ -342,7 +342,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     back: 'build',
     title: 'Web Development in Cyprus',
     description:
-      'Web development in Cyprus on Next.js: fast, server-rendered websites with the CMS and integrations your business runs on. From €1,800 for the build, or €2,500 designed and built.',
+      'Web development in Cyprus on Next.js: fast, server-rendered sites with the CMS and integrations you run on. From €1,800, or €2,500 designed and built.',
     areaServed: 'Cyprus',
     tagline: 'Built to load fast, rank, and never fight you',
     blurb:
@@ -351,12 +351,12 @@ export const SERVICE_PAGES: ServicePage[] = [
     visualPos: '50% 55%',
     answer: [
       'Web development at Konaverse is the build of a website on a modern stack (Next.js, server-rendered, deployed on Vercel) with the CMS, forms, bookings and integrations your business needs wired in. It is for Cyprus companies whose site has to perform, not just exist. The build of a standard website of five main pages starts at €1,800 and takes four to eight weeks depending on the integrations. Designed and built by us together, it starts at €2,500.',
-      'Every page ships as real HTML, so search engines and AI assistants read all of it. Core Web Vitals are a delivery requirement, not an afterthought.',
+      'Every page ships as real HTML, so search engines and AI assistants read all of it. We set Core Web Vitals targets at the start and build to meet them.',
     ],
     facts: [
       { value: '€1,800', label: 'Build, starting at', plate: 2, cue: '€1,800' },
       { value: '4–8 weeks', label: 'Typical build', plate: 3, cue: 'four to eight weeks' },
-      { value: '< 2.5 s', label: 'Largest paint, guaranteed', plate: 1, cue: 'Core Web Vitals' },
+      { value: '< 2.5 s', label: 'Largest paint, our target', plate: 1, cue: 'Core Web Vitals' },
     ],
     deck: ['/about-hero/07.webp', '/about-hero/01.webp', '/about-hero/06.webp'],
     fromPrice: 1800,
@@ -489,7 +489,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     back: 'depth',
     title: '3D and Immersive Website Design',
     description:
-      'Immersive website design and 3D websites: rendered objects, scroll-driven scenes and WebGL, built to stay fast on every device. From €6,000, live in eight to twelve weeks.',
+      'Immersive and 3D website design: rendered objects, scroll-driven scenes and WebGL, built to stay fast. From €6,000, live in eight to twelve weeks.',
     areaServed: 'Worldwide',
     tagline: 'Presence you feel before you read a word',
     blurb:
@@ -497,13 +497,13 @@ export const SERVICE_PAGES: ServicePage[] = [
     visual: '/home/inline-3.webp',
     visualPos: '50% 50%',
     answer: [
-      'A 3D website at Konaverse is an immersive website built around real dimension: pre-rendered, path-traced objects and scroll-driven scenes that move with the visitor. It is for product, hospitality and technology brands that need their presence felt rather than described, wherever they sell. Projects start at €6,000 and take eight to twelve weeks.',
-      'The objects are rendered offline and delivered as light video and imagery, so the site stays fast on a phone. WebGL is used where it earns its cost, never for its own sake.',
+      'A 3D website at Konaverse is an immersive website built around real dimension: modelled objects and scroll-driven scenes that move with the visitor. It is for product, hospitality and technology brands that need their presence felt rather than described, wherever they sell. Projects start at €6,000 and take eight to twelve weeks.',
+      'The objects are rendered offline and delivered as light video and imagery, so the site is built to stay fast on a phone. WebGL is used where it earns its cost, never for its own sake.',
     ],
     facts: [
       { value: '€6,000', label: 'Starting at', plate: 3, cue: '€6,000' },
       { value: '8–12 weeks', label: 'Concept to launch', plate: 1, cue: 'eight to twelve weeks' },
-      { value: '60 fps', label: 'On a mid-range phone', plate: 2, cue: 'fast on a phone' },
+      { value: '60 fps', label: 'Our target on a mid-range phone', plate: 2, cue: 'fast on a phone' },
     ],
     deck: ['/about-hero/06.webp', '/about-hero/07.webp', '/about-hero/02.webp'],
     fromPrice: 6000,
@@ -543,10 +543,10 @@ export const SERVICE_PAGES: ServicePage[] = [
       problems: [
         {
           say: 'Our product looks flat in a photograph.',
-          answer: 'A photograph shows one angle under one light. For Lumière Éclat the watch is a modelled object with a real material, lit by an environment the scroll turns, and the eleven rows of its bracelet are geometry rather than a picture, so they catch the light as they move. The visitor turns the product by reading.',
+          answer: 'A photograph shows one angle under one light. For Lumière Éclat, our studio concept, the watch is a modelled object with a real material, lit by an environment the scroll turns, and the eleven rows of its bracelet are geometry rather than a picture, so they catch the light as they move. The visitor turns the product by reading.',
           study: 'lumiere-eclat',
           pictures: ['/work/lumiere-eclat/04.webp'],
-          link: 'Lumière Éclat',
+          link: 'Lumière Éclat, a studio concept',
         },
         {
           say: 'Every site in our category looks the same.',
@@ -574,7 +574,7 @@ export const SERVICE_PAGES: ServicePage[] = [
       work: [
         {
           slug: 'lumiere-eclat',
-          line: 'A studio piece: a watch that turns with the scroll, written in a maison’s voice, in two languages.',
+          line: 'A studio concept: a watch that turns with the scroll, written in a maison’s voice, in two languages.',
         },
         {
           slug: 'chris-n-clean',
@@ -598,7 +598,7 @@ export const SERVICE_PAGES: ServicePage[] = [
         },
         {
           title: 'Every scene, on every screen',
-          text: 'Each scene wired to the scroll and measured on real devices, with lighter cuts for phones.',
+          text: 'Each scene wired to the scroll, with lighter cuts for phones.',
           pictures: ['/work/lumiere-eclat/03.webp', '/work/lumiere-eclat/m-02.webp', '/work/lumiere-eclat/m-04.webp'],
         },
         {
@@ -746,7 +746,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     back: 'renew',
     title: 'Website Redesign Services',
     description:
-      'Website redesign services from €2,500. We keep what works, redesign what does not, and redirect every old URL so your rankings survive the move. Four to eight weeks.',
+      'Website redesign services from €2,500. We keep what works, redesign what does not and redirect every old URL. Four to eight weeks.',
     areaServed: 'Worldwide',
     tagline: 'Keep what works. Redesign what doesn’t.',
     blurb:
@@ -754,13 +754,13 @@ export const SERVICE_PAGES: ServicePage[] = [
     visual: '/home/inline-1.webp',
     visualPos: '80% 60%',
     answer: [
-      'A website redesign at Konaverse starts with what your current site already does right (its traffic, its content, its rankings) and rebuilds the design and structure around it. It is for businesses whose site has fallen behind the company. A redesign is a new design and build, so it is priced as one and starts at €2,500 and takes four to eight weeks, and every old URL is redirected so nothing you rank for is lost.',
+      'A website redesign at Konaverse starts with what your current site already does right (its traffic, its content, its rankings) and rebuilds the design and structure around it. It is for businesses whose site has fallen behind the company. A redesign is a new design and build, so it is priced as one and starts at €2,500 and takes four to eight weeks, and every old URL is redirected so the rankings you have earned can carry over.',
       'Before and after is the easiest proof there is. Half of our redesigns begin with an audit you can act on whether or not you hire us.',
     ],
     facts: [
       { value: '€2,500', label: 'Starting at', plate: 2, cue: '€2,500' },
       { value: '4–8 weeks', label: 'Audit to launch', plate: 1, cue: 'four to eight weeks' },
-      { value: '0 lost', label: 'Old URLs redirected', plate: 3, cue: 'every old URL is redirected' },
+      { value: '100%', label: 'Old URLs redirected', plate: 3, cue: 'every old URL is redirected' },
     ],
     deck: ['/about-hero/01.webp', '/about-hero/02.webp', '/about-hero/03.webp'],
     fromPrice: 2500,
@@ -808,7 +808,7 @@ export const SERVICE_PAGES: ServicePage[] = [
         },
         {
           say: 'Nobody finds us unless they already know our name.',
-          answer: 'Velricon grew by referral. Owners searched for CFO services, bank financing preparation and investor packages, and none of those searches led to the firm. The keyword work came before the copy, so each new service page now owns its own term.',
+          answer: 'Velricon grew by referral. Owners searched for CFO services, bank financing preparation and investor packages, and none of those searches led to the firm. The keyword work came before the copy, so each new service page was written around the search it answers.',
           study: 'velricon',
           pictures: ['/work/velricon/05.webp'],
           link: 'Velricon, the search work',
@@ -850,7 +850,7 @@ export const SERVICE_PAGES: ServicePage[] = [
         },
         {
           title: 'Redirects in place',
-          text: 'Every old URL redirected on launch day, so nothing you rank for is lost.',
+          text: 'Every old URL redirected on launch day, so its rankings can follow it to the new page.',
         },
         {
           title: 'A month of watching',
@@ -869,7 +869,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     back: 'search',
     title: 'SEO Services in Cyprus',
     description:
-      'SEO services in Cyprus that start with the technical foundation (server-rendered pages, structured data, real content) and continue monthly from €300. For Google and for AI search.',
+      'SEO services in Cyprus from €300 a month: the technical foundation first (server-rendered pages, structured data, real content), for Google and AI search.',
     areaServed: 'Cyprus',
     tagline: 'Be the answer when they ask',
     blurb:

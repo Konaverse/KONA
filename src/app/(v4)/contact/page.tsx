@@ -32,15 +32,15 @@ import './contact.css'
  * NO FAQPage markup: the rich result is gone since 2026-05-07 and
  * controlled tests show no AI lift (SEO plan v3).
  *
- * HOURS AND THE REPLY PROMISE ARE FIRST DRAFTS (no such facts existed
- * anywhere on the site) — the user confirms them.
+ * HOURS AND THE REPLY PROMISE are the owner's (2026-10-21): Monday to
+ * Friday, 9 to 5, and a reply within 24 hours.
  *
  * INDEXED since 2026-10-02 (SEO plan v3 launch gate) and listed in
  * sitemap.ts.
  */
 const TITLE = 'Contact'
 const DESCRIPTION =
-  'Write to Konaverse or book a thirty-minute call. A web design and development studio in Cyprus, working with clients worldwide. Replies within one working day.'
+  'Write to Konaverse or book a thirty-minute call. A web design and development studio in Cyprus, working with clients worldwide. Replies within 24 hours.'
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -49,12 +49,14 @@ export const metadata: Metadata = {
   openGraph: { ...OG_DEFAULTS, title: `${TITLE} | Konaverse`, description: DESCRIPTION, url: `${SITE_URL}/contact`, type: 'website' },
 }
 
-/** the facts on the hairline — hours and the reply promise are FIRST DRAFTS */
+/** the facts on the hairline — the hours, the 24-hour reply and Nicosia
+ *  are the owner's (2026-10-21); the hours match openingHoursSpecification
+ *  in the root layout and must match the Business Profile */
 const FACTS: { label: string; value: string; href?: string }[] = [
-  { label: 'Where', value: 'Cyprus, working worldwide' },
+  { label: 'Where', value: 'Nicosia, Cyprus, working worldwide' },
   { label: 'Phone', value: CONTACT_PHONE, href: CONTACT_PHONE_HREF },
-  { label: 'Hours', value: 'Monday to Friday, 9 to 18 EET' },
-  { label: 'Replies', value: 'Within one working day' },
+  { label: 'Hours', value: 'Monday to Friday, 9 to 5, Cyprus time' },
+  { label: 'Replies', value: 'Within 24 hours' },
   { label: 'Languages', value: 'English, Greek' },
 ]
 
