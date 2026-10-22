@@ -39,6 +39,19 @@ Nothing on the site, the CMS, Search Console or any profile was changed by this 
 | 7 | Who takes the first call, named on service pages with tap-to-call | Owner names the person(s) | No service page names a person (0 mentions of the founders) or has a phone link |
 | 8 | Case-study authors | Owner names who wrote each | Schema author is still the Organization (audit D6) |
 
+### The owner's answers, 22 October
+
+| # | Answer | What happened |
+|---|---|---|
+| 1 | "Yes push" | Committed bbd3a67 (site), a85a2bc (these docs), pushed. Vercel failed a85a2bc: Tailwind scans every repository file for class names and read two Windows temp paths in the docs (`\fe0c35…`, `\d5d536…`) as escapes for code points that do not exist. d170ec7 removed the paths; it built and is live (favicon, RSS, OG JPEG, CSP, footer phone, "Within 24 hours" all checked on kona-verse.com; `seo-gate` PASS against production) |
+| 2 | Worried that a Cyprus title limits growth abroad; then "yes on the title" | Committed and pushed 22 Oct (7397948, 487c95e): the homepage title is **"Konaverse: Web Design Studio in Cyprus, Working Worldwide"** and its description says "web design studio". The hero line stays the h1. The 3D page carries the search abroad |
+| 3 | No Nicosia page | The no-city-pages decision holds; Nicosia leaves the title proposal too |
+| 4 | The owner reviews Greek; then, the same day: "Let's not publish anything in greek" | **No Greek content.** The Greek cost article and the Greek web design page are dropped, and no Greek plumbing is built. The Greek market finding stays on record for a later decision |
+| 5 | Clutch minimum lowered to $1,000 by the owner | Countries: list where clients are served, never an office the studio does not have |
+| 6 | "If it's going to cost then no" | It costs nothing: kona-verse.com's DNS is on Cloudflare (one free CNAME) and a custom domain on a Vercel project is free on every plan. City Arcade is in the Konaverse team (`city-arcade`); Lumière (watchweb.vercel.app) is on another Vercel account. Waits for the owner's yes |
+| 7 | Konstantinos takes the call | Committed and pushed 22 Oct (7397948, 487c95e): the service pages' closing section ends "Prefer the phone? Konstantinos takes the first call: +357 96 273855" (tap-to-call; `Invitation call`), and every `tel:` press sends `phone_click` to GA4 |
+| 8 | Published articles keep their authors; everything else is Konstantinos's | Committed and pushed 22 Oct (7397948, 487c95e): each case study's facts end "Written by Konstantinos Kyprianou" (linked to /about#konstantinos) and the Article schema's author is his Person node |
+
 ## The plan, in order
 
 ### This week: owner, dashboards, free (about three hours)
@@ -70,7 +83,7 @@ The ten-month plan stands; this run changes its order and adds two Cyprus pieces
 | 1 | **Refresh /blog/website-cost-cyprus**: a dated, sourced Cyprus market range; the `web-design-agency-pricing` draft merged in; service-page links in the body; the `updated` field bumped | Brief: `brief-cost-refresh-and-greek.md` | Our only non-brand ranking (13 to 15); the AI Overview cites agency posts with ranges and not ours. A Sanity edit, needs the owner's go |
 | 2 | What scrollytelling is (Article 13) | Drafted; trim its cost section to two sentences and link the 3D cost post | Ready; premium side |
 | 3 | How much a 3D website costs | Drafted; blocked on the owner accepting `editorial/3d-pricing-structure-2026-10-14.md` | Owns the 3D cost cluster (one freelancer's auto-generated pages hold 8 of 9 results) |
-| 4 | **Greek Cyprus website cost article** | Brief: `brief-cost-refresh-and-greek.md` | First test of the Greek market; gated on a Greek writer (decision 4) |
+| 4 | ~~Greek Cyprus website cost article~~ | Brief: `brief-cost-refresh-and-greek.md` | DROPPED 22 Oct (owner: no Greek publishing) |
 | 5 | Next.js vs. React for SEO | Drafted; needs the view-source addition | Approved |
 | 6 | Template, builder or custom: what €1,200, €2,500 and €6,000 buy | Brief: `brief-comparisons.md`; rebuilds `why-custom-websites-are-expensive` without the cost post's price table | Needs the owner's hours per tier (due November) |
 | 7 | The best web design agencies in Cyprus (December, as planned) | Planned | Ten agencies inspected; criteria disclosed; Konaverse not placed first |
@@ -101,7 +114,7 @@ Lumière Éclat moved to a kona-verse.com subdomain (decision 6), then: the Thre
 - **The 3D cost draft describes a homepage that no longer exists.** `docs/blog-drafts/how-much-does-a-3d-website-cost.md:125` says the object on our homepage is a Blender render shipped as a video loop. The live hero plays `/home/hero-loop.mp4` (HeroPortrait and HeroPeel); the Blender ice cube (`/object/idle-clear.mp4`) is parked at /hero-object, which redirects in production (checked 22 Oct). Unless hero-loop.mp4 is itself a Blender render, the line is wrong. Owner: what is hero-loop.mp4 and who made it?
 - **Two internal rates disagree.** The add-on note in `service-pages.ts:127` works from "~€50 an hour"; the 3D driver table in `editorial/3d-pricing-structure-2026-10-14.md` works from about €1,000 a working week (about €25 an hour). Reconcile before any piece prints hours beside prices.
 - **The blog footer line becomes false after the cost refresh.** Every post says "Every number in this article is from our own projects or price list" (`src/app/(v4)/blog/[slug]/page.tsx:347-348`). The refresh adds other firms' figures, so the line needs a per-post variant first.
-- **Greek on the site needs plumbing**, listed in `brief-cost-refresh-and-greek.md`: Sanity language fields, a Greek route, `lang="el"` on the article, Greek dates, the Greek font subset (Manrope loads `latin` only), and the Markdown importer's `slugify`, which turns Greek headings into empty keys.
+- **(Not needed while Greek is off, owner 22 Oct)** **Greek on the site needs plumbing**, listed in `brief-cost-refresh-and-greek.md`: Sanity language fields, a Greek route, `lang="el"` on the article, Greek dates, the Greek font subset (Manrope loads `latin` only), and the Markdown importer's `slugify`, which turns Greek headings into empty keys.
 - `@splinetool/react-spline` is in `package.json` but imported nowhere.
 
 ## Still not covered
