@@ -39,6 +39,8 @@ const UPDATED: Record<string, Date> = {
   '/work': AUDIT_PASS,
   /* TDK links moved to tdkdb.com (6452139) */
   '/work/tdk': new Date('2026-10-12'),
+  /* City Arcade rebuilt and renamed Arva Domus: new captures and copy */
+  '/work/arva-domus': new Date('2026-10-22'),
   '/services/web-development': AUDIT_PASS,
   '/services/3d-websites': AUDIT_PASS,
   '/services/website-redesign': AUDIT_PASS,

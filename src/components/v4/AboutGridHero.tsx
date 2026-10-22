@@ -58,7 +58,7 @@ const CONTENT = {
    *  is the one they named for the first appearance. */
   tiles: [
     { src: '/about-hero/01.webp', alt: 'The Heimat Group website on a laptop held between two hands' },
-    { src: '/about-hero/02.webp', alt: 'The City Arcade real-estate website on a monitor between dark rocks' },
+    { src: '/about-hero/02.webp', alt: 'The Arva Domus real-estate website on a monitor between dark rocks' },
     { src: '/about-hero/03.webp', alt: 'A luxury photobooth company’s website on a monitor rising out of grass' },
     { src: '/about-hero/04.webp', alt: 'The Konaverse wordmark between two birds in flight' } /* ← the opening picture */,
     { src: '/about-hero/05.webp', alt: 'A hand holding a glass card engraved with the Konaverse logo' },

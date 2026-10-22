@@ -76,7 +76,7 @@ const RUN: { slug: string; name?: string }[] = [
   { slug: 'velricon' },
   { slug: 'heimat-group', name: 'Heimat Group' },
   { slug: 'tdk', name: 'TDK' },
-  { slug: 'city-arcade', name: 'City Arcade' },
+  { slug: 'arva-domus', name: 'Arva Domus' },
 ]
 
 export default function WorkPage() {

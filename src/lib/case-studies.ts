@@ -1136,30 +1136,35 @@ export const CASE_STUDIES: CaseStudy[] = [
     service: { name: 'Web development', slug: 'web-development' },
   },
   /* ------------------------------------------------------------------
-     CITY ARCADE — a real-estate concept (FIRST DRAFT, 2026-10-01).
-     A STUDIO CONCEPT like Lumière: no such agency exists, the figures
-     and the three projects on the live page are part of the fiction, and
-     the copy says so. Facts from city-arcade-roan.vercel.app.
+     ARVA DOMUS — a real-estate concept. FIRST DRAFT 2026-10-01 as City
+     Arcade; the concept was rebranded and rebuilt on 2026-10-22 (new
+     sections: the aperture, the manifesto, the reasons, the sun study,
+     the viewing form) and this study rewritten to match. A STUDIO
+     CONCEPT like Lumière: no such company exists, the figures, the
+     address and the four projects on the live page are part of the
+     fiction, the project photographs are licensed stand-ins, and the
+     copy says so. Facts from arva-domus.kona-verse.com and its source
+     (Projects/city_arcade, DESIGN.md).
      ------------------------------------------------------------------ */
   {
-    slug: 'city-arcade',
-    name: 'City Arcade',
-    title: 'City Arcade: a real-estate website concept',
+    slug: 'arva-domus',
+    name: 'Arva Domus',
+    title: 'Arva Domus: a real-estate website concept',
     description:
-      'A studio concept: a one-page site for a real-estate agency, where the building rises out of its own photograph and the work slides across a pinned title.',
+      'A studio concept for a property developer: the building breaks its frame, the camera flies through a letter, and a June day passes over a 3D model.',
     intro: [
-      'City Arcade is a real-estate agency that does not exist. We built its website as a studio piece: one page that shows how a property brand can feel modern and trustworthy at once, without a single stock smile or a search bar wall.',
-      'Property sites are the most copied category on the web. This one was made to answer what an agency could look like if it started from the buildings rather than the listings.',
+      'Arva Domus is a property developer that does not exist. We built its website as a studio piece: one page that shows how a property brand can feel modern and trustworthy at once, without a single stock smile or a search bar wall.',
+      'Property sites are the most copied category on the web. This one was made to answer what a developer could look like if it started from the buildings rather than the listings, and followed one building from the drawing to the lights coming on.',
     ],
     facts: [
       { label: 'Client', value: 'Studio concept' },
       { label: 'Sector', value: 'Real estate (fictional)' },
       { label: 'Year', value: '2026' },
-      { label: 'Services', value: 'Web design, development' },
+      { label: 'Services', value: 'Web design, development, WebGL' },
       { label: 'Format', value: 'One page' },
     ],
-    live: 'https://city-arcade-roan.vercel.app',
-    still: { src: '/work/city-arcade/01.webp', alt: 'The City Arcade homepage: the name set large beside a glass building at golden hour' },
+    live: 'https://arva-domus.kona-verse.com',
+    still: { src: '/work/arva-domus/01.webp', alt: 'The Arva Domus homepage: the name set large, with a glass building at golden hour rising over it' },
     sections: [
       {
         id: 'overview',
@@ -1168,15 +1173,15 @@ export const CASE_STUDIES: CaseStudy[] = [
           {
             kind: 'text',
             paragraphs: [
-              'Agencies come to us asking for the same site: a search bar, a grid of listings, a team page, and a promise of trust that every other agency makes in the same words. We wanted a piece to show them before that conversation, so we invented a client and gave it the site we would argue for.',
-              'City Arcade is that client: a modern agency for homes, apartments, rentals and investment, with a short line of projects across Europe. The agency, its figures and its projects are fiction. The design, the build and the motion are exactly what we would ship.',
+              'Property firms come to us asking for the same site: a search bar, a grid of listings, a team page, and a promise of trust that every other firm makes in the same words. We wanted a piece to show them before that conversation, so we invented a client and gave it the site we would argue for.',
+              'Arva Domus is that client: a developer that buys its own land, designs and builds its homes with its own people and stays on after the keys, with four projects across Europe. The company, its figures, its address and its projects are fiction, and the project photographs are licensed stand-ins. The design, the build and the motion are exactly what we would ship.',
             ],
           },
           {
             kind: 'cards',
             items: [
-              { title: 'Who it is', body: 'A fictional modern real-estate agency: homes, apartments, rentals and investment, with digital tools and local knowledge.' },
-              { title: 'What we gave it', body: 'One photograph of a glass building, a name, four services and three invented projects to show.' },
+              { title: 'Who it is', body: 'A fictional developer in Athens: it owns the land, designs in-house, builds with its own crews and keeps a team on after the sale.' },
+              { title: 'What we gave it', body: 'One photograph of a glass building, a name, four invented projects, four reasons to trust it and one day of June sunlight.' },
               { title: 'What it had to show', body: 'That a property brand can lead with architecture and still read as calm, verified and safe to call.' },
             ],
           },
@@ -1189,8 +1194,8 @@ export const CASE_STUDIES: CaseStudy[] = [
           {
             kind: 'text',
             paragraphs: [
-              'Real-estate sites compete on inventory and look identical because of it. The listing grid is the product, and the brand is whatever colour the header is. A buyer remembers the house, not the agency, and the agency is the one thing that wants to be remembered.',
-              'The brief we set ourselves was to make the agency the first thing you see and the buildings the proof of it, on one page, with nothing a visitor has to learn before they understand who this is.',
+              'Real-estate sites compete on inventory and look identical because of it. The listing grid is the product, and the brand is whatever colour the header is. A buyer remembers the house, not the company, and the company is the one thing that wants to be remembered.',
+              'The brief we set ourselves was to make the company the first thing you see and the buildings the proof of it, on one page, with nothing a visitor has to learn before they understand who this is.',
             ],
           },
         ],
@@ -1202,16 +1207,16 @@ export const CASE_STUDIES: CaseStudy[] = [
           {
             kind: 'text',
             paragraphs: [
-              'The concept is the building breaking out of the frame. The name is set huge in two staggered lines beside a rounded photograph of a glass building, and as you scroll the frame opens and the building rises out of its own picture and over the type.',
-              'The rest is near-monochrome: paper, ink and carbon, with a single sky blue on the arrows. A grotesque for the display type, a mono for the labels. A statement in two tones, four feature cards beside a grey photograph, and then the work, on carbon, under a title as wide as the screen.',
+              'The concept is the building breaking out of the frame. The name is set huge in two staggered lines behind a letterboxed photograph of a glass building; as the page opens, the roofline rises past the frame’s edge and over the name, and as you scroll the frame opens to the full picture.',
+              'The rest is near-monochrome: paper, ink and carbon, with a single sky blue on the arrows. A grotesque for the display type, a mono for the labels. After the feature cards the page becomes one scroll story: the camera flies through the A of BUILT TO STAY into the projects, one sentence carries photographs inside it, four reasons climb a staircase, and a June day passes over a model of the hero building.',
             ],
           },
           {
             kind: 'cards',
             items: [
-              { title: 'Out of the frame', body: 'The full photograph sits in a rounded frame; a cut-out of the building on a taller layer above it rises past the frame’s edge as it opens.' },
-              { title: 'One accent', body: 'Ink, paper and carbon, and one sky blue reserved for the arrows, so every direction on the page is the same colour.' },
-              { title: 'The work over its title', body: 'A pinned OUR WORK sits behind the projects, which slide across it and dim it as they pass.' },
+              { title: 'Out of the frame', body: 'The photograph and a cut-out of the building share one size; the frame clips the photograph while the cut-out rises past its edge and over the name.' },
+              { title: 'Through the letter', body: 'The A of BUILT TO STAY is the logo triangle with the first project inside it. Scroll grows the headline about the triangle until the triangle fills the screen.' },
+              { title: 'One day, in 3D', body: 'The hero building as a white card model: drawn as an elevation, printed from the ground up, then lit through 21 June in Athens until its windows come on.' },
             ],
           },
         ],
@@ -1223,16 +1228,17 @@ export const CASE_STUDIES: CaseStudy[] = [
           {
             kind: 'text',
             paragraphs: [
-              'A Next.js page, server-rendered, with GSAP and ScrollTrigger for the scrubbed moves, Lenis for the scroll on GSAP’s own clock, and Framer Motion for the cards. Every move checks for reduced motion first, and the page reads complete without any of it.',
+              'A Next.js page, server-rendered, with GSAP and ScrollTrigger for the scrubbed and pinned scenes, Lenis for the scroll on GSAP’s own clock, Motion for the feature cards and three.js for the sun study, loaded in its own chunk once the opening has played. Every move checks for reduced motion first, and the page reads complete without any of it.',
             ],
           },
           {
             kind: 'steps',
             items: [
-              { title: 'One clock', body: 'The smooth scroll runs on GSAP’s ticker, so the scrubbed hero, the parallax and the pinned title all read the same scroll position on the same frame.' },
-              { title: 'The frame opens', body: 'The hero frame is a clip-path scrubbed outward while the heading drifts up, so the building and the name trade places as you scroll.' },
-              { title: 'Projects wipe in', body: 'Each project row opens from the bottom by clip-path, its picture settling from a close-up, with a carbon shade and grain scrubbed over it.' },
-              { title: 'Motion is optional', body: 'Every animation is gated on the reduced-motion setting; without it the page is the same page, still.' },
+              { title: 'One clock', body: 'The smooth scroll runs on GSAP’s ticker, so the scrubbed hero, the pinned stages and the 3D scene all read the same scroll position on the same frame.' },
+              { title: 'The frame opens', body: 'The hero window is a clip-path scrubbed past its own edge while the type drifts up behind it, so the building and the name trade places as you scroll.' },
+              { title: 'Through the A', body: 'One pinned stage: the headline and the triangle scale together about the triangle’s centre, then each project wipes up over the last, its photograph settling from a push-in.' },
+              { title: 'A day, scrubbed', body: 'The scene renders only when the scroll changes the shot: the elevation draws itself, a clip plane prints the model, the sun follows its June arc and the windows light one bay at a time.' },
+              { title: 'Motion is optional', body: 'Every animation is gated on the reduced-motion setting; without it each section is laid out still, and the sun study shows the finished building lit at night.' },
             ],
           },
         ],
@@ -1244,16 +1250,16 @@ export const CASE_STUDIES: CaseStudy[] = [
           {
             kind: 'text',
             paragraphs: [
-              'The hardest piece is the hero. One photograph plays two parts: the full picture inside the rounded frame, and a cut-out of the building on a layer three times as tall above it. The frame’s clip-path is scrubbed beyond its own edges while the type moves at another rate, and the two layers have to stay registered at every width, or the building visibly tears from its picture.',
-              'The second decision was to keep it to one page. An agency site grows pages by habit. This one says who the agency is, what it offers, and what it has done, in one scroll, and leaves the listings to the product a real agency would plug in behind it.',
+              'The hardest piece is still the hero. One photograph plays two parts: the full picture inside the frame, and a cut-out of the building at exactly the same size above it. The frame’s clip-path is scrubbed beyond its own edges while the type moves at another rate, and the two layers have to stay registered at every width, or the building visibly tears from its picture.',
+              'The second was the sun study. It had to sit on the page with no visible stage, so its sky is the page’s own paper until the evening, the renderer runs without tone mapping, and the glow waits until the sky is dark so the paper never shines.',
             ],
           },
           {
             kind: 'cards',
             items: [
               { title: 'Two layers, one picture', body: 'Photograph and cut-out share one image and one box, so the building rises out of its own picture instead of floating over it.' },
-              { title: 'Sticky with an overlap', body: 'The work section slides up over the features and holds its title pinned behind the projects, with no extra scroll spent.' },
-              { title: 'One page', body: 'Who, what and proof in a single scroll; the listing engine is the part a real agency brings.' },
+              { title: 'Sheets that slide over', body: 'The manifesto and the viewing form are pulled up a full screen, so each slides over the last frame of the pinned scene before it, with no extra scroll spent.' },
+              { title: 'One page', body: 'Who, what and proof in a single scroll; the listing engine is the part a real developer brings.' },
             ],
           },
         ],
@@ -1272,18 +1278,21 @@ export const CASE_STUDIES: CaseStudy[] = [
             kind: 'list',
             items: [
               'The one-page site, server-rendered',
+              'An opening sequence that hands over to the hero',
               'The building-out-of-the-frame hero',
-              'Count-up figures and feature cards',
-              'The pinned work section with three projects',
+              'The flight through the A into four projects',
+              'A manifesto with photographs set inside the sentence',
+              'The sun study in three.js',
+              'A viewing form, front end only',
               'Reduced-motion fallbacks throughout',
-              'Hosting on Vercel',
+              'Hosting on Vercel, at a kona-verse.com address',
             ],
           },
         ],
       },
     ],
     result: {
-      text: 'City Arcade is a concept, so there are no sales or traffic figures to report and the numbers on its page are part of the fiction. What it does is the job it was built for: it is the site we open when an agency asks what their website could be, and it answers in one scroll.',
+      text: 'Arva Domus is a concept, so there are no sales or traffic figures to report and the numbers on its page are part of the fiction. What it does is the job it was built for: it is the site we open when a property firm asks what their website could be, and it answers in one scroll.',
     },
     service: { name: 'Web design', slug: 'web-design' },
     next: 'los-santos-barbers',

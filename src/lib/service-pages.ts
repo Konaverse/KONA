@@ -301,9 +301,9 @@ export const SERVICE_PAGES: ServicePage[] = [
           say: 'It looks fine on a laptop and falls apart on a phone.',
           answer:
             'Most visitors arrive on a phone, and most sites are designed for a desktop and squeezed down afterwards. We design every page at both sizes from the first draft, with the motion written for each, so nothing is left for a breakpoint to decide.',
-          study: 'city-arcade',
-          pictures: ['/work/city-arcade/m-01.webp', '/work/chris-n-clean/m-04.webp'],
-          link: 'City Arcade on a phone',
+          study: 'arva-domus',
+          pictures: ['/work/arva-domus/m-01.webp', '/work/chris-n-clean/m-04.webp'],
+          link: 'Arva Domus on a phone',
         },
       ],
       workTitle: 'Recent web design work',
@@ -311,7 +311,7 @@ export const SERVICE_PAGES: ServicePage[] = [
         { slug: 'velricon', line: 'Senior financial leadership, made to look composed, precise and unmistakably senior.' },
         { slug: 'chris-n-clean', line: 'A cleaning company whose site shows the clean happen before you read a word.' },
         { slug: 'heimat-group', line: 'Three companies introduced as one group, its homes and plans a click away.' },
-        { slug: 'city-arcade', line: 'A studio concept: a property brand that starts from the buildings, not the listings.' },
+        { slug: 'arva-domus', line: 'A studio concept: a property brand that starts from the buildings, not the listings.' },
       ],
       getsTitle: 'What you get',
       gets: [
@@ -662,7 +662,7 @@ export const SERVICE_PAGES: ServicePage[] = [
     ],
     invite: 'Let’s make your page.',
     more: {
-      kindPictures: ['/work/city-arcade/02.webp', '/work/los-santos-barbers/m-02.webp'],
+      kindPictures: ['/work/arva-domus/01.webp', '/work/los-santos-barbers/m-02.webp'],
       fixTitle: 'What one good page fixes',
       problems: [
         {
@@ -701,8 +701,8 @@ export const SERVICE_PAGES: ServicePage[] = [
           line: 'A barbershop page that puts the price, the reviews and the booking button on one screen.',
         },
         {
-          slug: 'city-arcade',
-          line: 'One scroll that says who an agency is, what it offers and what it has done.',
+          slug: 'arva-domus',
+          line: 'One scroll that says who a developer is, what it has built and how to book a viewing.',
         },
       ],
       getsTitle: 'What you get',
@@ -714,7 +714,7 @@ export const SERVICE_PAGES: ServicePage[] = [
         {
           title: 'One argument, in order',
           text: 'Six to eight sections that answer the visitor’s questions as they arrive: what, for whom, proof, price, contact.',
-          pictures: ['/work/los-santos-barbers/04.webp', '/work/city-arcade/04.webp'],
+          pictures: ['/work/los-santos-barbers/04.webp', '/work/arva-domus/06.webp'],
         },
         {
           title: 'One search term, owned',
@@ -723,7 +723,7 @@ export const SERVICE_PAGES: ServicePage[] = [
         {
           title: 'Designed for the phone',
           text: 'The page designed at phone and desktop size, for the visitor who arrives from a social post.',
-          pictures: ['/work/los-santos-barbers/05.webp', '/work/los-santos-barbers/m-04.webp', '/work/city-arcade/m-02.webp'],
+          pictures: ['/work/los-santos-barbers/05.webp', '/work/los-santos-barbers/m-04.webp', '/work/arva-domus/m-02.webp'],
         },
         {
           title: 'A contact route that works',

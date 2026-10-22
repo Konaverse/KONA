@@ -35,6 +35,8 @@ const securityHeaders = [
  *   /pricing (no pricing page will exist — owner, 2026-10-02; prices
  *            live on the service pages; 67 GSC impressions move across)
  *                         → /services
+ *   /work/city-arcade (the concept was renamed Arva Domus, 2026-10-22)
+ *                         → /work/arva-domus
  *
  * TEMPORARY (307) — pages that are coming back at the same URL:
  *   /blog → / (until the blog ships).
@@ -57,6 +59,7 @@ const PERMANENT_REDIRECTS: [string, string][] = [
   ["/projects", "/work"],
   ["/services/videography", "/services"],
   ["/pricing", "/services"],
+  ["/work/city-arcade", "/work/arva-domus"],
 ];
 /* empty since the blog opened (2026-10-03): /blog was the last page
    waiting behind a temporary redirect */

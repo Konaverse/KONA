@@ -3,7 +3,7 @@
  *
  * One list, in the order the cards read them. Tzankatian is OFF the
  * site (user, 2026-10-01: "remove Tzankatian"); Chris N Clean, Heimat
- * Group, TDK and City Arcade join with case studies of their own. `slug` is the case
+ * Group, TDK and Arva Domus join with case studies of their own. `slug` is the case
  * study's future URL (/work/[slug]) and never changes once published.
  *
  * `href` is the LIVE site and is only set where it is known. Velricon's
@@ -124,17 +124,17 @@ export const WORK_PROJECTS: WorkProject[] = [
     phones: Array.from({ length: 6 }, (_, i) => `/work/tdk/m-${String(i + 1).padStart(2, '0')}.webp`),
   },
   {
-    slug: 'city-arcade',
-    name: 'City Arcade',
+    slug: 'arva-domus',
+    name: 'Arva Domus',
     line: 'A real-estate concept where the building rises out of its frame.',
     concept: true,
     year: '2026',
     service: 'Web design',
     serviceSlug: 'web-design',
-    href: 'https://city-arcade-roan.vercel.app',
-    image: '/work/covers/city-arcade.webp',
-    frames: Array.from({ length: 8 }, (_, i) => `/work/city-arcade/${String(i + 1).padStart(2, '0')}.webp`),
-    phones: Array.from({ length: 5 }, (_, i) => `/work/city-arcade/m-${String(i + 1).padStart(2, '0')}.webp`),
+    href: 'https://arva-domus.kona-verse.com',
+    image: '/work/covers/arva-domus.webp',
+    frames: Array.from({ length: 8 }, (_, i) => `/work/arva-domus/${String(i + 1).padStart(2, '0')}.webp`),
+    phones: Array.from({ length: 6 }, (_, i) => `/work/arva-domus/m-${String(i + 1).padStart(2, '0')}.webp`),
   },
 ]
 
