@@ -1,0 +1,541 @@
+{
+  "meta": {
+    "collected": "2026-10-22, about 02:50 to 03:15 Cyprus time (EEST), one pass, sequential, a few seconds between queries",
+    "browser": "Owner's Chrome, located in Cyprus, signed in to Google",
+    "url_pattern": "https://www.google.com/search?q=<query>&gl=cy&hl=en|el&num=10&pws=0",
+    "method": "Page read with get_page_text (local pack, PAA, ads, snippets) plus a read-only DOM script for exact organic hrefs (a > h3 inside #rso, ads containers excluded) and the hostnames linked inside the AI Overview container. No clicks.",
+    "caveats": [
+      "Signed-in account: pws=0 reduces but does not remove personalisation. kona-verse.com ranking 3rd for two cost queries may be partly the owner's own history; confirm from a signed-out or incognito session before treating it as a position.",
+      "Run at night: almost every business in the local packs showed 'Closed'. Ads are dayparted and budget-capped, so the near absence of ads here does NOT mean the queries are unadvertised. The 13 October daytime check saw four ads on 'web design cyprus'.",
+      "Location label varied: 'Cyprus' on most queries, 'Can't determine location' on 'seo cyprus', 'Lefkosa' on 'web design nicosia', 'Limassol' on 'web design limassol'. Google re-centres the local pack on the city named in the query.",
+      "num=10 is no longer honoured strictly; several pages returned 9 organic results (the 10th slot taken by a feature). Recorded as returned.",
+      "AI Overview citations are hostnames linked inside the overview container (inline chips and the source cards). Order is not rank.",
+      "One sample per query. SERPs move daily; use this as a shape, not a position tracker. SERPs carry no search volume.",
+      "Page types are my classification from title, URL and snippet (observed), not from opening the pages."
+    ],
+    "page_type_codes": {
+      "agency_home": "agency or freelancer homepage",
+      "service": "agency service or landing page for the query's service",
+      "city_page": "agency page targeting a named city",
+      "pricing": "agency pricing or packages page",
+      "blog": "blog post or guide on an agency site",
+      "directory": "directory, marketplace or ranked vendor list (Clutch, Sortlist, The Manifest, cypruswebdesigners.com, TechBehemoths, Upwork, RevenueBase, cyprusatlas, cypindex, topseos, Semrush agencies)",
+      "list_article": "editorial list article not run by a vendor directory",
+      "jobs": "job board",
+      "builder": "website builder or platform",
+      "hosting_provider": "hosting company",
+      "other": "off-topic intent (3D printing, tourism, heritage, data reports, social)"
+    }
+  },
+  "queries": [
+    {
+      "query": "web design cyprus", "hl": "en", "location_label": "Cyprus",
+      "ads": {"top": 0, "mid": 0, "bottom": 0, "note": "none observed at night"},
+      "local_pack": [
+        {"name": "WebSEO (Web Design Cyprus - Custom Website Design & SEO Services)", "rating": 5.0, "reviews": 2, "category": "Website designer"},
+        {"name": "Mojo Design", "rating": 5.0, "reviews": 34, "category": "Website designer"},
+        {"name": "LilKangooMedia", "rating": 5.0, "reviews": 120, "category": "Photographer"}
+      ],
+      "ai_overview": {"present": true, "cited": ["webtheoria.com", "qoboweb.com", "mojodesign.io", "untitledpros.com", "oncypruswebdesign.com", "bridgestudios.com.cy", "bevisible.com.cy"], "gist": "Price ranges (EUR 800 starter to EUR 50,000+) then named agencies"},
+      "paa": ["Is web design still worth it in 2026?", "Can ChatGPT design a website?", "How much does it cost to design a website?", "What are the top websites in Cyprus?"],
+      "organic": [
+        {"pos": 1, "url": "cypruswebdesigners.com/", "type": "directory"},
+        {"pos": 2, "url": "natasalagou.com/", "type": "agency_home"},
+        {"pos": 3, "url": "untitledpros.com/", "type": "agency_home"},
+        {"pos": 4, "url": "clutch.co/cy/web-designers", "type": "directory"},
+        {"pos": 5, "url": "oncypruswebdesign.com/en/", "type": "agency_home"},
+        {"pos": 6, "url": "bridgestudios.com.cy/services/web-design/", "type": "service"},
+        {"pos": 7, "url": "paphoswebsitedesign.com/web-design-cyprus/", "type": "service"},
+        {"pos": 8, "url": "themanifest.com/cy/web-design/agencies", "type": "directory"},
+        {"pos": 9, "url": "qoboweb.com/", "type": "agency_home"},
+        {"pos": 10, "url": "webtheoria.com/", "type": "agency_home"}
+      ]
+    },
+    {
+      "query": "web development cyprus", "hl": "en", "location_label": "Cyprus",
+      "ads": {"top": 4, "mid": 0, "bottom": 2, "advertisers": ["digius.gr", "qbrains.gr", "chameleon.com.cy", "nextdigital.gr", "pheraspis.gr", "pgswebstudio.com"], "note": "four of six advertisers are Greek (.gr) firms with Greek ad copy"},
+      "local_pack": [
+        {"name": "Mojo Design", "rating": 5.0, "reviews": 34, "category": "Website designer"},
+        {"name": "JCSL", "rating": 5.0, "reviews": 59, "category": "Website designer"},
+        {"name": "avocadots Digital Design Studio", "rating": 4.9, "reviews": 51, "category": "Marketing agency"}
+      ],
+      "ai_overview": {"present": true, "cited": ["webtheoria.com", "clutch.co", "qoboweb.com", "dlkcyprus.com", "natasalagou.com", "cypruswork.com", "cy.linkedin.com", "cypruswebdesigners.com", "untitledpros.com", "revenuebase.ai", "youtube.com"], "gist": "Agencies plus a jobs and tax angle; ends by asking whether the user wants to hire or find a job"},
+      "paa": ["Is web dev still worth it in 2026?", "Who is the biggest developer in Cyprus?", "How much does it cost for web development?", "How to make money online in Cyprus?"],
+      "organic": [
+        {"pos": 1, "url": "webtheoria.com/", "type": "agency_home"},
+        {"pos": 2, "url": "clutch.co/cy/web-developers", "type": "directory"},
+        {"pos": 3, "url": "qoboweb.com/", "type": "agency_home"},
+        {"pos": 4, "url": "natasalagou.com/", "type": "agency_home"},
+        {"pos": 5, "url": "dlkcyprus.com/", "type": "agency_home"},
+        {"pos": 6, "url": "cy.linkedin.com/jobs/web-development-jobs", "type": "jobs"},
+        {"pos": 7, "url": "themanifest.com/cy/web-development/companies", "type": "directory"},
+        {"pos": 8, "url": "cypruswebdesigners.com/", "type": "directory"},
+        {"pos": 9, "url": "revenuebase.ai/companies/enterprise-web-development-firms/cyprus", "type": "directory"},
+        {"pos": 10, "url": "cypruswork.com/jobs/", "type": "jobs"}
+      ]
+    },
+    {
+      "query": "website design cyprus", "hl": "en", "location_label": "Cyprus",
+      "ads": {"top": 0, "mid": 0, "bottom": 0},
+      "local_pack": [
+        {"name": "WebSEO", "rating": 5.0, "reviews": 2, "category": "Website designer"},
+        {"name": "Mojo Design", "rating": 5.0, "reviews": 34, "category": "Website designer"},
+        {"name": "LilKangooMedia", "rating": 5.0, "reviews": 120, "category": "Photographer"}
+      ],
+      "ai_overview": {"present": true, "cited": ["sortlist.com", "webtheoria.com", "natasalagou.com", "websitedesign.cy", "clutch.co", "qoboweb.com"], "gist": "Price bands (EUR 300 to 50,000+), 2 to 4 week builds, named agencies"},
+      "paa": ["How much does it cost to design a website?", "What is the average cost to have someone design a website?", "Can ChatGPT design a website?", "Is web design still worth it in 2026?"],
+      "organic": [
+        {"pos": 1, "url": "webtheoria.com/", "type": "agency_home"},
+        {"pos": 2, "url": "natasalagou.com/", "type": "agency_home"},
+        {"pos": 3, "url": "cypruswebdesigners.com/", "type": "directory"},
+        {"pos": 4, "url": "websitedesign.cy/", "type": "agency_home"},
+        {"pos": 5, "url": "clutch.co/cy/web-designers", "type": "directory"},
+        {"pos": 6, "url": "oncypruswebdesign.com/en/", "type": "agency_home"},
+        {"pos": 7, "url": "paphoswebsitedesign.com/", "type": "agency_home"},
+        {"pos": 8, "url": "qoboweb.com/", "type": "agency_home"},
+        {"pos": 9, "url": "sortlist.com/web-design/cyprus-cy", "type": "directory"},
+        {"pos": 10, "url": "themanifest.com/cy/web-design/agencies", "type": "directory"}
+      ]
+    },
+    {
+      "query": "web design agency cyprus", "hl": "en", "location_label": "Cyprus",
+      "ads": {"top": 0, "mid": 1, "bottom": 0, "advertisers": ["web-design.ideaseven.com"]},
+      "local_pack": [
+        {"name": "Mojo Design", "rating": 5.0, "reviews": 34, "category": "Website designer"},
+        {"name": "avocadots Digital Design Studio", "rating": 4.9, "reviews": 51, "category": "Marketing agency"},
+        {"name": "WebSEO", "rating": 5.0, "reviews": 2, "category": "Website designer"}
+      ],
+      "ai_overview": {"present": true, "cited": ["avocadots.com", "mojodesign.io", "webtheoria.com", "natasalagou.com", "sortlist.com", "ideaseven.com", "qoboweb.com"], "gist": "A table: agency, city, services, starting price"},
+      "paa": [],
+      "organic": [
+        {"pos": 1, "url": "webtheoria.com/", "type": "agency_home"},
+        {"pos": 2, "url": "natasalagou.com/", "type": "agency_home"},
+        {"pos": 3, "url": "sortlist.com/web-design/cyprus-cy", "type": "directory"},
+        {"pos": 4, "url": "cypruswebdesigners.com/", "type": "directory"},
+        {"pos": 5, "url": "avocadots.com/", "type": "agency_home"},
+        {"pos": 6, "url": "qoboweb.com/", "type": "agency_home"},
+        {"pos": 7, "url": "themanifest.com/cy/web-design/agencies", "type": "directory"},
+        {"pos": 8, "url": "air-balloon.eu/", "type": "agency_home"},
+        {"pos": 9, "url": "clutch.co/cy/web-designers", "type": "directory"},
+        {"pos": 10, "url": "ideaseven.com/", "type": "agency_home"}
+      ]
+    },
+    {
+      "query": "web design company cyprus", "hl": "en", "location_label": "Cyprus",
+      "ads": {"top": 0, "mid": 0, "bottom": 0},
+      "local_pack": [
+        {"name": "Mojo Design", "rating": 5.0, "reviews": 34, "category": "Website designer"},
+        {"name": "WebSEO", "rating": 5.0, "reviews": 2, "category": "Website designer"},
+        {"name": "avocadots Digital Design Studio", "rating": 4.9, "reviews": 51, "category": "Marketing agency"}
+      ],
+      "ai_overview": {"present": true, "cited": ["avocadots.com", "webtheoria.com", "natasalagou.com", "clutch.co", "cypruswebdesigners.com", "mojodesign.io", "beenerds.com"], "gist": "Named companies by city, then service categories"},
+      "paa": [],
+      "organic": [
+        {"pos": 1, "url": "webtheoria.com/", "type": "agency_home"},
+        {"pos": 2, "url": "clutch.co/cy/web-designers", "type": "directory"},
+        {"pos": 3, "url": "natasalagou.com/", "type": "agency_home"},
+        {"pos": 4, "url": "cypruswebdesigners.com/", "type": "directory"},
+        {"pos": 5, "url": "paphoswebsitedesign.com/", "type": "agency_home"},
+        {"pos": 6, "url": "dlkcyprus.com/", "type": "agency_home"},
+        {"pos": 7, "url": "themanifest.com/cy/web-development/companies", "type": "directory"},
+        {"pos": 8, "url": "oncypruswebdesign.com/en/", "type": "agency_home"},
+        {"pos": 9, "url": "avocadots.com/", "type": "agency_home"},
+        {"pos": 10, "url": "sortlist.com/web-design/cyprus-cy", "type": "directory"}
+      ]
+    },
+    {
+      "query": "website redesign cyprus", "hl": "en", "location_label": "Cyprus",
+      "ads": {"top": 0, "mid": 0, "bottom": 0},
+      "local_pack": [
+        {"name": "WebSEO", "rating": 5.0, "reviews": 2, "category": "Website designer"},
+        {"name": "Mojo Design", "rating": 5.0, "reviews": 34, "category": "Website designer"},
+        {"name": "avocadots Digital Design Studio", "rating": 4.9, "reviews": 51, "category": "Marketing agency"}
+      ],
+      "ai_overview": {"present": true, "cited": ["webtheoria.com", "qoboweb.com", "pixelbanana.cy", "opiumworks.com"], "gist": "Named agencies, then redesign steps: audit, UX/visual, SEO and URL preservation with 301s"},
+      "paa": ["How much does it cost to have a website redesigned?", "Is web design still worth it in 2026?", "How do I redesign my website?", "What is the richest company in Cyprus?"],
+      "organic": [
+        {"pos": 1, "url": "websitedesign.cy/", "type": "agency_home"},
+        {"pos": 2, "url": "bridgestudios.com.cy/services/web-design/", "type": "service", "note": "web design page, not a redesign page"},
+        {"pos": 3, "url": "webtheoria.com/", "type": "agency_home"},
+        {"pos": 4, "url": "sortlist.com/s/website-redesign/cyprus-cy", "type": "directory"},
+        {"pos": 5, "url": "domainstar.me/website-redesign-in-cyprus/", "type": "blog", "note": "the only redesign-specific agency page in the top 10; a guide (when, benefits, costs)"},
+        {"pos": 6, "url": "paphoswebsitedesign.com/web-design-cyprus/", "type": "service"},
+        {"pos": 7, "url": "untitledpros.com/web-design-cyprus/", "type": "service"},
+        {"pos": 8, "url": "cypruswebdesigners.com/", "type": "directory"},
+        {"pos": 9, "url": "qoboweb.com/", "type": "agency_home"},
+        {"pos": 10, "url": "bevisible.com.cy/blog/2026-website-redesign-seo-guide-essential-checklist-tips", "type": "blog"}
+      ]
+    },
+    {
+      "query": "seo cyprus", "hl": "en", "location_label": "Can't determine location",
+      "ads": {"top": 0, "mid": 0, "bottom": 0},
+      "local_pack": [
+        {"name": "WebSEO", "rating": 5.0, "reviews": 2, "category": "Website designer"},
+        {"name": "LilKangooMedia", "rating": 5.0, "reviews": 120, "category": "Photographer"},
+        {"name": "Onlyseo.", "rating": 5.0, "reviews": 18, "category": "Internet marketing service"}
+      ],
+      "ai_overview": {"present": true, "cited": ["clutch.co", "sortlist.com", "bevisible.com.cy", "adonisanastasiou.com", "seocyprus.com", "seocyprus.com.cy", "bridgestudios.com.cy"], "gist": "Named agencies (Natural Links, Buzz Dealer, iDigitalise.net), then core services: local SEO, technical SEO"},
+      "paa": ["How much should I expect to pay for SEO?", "Which internet provider is the best in Cyprus?", "Is SEO dead or evolving in 2026?", "Where can I find SEO?"],
+      "organic": [
+        {"pos": 1, "url": "seocyprus.com/", "type": "agency_home", "note": "exact-match domain"},
+        {"pos": 2, "url": "seocyprus.com.cy/", "type": "agency_home", "note": "exact-match domain"},
+        {"pos": 3, "url": "clutch.co/cy/seo-firms", "type": "directory"},
+        {"pos": 4, "url": "hscoms.com/seo/", "type": "service"},
+        {"pos": 5, "url": "adonisanastasiou.com/seo-specialist-in-cyprus/", "type": "service"},
+        {"pos": 6, "url": "bridgestudios.com.cy/services/seo-marketing/", "type": "service"},
+        {"pos": 7, "url": "sortlist.com/seo/cyprus-cy", "type": "directory"},
+        {"pos": 8, "url": "cy.linkedin.com/jobs/seo-jobs", "type": "jobs"},
+        {"pos": 9, "url": "dlkcyprus.com/seo/", "type": "service"},
+        {"pos": 10, "url": "opensolutions.com.cy/", "type": "agency_home"}
+      ]
+    },
+    {
+      "query": "seo services cyprus", "hl": "en", "location_label": "Cyprus",
+      "ads": {"top": 0, "mid": 0, "bottom": 0},
+      "local_pack": [
+        {"name": "WebSEO", "rating": 5.0, "reviews": 2, "category": "Website designer"},
+        {"name": "Onlyseo.", "rating": 5.0, "reviews": 18, "category": "Internet marketing service"},
+        {"name": "R Digital", "rating": 5.0, "reviews": 24, "category": "Marketing agency"}
+      ],
+      "ai_overview": {"present": true, "cited": ["blenddigital.com", "loopdigitalmarketing.com", "dlkcyprus.com", "bevisible.com.cy", "sortlist.com", "clutch.co", "opensolutions.com.cy", "bridgestudios.com.cy", "seocyprus.com.cy", "mojodesign.io"], "gist": "SEO for Google and AI search, Greek and English keyword optimisation"},
+      "paa": ["How much does an SEO service cost?", "How much should I expect to pay for SEO?", "Is SEO dead now with AI?", "What is the 80/20 rule in SEO?"],
+      "organic": [
+        {"pos": 1, "url": "bridgestudios.com.cy/services/seo-marketing/", "type": "service"},
+        {"pos": 2, "url": "yoshirodigital.com/service/search-engine-optimization-agency/", "type": "service"},
+        {"pos": 3, "url": "clutch.co/cy/seo-firms", "type": "directory"},
+        {"pos": 4, "url": "blenddigital.com/services/seo", "type": "service"},
+        {"pos": 5, "url": "themanifest.com/cy/seo/local/agencies", "type": "directory"},
+        {"pos": 6, "url": "dlkcyprus.com/seo/", "type": "service"},
+        {"pos": 7, "url": "adonisanastasiou.com/seo-specialist-in-cyprus/", "type": "service"},
+        {"pos": 8, "url": "sortlist.com/seo/cyprus-cy", "type": "directory"},
+        {"pos": 9, "url": "opensolutions.com.cy/SEO-Services-Cyprus", "type": "service"},
+        {"pos": 10, "url": "agencies.semrush.com/list/seo/cyprus/", "type": "directory"}
+      ]
+    },
+    {
+      "query": "one page website cyprus", "hl": "en", "location_label": "Cyprus",
+      "ads": {"top": 0, "mid": 0, "bottom": 0},
+      "local_pack": null,
+      "ai_overview": {"present": true, "cited": ["marketmeglobal.com", "ultimateworkzcy.com", "nerwx.com", "bypanik.tech", "webseo.cy", "vitpgroup.com", "bridgestudios.com.cy", "foryoudigitalsolutions.com"], "gist": "Opens with a price: a one-page website in Cyprus typically EUR 150 to 500"},
+      "paa": ["How much should a 1 page website cost?", "What are the top 10 single-page websites?", "What are the top websites in Cyprus?", "Can I make money with a one-page website?"],
+      "organic": [
+        {"pos": 1, "url": "untitledpros.com/", "type": "agency_home"},
+        {"pos": 2, "url": "vitpgroup.com/landing", "type": "service"},
+        {"pos": 3, "url": "ultimateworkzcy.com/", "type": "agency_home", "note": "snippet leads with 'EUR 497 One-Pager'"},
+        {"pos": 4, "url": "bypanik.tech/en/web-design-cyprus/", "type": "service", "note": "snippet leads with 'from EUR 499 for a one-page website'"},
+        {"pos": 5, "url": "webseo.cy/services/starter-website-design-cyprus/", "type": "service", "note": "price rich result EUR 450"},
+        {"pos": 6, "url": "solutioweb.com/affordable-website-design-cyprus/", "type": "blog"},
+        {"pos": 7, "url": "oncypruswebdesign.com/en/packages", "type": "pricing"},
+        {"pos": 8, "url": "aawebstudio.com/website-cost-cyprus/", "type": "blog"},
+        {"pos": 9, "url": "onlinesolutions.com.cy/web-design-cyprus/", "type": "blog"}
+      ]
+    },
+    {
+      "query": "website cost cyprus", "hl": "en", "location_label": "Cyprus",
+      "ads": {"top": 0, "mid": 0, "bottom": 0},
+      "local_pack": null,
+      "ai_overview": {"present": true, "cited": ["solutioweb.com", "macleedesigns.com.cy", "oncypruswebdesign.com", "foryoudigitalsolutions.com", "bypanik.tech", "aawebstudio.com", "webseo.cy", "ludehq.com", "bandziuk.com", "clovo-solutions.com"], "gist": "EUR 450 to 6,000 upfront by tier; kona-verse.com not cited"},
+      "paa": ["How much does a full website cost?", "How much should it cost to have a website?", "How much does it cost for a website?", "How much does it cost monthly to own a website?"],
+      "organic": [
+        {"pos": 1, "url": "oncypruswebdesign.com/en/packages", "type": "pricing"},
+        {"pos": 2, "url": "solutioweb.com/how-much-does-a-website-cost-in-cyprus/", "type": "blog"},
+        {"pos": 3, "url": "kona-verse.com/blog/website-cost-cyprus", "type": "blog", "note": "KONAVERSE. Signed-in caveat applies."},
+        {"pos": 4, "url": "domainstar.me/website-cost-cyprus-2026/", "type": "blog"},
+        {"pos": 5, "url": "macleedesigns.com.cy/blog/website-cost-cyprus", "type": "blog"},
+        {"pos": 6, "url": "aawebstudio.com/website-cost-cyprus/", "type": "blog"},
+        {"pos": 7, "url": "bypanik.tech/en/website-cost-cyprus/", "type": "blog"},
+        {"pos": 8, "url": "ludehq.com/blog/how-much-does-a-website-cost-in-cyprus", "type": "blog"},
+        {"pos": 9, "url": "dm-labs.io/blog/website-cost-cyprus-2026-guide/", "type": "blog"}
+      ]
+    },
+    {
+      "query": "website design cyprus prices", "hl": "en", "location_label": "Cyprus",
+      "ads": {"top": 0, "mid": 0, "bottom": 0},
+      "local_pack": null,
+      "ai_overview": {"present": true, "cited": ["oncypruswebdesign.com", "foryoudigitalsolutions.com", "aawebstudio.com", "solutioweb.com", "paphoswebsitedesign.com", "cyprusdigitalagency.com", "webseo.cy", "mind-laboratory.com", "elixirblend.com", "bandziuk.com"], "gist": "EUR 200 to 6,000 by type; kona-verse.com not cited"},
+      "paa": ["How much should a full website design cost?", "How much should I pay to design a website?", "How much does it cost to design a web?", "How much do web designers usually charge?"],
+      "organic": [
+        {"pos": 1, "url": "oncypruswebdesign.com/en/packages", "type": "pricing"},
+        {"pos": 2, "url": "aawebstudio.com/website-cost-cyprus/", "type": "blog"},
+        {"pos": 3, "url": "kona-verse.com/blog/website-cost-cyprus", "type": "blog", "note": "KONAVERSE. Signed-in caveat applies."},
+        {"pos": 4, "url": "mind-laboratory.com/pricing-website-design/", "type": "pricing"},
+        {"pos": 5, "url": "solutioweb.com/how-much-does-a-website-cost-in-cyprus/", "type": "blog"},
+        {"pos": 6, "url": "cyprusdigitalagency.com/website-design-cost-in-cyprus-2026/", "type": "blog"},
+        {"pos": 7, "url": "webseo.cy/how-much-does-website-design-cost-in-cyprus/", "type": "blog"},
+        {"pos": 8, "url": "ergowebdesign.com/blog/how-much-does-a-web-designer-cost/", "type": "blog"},
+        {"pos": 9, "url": "elephanttribeagency.com/pricing/website-design-development-pricing/", "type": "pricing"}
+      ]
+    },
+    {
+      "query": "ecommerce website cyprus", "hl": "en", "location_label": "Cyprus",
+      "ads": {"top": 0, "mid": 0, "bottom": 0},
+      "local_pack": null,
+      "ai_overview": {"present": true, "cited": ["trade.gov", "semrush.com", "avocadots.com", "buildecommercewebsites.com", "sortlist.com", "opiumworks.com", "qoboweb.com", "bypanik.tech"], "gist": "Opens with market size (e-commerce market, internet penetration), then agencies: mixed intent"},
+      "paa": ["What is the best online shopping platform in Cyprus?", "What are the top 5 e-commerce websites?", "What are the top websites in Cyprus?", "Which website is best for ecommerce?"],
+      "organic": [
+        {"pos": 1, "url": "avocadots.com/ecommerce-shopify", "type": "service"},
+        {"pos": 2, "url": "absolute-websites.com/websites/ecommerce/", "type": "service"},
+        {"pos": 3, "url": "bevisible.com.cy/eshop", "type": "service"},
+        {"pos": 4, "url": "sortlist.com/ecommerce/cyprus-cy", "type": "directory"},
+        {"pos": 5, "url": "ruxbo.com/service/e-commerce-website-design/", "type": "service"},
+        {"pos": 6, "url": "dlkcyprus.com/cyprus-e-commerce-websites/", "type": "blog"},
+        {"pos": 7, "url": "appscrip.com/blog/top-5-ecommerce-websites-in-cyprus/", "type": "list_article", "note": "shopping sites, consumer intent"},
+        {"pos": 8, "url": "brandnav.io/reports/countries/cyprus/", "type": "other"},
+        {"pos": 9, "url": "buildecommercewebsites.com/locations/cyprus/", "type": "city_page", "note": "non-Cypriot firm's country location page"}
+      ]
+    },
+    {
+      "query": "website maintenance cyprus", "hl": "en", "location_label": "Cyprus",
+      "ads": {"top": 0, "mid": 0, "bottom": 0},
+      "local_pack": [
+        {"name": "WebSEO", "rating": 5.0, "reviews": 2, "category": "Website designer"},
+        {"name": "LilKangooMedia", "rating": 5.0, "reviews": 120, "category": "Photographer"},
+        {"name": "Wizzweb Solutions", "rating": 5.0, "reviews": 10, "category": "Website designer"}
+      ],
+      "ai_overview": {"present": true, "cited": ["bluepixel.com.cy", "devitus.com", "dlkcyprus.com", "createcy.com", "ruxbo.com", "loopdigitalmarketing.com", "websitedesign.cy", "lemonhub.tech", "stellar-reach-solutions.com"], "gist": "What maintenance covers, then named local agencies"},
+      "paa": ["How long are websites down for maintenance?", "How much should I pay for website maintenance?", "How much does a website maintenance cost?", "What are the top websites in Cyprus?"],
+      "organic": [
+        {"pos": 1, "url": "bluepixel.com.cy/website-maintenance-support/", "type": "service"},
+        {"pos": 2, "url": "dlkcyprus.com/website-management/", "type": "service"},
+        {"pos": 3, "url": "domainstar.me/website-maintenance-in-cyprus/", "type": "blog"},
+        {"pos": 4, "url": "ruxbo.com/service/website-maintenance-services/", "type": "service"},
+        {"pos": 5, "url": "lemonhub.tech/service/website-maintenance/", "type": "service"},
+        {"pos": 6, "url": "devitus.com/website-maintenance", "type": "service"},
+        {"pos": 7, "url": "webseo.cy/tag/website-maintenance-cyprus/", "type": "blog"},
+        {"pos": 8, "url": "createcy.com/reliable-affordable-website-hosting-in-cyprus/", "type": "blog"},
+        {"pos": 9, "url": "websitedesign.cy/website-maintenance-cyprus/", "type": "blog"},
+        {"pos": 10, "url": "cy.technology/services/web-services-cyprus/website-maintenance-web-management/", "type": "service"}
+      ]
+    },
+    {
+      "query": "3d website cyprus", "hl": "en", "location_label": "Cyprus",
+      "ads": {"top": 0, "mid": 0, "bottom": 0},
+      "local_pack": null,
+      "ai_overview": {"present": true, "cited": ["the3dfactory.com.cy", "3dproductionscyprus.com", "3dprinting.cy", "progressivetechnologies.com.cy", "concept-ave.com", "visitcyprus.com", "cyprusdigitalheritage.com", "cyprusatlas.com", "cypruswebdesigners.com"], "gist": "3D printing, rendering and digital heritage; no 3D web design studio"},
+      "paa": [],
+      "organic": [
+        {"pos": 1, "url": "3dproductionscyprus.com/", "type": "other", "note": "3D printing shop"},
+        {"pos": 2, "url": "the3dfactory.com.cy/", "type": "other", "note": "3D printing shop"},
+        {"pos": 3, "url": "cyprusatlas.com/company/3d-web-solutions-creative-marketing-and-web-design-agency-10486", "type": "directory", "note": "listing for a Paphos agency named '3D Web Solutions'"},
+        {"pos": 4, "url": "cypruswebdesigners.com/listings/name/3d-web-solutions", "type": "directory"},
+        {"pos": 5, "url": "cyprusdigitalheritage.com/", "type": "other"},
+        {"pos": 6, "url": "cypindex.com/company/23406/3D_WEB_SOLUTIONS_CREATIVE_MARKETING_WEB_DESIGN_AGENCY", "type": "directory"},
+        {"pos": 7, "url": "visitcyprus.com/discover-cyprus/sun-sea/diving/diving_useful_info/models/", "type": "other"},
+        {"pos": 8, "url": "themanifest.com/cy/video-production/3d-animation/agencies", "type": "directory"},
+        {"pos": 9, "url": "applet3d.com/service-areas/cyprus/", "type": "other", "note": "architectural rendering"}
+      ]
+    },
+    {
+      "query": "web design nicosia", "hl": "en", "location_label": "Lefkosa",
+      "ads": {"top": 0, "mid": 0, "bottom": 0},
+      "local_pack": [
+        {"name": "Mojo Design", "rating": 5.0, "reviews": 34, "category": "Website designer"},
+        {"name": "JCSL", "rating": 5.0, "reviews": 59, "category": "Website designer"},
+        {"name": "avocadots Digital Design Studio", "rating": 4.9, "reviews": 51, "category": "Marketing agency"}
+      ],
+      "ai_overview": {"present": true, "cited": ["aiolosweb.com", "weblab.com.cy", "mbloo.com", "wildberry.digital", "jcsl.com.cy", "devitus.com", "loopdigitalmarketing.com"], "gist": "Named Nicosia agencies; devitus.com and LOOP are cited through their 'Web Design in Nicosia' pages; notes bilingual Greek/English as a local requirement"},
+      "paa": [],
+      "organic": [
+        {"pos": 1, "url": "wildberry.digital/", "type": "agency_home"},
+        {"pos": 2, "url": "sortlist.com/web-design/nicosia-cy", "type": "directory"},
+        {"pos": 3, "url": "mbloo.com/", "type": "agency_home"},
+        {"pos": 4, "url": "digitalmarketingcity.cy/web-design/", "type": "service"},
+        {"pos": 5, "url": "blenddigital.com/redesign-your-website-en/", "type": "city_page", "note": "title 'Web design for your business | Top Agency in Nicosia'"},
+        {"pos": 6, "url": "revenuebase.ai/companies/freelancer-web-design-companies/cyprus/nicosia", "type": "directory"},
+        {"pos": 7, "url": "oncypruswebdesign.com/en/", "type": "agency_home"},
+        {"pos": 8, "url": "techbehemoths.com/companies/web-design/nicosia", "type": "directory"},
+        {"pos": 9, "url": "weblab.com.cy/", "type": "agency_home"},
+        {"pos": 10, "url": "cypruswebdesigners.com/nicosia-web-designers.html", "type": "directory"}
+      ]
+    },
+    {
+      "query": "web design limassol", "hl": "en", "location_label": "Limassol",
+      "ads": {"top": 0, "mid": 0, "bottom": 0, "sponsored_places": 2, "advertisers": ["BlueCloudNet", "Chameleon Design+Marketing (5.0, 16 reviews)"]},
+      "local_pack": [
+        {"name": "A.A Webstudio", "rating": 5.0, "reviews": 61, "category": "Website designer"},
+        {"name": "Absolute Websites", "rating": 5.0, "reviews": 48, "category": "Website designer"},
+        {"name": "Online Solutions", "rating": 5.0, "reviews": 64, "category": "Marketing agency"}
+      ],
+      "ai_overview": {"present": true, "cited": ["aawebstudio.com", "onlinesolutions.com.cy", "untitledpros.com", "website-design-limassol.com", "beenerds.com", "bypanik.tech"], "gist": "Named Limassol agencies with street addresses, then price bands; bypanik.tech cited through a 'Web Design Limassol' page"},
+      "paa": ["How much does it cost to pay a website designer?", "Is web design still worth it in 2026?", "What is the 3 second rule in web design?", "How much does it cost to design a website?"],
+      "organic": [
+        {"pos": 1, "url": "limassolwebdesign.com/", "type": "agency_home", "note": "exact-match domain"},
+        {"pos": 2, "url": "website-design-limassol.com/", "type": "agency_home", "note": "exact-match domain (Applab Projects)"},
+        {"pos": 3, "url": "natasalagou.com/", "type": "agency_home"},
+        {"pos": 4, "url": "upwork.com/hire/web-designers/cy/limassol/", "type": "directory"},
+        {"pos": 5, "url": "untitledpros.com/", "type": "agency_home"},
+        {"pos": 6, "url": "topseos.com/cy/best-web-design-companies-in-limassol-cyprus", "type": "directory"},
+        {"pos": 7, "url": "beenerds.com/", "type": "agency_home"},
+        {"pos": 8, "url": "cypruswebdesigners.com/limassol-web-designers.html", "type": "directory"},
+        {"pos": 9, "url": "onlinesolutions.com.cy/web-design-in-limassol/", "type": "blog", "note": "city guide by a Limassol agency"},
+        {"pos": 10, "url": "sortlist.com/web-design/limassol-cy", "type": "directory"}
+      ]
+    },
+    {
+      "query": "κατασκευή ιστοσελίδων", "hl": "el", "location_label": "not shown",
+      "ads": {"top": 0, "mid": 0, "bottom": 0},
+      "local_pack": null,
+      "other_features": ["images pack", "video pack (three Greek YouTube tutorials)"],
+      "ai_overview": {"present": true, "cited": ["webnode.com", "netstudio.gr", "makemyweb.gr", "youtube.com", "movingup.gr"], "gist": "Build it yourself on a builder (Webnode) or hire a firm (Netstudio); Greece-centred"},
+      "paa": [],
+      "related_searches_note": "Greece-centred: τιμες, αθήνα, θεσσαλονίκη, δωρεαν, wordpress",
+      "organic": [
+        {"pos": 1, "url": "netstudio.gr/", "type": "agency_home", "market": "Greece"},
+        {"pos": 2, "url": "oncypruswebdesign.com/", "type": "agency_home", "market": "Cyprus", "language": "el"},
+        {"pos": 3, "url": "jcsl.com.cy/", "type": "agency_home", "market": "Cyprus", "language": "el"},
+        {"pos": 4, "url": "makemyweb.gr/", "type": "agency_home", "market": "Greece"},
+        {"pos": 5, "url": "cactusweb.gr/kostos-kataskevi-istoselidas-2026/", "type": "blog", "market": "Greece"},
+        {"pos": 6, "url": "iwp.com.cy/web-development-cyprus-greece/", "type": "service", "market": "Cyprus", "language": "el"},
+        {"pos": 7, "url": "dicha.gr/kataskevi-istoselidon/", "type": "service", "market": "Greece"}
+      ]
+    },
+    {
+      "query": "κατασκευή ιστοσελίδας κύπρος", "hl": "el", "location_label": "not shown",
+      "ads": {"top": 0, "mid": 0, "bottom": 0},
+      "local_pack": [
+        {"name": "WebSEO", "rating": 5.0, "reviews": 2, "category": "Σχεδιαστής ιστοσελίδων"},
+        {"name": "avocadots Digital Design Studio", "rating": 4.9, "reviews": 51, "category": "Εταιρεία μάρκετινγκ"},
+        {"name": "Cyprus Digital Agency", "rating": 5.0, "reviews": 11, "category": "Σχεδιαστής ιστοσελίδων"}
+      ],
+      "ai_overview": {"present": true, "cited": ["adonisanastasiou.com", "webtheoria.com", "loopdigitalmarketing.com", "websolutions.cy", "jcsl.com.cy", "proteasoft.com", "yoosor.com", "nerwx.com"]},
+      "paa": [],
+      "organic": [
+        {"pos": 1, "url": "oncypruswebdesign.com/", "type": "agency_home", "language": "el"},
+        {"pos": 2, "url": "websolutions.cy/", "type": "agency_home", "language": "el"},
+        {"pos": 3, "url": "proteasoft.com/el/", "type": "agency_home", "language": "el"},
+        {"pos": 4, "url": "jcsl.com.cy/", "type": "agency_home", "language": "el"},
+        {"pos": 5, "url": "yoosor.com/", "type": "agency_home", "language": "el"},
+        {"pos": 6, "url": "adonisanastasiou.com/el/digital-marketing-services-kypros/dimiourgia-istoselidwn-kypros/", "type": "service", "language": "el"},
+        {"pos": 7, "url": "webtheoria.com/el/", "type": "agency_home", "language": "el"},
+        {"pos": 8, "url": "loopdigitalmarketing.com/σχεδιασμός-ιστοσελίδας-κύπρος-επαγγ/", "type": "service", "language": "el"},
+        {"pos": 9, "url": "firstidea.gr/kataskevi-istoselidon-kypros/", "type": "service", "language": "el", "market": "Greece-based firm"},
+        {"pos": 10, "url": "nerwx.com/el/web-design-cyprus/", "type": "service", "language": "el"}
+      ]
+    },
+    {
+      "query": "κατασκευή ιστοσελίδων λευκωσία", "hl": "el", "location_label": "not shown",
+      "ads": {"top": 0, "mid": 0, "bottom": 0},
+      "local_pack": null,
+      "ai_overview": {"present": true, "cited": ["webtheoria.com", "pasiasdigital.com", "ikaroa.com", "jcsl.com.cy", "nxdpro.com"]},
+      "paa": [],
+      "organic": [
+        {"pos": 1, "url": "jcsl.com.cy/", "type": "agency_home", "language": "el"},
+        {"pos": 2, "url": "oncypruswebdesign.com/", "type": "agency_home", "language": "el"},
+        {"pos": 3, "url": "acronweb.gr/kataskeyi-istoselidon-lefkosia", "type": "city_page", "language": "el", "market": "Greece-based firm, remote"},
+        {"pos": 4, "url": "pasiasdigital.com/el/web-design-nicosia/", "type": "city_page", "language": "el"},
+        {"pos": 5, "url": "webtheoria.com/el/", "type": "agency_home", "language": "el"},
+        {"pos": 6, "url": "cyprusatlas.com/el/category/websites", "type": "directory", "language": "el"},
+        {"pos": 7, "url": "nxdpro.com/web-design-nicosia", "type": "city_page", "language": "el"},
+        {"pos": 8, "url": "devitus.com/el/digital", "type": "service", "language": "el"},
+        {"pos": 9, "url": "facebook.com/cywebsites/", "type": "other", "language": "el"}
+      ]
+    },
+    {
+      "query": "κατασκευή ιστοσελίδας τιμές κύπρος", "hl": "el", "location_label": "not shown",
+      "ads": {"top": 0, "mid": 0, "bottom": 0},
+      "local_pack": null,
+      "ai_overview": {"present": true, "cited": ["webseo.cy", "teraburn.com", "bypanik.tech"], "gist": "EUR 450 to 1,000 for simple or business sites, more for e-shops"},
+      "paa": [],
+      "organic": [
+        {"pos": 1, "url": "webseo.cy/el/κόστος-σχεδιασμού-ιστοσελίδας-κύπρο/", "type": "blog", "language": "el"},
+        {"pos": 2, "url": "oncypruswebdesign.com/el/packages", "type": "pricing", "language": "el"},
+        {"pos": 3, "url": "devitus.com/el/blog/website-cost-cyprus", "type": "blog", "language": "el", "note": "Greek mirror of an English cost post"},
+        {"pos": 4, "url": "iwp.com.cy/web-development-cyprus-greece/", "type": "service", "language": "el"},
+        {"pos": 5, "url": "jcsl.com.cy/kataskeyh-istoselidas-times-prosfora/", "type": "pricing", "language": "el", "note": "review stars 4.9 (81) in the snippet"},
+        {"pos": 6, "url": "foryoudigitalsolutions.com/el/services/web-design-cyprus/", "type": "service", "language": "el"},
+        {"pos": 7, "url": "teraburn.com/pricing", "type": "pricing", "language": "el"},
+        {"pos": 8, "url": "solutioweb.com/el/κατασκευή-ιστοσελίδων-στην-κύπρο-κόσ/", "type": "blog", "language": "el", "note": "Greek mirror of an English cost post"},
+        {"pos": 9, "url": "bypanik.tech/el/website-cost-cyprus/", "type": "blog", "language": "el", "note": "Greek mirror of an English cost post"}
+      ]
+    },
+    {
+      "query": "σχεδιασμός ιστοσελίδων κύπρος", "hl": "el", "location_label": "not shown",
+      "ads": {"top": 0, "mid": 0, "bottom": 0},
+      "local_pack": [
+        {"name": "WebSEO", "rating": 5.0, "reviews": 2, "category": "Σχεδιαστής ιστοσελίδων"},
+        {"name": "Mojo Design", "rating": 5.0, "reviews": 34, "category": "Σχεδιαστής ιστοσελίδων"},
+        {"name": "avocadots Digital Design Studio", "rating": 4.9, "reviews": 51, "category": "Εταιρεία μάρκετινγκ"}
+      ],
+      "ai_overview": {"present": true, "cited": ["jcsl.com.cy", "oncypruswebdesign.com", "websolutions.cy", "webtheoria.com"]},
+      "paa": [],
+      "organic": [
+        {"pos": 1, "url": "oncypruswebdesign.com/", "type": "agency_home", "language": "el"},
+        {"pos": 2, "url": "webtheoria.com/el/website-design-agency/", "type": "service", "language": "el"},
+        {"pos": 3, "url": "jcsl.com.cy/", "type": "agency_home", "language": "el"},
+        {"pos": 4, "url": "webseo.cy/el/σχεδιασμός-ιστοσελίδων-στην-κύπρο/", "type": "service", "language": "el"},
+        {"pos": 5, "url": "websolutions.cy/", "type": "agency_home", "language": "el"},
+        {"pos": 6, "url": "gooiz.com/website-design-web-developement", "type": "service", "language": "el"},
+        {"pos": 7, "url": "loopdigitalmarketing.com/σχεδιασμός-ιστοσελίδας-κύπρος-επαγγ/", "type": "service", "language": "el"},
+        {"pos": 8, "url": "digitalizedcy.com/kataskevi-istoselidas-larnaka", "type": "city_page", "language": "el"},
+        {"pos": 9, "url": "nerwx.com/el/web-design-cyprus/", "type": "service", "language": "el"},
+        {"pos": 10, "url": "cyprusatlas.com/el/category/web_design", "type": "directory", "language": "el"}
+      ]
+    },
+    {
+      "query": "seo κύπρος", "hl": "el", "location_label": "not shown",
+      "ads": {"top": 0, "mid": 0, "bottom": 0},
+      "local_pack": null,
+      "ai_overview": {"present": true, "cited": ["absolute-websites.com", "bevisible.com.cy", "blenddigital.com", "adonisanastasiou.com", "clutch.co", "nem.cy", "shahandigital.com"]},
+      "paa": [],
+      "organic": [
+        {"pos": 1, "url": "seocyprus.com/", "type": "agency_home", "language": "en", "note": "shown with 'translate this page'"},
+        {"pos": 2, "url": "nem.cy/seo-kypros/", "type": "service", "language": "el"},
+        {"pos": 3, "url": "adonisanastasiou.com/el/seo-specialist-kypros/", "type": "service", "language": "el"},
+        {"pos": 4, "url": "clutch.co/cy/seo-firms", "type": "directory", "language": "en"},
+        {"pos": 5, "url": "bridgestudios.com.cy/services/seo-marketing/", "type": "service", "language": "en"},
+        {"pos": 6, "url": "cy.linkedin.com/jobs/seo-jobs", "type": "jobs", "language": "en"},
+        {"pos": 7, "url": "dlkcyprus.com/seo/", "type": "service", "language": "en"},
+        {"pos": 8, "url": "onlyseoagency.com/", "type": "agency_home", "language": "en"},
+        {"pos": 9, "url": "shahandigital.com/seo-cyprus/", "type": "blog", "language": "en"}
+      ]
+    }
+  ],
+  "extra_queries": [
+    {
+      "query": "website hosting cyprus", "hl": "en", "why": "added to test the hosting half of the maintenance/hosting candidate",
+      "ads": {"top": 0, "mid": 0, "bottom": 0},
+      "local_pack": [
+        {"name": "WebSEO", "rating": 5.0, "reviews": 2, "category": "Website designer"},
+        {"name": "NetShop ISP", "rating": 4.5, "reviews": 8, "category": "Web hosting company"},
+        {"name": "HostingB2B", "rating": 4.0, "reviews": 8, "category": "Web hosting company"}
+      ],
+      "ai_overview": {"present": true, "cited": ["netshop-isp.com.cy", "hostingb2b.com", "cypruswebsitehosting.com", "jcsl.com.cy", "netcy.com"]},
+      "paa": ["How much does it cost to have a website hosted?", "What are the top websites in Cyprus?", "How much should I pay for web hosting?", "What is the best classifieds website in Cyprus?"],
+      "organic": [
+        {"pos": 1, "url": "netshop-isp.com.cy/web-hosting/cyprus/", "type": "hosting_provider", "note": "price rich result EUR 7.99 to 34.99"},
+        {"pos": 2, "url": "hostingb2b.com/web-hosting/cyprus-web-hosting/", "type": "hosting_provider"},
+        {"pos": 3, "url": "cypruswebsitehosting.com/", "type": "hosting_provider"},
+        {"pos": 4, "url": "b3website.com/blog/cyprus-hosting/the-present-is-mobile", "type": "builder"},
+        {"pos": 5, "url": "cypruswebs.com/", "type": "agency_home"},
+        {"pos": 6, "url": "totalcyservices.com/", "type": "hosting_provider"},
+        {"pos": 7, "url": "hostadvice.com/web-hosting/cyprus/", "type": "list_article"},
+        {"pos": 8, "url": "smptechnoservices.com/hosting-solutions", "type": "hosting_provider"},
+        {"pos": 9, "url": "paphoswebsitedesign.com/web-design-cyprus/", "type": "service"},
+        {"pos": 10, "url": "jcsl.com.cy/en/web-hosting-cyprus/", "type": "service"}
+      ]
+    },
+    {
+      "query": "κατασκευή eshop κύπρος", "hl": "el", "why": "added to test the Greek side of the ecommerce candidate (Cypriots say e-shop)",
+      "ads": {"top": 0, "mid": 0, "bottom": 0},
+      "local_pack": [
+        {"name": "WebSEO", "rating": 5.0, "reviews": 2, "category": "Σχεδιαστής ιστοσελίδων"},
+        {"name": "Mojo Design", "rating": 5.0, "reviews": 34, "category": "Σχεδιαστής ιστοσελίδων"},
+        {"name": "FlipRobo", "rating": 5.0, "reviews": 7, "category": "Σχεδιαστής ιστοσελίδων"}
+      ],
+      "ai_overview": {"present": true, "cited": ["digitalizedcy.com", "jcsl.com.cy", "adonisanastasiou.com", "makemyweb.gr", "proteasoft.com", "nem.cy", "gooiz.com"]},
+      "paa": [],
+      "organic": [
+        {"pos": 1, "url": "jcsl.com.cy/kataskevi-eshop/", "type": "service", "language": "el"},
+        {"pos": 2, "url": "proteasoft.com/el/kataskevi-e-shop/", "type": "service", "language": "el"},
+        {"pos": 3, "url": "nem.cy/kataskevi-eshop/", "type": "service", "language": "el"},
+        {"pos": 4, "url": "makemyweb.gr/kataskevi-eshop-me-oikiako-eksoplismo-stin-kypro/", "type": "blog", "language": "el", "note": "Greece firm's case study of a Cyprus e-shop"},
+        {"pos": 5, "url": "websolutions.cy/", "type": "agency_home", "language": "el"},
+        {"pos": 6, "url": "oncypruswebdesign.com/el/packages", "type": "pricing", "language": "el"},
+        {"pos": 7, "url": "gooiz.com/eshop-design", "type": "service", "language": "el"},
+        {"pos": 8, "url": "digitalizedcy.com/ilektroniko-katastima-kypros", "type": "service", "language": "el"},
+        {"pos": 9, "url": "adonisanastasiou.com/el/digital-marketing-services-kypros/dimiourgia-istoselidwn-kypros/", "type": "service", "language": "el"},
+        {"pos": 10, "url": "aboutsite.gr/kataskevi-istoselidon-kypros/", "type": "service", "language": "el", "market": "Greece-based firm"}
+      ]
+    }
+  ]
+}
