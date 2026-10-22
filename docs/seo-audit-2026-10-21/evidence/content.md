@@ -251,7 +251,7 @@ Severity: High, Medium or Low. Every quote is from the live raw HTML.
 
 ## 8. Evidence files
 
-- **Raw HTML and extracted text (scratchpad, not committed):** `C:\Users\konst\AppData\Local\Temp\claude\C--Users-konst-Projects-KONA\d5d536f6-1a6d-4751-9c13-550f2341c4ac\scratchpad\text\` (`*.html`, `*.txt`, `_summary.json`).
+- **Raw HTML and extracted text (scratchpad, not committed):** the 21 October session scratchpad on the owner's machine (`text/*.html`, `text/*.txt`, `text/_summary.json`).
 - **Overlap script:** `...\scratchpad\tools\overlap.py`.
 - **Extractor:** `...\scratchpad\tools\extract.py`.
 
